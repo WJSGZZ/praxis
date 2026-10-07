@@ -18,3 +18,10 @@ Workflow review additions:
 - [Math Modeling Contest Workflow](https://github.com/user0928/math-modeling-contest-workflow/tree/40155106a7051fccff9c0b2ab60cdff2588524b4) was read for comparison. No clear license was found at the reviewed commit; no text, code, skill or evaluation dataset is included. Praxis's definition examples and evidence-index implementation are independently authored. This link is acknowledgment of comparison, not a claim of reuse permission.
 
 Review scope and adoption decisions are documented in references/upstream-review.md and third_party/workflow-review.json.
+
+
+Mathematical reasoning review:
+
+- Existing installed [SymPy](https://github.com/sympy/sympy) and [SciPy](https://github.com/scipy/scipy) are used in locally authored synthetic structural checks; installed license texts retained as third_party/licenses/sympy-LICENSE and scipy-LICENSE. No library implementation is vendored.
+- [CVXPY](https://github.com/cvxpy/cvxpy), [PyMC](https://github.com/pymc-devs/pymc), [DoWhy](https://github.com/py-why/dowhy), and [OR-Tools](https://github.com/google/or-tools) were reviewed as concept/tool references. No implementation, tutorial text, figures or datasets are copied, and these libraries are not installed or tested by this review. Their licenses do not become MIT through this repository's LICENSE.
+- Verified repository license texts, fixed review commits, star-count snapshots and adoption scope are recorded in third_party/mathematical-review.json. Installed release versions remain distinct from repository review commits. Original guidance and examples are in references/mathematical-reasoning.md and examples/structural_reasoning_demo.py.

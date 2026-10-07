@@ -33,3 +33,19 @@ Praxis 的目的、任务记录和推进逻辑先确定；上游经验按职责�
 | Praxis 的 evidence 索引 | 连接数值交付物和实际检查 | 使用同一任务 ID，不替代主记录与科学审核 | 数值交付才调用；漏字段、漏检查、失败与过期回归 |
 
 统一方法见 methods.md。新增项目先说明缺口、职责、契约、替代关系、验收和许可；无实际收益不引入。实践中出现错误，修正对应职责的规则或工具，而非再添加平行流程。
+
+
+## 数学方法与思想对照（2026-10-07）
+
+星数是核查时的 GitHub API 快照，仅用于发现，不代表方法正确或适合当前题目。固定提交、许可与审查范围见 third_party/mathematical-review.json。
+
+| 项目 | 星数快照 | 明确缺口与主线职责 | 本次取舍 |
+|---|---:|---|---|
+| [sympy/sympy](https://github.com/sympy/sympy/tree/319ea7a6186edf88bc23d502917242b10314ae51) | 14,993 | 形成路线前检查量纲与等价参数；独立符号核验 | Reuse already-installed dependency for dimensional and exact symbolic examples; representation and parameter-identifiability guidance |
+| [scipy/scipy](https://github.com/scipy/scipy/tree/0aa66630fc0717788fd39b25bdaecfcc8d7002cd) | 15,086 | 取得结果并用独立界判断最优性 | Reuse already-installed dependency for LP solve contrasted with independent exact certificate |
+| [cvxpy/cvxpy](https://github.com/cvxpy/cvxpy/tree/5c569b461c62aa7d93e06fd3994213ae3fc4af5c) | 6,356 | 依据连续／凸性结构选择优化路线 | Adopt structure-first reasoning and conditional DCP guidance; not installed or executed |
+| [pymc-devs/pymc](https://github.com/pymc-devs/pymc/tree/19a783ff4564fcda6340477415b8efdd0f245871) | 9,795 | 需要概率区间时表达生成过程与检查分布假设 | Adopt conditional generative and prior/posterior predictive checking guidance; not installed or executed |
+| [py-why/dowhy](https://github.com/py-why/dowhy/tree/b06369ed4a01a54c9d6422a24f103626fbcaec19) | 8,338 | 干预问题先核验因果假设与识别条件 | Adopt conditional causal-assumption and identification guidance; not installed or executed |
+| [google/or-tools](https://github.com/google/or-tools/tree/100f66e6242ab8bf8d32feb8f3bf086db66ae2b5) | 14,156 | 离散任务按整数／组合结构选工具 | Candidate for discrete scheduling/routing beyond existing tools; not installed or executed |
+
+没有从这些仓库复制算法代码、教程文字或数据。已安装的 SymPy／SciPy 支持自行编写的小例子，其余仅吸收有来源的一般方法与条件指导，不声明已验证这些库本身。主线与任务记录保持不变，具体条件见 mathematical-reasoning.md。

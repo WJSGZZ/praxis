@@ -1,0 +1,68 @@
+[
+  {
+    "repository": "sympy/sympy",
+    "stars": 14993,
+    "reviewed_commit": "319ea7a6186edf88bc23d502917242b10314ae51",
+    "license_label": "NOASSERTION",
+    "archived": false,
+    "review_date": "2026-10-07",
+    "verified_license_text": "BSD-3-Clause in inspected LICENSE",
+    "decision": "Reuse already-installed dependency for dimensional and exact symbolic examples; representation and parameter-identifiability guidance",
+    "review_scope": "Fixed-commit README introduction and license text; selected official concept documentation linked in mathematical-reasoning.md. No comprehensive source-code audit."
+  },
+  {
+    "repository": "scipy/scipy",
+    "stars": 15086,
+    "reviewed_commit": "0aa66630fc0717788fd39b25bdaecfcc8d7002cd",
+    "license_label": "BSD-3-Clause",
+    "archived": false,
+    "review_date": "2026-10-07",
+    "verified_license_text": "BSD-3-Clause in inspected LICENSE.txt",
+    "decision": "Reuse already-installed dependency for LP solve contrasted with independent exact certificate",
+    "review_scope": "Fixed-commit README introduction and license text; selected official concept documentation linked in mathematical-reasoning.md. No comprehensive source-code audit."
+  },
+  {
+    "repository": "cvxpy/cvxpy",
+    "stars": 6356,
+    "reviewed_commit": "5c569b461c62aa7d93e06fd3994213ae3fc4af5c",
+    "license_label": "Apache-2.0",
+    "archived": false,
+    "review_date": "2026-10-07",
+    "verified_license_text": "Apache-2.0 in inspected LICENSE",
+    "decision": "Adopt structure-first reasoning and conditional DCP guidance; not installed or executed",
+    "review_scope": "Fixed-commit README introduction and license text; selected official concept documentation linked in mathematical-reasoning.md. No comprehensive source-code audit."
+  },
+  {
+    "repository": "pymc-devs/pymc",
+    "stars": 9795,
+    "reviewed_commit": "19a783ff4564fcda6340477415b8efdd0f245871",
+    "license_label": "NOASSERTION",
+    "archived": false,
+    "review_date": "2026-10-07",
+    "verified_license_text": "Apache-2.0 plus bundled and historical notices in inspected LICENSE",
+    "decision": "Adopt conditional generative and prior/posterior predictive checking guidance; not installed or executed",
+    "review_scope": "Fixed-commit README introduction and license text; selected official concept documentation linked in mathematical-reasoning.md. No comprehensive source-code audit."
+  },
+  {
+    "repository": "py-why/dowhy",
+    "stars": 8338,
+    "reviewed_commit": "b06369ed4a01a54c9d6422a24f103626fbcaec19",
+    "license_label": "MIT",
+    "archived": false,
+    "review_date": "2026-10-07",
+    "verified_license_text": "MIT in inspected LICENSE",
+    "decision": "Adopt conditional causal-assumption and identification guidance; not installed or executed",
+    "review_scope": "Fixed-commit README introduction and license text; selected official concept documentation linked in mathematical-reasoning.md. No comprehensive source-code audit."
+  },
+  {
+    "repository": "google/or-tools",
+    "stars": 14156,
+    "reviewed_commit": "100f66e6242ab8bf8d32feb8f3bf086db66ae2b5",
+    "license_label": "Apache-2.0",
+    "archived": false,
+    "review_date": "2026-10-07",
+    "verified_license_text": "Apache-2.0 in inspected LICENSE",
+    "decision": "Candidate for discrete scheduling/routing beyond existing tools; not installed or executed",
+    "review_scope": "Fixed-commit README introduction and license text; selected official concept documentation linked in mathematical-reasoning.md. No comprehensive source-code audit."
+  }
+]

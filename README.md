@@ -38,6 +38,7 @@ WORKSPACE="/absolute/path/to/your/project"
 - 任务拆解、机制与基线选择指导，见 [方法参考](references/methods.md)。
 - CSV 与 Excel 全工作表审计；PDF 文本提取，大文件或不支持格式明确延后审计。
 - 每次运行保存源码、参数、输入和输出哈希、环境版本、日志及独立检查。过期证据会被标记。
+- 数学结构与思想的条件指导：量纲／不变性、参数可辨识性、优化结构与证书、概率生成检查、因果识别。部分已用现有库演练，专门库仅留作备选，见 [数学思想](references/mathematical-reasoning.md)。
 - 定义审查与跨任务一致性指导；`pipeline evidence` 将已记录的数值任务链接到结果字段与独立检查，拒绝过期运行，暴露遗漏。清单的完整性仍须对照原题审核。
 - 两个数学工具：独立均匀输入的 Sobol 敏感性，以及具有明确权重和成本／收益方向的 TOPSIS 方案评价。
 - 通用 PDF 基础检查与字节一致的冻结副本。PDF 字体、图表、公式与布局仍须视觉审核。
@@ -50,6 +51,7 @@ WORKSPACE="/absolute/path/to/your/project"
 uv sync --locked --group dev
 uv run --locked python -m pytest -q
 uv run --locked python -m examples.decision_sensitivity_demo
+uv run --locked python -m examples.structural_reasoning_demo
 ```
 
 ## 许可

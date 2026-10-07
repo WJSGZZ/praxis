@@ -14,6 +14,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 读 [references/methods.md](references/methods.md)：这是唯一的推理主线，定义各环节的输入、产出、推进条件、方法选择与失败返回位置。按当前请求进入和结束，不默认每次全流程，不要求逐步审批。
 
 - 分析记录使用 [references/tasks-template.md](references/tasks-template.md)，写入案例 planning/tasks.md；所有环节更新同一份任务记录。
+- 参数能否被观测区分、尺度、优化保证、概率区间或干预结论需要判断时，读 [references/mathematical-reasoning.md](references/mathematical-reasoning.md) 的对应条件分支；不增加全题必经阶段。
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
 - 引入外部方法按 methods.md 的统一规则，出处与实际复用范围见 [references/upstream-review.md](references/upstream-review.md) 和 THIRD_PARTY_NOTICES.md。

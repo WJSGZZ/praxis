@@ -39,5 +39,29 @@
         "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
       }
     ]
+  },
+  {
+    "package": "sympy",
+    "installed_version": "1.14.0",
+    "reuse": "existing installed dependency; independently authored structural examples; no upstream implementation vendored",
+    "repository": "https://github.com/sympy/sympy",
+    "license_files": [
+      {
+        "file": "third_party/licenses/sympy-LICENSE",
+        "sha256": "07a5e9819f727b4986ad2829c7a29a6320d42575f720eb24d71b7fef573a0286"
+      }
+    ]
+  },
+  {
+    "package": "scipy",
+    "installed_version": "1.18.1",
+    "reuse": "existing installed dependency; independently authored structural examples; no upstream implementation vendored",
+    "repository": "https://github.com/scipy/scipy",
+    "license_files": [
+      {
+        "file": "third_party/licenses/scipy-LICENSE",
+        "sha256": "09a1b9e19573045b0784a181cc4bef677039d4f2111631c747bf72b7f19017d4"
+      }
+    ]
   }
 ]
