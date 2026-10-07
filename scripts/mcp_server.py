@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modeling import decision, epidemic, forecast, graph, optimize, queueing, sensitivity, weights  # noqa: E402
+from modeling import decision, epidemic, experiment, forecast, graph, optimize, queueing, routes, sensitivity, structure, weights  # noqa: E402
 from scripts import audit_data, check_references, literature  # noqa: E402
 
 VERSION = '0.1.0'
@@ -44,6 +44,72 @@ def _compile(expression, names):
         scope = {**FUNCTIONS, **{name: x[:, i] for i, name in enumerate(names)}}
         return np.asarray(eval(code, {'__builtins__': {}}, scope), float) * np.ones(len(x))
     return model
+
+
+def _scalar(expression, names):
+    """Scalar function of a point (list of floats) from an arithmetic expression."""
+    model = _compile(expression, names)
+    return lambda x: float(model(np.atleast_2d(np.asarray(x, float)))[0])
+
+
+PREDICATE_FUNCTIONS = {'abs': abs, 'min': min, 'max': max, 'gcd': __import__('math').gcd, 'isprime': lambda n: bool(__import__('sympy').isprime(n))}
+
+
+def _predicate(expression, names):
+    """Boolean function of integer or float arguments: arithmetic, comparisons, and/or/not and a few functions. Nothing else."""
+    tree = ast.parse(expression, mode='eval')
+    arithmetic = (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod, ast.Pow, ast.USub, ast.UAdd, ast.Not, ast.And, ast.Or,
+                  ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE)
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Expression, ast.BinOp, ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Load) + arithmetic):
+            continue
+        if isinstance(node, ast.Constant):
+            if not isinstance(node.value, (int, float)) or isinstance(node.value, bool):
+                raise ValueError('Only numeric constants are allowed')
+        elif isinstance(node, ast.Name):
+            if node.id not in names and node.id not in PREDICATE_FUNCTIONS:
+                raise ValueError(f'Unknown name: {node.id}')
+        elif isinstance(node, ast.Call):
+            if not (isinstance(node.func, ast.Name) and node.func.id in PREDICATE_FUNCTIONS and not node.keywords):
+                raise ValueError('Only simple calls to abs, min, max, gcd, isprime are allowed')
+        else:
+            raise ValueError(f'Disallowed syntax: {type(node).__name__}')
+    code = compile(tree, '<predicate>', 'eval')
+    return lambda *args: bool(eval(code, {'__builtins__': {}}, {**PREDICATE_FUNCTIONS, **dict(zip(names, args))}))
+
+
+def _probe(a):
+    names, bounds, kind = a['names'], a['bounds'], a['property']
+    if kind == 'invariant':
+        rhs = [_scalar(e, names) for e in a['rhs']]
+        return structure.check_invariant(lambda x: np.array([f(x) for f in rhs]), _scalar(a['expression'], names), bounds)
+    f = _scalar(a['expression'], names)
+    if kind == 'convexity':
+        return structure.check_convexity(f, bounds)
+    if kind == 'monotone':
+        return structure.check_monotone(f, bounds, names.index(a['variable']))
+    if kind == 'symmetry':
+        return structure.check_symmetry(f, bounds, a['permutation'])
+    if kind == 'power_law':
+        return structure.check_power_law(f, bounds)
+    raise ValueError('property must be convexity, monotone, symmetry, power_law or invariant')
+
+
+def _conjecture(a):
+    names, bounds = a['names'], a['bounds']
+    left, right = _scalar(a['lhs'], names), _scalar(a['rhs'], names)
+    rng = np.random.default_rng(a.get('seed', 2027))
+    lo, hi = np.asarray(bounds, float).T
+    worst, where = 0.0, None
+    for _ in range(a.get('points', 5000)):
+        x = lo + (hi - lo) * rng.random(len(lo))
+        u, v = left(x), right(x)
+        gap = abs(u - v) if a['relation'] == '==' else (u - v if a['relation'] == '<=' else v - u)
+        if gap > worst:
+            worst, where = gap, x.tolist()
+    tol = a.get('tolerance', 1e-9)
+    return dict(holds=worst <= tol, proved=worst > tol, worst_violation=worst, at=where, precision='double',
+                note='Double precision; use modeling.experiment.test_conjecture for high precision.' if worst <= tol else 'Violation found.')
 
 
 def _sobol(a):
@@ -125,6 +191,35 @@ TOOLS = dict([
     _tool('backtest_baselines', 'Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines.',
           {'series': SERIES, 'horizon': {'type': 'integer'}, 'min_train': {'type': 'integer'}, 'season': {'type': 'integer'}}, ['series', 'horizon'],
           lambda a: forecast.rolling_origin(a['series'], a['horizon'], min_train=a.get('min_train'), season=a.get('season'))),
+    _tool('probe_structure', 'Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs. A found violation is a proof; otherwise it is evidence on sampled points only.',
+          {'property': {'type': 'string', 'enum': ['convexity', 'monotone', 'symmetry', 'power_law', 'invariant']}, 'expression': {'type': 'string'},
+           'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'variable': {'type': 'string'},
+           'permutation': {'type': 'array', 'items': {'type': 'integer'}}, 'rhs': {'type': 'array', 'items': {'type': 'string'}, 'description': 'dx_i/dt expressions, for property=invariant'}},
+          ['property', 'expression', 'names', 'bounds'], _probe),
+    _tool('dimensional_analysis', 'Dimensionless groups (Buckingham Pi) from a dimension matrix: rows are base dimensions, columns are variables.',
+          {'matrix': MATRIX, 'names': {'type': 'array', 'items': {'type': 'string'}}}, ['matrix', 'names'],
+          lambda a: structure.buckingham_pi(a['matrix'], a['names'])),
+    _tool('check_total_unimodularity', 'Is a constraint matrix totally unimodular (integral LP vertices)? Exact for incidence-type matrices and small matrices.',
+          {'matrix': MATRIX}, ['matrix'], lambda a: structure.is_network_matrix(a['matrix'])),
+    _tool('route_graph', 'Keep the record of routes tried on a problem. Pass the current graph (or a question to start) and a list of operations: add_structure, add_assumption, add_path, attack, kill, keep_result, merge, choose. Returns the graph, record problems and a readable trace.',
+          {'graph': {'type': 'object'}, 'question': {'type': 'string'}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
+          lambda a: routes.apply(a.get('graph'), a['operations'], question=a.get('question'))),
+    _tool('test_conjecture', 'Test lhs (==, <=, >=) rhs for random points in a box (double precision). A violation refutes the conjecture; passing is evidence only.',
+          {'lhs': {'type': 'string'}, 'rhs': {'type': 'string'}, 'relation': {'type': 'string', 'enum': ['==', '<=', '>=']},
+           'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'points': {'type': 'integer'}, 'tolerance': _num()},
+          ['lhs', 'rhs', 'relation', 'names', 'bounds'], _conjecture),
+    _tool('find_counterexample', 'Search for a counterexample of a claim (arithmetic, comparisons, and/or, abs/min/max/gcd/isprime) over integer or real ranges; exhaustive when the integer domain is small, with shrinking.',
+          {'claim': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}},
+           'domain': {'type': 'array', 'items': {'type': 'array'}, 'description': "[['int'|'real', lo, hi], ...] one per name"}, 'trials': {'type': 'integer'}},
+          ['claim', 'names', 'domain'],
+          lambda a: experiment.find_counterexample(_predicate(a['claim'], a['names']), [tuple(d) for d in a['domain']], trials=a.get('trials', 20000))),
+    _tool('guess_sequence', 'Guess a constant-coefficient linear recurrence and a polynomial formula for a sequence of rationals (exact). Results are conjectures beyond the data.',
+          {'sequence': SERIES, 'max_order': {'type': 'integer'}, 'max_degree': {'type': 'integer'}}, ['sequence'],
+          lambda a: dict(recurrence=experiment.guess_linear_recurrence(a['sequence'], a.get('max_order', 6)),
+                         polynomial=experiment.guess_polynomial(a['sequence'], a.get('max_degree', 8)))),
+    _tool('find_relation', 'Integer relation (PSLQ) between a value and constants, e.g. value "zeta(2)", constants {"pi2": "pi**2"}. A hint to prove, not a proof.',
+          {'value': {'type': 'string'}, 'constants': {'type': 'object'}, 'dps': {'type': 'integer'}, 'max_coeff': {'type': 'integer'}}, ['value', 'constants'],
+          lambda a: experiment.find_relation(a['value'], a['constants'], dps=a.get('dps', 50), max_coeff=a.get('max_coeff', 1000))),
 ])
 
 

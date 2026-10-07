@@ -1,4 +1,5 @@
 import json
+import pytest
 import subprocess
 import sys
 from pathlib import Path
@@ -44,3 +45,27 @@ def test_sobol_expression_is_restricted_and_correct():
         except ValueError:
             continue
         raise AssertionError(f'accepted {bad}')
+
+
+def test_structure_and_exploration_tools_through_the_server():
+    from scripts import mcp_server as server
+    probe = server.call('probe_structure', dict(property='convexity', expression='x**2+y**2', names=['x', 'y'], bounds=[[-1, 1], [-1, 1]]))
+    assert probe['convex'] and not probe['proved']
+    bad = server.call('probe_structure', dict(property='monotone', expression='x**2', names=['x'], bounds=[[-1, 1]], variable='x'))
+    assert bad['kind'] == 'not monotone'
+    invariant = server.call('probe_structure', dict(property='invariant', expression='x**2+y**2', rhs=['y', '-x'], names=['x', 'y'], bounds=[[-2, 2], [-2, 2]]))
+    assert invariant['conserved']
+    assert server.call('dimensional_analysis', dict(matrix=[[0, 0, 0, 1], [0, 1, 1, 0], [1, 0, -2, 0]], names=['T', 'L', 'g', 'm']))['n_groups'] == 1
+    assert server.call('check_total_unimodularity', dict(matrix=[[1, 1, 0], [0, 1, 1], [1, 0, 1]]))['totally_unimodular'] is False
+    found = server.call('find_counterexample', dict(claim='isprime(n*n+n+41)', names=['n'], domain=[['int', 0, 100]]))
+    assert found['counterexample'] == [40]
+    with pytest.raises(ValueError):
+        server.call('find_counterexample', dict(claim='__import__("os").system("true")', names=['n'], domain=[['int', 0, 3]]))
+    conj = server.call('test_conjecture', dict(lhs='x**2', rhs='x', relation='<=', names=['x'], bounds=[[0, 3]]))
+    assert not conj['holds']
+    seq = server.call('guess_sequence', dict(sequence=[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]))
+    assert seq['recurrence']['coefficients'] == ['1', '1']
+    rel = server.call('find_relation', dict(value='zeta(2)', constants={'pi2': 'pi**2'}))
+    assert rel['found']
+    graph = server.call('route_graph', dict(question='q', operations=[dict(op='add_path', key='A', title='a')]))
+    assert graph['graph']['paths']['A']['status'] == 'open' and 'a' in graph['trace']
