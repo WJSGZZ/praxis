@@ -19,7 +19,7 @@
     1,
     8
   ],
-  "report_pages": 17,
+  "report_pages": 18,
   "preview_visual_review": "All four final localized showcase graphics reviewed; original report page previews unchanged.",
   "reproduction_environment": "Existing locked project environment; no fresh-install or Windows claim",
   "homepage_visuals": [
@@ -53,5 +53,10 @@
     "seed": 20261007,
     "draws": 200,
     "tests": "execution error ±5%/±10%, risk-cap buffer 5%/10%, independent ±10% parameter errors"
+  },
+  "supplemental_alternatives": {
+    "script": "reproduce/check_alternatives.py",
+    "archived": "reproduce/reference/alternatives.json",
+    "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
   }
 }

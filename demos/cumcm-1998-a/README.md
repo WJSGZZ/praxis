@@ -29,6 +29,8 @@
 
 **照着做会不会越界？** 拐点方案刚好用满风险上限：每项投资额有 ±5% 的操作误差时，约 90% 以上的随机试验会超出上限（中位数超出约 3%–4%）。收益和所选资产几乎不受影响（数据各项有 ±10% 误差时，资产组合在 99.5% 以上的试验中不变），所以要留的是风险余量：收紧 5%，净收益率只少约 0.3–0.6 个百分点。
 
+**简单规则够不够？** 资金 100 万元时，按“收益率减费率”从高到低、每项买到风险上限允许的最大额，在六个检验情形里都与整数规划的最优值一致：此时最低计费门槛不起作用，整数模型的价值在小资金。按“收益率除以风险率”排序最多差 4.3 个百分点，平均分配只有 11.8%/22.0%。另外，把风险率当作标准差、收益相互独立来衡量，同一个 0.6%/8% 上限下的最优净收益率只有 13.4%/17.4%，而题设“最大单项损失”下的拐点方案在这种读法下风险高出数倍：风险的定义要先确认。
+
 ## 翻两页报告
 
 <table>
@@ -42,7 +44,7 @@
 </tr>
 </table>
 
-[阅读全文：17 页 PDF →](deliverables/paper.pdf)
+[阅读全文：18 页 PDF →](deliverables/paper.pdf)
 
 ## 自己跑一次
 
@@ -54,9 +56,10 @@ uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py
 ```
 
-第一条运行命令重新计算两组资产的方案、曲线与模型核验，并与报告对应的记录比对；第二条执行 4 项资金阈值核验，第三条定位拐点并以解析上界核验，第四条对拐点方案做执行误差与参数误差的随机试验（种子固定）。结果写入 `reproduce/reproduced/`，该目录不进入 Git。再次运行第一条命令前请移走自己已有的结果目录，程序不会覆盖它。
+第一条运行命令重新计算两组资产的方案、曲线与模型核验，并与报告对应的记录比对；第二条执行 4 项资金阈值核验，第三条定位拐点并以解析上界核验，第四条对拐点方案做执行误差与参数误差的随机试验（种子固定），第五条与简单规则、逐项剔除资产和另一种风险读法比较。结果写入 `reproduce/reproduced/`，该目录不进入 Git。再次运行第一条命令前请移走自己已有的结果目录，程序不会覆盖它。
 
 也可以只下载并解压 [支撑 ZIP](deliverables/supporting_materials.zip)，按其中运行说明准备依赖，独立复现论文计算，无需安装 Praxis 或连接 AI 服务。额外的资金阈值核验脚本位于本开发案例，不改变论文的支撑包清单。
 
@@ -64,7 +67,7 @@ uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
 
 ```text
 deliverables/                 # 两份电子提交文件
-  paper.pdf                   # 17 页；含支撑清单与完整建模源程序
+  paper.pdf                   # 18 页；含支撑清单与完整建模源程序
   supporting_materials.zip    # 22 文件；含 AI工具使用详情.pdf
 reproduce/                    # 开发版直接复现入口与计算证据
 assets/                       # 报告页预览及结果图生成脚本

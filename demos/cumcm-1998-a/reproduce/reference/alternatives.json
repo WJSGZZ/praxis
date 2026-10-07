@@ -1,0 +1,126 @@
+{
+  "groups": {
+    "four": {
+      "cap": 0.006,
+      "baselines": [
+        {
+          "cap": 0.003,
+          "optimal": 0.12658283216783214,
+          "bank_only": 0.05,
+          "greedy_return_over_risk": 0.12658283216783217,
+          "greedy_net_return": 0.12658283216783217,
+          "equal_weight_eligible": 0.08398181818181819
+        },
+        {
+          "cap": 0.006,
+          "optimal": 0.20190763977806228,
+          "bank_only": 0.05,
+          "greedy_return_over_risk": 0.20187383143172616,
+          "greedy_net_return": 0.20190763977806228,
+          "equal_weight_eligible": 0.11796363636363638
+        },
+        {
+          "cap": 0.012,
+          "optimal": 0.22556862745098039,
+          "bank_only": 0.05,
+          "greedy_return_over_risk": 0.20118811881188117,
+          "greedy_net_return": 0.22556862745098036,
+          "equal_weight_eligible": 0.18592727272727277
+        }
+      ],
+      "drop_one": [
+        {
+          "asset": 1,
+          "net_return_without": 0.15048566433566432
+        },
+        {
+          "asset": 2,
+          "net_return_without": 0.14756566433566434
+        },
+        {
+          "asset": 3,
+          "net_return_without": 0.18868384615384615
+        },
+        {
+          "asset": 4,
+          "net_return_without": 0.17276181818181818
+        }
+      ],
+      "independent_risk_reading": {
+        "cap": 0.006,
+        "net_return": 0.13367037848671734,
+        "knee_plan_std_risk": 0.011877814594583487,
+        "std_plan_max_item_risk": 0.0039890298499872376,
+        "overlap_assets": 4,
+        "std_plan_assets": 4,
+        "knee_plan_assets": 4
+      },
+      "nominal": 0.20190763977806228
+    },
+    "fifteen": {
+      "cap": 0.08,
+      "baselines": [
+        {
+          "cap": 0.04,
+          "optimal": 0.22583507685518858,
+          "bank_only": 0.05,
+          "greedy_return_over_risk": 0.22533853698379205,
+          "greedy_net_return": 0.2258350768551886,
+          "equal_weight_eligible": 0.1742970588235294
+        },
+        {
+          "cap": 0.08,
+          "optimal": 0.32289995993378606,
+          "bank_only": 0.05,
+          "greedy_return_over_risk": 0.3116718295676847,
+          "greedy_net_return": 0.32289995993378606,
+          "equal_weight_eligible": 0.2196002889477486
+        },
+        {
+          "cap": 0.16,
+          "optimal": 0.3519311758978177,
+          "bank_only": 0.05,
+          "greedy_return_over_risk": 0.3089054750875607,
+          "greedy_net_return": 0.35193117589781775,
+          "equal_weight_eligible": 0.2196002889477486
+        }
+      ],
+      "drop_one": [
+        {
+          "asset": 3,
+          "net_return_without": 0.29887264092671095
+        },
+        {
+          "asset": 7,
+          "net_return_without": 0.31167182956768463
+        },
+        {
+          "asset": 8,
+          "net_return_without": 0.3125573657368976
+        },
+        {
+          "asset": 9,
+          "net_return_without": 0.31318801907253485
+        },
+        {
+          "asset": 10,
+          "net_return_without": 0.3031664340301593
+        },
+        {
+          "asset": 13,
+          "net_return_without": 0.30879168140647106
+        }
+      ],
+      "independent_risk_reading": {
+        "cap": 0.08,
+        "net_return": 0.17405491122035102,
+        "knee_plan_std_risk": 0.1898067695795158,
+        "std_plan_max_item_risk": 0.03704829560398061,
+        "overlap_assets": 6,
+        "std_plan_assets": 12,
+        "knee_plan_assets": 6
+      },
+      "nominal": 0.32289995993378606
+    }
+  }
+}
