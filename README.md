@@ -16,12 +16,6 @@
 
 </div>
 
-[![Praxis：从问题分析、模型求解到验证与完整报告；点击进入国赛 Demo](demos/cumcm-1998-a/assets/overview-zh.png)](demos/cumcm-1998-a/README.md)
-
-**[查看完整国赛 Demo →](demos/cumcm-1998-a/README.md)** · [直接阅读论文](demos/cumcm-1998-a/deliverables/paper.pdf)
-
----
-
 拿到一道题，先分析什么、用什么模型、怎样判断结果可靠，往往比调用算法更难。Praxis 把这些工作连接起来，帮助个人或团队完成**模型、核验和报告**。你可以从题目和数据开始，也可以只让它审查模型、验证结果或改进论文。
 
 题目要求、计算结果、验证记录和论文中的结论彼此对应。方法按题目选择，先做可解释的基线，再决定是否增加复杂度。研究、课程、实际应用和比赛都可以使用这套工作方式。
@@ -34,46 +28,36 @@
 </tr>
 </table>
 
-## 一个完整案例，先看 Praxis 做出了什么
+## 两个完整案例，两种建模问题
 
-**1998 国赛 A 题《投资的收益和风险》：从费用门槛与风险约束，走到最优方案、独立核验和完整论文。**
-
-[![国赛完整案例：风险收益曲线、代表结果与最优性论证](demos/cumcm-1998-a/assets/risk-return-zh.png)](demos/cumcm-1998-a/README.md)
+国赛与美赛案例都按完整交付标准组织：从题目分析、模型与验证，到论文和复现材料。一个研究风险与收益，一个研究热量如何在空间中传递；你可以从更感兴趣的问题进入。
 
 <table>
 <tr>
-<td width="33%"><strong>16 页完整报告</strong><br>模型、结果、证明、图表与完整代码附录。</td>
-<td width="33%"><strong>12 项模型检查</strong><br>费用分区穷举、解析上界及边界检查。</td>
-<td width="33%"><strong>下载后可以复现</strong><br>两份交付文件，计算入口与证据一起开放。</td>
+<td width="50%" valign="top"><strong>国赛 · 投资的收益和风险</strong><br>1998 CUMCM A</td>
+<td width="50%" valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A</td>
 </tr>
-</table>
-
-资金 100 万元时，四资产在风险上限 1% 下得到净收益率 **21.90%**，十五资产在风险上限 10% 下得到 **33.53%**。这些是题目参数与所述风险定义下的模型结果；案例页解释条件、核验和资金规模论证。
-
-**[看完整案例与报告预览 →](demos/cumcm-1998-a/README.md)** · [阅读论文](demos/cumcm-1998-a/deliverables/paper.pdf) · [下载支撑材料](demos/cumcm-1998-a/deliverables/supporting_materials.zip)
-
-<details>
-<summary><strong>展开看看报告：摘要与最优性证明</strong></summary>
-
-<table>
 <tr>
-<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-abstract.png" alt="摘要：定义、方法与量化结果" width="100%"></a></td>
-<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-proof.png" alt="证明：解析上界与资金规模条件" width="100%"></a></td>
+<td width="50%" valign="top"><a href="demos/cumcm-1998-a/README.md"><img src="demos/cumcm-1998-a/assets/overview-zh.png" alt="国赛案例：投资组合、独立核验与完整报告" width="100%"></a></td>
+<td width="50%" valign="top"><a href="demos/mcm-2016-a/README.md"><img src="demos/mcm-2016-a/assets/overview-zh.png" alt="美赛案例：空间水温、补水策略与能量证据" width="100%"></a></td>
 </tr>
-<tr><td>摘要：定义、方法与量化结果</td><td>证明：解析上界与资金规模条件</td></tr>
+<tr>
+<td valign="top"><strong>费用门槛怎样改变最优投资？</strong><br>分段费用与风险约束进入同一个模型，通过费用分区穷举和解析上界核验方案。</td>
+<td valign="top"><strong>平均水温够高，远处的水也够暖吗？</strong><br>从可证明的完混基线进入三维热网络，比较补水策略、空间温差与能量下界。</td>
+</tr>
+<tr>
+<td valign="top"><strong>16 页中文报告 · 12 项模型检查</strong><br>资金 100 万元时，四资产风险上限 1% 下的净收益率为 21.90%；十五资产风险上限 10% 下为 33.53%。结果基于题目参数及所述风险定义。</td>
+<td valign="top"><strong>19 页英文报告 · 17 项模型检查</strong><br>30 分钟基准情景中，空间候选补水 10.48 L，理想完混最优值 6.53 L，能量下界 5.98 L；含 16 个变化情景。参数为明确假设，结果不冒充实测。</td>
+</tr>
+<tr>
+<td valign="top"><strong>论文 PDF + 支撑材料 ZIP</strong><br>完整代码与复现证据在案例页开放。</td>
+<td valign="top"><strong>一份论文 PDF</strong><br>复现代码与证据单独开放，论文内附一页使用者说明及 AI 披露。</td>
+</tr>
+<tr>
+<td valign="top"><a href="demos/cumcm-1998-a/README.md"><strong>查看完整国赛 Demo →</strong></a><br><a href="demos/cumcm-1998-a/deliverables/paper.pdf">阅读论文</a> · <a href="demos/cumcm-1998-a/reproduce/">复现计算</a></td>
+<td valign="top"><a href="demos/mcm-2016-a/README.md"><strong>查看完整美赛 Demo →</strong></a><br><a href="demos/mcm-2016-a/deliverables/7391856.pdf">阅读论文</a> · <a href="demos/mcm-2016-a/reproduce/">复现计算</a></td>
+</tr>
 </table>
-
-</details>
-
-## 再看一个不同类型的问题：美赛的空间热模型
-
-**2016 MCM A《A Hot Bath》：平均水温够高，远处的水就一定够暖吗？**
-
-[![美赛案例：三维水温、策略与能量证据](demos/mcm-2016-a/assets/overview-zh.png)](demos/mcm-2016-a/README.md)
-
-这次从可证明的理想模型出发，用三维热网络检查策略是否仍成立。19 页英文报告包含 17 项检查、16 个变化情景、网格诊断及一页使用者说明；最终提交目录只保留一份 PDF。热损与混合参数明确作为情景，结果不冒充实测。
-
-**[查看完整美赛案例 →](demos/mcm-2016-a/README.md)** · [阅读英文论文](demos/mcm-2016-a/deliverables/7391856.pdf)
 
 如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 

@@ -16,12 +16,6 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 </div>
 
-[![Praxis: from problem framing to a verified model and complete report; open the demo](demos/cumcm-1998-a/assets/overview-en.png)](demos/cumcm-1998-a/README.en.md)
-
-**[Explore the complete CUMCM demo →](demos/cumcm-1998-a/README.en.md)** · [Read the report (Chinese)](demos/cumcm-1998-a/deliverables/paper.pdf)
-
----
-
 The difficult part of modeling is deciding what to model, which assumptions to trust, and whether the results answer the question. Praxis gives your agent a workflow for those decisions, connecting **model development, independent validation, and reporting**. It works for individual and team projects in research, coursework, practical applications, and competitions.
 
 Bring a problem and data, or ask for a focused review of a model, a result, or a draft. Start with an interpretable baseline and add complexity when the task calls for it. A shared record links the requirements to the calculations, checks, and claims in the report.
@@ -34,46 +28,38 @@ Bring a problem and data, or ask for a focused review of a model, a result, or a
 </tr>
 </table>
 
-## Follow the workflow through a real problem
+## Two complete cases to explore
 
-**Explore an investment-allocation problem from CUMCM 1998: the model, the optimality argument, and the finished report are all available.**
-
-[![CUMCM case: risk-return frontiers and verifiable results](demos/cumcm-1998-a/assets/risk-return.png)](demos/cumcm-1998-a/README.en.md)
+Follow either problem from its assumptions to a finished report and runnable evidence. The investment case examines discrete fee thresholds; the bath case asks when a spatial model changes the decision. Both are developed to the standard of a complete submission package.
 
 <table>
 <tr>
-<td width="33%"><strong>16-page report</strong><br>Model, results, proofs, figures, and full modeling-code appendix.</td>
-<td width="33%"><strong>12 model checks</strong><br>Fee-regime enumeration, analytical bounds, and boundary checks.</td>
-<td width="33%"><strong>Runnable evidence</strong><br>Two deliverables, source code, and reproduction records.</td>
+<td width="50%" valign="top"><strong>CUMCM · Investment and risk</strong><br>1998 CUMCM A</td>
+<td width="50%" valign="top"><strong>MCM · A Hot Bath</strong><br>2016 MCM A</td>
 </tr>
-</table>
-
-At a CNY 1,000,000 budget, the four-asset solution returns **21.90%** net at a 1% risk limit; the fifteen-asset solution returns **33.53%** net at a 10% limit. These are conditional model results, not investment forecasts. The case explains the assumptions, validation, and sufficient capital thresholds.
-
-**[Explore the case and report previews →](demos/cumcm-1998-a/README.en.md)** · [Read the report (Chinese)](demos/cumcm-1998-a/deliverables/paper.pdf) · [Download supporting files](demos/cumcm-1998-a/deliverables/supporting_materials.zip)
-
-<details>
-<summary><strong>Look inside the report: the answer and the proof</strong></summary>
-
-<table>
 <tr>
-<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-abstract.png" alt="Abstract: definitions, method, results" width="100%"></a></td>
-<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-proof.png" alt="Proof: upper bound and capital condition" width="100%"></a></td>
+<td width="50%" valign="top"><a href="demos/cumcm-1998-a/README.en.md"><img src="demos/cumcm-1998-a/assets/overview-en.png" alt="Investment case: allocation, validation, and a complete report" width="100%"></a></td>
+<td width="50%" valign="top"><a href="demos/mcm-2016-a/README.en.md"><img src="demos/mcm-2016-a/assets/overview-en.png" alt="Bath case: spatial temperatures, control, and energy bounds" width="100%"></a></td>
 </tr>
-<tr><td>Abstract: definitions, method, results</td><td>Proof: upper bound and capital condition</td></tr>
+<tr>
+<td valign="top"><strong>When do transaction fees change the best allocation?</strong><br>Model fee thresholds and risk constraints together, then check the solution through regime enumeration and analytical bounds.</td>
+<td valign="top"><strong>Can a warm average hide cold water?</strong><br>Compare a proved well-mixed benchmark with a three-dimensional thermal network, testing replenishment and temperature uniformity.</td>
+</tr>
+<tr>
+<td valign="top"><strong>16-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
+<td valign="top"><strong>19-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the spatial candidate adds 10.48 L, versus a 6.53 L ideal optimum and a 5.98 L energy bound. Explore 16 scenario variations; coefficients are assumed, not measured.</td>
+</tr>
+<tr>
+<td valign="top"><strong>Report PDF + supporting ZIP</strong><br>Modeling code and reproduction evidence are available on the case page.</td>
+<td valign="top"><strong>One report PDF</strong><br>Includes a one-page user guide and AI disclosure, with reproduction sources and evidence available separately.</td>
+</tr>
+<tr>
+<td valign="top"><a href="demos/cumcm-1998-a/README.en.md"><strong>Explore the CUMCM case →</strong></a><br><a href="demos/cumcm-1998-a/deliverables/paper.pdf">Read the report</a> · <a href="demos/cumcm-1998-a/reproduce/">Run the model</a></td>
+<td valign="top"><a href="demos/mcm-2016-a/README.en.md"><strong>Explore the MCM case →</strong></a><br><a href="demos/mcm-2016-a/deliverables/7391856.pdf">Read the report</a> · <a href="demos/mcm-2016-a/reproduce/">Run the model</a></td>
+</tr>
 </table>
 
-</details>
-
-## A second case: when spatial detail changes the decision
-
-[![A Hot Bath: compare a spatial policy, an ideal optimum, and an energy bound](demos/mcm-2016-a/assets/overview-en.png)](demos/mcm-2016-a/README.en.md)
-
-**MCM 2016 A, A Hot Bath.** A proved well-mixed benchmark and a three-dimensional thermal network recommend different replenishment strategies. Follow the argument through a 19-page English report, 17 recorded checks, 16 scenario variations, a resolution diagnostic, and a one-page user guide. The submission is one PDF; the assumed coefficients are kept distinct from measured data.
-
-[Inspect the MCM case →](demos/mcm-2016-a/README.en.md) · [Read the report](demos/mcm-2016-a/deliverables/7391856.pdf)
-
-Try the case or bring your own problem. **Star Praxis** if you would like to follow its development.
+Explore either case or bring your own problem. **Star Praxis** if you would like to follow its development.
 
 ## Quick start
 
