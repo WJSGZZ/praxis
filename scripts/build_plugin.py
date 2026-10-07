@@ -16,6 +16,7 @@ TREES = {
     'references': {'.md'},
     'scripts': {'.py'},
     'modeling': {'.py'},
+    'templates': {'.tex'},
     'examples': {'.py'},
     'third_party': {'.json'},
     'third_party/licenses': None,

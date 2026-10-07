@@ -1,20 +1,7 @@
 """Professional single-file MCM report; numerical evidence is supplied, never invented."""
 import argparse,json,math,re,sys
 from pathlib import Path
-from xml.sax.saxutils import escape
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib.mathtext import MathTextParser
-from matplotlib.font_manager import FontProperties
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,PageBreak,Table,TableStyle,Image,Flowable,KeepTogether,Preformatted
-from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT=Path(__file__).resolve().parent
 sys.path.insert(0,str(ROOT/'code'))
@@ -28,113 +15,156 @@ E=json.loads((args.run/'extended.json').read_text());wf=lambda floor:next(f_['co
 assert all(c['passed'] for c in ctl_checks)
 save=100*(1-ctl['water_l']/b['water_l']);qq=lr['water_quantiles_l'];sp=lr['spearman_with_water']
 ct=E['control']['runs']
-ROOT.joinpath('figures').mkdir(exist_ok=True);ROOT.joinpath('submission').mkdir(exist_ok=True)
-fontdir=Path('/System/Library/Fonts/Supplemental')
-for name,file in [('Text','Times New Roman.ttf'),('Bold','Times New Roman Bold.ttf'),('Italic','Times New Roman Italic.ttf')]:pdfmetrics.registerFont(TTFont(name,str(fontdir/file)))
-pdfmetrics.registerFontFamily('Text',normal='Text',bold='Bold',italic='Italic',boldItalic='Bold')
-styles={k:ParagraphStyle(k,fontName='Text',fontSize=12,leading=16.8,spaceAfter=8,allowWidows=0,allowOrphans=0) for k in ['body','caption','table']}
-styles['title']=ParagraphStyle('title',parent=styles['body'],fontName='Bold',fontSize=19,leading=23,spaceAfter=15)
-styles['heading']=ParagraphStyle('heading',parent=styles['body'],fontName='Bold',fontSize=15,leading=19,spaceAfter=12,keepWithNext=True)
-styles['section']=ParagraphStyle('section',parent=styles['heading'],spaceBefore=16)
-styles['table'].leading=14.2
-styles['caption'].leading=15
-flow=[];content=[];pages=0;eqcount=0
-
+ROOT.joinpath('submission').mkdir(exist_ok=True)
+sys.path.insert(0,str(ROOT.parents[2]))
+import subprocess,shutil
+from scripts import texplot
+escape=lambda s:s
+tex=[];eqcount=0;tabcount=0;SEC=[0]
+CAPS=['Where each requirement is answered','Modeling options compared','Baseline inputs','Coefficient anchors and the values used','Symbols',
+ 'Baseline result under the best constant rate','Constant rate, scheduled flow and the bounds','Geometry, size and body scenarios',
+ 'Mixing, surface, comfort and supply scenarios','Mesh and time-step replay','Scenario definitions','Scenario definitions (continued)']
+UNI={'′':r"$'$",'Ṫ':r'$\dot T$','∫':r'$\int$','≥':r'$\geq$','≤':r'$\leq$','≈':r'$\approx$','→':r'$\rightarrow$','≠':r'$\neq$','⁻':r'$^{-}$','¹':r'$^{1}$','⁰':r'$^{0}$','∂':r'$\partial$','ρ':r'$\rho$','Δ':r'$\Delta$','∑':r'$\sum$','−':'-','µ':r'$\mu$','∞':r'$\infty$','∎':r'$\blacksquare$'}
+def esc(s):
+    s=s.replace('\\',r'\textbackslash{}')
+    for a,b in [('&',r'\&'),('%',r'\%'),('$',r'\$'),('#',r'\#'),('_',r'\_'),('{',r'\{'),('}',r'\}'),('~',r'\textasciitilde{}'),('^',r'\textasciicircum{}')]:s=s.replace(a,b)
+    return ''.join(UNI.get(c,c) for c in s)
+URL=re.compile(r'((?:https?://)?[A-Za-z0-9.-]+\.(?:com|org|gov|net|edu)/[^\s,;]*[^\s,;.])')
+TOK={'Tmin':r'T_{\min}','Tmax':r'T_{\max}','Tout':r'T_{\mathrm{out}}','Tin':r'T_{\mathrm{in}}','Vcell':r'V_{\mathrm{cell}}','Aij':'A_{ij}','dij':'d_{ij}','gij':'g_{ij}',
+ 'φi':r'\phi_i','Ti':'T_i','Tc':'T_c','Te':'T_e','Ta':'T_a','Tb':'T_b','T0':'T_0','Tf':'T_f','Ha':'H_a','Hb':'H_b','Ci':'C_i','Vi':'V_i','tc':'t_c','tf':'t_f','wi':'w_i',
+ 'ℓ':r'\ell','φ':r'\phi','Ṫ':r'\dot T','Ri':r'\mathrm{Ri}','ΔT':r'\Delta T','q':'q','D':'D','T':'T'}
+TOKRE=re.compile(r'(?<![\w°$\\])(%s)(?![\w°])'%'|'.join(sorted(map(re.escape,TOK),key=len,reverse=True)))
+EXP=re.compile(r'\b(\d+(?:\.\d+)?)e-(\d+)\b')
+def plain_nomath(s):
+    parts=URL.split(s)
+    return ''.join((r'\url{'+x+'}') if i%2 else esc(x) for i,x in enumerate(parts))
+def plain(s):
+    hold=[]
+    def keep(raw):hold.append(raw);return '\x00%d\x01'%(len(hold)-1)
+    out=[]
+    for i,seg in enumerate(re.split(r'(\$[^$]*\$)',s)):
+        if i%2:out.append(keep(seg));continue
+        seg=EXP.sub(lambda m:keep(r'$%s\times10^{-%s}$'%(m.group(1),m.group(2))),seg)
+        seg=TOKRE.sub(lambda m:keep('$'+TOK[m.group(1)]+'$'),seg)
+        parts=URL.split(seg)
+        out.append(''.join(keep(r'\url{'+x+'}') if j%2 else esc(x) for j,x in enumerate(parts)))
+    res=''.join(out)
+    return re.sub('\x00(\\d+)\x01',lambda m:hold[int(m.group(1))],res)
+def tx(s,math=True):
+    s=s.replace('&gt;','>').replace('&lt;','<').replace('&amp;','&')
+    out=[];depth=[]
+    for tok in re.split(r'(</?b>|</?i>|<br/>|</?font[^>]*>)',s):
+        if tok=='<b>':out.append(r'\textbf{');depth.append('b')
+        elif tok=='<i>':out.append(r'\emph{');depth.append('i')
+        elif tok in('</b>','</i>'):out.append('}');depth.pop()
+        elif tok=='<br/>':out.append(r'\\ ')
+        elif tok.startswith('<font') or tok=='</font>':pass
+        else:out.append(plain(tok) if math else plain_nomath(tok))
+    return re.sub(r'@fig:(\w+)@',r'\\ref{fig:\1}',''.join(out))
 def para(s,kind='body'):
- flow.append(Paragraph(s,styles[kind]));content.append({'kind':kind,'text':s})
+    if kind=='title':tex.append(r'\begin{center}{\LARGE\bfseries '+tx(s)+r'}\end{center}'+'\n')
+    elif kind=='heading':
+        if s=='Summary':tex.append(r'\begin{center}{\Large\bfseries Summary}\end{center}'+'\n')
+        else:tex.append(r'\subsection*{'+tx(s)+'}\n')
+    elif kind=='ref':tex.append(r'\begingroup\small\setlength{\parindent}{0pt}\hangindent=1.5em '+tx(s,False)+r'\par\endgroup'+'\n')
+    else:tex.append(tx(s)+'\n\n')
 def page(title,hard=False):
- global pages
- if hard and pages:flow.append(PageBreak())
- pages+=1;para(title,'title' if hard else 'section');flow[-1].toc_level=1 if re.match(r'\d+\.\d+ ',title) else 0;flow[-1].toc_text=title;content.append({'page':pages})
+    if hard:tex.append(r'\clearpage'+'\n')
+    m2=re.match(r'^(\d+)\.(\d+) (.*)$',title);m1=re.match(r'^(\d+)\. (.*)$',title)
+    if m2:tex.append(r'\subsection{'+tx(m2.group(3))+'}\n')
+    elif m1:
+        SEC[0]+=1;assert int(m1.group(1))==SEC[0],title
+        tex.append(r'\section{'+tx(m1.group(2))+'}\n')
+    else:tex.append(r'\section*{'+tx(title)+'}\n'+r'\addcontentsline{toc}{section}{'+tx(title)+'}\n')
 def table(rows,widths=None):
- data=[[Paragraph(escape(str(x)),styles['table']) for x in row] for row in rows]
- t=Table(data,colWidths=widths or [468/len(rows[0])]*len(rows[0]),repeatRows=1,hAlign='LEFT')
- t.setStyle(TableStyle([('LINEABOVE',(0,0),(-1,0),.8,colors.black),('LINEBELOW',(0,0),(-1,0),.5,colors.black),('LINEBELOW',(0,-1),(-1,-1),.8,colors.black),('VALIGN',(0,0),(-1,-1),'TOP'),('TOPPADDING',(0,0),(-1,-1),5),('BOTTOMPADDING',(0,0),(-1,-1),5)]))
- flow.extend([t,Spacer(1,10)]);content.append({'table':rows})
-mathparser=MathTextParser('path');matplotlib.rcParams['mathtext.fontset']='stix'
-class Equation(Flowable):
- def __init__(self,s,num):
-  super().__init__();self.s=s;self.num=num;self.v=mathparser.parse('$'+s+'$',dpi=72,prop=FontProperties(size=14));self.width=456;self.height=max(28,float(self.v.height)+18)
-  if self.v.width>426:raise ValueError('Equation too wide '+s)
- def draw(self):
-  c=self.canv;v=self.v;c.saveState();c.translate((432-v.width)/2,8+v.depth)
-  for glyph in v.glyphs:
-   font,size,num=glyph[:3];ox,oy=glyph[-2:];font.set_size(size,72);font.load_char(num);verts,codes=font.get_path();path=c.beginPath();i=0;last=(0,0)
-   while i<len(codes):
-    op=codes[i];x,y=verts[i];x+=ox;y+=oy
-    if op==1:path.moveTo(x,y);last=(x,y);i+=1
-    elif op==2:path.lineTo(x,y);last=(x,y);i+=1
-    elif op==3:
-     ex,ey=verts[i+1];ex+=ox;ey+=oy;path.curveTo(last[0]+2*(x-last[0])/3,last[1]+2*(y-last[1])/3,ex+2*(x-ex)/3,ey+2*(y-ey)/3,ex,ey);last=(ex,ey);i+=2
-    elif op==4:
-     x2,y2=verts[i+1];ex,ey=verts[i+2];path.curveTo(x,y,x2+ox,y2+oy,ex+ox,ey+oy);last=(ex+ox,ey+oy);i+=3
-    elif op==79:path.close();i+=1
-    else:raise ValueError(op)
-   c.drawPath(path,fill=1,stroke=0)
-  for x,y,w,h in v.rects:c.rect(x,y,w,h,fill=1,stroke=0)
-  c.restoreState();c.setFont('Text',12);c.drawRightString(456,self.height/2-3,'('+str(self.num)+')')
+    global tabcount
+    tabcount+=1;n=len(rows[0]);tot=float(sum(widths)) if widths else 1
+    if widths:cols=''.join(r'>{\raggedright\arraybackslash}p{%.3f\linewidth}'%((w/tot)*0.98-0.02*0) for w in widths)
+    else:cols='l'*n
+    lines=[' & '.join(tx(c) for c in row) for row in rows]
+    tex.append(r'\begin{table}[htbp]\centering\small\caption{'+CAPS[tabcount-1]+'}\n\\begin{tabular}{'+cols+'}\n\\toprule\n'+lines[0]+r' \\ \midrule'+'\n'+(r' \\ '+'\n').join(lines[1:])+r' \\ \bottomrule'+'\n\\end{tabular}\n\\end{table}\n')
 def eq(s):
- global eqcount
- eqcount+=1;flow.append(Equation(s,eqcount));content.append({'equation':s,'number':eqcount})
-def figure(name,caption,height=210):
- flow.append(Image(str(ROOT/'figures'/name),width=468,height=height));para(caption,'caption');content.append({'figure':name})
+    global eqcount
+    eqcount+=1;tex.append(r'\begin{equation}'+re.sub(r'\{\\rm ',r'{\\mathrm ',s)+r'\end{equation}'+'\n')
+figcount=[0]
+def figure(name,caption,height=None):
+    figcount[0]+=1
+    m=re.match(r'^Figure (\d+)\. (.*)$',caption,re.S);assert m,caption
+    tex.append(texplot.figure_env(FIG[name],tx(m.group(2)),label='fig:'+name.replace('.png','')))
+PREAMBLE=r'''\documentclass[12pt,letterpaper]{article}
+\usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs,array,graphicx,xcolor,caption,fvextra,fancyhdr,lastpage,titlesec,needspace}
+\usepackage[hidelinks,pdfauthor={},pdftitle={A Hot Bath: Conserving Water Without Losing Uniformity}]{hyperref}
+\urlstyle{same}\Urlmuskip=0mu plus 1mu
+'''+texplot.PREAMBLE+r'''
+\linespread{1.12}
+\setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{16pt plus 3pt}{8pt}
+\titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
+\setcounter{tocdepth}{2}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{Team \# 7391856}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\begin{document}
+'''
+def compile_pdf(stem,title):
+    d=ROOT/'paper';d.mkdir(exist_ok=True)
+    (d/(stem+'.tex')).write_text(PREAMBLE+''.join(tex)+'\n\\end{document}\n')
+    xe=shutil.which('xelatex') or next(iter(sorted(Path.home().glob('texlive/*/bin/*/xelatex'))),None)
+    if xe:
+        for _ in range(3):res=subprocess.run([str(xe),'-interaction=nonstopmode','-halt-on-error',stem+'.tex'],cwd=d,capture_output=True,text=True)
+        ok=res.returncode==0;log=res.stdout
+    else:
+        res=subprocess.run([shutil.which('tectonic') or str(Path.home()/'.local/bin/tectonic'),stem+'.tex'],cwd=d,capture_output=True,text=True);ok=res.returncode==0;log=res.stdout+res.stderr
+    (d/(stem+'.compile.log')).write_text(log)
+    assert ok,log[-2500:]
+    return d/(stem+'.pdf')
 
-plt.rcParams.update({'font.family':'serif','font.serif':['DejaVu Serif'],'font.size':15,'axes.spines.top':False,'axes.spines.right':False,'axes.labelsize':15,'xtick.labelsize':15,'ytick.labelsize':15,'legend.fontsize':15,'figure.dpi':180})
+# Figures are pgfplots/TikZ source built from the numerical record; fonts match the paper.
+FIG={}
 t=z['t']/60;T=z['T'];mean=T@z['volume']/z['volume'].sum()
-fig,ax=plt.subplots(figsize=(8,3.55));ax.fill_between(t,T.min(1),T.max(1),color='#17766e',alpha=.14,label='Spatial range');ax.plot(t,mean,color='#17766e',label='Volume-weighted mean');ax.plot(t,T.min(1),color='#9e6440',ls='--',label='Coldest cell');ax.axhline(p['floor'],color='black',ls=':',lw=1);ax.axhline(p['ceiling'],color='black',ls=':',lw=1);ax.set(xlabel='Time (min)',ylabel='Temperature (°C)',ylim=(38.85,p['ceiling']+.2));ax.legend(loc='lower left',ncol=2);fig.tight_layout();fig.savefig(ROOT/'figures'/'temperature.png');plt.close(fig)
+ax=texplot.Axis('Time (min)','Temperature (°C)',height='5.0cm',xmin=0,xmax=30,ymin=38.85,ymax=p['ceiling']+.2,legend='south west',legend_columns=2)
+ax.band(t,T.min(1),T.max(1),label='Spatial range').line(t,mean,label='Volume-weighted mean').line(t,T.min(1),color='clay',style='dashed',label='Coldest cell').hline(p['floor']).hline(p['ceiling'])
+FIG['temperature.png']=ax.tex().replace('°C','$^\\circ$C')
 labels=['Constant rate','Constant rate, fine grid','Optimized schedule','Perfect mixing','Energy bound'];values=[b['water_l'],r['mesh']['fine_policy']['water_l'],ctl['water_l'],a['mixed_optimum_l'],a['energy_lower_bound_l']]
-fig,ax=plt.subplots(figsize=(8,3.55));ax.barh(labels[::-1],values[::-1],color=['#aaa69b','#b5bba8','#17766e','#9e6440','#5d696e']);ax.set(xlabel='Added water over 30 min (L)',xlim=(0,max(values)*1.3));
-for i,v in enumerate(values[::-1]):ax.text(v+.12,i,f'{v:.2f} L',va='center')
-fig.tight_layout();fig.savefig(ROOT/'figures'/'bounds.png');plt.close(fig)
-
-seg_min=ctl['segment_s']/60;edges=np.arange(len(ctl['flow_lpm'])+1)*seg_min
-fig,(ax1,ax2)=plt.subplots(2,1,figsize=(8,3.2),sharex=True,gridspec_kw={'height_ratios':[1,1.15]},layout='constrained')
-ax1.stairs(ctl['flow_lpm'],edges,color='#17766e',lw=2,label='Optimized schedule');ax1.hlines(b['flow_lpm'],0,30,color='#9e6440',ls='--',label='Best constant rate');ax1.set_ylabel('Flow (L/min)',fontsize=13);ax1.legend(loc='upper right',fontsize=12)
+FIG['bounds.png']=texplot.hbar_chart(labels,values,['sand','sand','teal','clay','slate'],'Added water over 30 min (L)',height='5.0cm',xmax=max(values)*1.3)
+seg_min=ctl['segment_s']/60;edges=list(np.arange(len(ctl['flow_lpm'])+1)*seg_min)
 Yc=control.piecewise(p,model.network(p),ctl['flow_lpm'],5.);tc=np.linspace(0,30,len(Yc))
-ax2.fill_between(tc,Yc.min(1),Yc.max(1),color='#17766e',alpha=.14);ax2.plot(tc,Yc.min(1),color='#9e6440',ls='--',label='Coldest cell');ax2.plot(tc,Yc.max(1),color='#17766e',label='Hottest cell');ax2.axhline(p['floor'],color='black',ls=':',lw=1);ax2.axhline(p['ceiling'],color='black',ls=':',lw=1)
-ax2.set(xlabel='Time (min)',ylim=(38.85,41.15));ax2.set_ylabel('Temp. (°C)',fontsize=13);ax2.legend(loc='lower left',ncol=2,fontsize=12)
-fig.savefig(ROOT/'figures'/'control.png');plt.close(fig)
-
-fig,ax=plt.subplots(figsize=(8,1.9));ax.axis('off');ax.set_xlim(0,100);ax.set_ylim(0,24)
-boxes=[(0,'Assumptions\nand anchors\n§2'),(17,'Mixed benchmark\nand bound\n§3–4'),(34,'Spatial network\nand solver\n§5–6'),(51,'Rate, schedule,\nscenarios\n§7–9'),(68,'Validation,\nranges, mesh\n§10–11'),(85,'Conclusion,\nuser guide\n§12–13')]
-for x,txt in boxes:
- ax.add_patch(plt.Rectangle((x,3),15,18,fill=False,lw=1.2,ec='#17766e'));ax.text(x+7.5,12,txt,ha='center',va='center',fontsize=7.5)
-for x,_ in boxes[:-1]:ax.annotate('',xy=(x+16.9,12),xytext=(x+15.1,12),arrowprops=dict(arrowstyle='->',color='#9e6440',lw=1.3))
-fig.savefig(ROOT/'figures'/'roadmap.png');plt.close(fig)
-rows=lr['rows'];okr=[r_ for r_ in rows if r_['feasible']];bad=[r_ for r_ in rows if not r_['feasible']]
-fig,ax=plt.subplots(figsize=(8,3.4));ax.scatter([r_['inputs']['h_surface'] for r_ in okr],[r_['water_l'] for r_ in okr],s=26,color='#17766e',label='Accepted policy')
-top=max(r_['water_l'] for r_ in okr)*1.08;ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),marker='x',s=30,color='#9e6440',label='None accepted')
-ax.axvline(p['h_surface'],color='black',ls=':',lw=1);ax.set(xlabel='Surface coefficient (W/(m² K))',ylabel='Added water (L)');ax.legend(loc='upper left',fontsize=12);fig.tight_layout();fig.savefig(ROOT/'figures'/'ranges.png');plt.close(fig)
-
+a1=texplot.Axis('','Flow (L/min)',width='0.9\\linewidth',height='2.6cm',xmin=0,xmax=30,ymin=0,legend='north east',extra='scale only axis,name=top,xticklabels={}')
+a1.stairs(ctl['flow_lpm'],edges,label='Optimized schedule').line([0,30],[b['flow_lpm']]*2,color='clay',style='dashed',label='Best constant rate')
+a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.9\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend='south west',legend_columns=2,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm')
+a2.band(tc,Yc.min(1),Yc.max(1)).line(tc,Yc.min(1),color='clay',style='dashed',label='Coldest cell').line(tc,Yc.max(1),label='Hottest cell').hline(p['floor']).hline(p['ceiling'])
+FIG['control.png']=a1.tex()+'\n'+a2.tex()
+boxes=['Assumptions\nand anchors\n§2','Mixed benchmark\nand bound\n§3–4','Spatial network\nand solver\n§5–6','Rate, schedule,\nscenarios\n§7–9','Validation,\nranges, mesh\n§10–11','Conclusion,\nuser guide\n§12–13']
+FIG['roadmap.png']=texplot.flow_diagram(boxes,node_width='2.1cm')
+rows_=lr['rows'];okr=[r_ for r_ in rows_ if r_['feasible']];bad=[r_ for r_ in rows_ if not r_['feasible']]
+top=max(r_['water_l'] for r_ in okr)*1.08
+ax=texplot.Axis('Surface coefficient (W/(m$^2$ K))','Added water (L)',height='5.0cm',legend='north west')
+ax.scatter([r_['inputs']['h_surface'] for r_ in okr],[r_['water_l'] for r_ in okr],color='teal',label='Accepted policy')
+if bad:ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),color='clay',mark='x',size=2.6,label='None accepted')
+ax.vline(p['h_surface'])
+FIG['ranges.png']=ax.tex()
 fr=E['frontier'];okf=[f_ for f_ in fr if f_['constant_l'] is not None]
-fig,ax=plt.subplots(figsize=(8,3.4));ax.plot([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],color='#17766e',lw=1.8,label='Perfectly mixed optimum (proved)')
-ax.plot([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='#555',lw=1.2,ls='--',label='Energy lower bound')
-ax.plot([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='#9e6440',lw=1.8,marker='o',label='Best constant rate, spatial model')
-bad=[f_ for f_ in fr if f_['constant_l'] is None]
-if bad:ax.scatter([f_['fall'] for f_ in bad],[0]*len(bad),marker='x',s=40,color='#9e6440',label='None accepted',zorder=3)
-ax.axvline(p['initial']-p['floor'],color='black',ls=':',lw=1);ax.set(xlabel='Allowed fall below the starting temperature (°C)',ylabel='Added water (L)');ax.legend(fontsize=11,loc='upper right');fig.tight_layout();fig.savefig(ROOT/'figures'/'frontier.png');plt.close(fig)
+ax=texplot.Axis('Allowed fall below the starting temperature ($^\\circ$C)','Added water (L)',height='5.0cm',legend='north east')
+ax.line([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],label='Perfectly mixed optimum (proved)').line([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='slate',style='dashed',width=0.9,label='Energy lower bound')
+ax.line([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='clay',marks='*',label='Best constant rate, spatial model')
+badf=[f_ for f_ in fr if f_['constant_l'] is None]
+if badf:ax.scatter([f_['fall'] for f_ in badf],[0]*len(badf),color='clay',mark='x',size=2.6,label='None accepted')
+ax.vline(p['initial']-p['floor'])
+FIG['frontier.png']=ax.tex()
 cube=T[-1].reshape(tuple(r['grid']))
-fig,axes=plt.subplots(1,3,figsize=(8,3.4),layout='constrained')
-for k,ax in enumerate(axes):
- im=ax.imshow(cube[:,:,k].T,origin='lower',extent=[0,p['L'],0,p['W']],vmin=T[-1].min(),vmax=T[-1].max(),cmap='viridis',aspect='equal')
- ax.set(title=['Bottom layer','Middle layer','Top layer'][k],xlabel='Length (m)',ylabel='Width (m)' if k==0 else '')
- ax.set_xticks([0,.75,1.5]);ax.set_yticks([0,.325,.65])
-fig.colorbar(im,ax=axes,orientation='horizontal',shrink=.8,label='Final cell-average temperature (°C)',pad=.1)
-fig.savefig(ROOT/'figures'/'spatial.png');plt.close(fig)
+FIG['spatial.png']=texplot.heatmap_panels([cube[:,:,k].tolist() for k in range(3)],['Bottom layer','Middle layer','Top layer'],'Length (m)','Width (m)',(p['L'],p['W']),float(T[-1].min()),float(T[-1].max()),cbar_label='Final cell-average temperature ($^\\circ$C)',xticks=[0,.75,1.5],yticks=[0,.325,.65])
 
-# Official Summary Sheet hierarchy: metadata first, then the summary content.
-# The current official sample has a stale visible year; historical cases omit it.
-pages=1
-summary_style=ParagraphStyle('summary_metadata',parent=styles['table'],fontName='Bold',alignment=1,leading=16)
-summary_cells=[
- Paragraph('Problem Chosen<br/><font size="18">A</font>',summary_style),
- Paragraph('MCM/ICM<br/>Summary Sheet',summary_style),
- Paragraph('Team Control Number<br/><font size="18">'+TEAM_CONTROL_NUMBER+'</font>',summary_style),
-]
-summary_header=Table([summary_cells],colWidths=[152]*3,hAlign='LEFT')
-summary_header.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('TOPPADDING',(0,0),(-1,-1),0),('BOTTOMPADDING',(0,0),(-1,-1),12),('LINEBELOW',(0,0),(-1,-1),.6,colors.black)]))
-flow.extend([summary_header,Spacer(1,16)])
-content.append({'page':1,'summary_metadata':{'problem':'A','team_control_number':TEAM_CONTROL_NUMBER,'label':'MCM/ICM Summary Sheet'}})
+tex.append(r'\thispagestyle{fancy}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}'+'\n'
+ r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\'+'\n'
+ r'{\Large\textbf{A}}&\textbf{Summary Sheet}&{\Large\textbf{'+TEAM_CONTROL_NUMBER+r'}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}'+'\n')
+
 para('A Hot Bath: Conserving Water Without Losing Uniformity','title')
 para('Summary','heading')
 para('Maintaining a warm bath is a coupled problem of heat loss, replenishment and transport. A hot inlet can improve the mean temperature while leaving distant water cool and sending useful heat directly to the overflow. We therefore minimize added water subject to explicit limits on every modeled cell, rather than optimizing an average alone.')
@@ -144,16 +174,14 @@ para(f'The answer depends strongly on the surface and body loss coefficients. Ac
 para(f'Independent integration, analytic limits, energy accounting and a between-samples envelope support the results: {len(checks)} model checks and {len(ctl_checks)} for the schedule. A one-page user guide and the limitations follow; AI assistance is disclosed in the references and appended report.')
 para('<b>Keywords:</b> thermal network; energy balance; lower bound; optimal control; sensitivity analysis')
 
-flow.append(PageBreak());para('Contents','title')
-toc=TableOfContents();toc.levelStyles=[ParagraphStyle('toc0',parent=styles['body'],fontName='Bold',fontSize=12,leading=17,spaceAfter=2),ParagraphStyle('toc1',parent=styles['body'],fontSize=12,leading=16,leftIndent=22,spaceAfter=0)];toc.dotsMinLevel=0
-flow.append(toc)
+tex.append(r'\clearpage\renewcommand{\contentsname}{Contents}\tableofcontents'+'\n')
 page('1. Define the decision before optimizing',True)
 para('The task is to preserve both warmth and spatial uniformity in an overflowing, unheated tub, and to examine geometry, the bather and motion, and a bubble-bath layer [1]. The report separates physical requirements from preference assumptions. There is no supplied temperature record or measured heat-transfer coefficient to fit.')
 para('The decision variables are an inlet flow rate and the time at which a constant trickle begins. The tub is already full: added water displaces an equal volume through the overflow. The horizon is 1,800 s. Our baseline accepts cell averages between 39°C and 41°C, with an instantaneous spread of at most 1.5°C. These choices operationalize comfort; they are not medical limits or numbers specified by the problem.')
 eq(r'J=1000\int_0^{t_f}q(t)\,dt')
 eq(r'T_{\min}\leq T_i(t)\leq T_{\max},\quad \max_iT_i(t)-\min_iT_i(t)\leq\Delta')
 para('Here q is in m³/s and J is in litres. We prioritize the least water within the constraints, rather than assigning arbitrary weights to unlike units. Tightening the temperature tolerance is a separate scenario. Zero flow is admitted: if the initial stored heat suffices, using no added water is globally water-minimal.')
-table([['Requirement','Where answered'],['Temperature in space and time','Sections 3, 5–7; Figures 1–2'],['Water-use strategy and its scope','Sections 4, 6–7 and 12'],['Tub/body geometry, size and temperature','Section 8'],['Motion and bubble-bath additive','Section 9'],['Validation and sensitivity','Sections 8–11'],['One-page non-technical explanation','Section 13']],[210,258])
+table([['Requirement','Where answered'],['Temperature in space and time','Sections 3, 5–7; Figures @fig:spatial@–@fig:temperature@'],['Water-use strategy and its scope','Sections 4, 6–7 and 12'],['Tub/body geometry, size and temperature','Section 8'],['Motion and bubble-bath additive','Section 9'],['Validation and sensitivity','Sections 8–11'],['One-page non-technical explanation','Section 13']],[210,258])
 para('Spatial temperature means a control-volume average. It does not bound the unresolved temperature of a faucet jet or a skin-contact film. This distinction determines which practical conclusions the simulation can support.')
 
 para('<b>Modeling options.</b> A lumped model (Newton cooling) keeps one temperature and cannot see a cold corner. A flow solver resolves velocity but needs a turbulence closure and a faucet jet that nothing available here can constrain. A finite-volume thermal network sits between them: it keeps conservation exact, resolves where heat is lost and delivered, and makes mixing an explicit, testable parameter [5]. We use the lumped model as a proved benchmark (Sections 3–4) and the network for the decision (Sections 5–11).')
@@ -170,49 +198,49 @@ para('<b>A5. Mixing as one effective diffusivity D.</b> Motion enters through D,
 
 page('2.1 Where the coefficients come from')
 sf=prov['surface'];wl=prov['wall'];bd=prov['body']
-para(f'No temperature record exists to fit, so each coefficient is anchored in a standard relation or a published measurement and given a range. Surface loss sums natural convection above a hot horizontal surface (Nu = 0.15 Ra^(1/3) for 10^7 < Ra < 10^11, length A/P [5]; here Ra = {sf["rayleigh"]/1e7:.1f} × 10^7), linearized radiation (emissivity 0.96) and evaporation by the Lewis analogy. For open water at 40°C in 22°C air at 50% humidity the parts are {sf["parts"]["convection"]:.1f}, {sf["parts"]["radiation"]:.1f} and {sf["parts"]["evaporation"]:.1f} W/(m² K) ({sf["evaporation_kg_m2_h"]:.2f} kg/m² h evaporated), {sf["open_water_total"]:.1f} in total. A bather covers part of the surface; with an assumed exposed fraction of 0.7 the central value is {sf["central"]:.1f}, and we use 25 within the range 17–37.')
-para(f'The shell coefficient is a series resistance: a 5 mm shell (0.19 W/(m K)) with film coefficients of 300 inside and 8 W/(m² K) outside gives {wl["central"]:.1f}, and {wl["range"][0]:.1f}–{wl["range"][1]:.1f} for other thicknesses. These are typical engineering values, not measurements of a particular tub. The body coefficient is anchored by a measurement: Menzies et al. report a rectal-temperature rise of 0.9 ± 0.3°C after 30 minutes in 40°C water to the shoulders [6]. Taking the mean body mass of the study participants, 73 kg, c = 3470 J/(kg K) and a mean body rise of 1–2°C, the average heat uptake is {bd["anchor"][0]["average_uptake_w"]:.0f}–{bd["anchor"][1]["average_uptake_w"]:.0f} W, equal to {bd["anchor"][0]["equivalent_h_body"]:.0f}–{bd["anchor"][1]["equivalent_h_body"]:.0f} W/(m² K) with skin held at 34°C. We use 25, because a fixed skin node overstates the driving difference later in the bath. The mean body rise and the driving difference are assumptions, so this is an order-of-magnitude anchor, not a calibration.')
-para('Mixing has only a scaling anchor. A mixing-length estimate D ≈ 0.1 u′ℓ, with a velocity scale u′ and eddy size ℓ, gives about 1e-4 m²/s for buoyancy-driven flow alone (u′ = 0.02 m/s, ℓ = 0.05 m), 1e-3 for gentle movement of the bather (0.1 m/s, 0.1 m) and 6e-3 for vigorous movement (0.3 m/s, 0.2 m). We use 0.001 and test 0.0003–0.003. This is a scaling argument, not a measurement, so D stays a scenario. The 39–41°C window is a preference; immersion studies use 40–42°C water [6], which is not a safety standard. A 40.5°C upper limit was tried first: the coarse mesh accepted a 24.51 L constant-rate policy, but the finer mesh accepted none, because the inlet-cell average rises under refinement. The limit was set to 41°C, where both meshes agree.')
+para(f'No temperature record exists to fit, so each coefficient is anchored in a standard relation or a published measurement and given a range. Surface loss sums natural convection above a hot horizontal surface ($\\mathrm{{Nu}}=0.15\\,\\mathrm{{Ra}}^{{1/3}}$ for $10^{{7}}<\\mathrm{{Ra}}<10^{{11}}$, length $A/P$ [5]; here $\\mathrm{{Ra}}={sf["rayleigh"]/1e7:.1f}\\times10^{{7}}$), linearized radiation (emissivity 0.96) and evaporation by the Lewis analogy. For open water at 40°C in 22°C air at 50% humidity the parts are {sf["parts"]["convection"]:.1f}, {sf["parts"]["radiation"]:.1f} and {sf["parts"]["evaporation"]:.1f} W/(m² K) ({sf["evaporation_kg_m2_h"]:.2f} kg/m² h evaporated), {sf["open_water_total"]:.1f} in total. A bather covers part of the surface; with an assumed exposed fraction of 0.7 the central value is {sf["central"]:.1f}, and we use 25 within the range 17–37.')
+para(f'The shell coefficient is a series resistance: a 5 mm shell (0.19 W/(m K)) with film coefficients of 300 inside and 8 W/(m² K) outside gives {wl["central"]:.1f}, and {wl["range"][0]:.1f}–{wl["range"][1]:.1f} for other thicknesses. These are typical engineering values, not measurements of a particular tub. The body coefficient is anchored by a measurement: Menzies et al. report a rectal-temperature rise of 0.9 ± 0.3°C after 30 minutes in 40°C water to the shoulders [6]. Taking the mean body mass of the study participants, 73 kg, $c=3470$ J/(kg K) and a mean body rise of 1–2°C, the average heat uptake is {bd["anchor"][0]["average_uptake_w"]:.0f}–{bd["anchor"][1]["average_uptake_w"]:.0f} W, equal to {bd["anchor"][0]["equivalent_h_body"]:.0f}–{bd["anchor"][1]["equivalent_h_body"]:.0f} W/(m² K) with skin held at 34°C. We use 25, because a fixed skin node overstates the driving difference later in the bath. The mean body rise and the driving difference are assumptions, so this is an order-of-magnitude anchor, not a calibration.')
+para('Mixing has only a scaling anchor. A mixing-length estimate $D\\approx 0.1\\,u\'\\ell$, with a velocity scale $u\'$ and eddy size $\\ell$, gives about 1e-4 m²/s for buoyancy-driven flow alone ($u\'=0.02$ m/s, $\\ell=0.05$ m), 1e-3 for gentle movement of the bather (0.1 m/s, 0.1 m) and 6e-3 for vigorous movement (0.3 m/s, 0.2 m). We use 0.001 and test 0.0003–0.003. This is a scaling argument, not a measurement, so D stays a scenario. The 39–41°C window is a preference; immersion studies use 40–42°C water [6], which is not a safety standard. A 40.5°C upper limit was tried first: the coarse mesh accepted a 24.51 L constant-rate policy, but the finer mesh accepted none, because the inlet-cell average rises under refinement. The limit was set to 41°C, where both meshes agree.')
 table([['Coefficient','Relation or anchor','Derived value','Used (range tested)'],['Surface, W/(m² K)','Convection + radiation + evaporation [5]',f'{sf["open_water_total"]:.1f} open; {sf["central"]:.1f} at 70%','25 (17–37)'],['Shell, W/(m² K)','Series resistance, typical shell values',f'{wl["central"]:.1f} ({wl["range"][0]:.1f}–{wl["range"][1]:.1f})','6.5 (4.5–8.5)'],['Body, W/(m² K)','Uptake implied by core rise [6]',f'{bd["anchor"][0]["equivalent_h_body"]:.0f}–{bd["anchor"][1]["equivalent_h_body"]:.0f} at fixed skin','25 (12–40)'],['Mixing D, m²/s','Mixing-length scaling','1e-4 to 6e-3','0.001 (0.0003–0.003)']],[96,162,110,100])
 
 page('3. A transparent well-mixed benchmark')
 table([['Symbol','Meaning'],['C','Heat capacity of the water, J/K'],['Ha, Hb','Air/shell and body conductance, W/K'],['Ta, Tb, Tin','Room, skin and inlet temperature, °C'],['Tmin, Tmax','Lower and upper limit, °C'],['q, J','Inlet flow, m³/s; added water, L'],['D','Effective mixing diffusivity, m²/s']],[110,358])
-para('Let C be total water heat capacity, Ha the air/shell conductance and Hb the body conductance. A well-mixed overflow has the same temperature as the bath. Integrating the physical energy balance gives')
+para('Let $C$ be total water heat capacity, $H_a$ the air/shell conductance and $H_b$ the body conductance. A well-mixed overflow has the same temperature as the bath. Integrating the physical energy balance gives')
 eq(r'C\dot T=H_a(T_a-T)+H_b(T_b-T)+\rho c_pq(T_{\rm in}-T)')
 eq(r'C=\rho c_p(LWH-V_b),\quad H_b=h_bA_b')
 eq(r'H_a=h_s fLW+h_w\{LW+2H(L+W)\}')
-para('The foam multiplier f equals one without a layer. Setting q = 0, define H = Ha + Hb and Te = (Ha Ta + Hb Tb)/H. The cooling solution and first time to reach the lower limit are')
+para('The foam multiplier $f$ equals one without a layer. Setting $q=0$, define $H=H_a+H_b$ and $T_e=(H_aT_a+H_bT_b)/H$. The cooling solution and first time to reach the lower limit are')
 eq(r'T(t)=T_e+(T_0-T_e)e^{-Ht/C}')
 eq(r't_c=\frac{C}{H}\log\frac{T_0-T_e}{T_{\min}-T_e}')
 para(f'Baseline conductances are Ha = {a["air_conductance"]:.2f} W/K and Hb = {a["body_conductance"]:.2f} W/K, and C = {p["rho"]*p["cp"]*(p["L"]*p["W"]*p["H"]-p["body_volume"]):,.0f} J/K. Thus Te = {a["equilibrium"]:.2f}°C and tc = {a["coast_s"]/60:.2f} min.')
 para('A heat-loss model must approach an environmental equilibrium rather than zero Celsius. This analytic boundary also supplies a direct check on signs and units. The benchmark describes mixing perfectly; the spatial model will test the cost of departing from that assumption.')
 
 page('4. What can be proved about water use?')
-para('Let ℓ(T) = Ha(T − Ta) + Hb(T − Tb) be the heat loss of the mixed bath, and let the inlet be hotter than every temperature considered. <b>Proposition 1.</b> Coasting to the lower limit and then holding it uses the least water, provided the holding rate is within the faucet bound. The proof has four steps.')
-para('<b>Step 1, an identity.</b> Dividing the balance by Tin − T and integrating over the horizon gives')
+para('Let $\\ell(T)=H_a(T-T_a)+H_b(T-T_b)$ be the heat loss of the mixed bath, and let the inlet be hotter than every temperature considered. <b>Proposition 1.</b> Coasting to the lower limit and then holding it uses the least water, provided the holding rate is within the faucet bound. The proof has four steps.')
+para('<b>Step 1, an identity.</b> Dividing the balance by $T_{\\mathrm{in}}-T$ and integrating over the horizon gives')
 eq(r'\int q\,dt=\frac{C}{\rho c_p}\log\frac{T_{\rm in}-T_0}{T_{\rm in}-T_f}+\int\frac{\ell(T)}{\rho c_p(T_{\rm in}-T)}\,dt')
-para('<b>Step 2, monotonicity.</b> The integrand ℓ(T)/(Tin − T) has derivative [Ha(Tin − Ta) + Hb(Tin − Tb)]/(Tin − T)² &gt; 0, so it increases with T, and the logarithmic term increases with the final temperature. Water use is therefore an increasing functional of the temperature path.')
-para('<b>Step 3, the lowest admissible path.</b> Because q ≥ 0, comparison with the no-flow solution gives T(t) ≥ Tc(t), the cooling curve of Section 3, and feasibility requires T(t) ≥ Tmin. The pointwise lowest admissible path is max(Tc(t), Tmin): coast until Tc reaches Tmin, then hold.')
-para('<b>Step 4, attainability.</b> Holding T = Tmin means Ṫ = 0, which needs the rate')
+para('<b>Step 2, monotonicity.</b> The integrand $\\ell(T)/(T_{\\mathrm{in}}-T)$ has derivative $[H_a(T_{\\mathrm{in}}-T_a)+H_b(T_{\\mathrm{in}}-T_b)]/(T_{\\mathrm{in}}-T)^2>0$, so it increases with $T$, and the logarithmic term increases with the final temperature. Water use is therefore an increasing functional of the temperature path.')
+para('<b>Step 3, the lowest admissible path.</b> Because $q\\ge 0$, comparison with the no-flow solution gives $T(t)\\ge T_c(t)$, the cooling curve of Section 3, and feasibility requires $T(t)\\ge T_{\\min}$. The pointwise lowest admissible path is $\\max(T_c(t),T_{\\min})$: coast until $T_c$ reaches $T_{\\min}$, then hold.')
+para('<b>Step 4, attainability.</b> Holding $T=T_{\\min}$ means $\\dot T=0$, which needs the rate')
 eq(r'q_{\rm hold}=\frac{\ell(T_{\min})}{\rho c_p(T_{\rm in}-T_{\min})}')
 para(f'When this rate is within the bound, the path is feasible, and by Step 2 it is optimal. ∎ For the baseline it adds {a["mixed_optimum_l"]:.2f} L: wait {a["coast_s"]/60:.2f} min, then supply {a["hold_lpm"]:.3f} L/min. This is a proved optimum of the mixed model, not a guarantee for a spatially nonuniform tub.')
-para('<b>Proposition 2 (energy lower bound).</b> In the spatial model, suppose every cell satisfies Ti(t) ≥ Tmin. Summing the cell balances gives ΣCiTi(tf) − CT0 = −∫L dt + ρcp∫q(Tin − Tout)dt, with L the total loss. Each loss term increases with its cell temperature, and Ha and Hb are the sums of the cell conductances, so L(t) ≥ ℓ(Tmin). The outlet cell satisfies Tout ≥ Tmin, so Tin − Tout ≤ Tin − Tmin, and the left side is at least C(Tmin − T0). Combining these three facts,')
+para('<b>Proposition 2 (energy lower bound).</b> In the spatial model, suppose every cell satisfies $T_i(t)\\ge T_{\\min}$. Summing the cell balances gives $\\sum_i C_iT_i(t_f)-CT_0=-\\int L\\,dt+\\rho c_p\\int q(T_{\\mathrm{in}}-T_{\\mathrm{out}})\\,dt$, with $L$ the total loss. Each loss term increases with its cell temperature, and $H_a$ and $H_b$ are the sums of the cell conductances, so $L(t)\\ge\\ell(T_{\\min})$. The outlet cell satisfies $T_{\\mathrm{out}}\\ge T_{\\min}$, so $T_{\\mathrm{in}}-T_{\\mathrm{out}}\\le T_{\\mathrm{in}}-T_{\\min}$, and the left side is at least $C(T_{\\min}-T_0)$. Combining these three facts,')
 eq(r'J\geq\max\left(0,\frac{1000[\ell(T_{\min})t_f-C(T_0-T_{\min})]}{\rho c_p(T_{\rm in}-T_{\min})}\right)')
 para(f'The resulting {a["energy_lower_bound_l"]:.2f} L is a genuine conditional lower bound, valid for any control, but it is not tight: the initial water is hotter than the floor and loses more heat, and limited mixing adds further cost. Section 7.1 shows how much of the gap an optimized schedule recovers.')
 
 page('5. A conservative model in three dimensions')
-para('The rectangular water envelope is divided into 8 × 4 × 3 cells. Each has a capacity Ci and exchanges heat only across common faces. Top cells lose heat to the room; bottom and side faces lose heat through the shell. The bather is represented by a smooth, three-dimensional displacement field and a distributed skin contact term.')
+para('The rectangular water envelope is divided into 8 × 4 × 3 cells. Each has a capacity $C_i$ and exchanges heat only across common faces. Top cells lose heat to the room; bottom and side faces lose heat through the shell. The bather is represented by a smooth, three-dimensional displacement field and a distributed skin contact term.')
 eq(r'C_i\dot T_i=\sum_jg_{ij}(T_j-T_i)+H_{a,i}(T_a-T_i)+H_{b,i}(T_b-T_i)+S_i')
 eq(r'g_{ij}=\rho c_pD\frac{A_{ij}}{d_{ij}}\min(\phi_i,\phi_j),\quad C_i=\rho c_pV_i')
-para('Here φ is fluid fraction, Aij a face area and dij the center separation. Symmetric gij guarantees that internal heat exchange cancels when the equations are summed. D is an effective mixing closure; molecular diffusion alone would not represent motion or buoyant circulation.')
+para('Here $\\phi$ is fluid fraction, $A_{ij}$ a face area and $d_{ij}$ the center separation. Symmetric $g_{ij}$ guarantees that internal heat exchange cancels when the equations are summed. D is an effective mixing closure; molecular diffusion alone would not represent motion or buoyant circulation.')
 eq(r'w_i\propto\exp\left[-\frac{1}{2}\sum_{k=1}^3\left(\frac{x_{ik}-b_k}{s_k}\right)^2\right],\quad \sum_iw_i=1')
 eq(r'V_i=V_{\rm cell}-V_bw_i,\quad H_{b,i}=h_bA_bw_i')
-para('Baseline b = (0.55L, W/2, 0.45H), with widths s = (0.40, 0.16, 0.12) m. Fluid fraction is φi = Vi/Vcell. The center b and widths s set the spatial distribution of body effects. Body volume and contact area remain independent inputs: shape is varied through s at fixed volume and area. This is a homogenized immersed-body representation, not an anatomically resolved obstruction. A cell whose occupied fraction reaches 0.95 is rejected rather than assigned a negative capacity.')
+para('Baseline $\\mathbf{b}=(0.55L,\\,W/2,\\,0.45H)$, with widths $\\mathbf{s}=(0.40,0.16,0.12)$ m. Fluid fraction is $\\phi_i=V_i/V_{\\mathrm{cell}}$. The center $\\mathbf{b}$ and widths $\\mathbf{s}$ set the spatial distribution of body effects. Body volume and contact area remain independent inputs: shape is varied through $\\mathbf{s}$ at fixed volume and area. This is a homogenized immersed-body representation, not an anatomically resolved obstruction. A cell whose occupied fraction reaches 0.95 is rejected rather than assigned a negative capacity.')
 para('A fixed envelope volume is preserved by balancing inlet and overflow. In the baseline the exact displaced-water volume is 164.25 L. Shape scenarios preserve envelope volume when isolating aspect-ratio effects. Volume scenarios deliberately change water depth and hence both storage and side-wall area.')
 
 page('5.1 Spatial evidence: the mean is not the whole bath')
 figure('spatial.png','Figure 4. Final temperatures in the three horizontal cell layers. All layers use one color scale; the top layer contains the prescribed inlet-to-overflow stream. Geometry is in metres, and values are cell averages.',height=199)
-para('The heat map is calculated from the same archived trajectory as Figure 2. It shows where the imposed transport path and environmental/body sinks leave temperature differences. The plots are horizontal slices through a three-dimensional network with exchange between layers, not three independent two-dimensional models.')
+para('The heat map is calculated from the same archived trajectory as Figure @fig:temperature@. It shows where the imposed transport path and environmental/body sinks leave temperature differences. The plots are horizontal slices through a three-dimensional network with exchange between layers, not three independent two-dimensional models.')
 para('A temperature range summarizes the spread but cannot show its location. The maps make the physical interpretation inspectable: localized replenishment and distributed losses must be balanced through mixing. Every cell contributes to the comfort test; a high mean cannot compensate for a cold region.')
 para('The Gaussian body representation changes both storage and exchange distribution. A map does not prove that this homogenized representation captures anatomy, recirculation or buoyancy. Its role is to reveal the actual implications of the declared model, not to create the appearance of a resolved flow simulation. The refinement table separately checks how cell size affects the result.')
 
@@ -223,7 +251,7 @@ eq(r'\sum_i C_i\dot T_i=-\sum_iH_{a,i}(T_i-T_a)-\sum_iH_{b,i}(T_i-T_b)+\rho c_pq
 para('This stream deliberately allows hot-water short circuit. Heat can leave at a locally warm outlet before warming a distant cold region. It is an explicit transport assumption, not an inferred flow field. Alternative inlet placement would require another transport network and calibration.')
 para('For a fixed flow, the network is affine linear. Augmenting the state by a constant one permits matrix-exponential propagation, avoiding a large forward-Euler step restriction [4]. A delayed-start policy has two exact constant-control segments.')
 eq(r'\dot{\mathbf{T}}=A(q)\mathbf{T}+\mathbf{b}(q),\quad \mathbf{z}(t+\tau)=e^{\widetilde{A}(q)\tau}\mathbf{z}(t)')
-para('Starts are tested at 0, 120, …, 1200 seconds. For each, rates from 0 to 3 L/min are bracketed on a 0.2 L/min grid; the first crossing of the lower-temperature requirement is refined by Brent’s root method. The search targets Tmin + 0.03°C as numerical reserve, then checks the upper-temperature and spread limits at 5-second output intervals. Starts that already violate the floor are rejected.')
+para('Starts are tested at 0, 120, …, 1200 seconds. For each, rates from 0 to 3 L/min are bracketed on a 0.2 L/min grid; the first crossing of the lower-temperature requirement is refined by Brent’s root method. The search targets $T_{\\min}+0.03$°C as numerical reserve, then checks the upper-temperature and spread limits at 5-second output intervals. Starts that already violate the floor are rejected.')
 para('This is a reproducible candidate search. Nonmonotone flow responses, untested delays, pulsed inputs, inlet relocation and feedback are not excluded by the calculation. A failed search means no candidate was accepted, not that every possible action is infeasible. The independent checks further examine the chosen trajectory between samples.')
 
 page('7. The spatial result and the mixing penalty')
@@ -240,8 +268,8 @@ for run in ct:rows.append([f'{run["segments"]} segments',f'{run["water_l"]:.2f}'
 rows+=[['Perfect-mixing optimum',f'{a["mixed_optimum_l"]:.2f}','','',''],['Energy lower bound',f'{a["energy_lower_bound_l"]:.2f}','','','']]
 table(rows,[150,70,70,100,78])
 pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,  max_i T_i(t) <= Tmax,\n              max_i T_i(t) - min_i T_i(t) <= span   (every 15 s)\nreplay the best x at 5 s; keep it only if all margins >= 0'''
-box=Table([[Preformatted(pseudo,ParagraphStyle('code',fontName='Courier',fontSize=8.5,leading=11))]],colWidths=[468],hAlign='LEFT');box.setStyle(TableStyle([('BOX',(0,0),(-1,-1),.6,colors.black),('LEFTPADDING',(0,0),(-1,-1),8),('TOPPADDING',(0,0),(-1,-1),5),('BOTTOMPADDING',(0,0),(-1,-1),5)]))
-flow.extend([box,Spacer(1,8)]);content.append({'algorithm':pseudo})
+tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\n')
+
 figure('control.png',f'Figure 6. Best {K}-segment schedule against the best constant rate (top) and the range of cell temperatures (bottom); dotted lines mark the limits.',height=176)
 para(f'The {K}-segment schedule is {"off" if lead else "on"} for the first {lead*seg_min:.1f} minutes and off for the last {trail*seg_min:.1f} minutes, with a peak of {max(flows):.2f} L/min between. It adds {ctl["water_l"]:.2f} L, {save:.1f}% below the constant rate, and narrows the gap to the energy lower bound from {b["water_l"]-a["energy_lower_bound_l"]:.1f} L to {ctl["water_l"]-a["energy_lower_bound_l"]:.1f} L. Refining from 3 to {K} segments gains only {100*(ct[0]["water_l"]-ctl["water_l"])/ct[0]["water_l"]:.1f}%: the saving comes from the shape. The optimum touches the lower limit and the spread limit ({ctl["max_span"]:.2f}°C) and comes close to the upper limit ({ctl["max_temp"]:.2f}°C).')
 para('We have not isolated why the best schedule stops at the end. One candidate explanation, an inference rather than a model result, is that hot water added late leaves through the overflow before it warms the remote cells, while stored heat carries the final minutes. ')
@@ -249,7 +277,7 @@ para('We have not isolated why the best schedule stops at the end. One candidate
 page('7.2 What does staying close to the start temperature cost?')
 fm={f_['floor']:f_ for f_ in E['frontier']}
 w=lambda fl:fm[fl]['constant_l']
-para(f'The task asks for a bath close to its initial temperature without wasting much water, which is a trade-off rather than a single optimum. Figure 7 repeats the search while the allowed fall below 40°C changes from 0.25 to 3°C; the 1°C case is the baseline. With a fall of 2.5°C or more the stored heat suffices and no water is added. At 2°C the best constant rate adds {w(38.0):.1f} L, at 1.5°C {w(38.5):.1f} L, at 1°C {w(39.0):.1f} L and at 0.75°C {w(39.25):.1f} L. Between 2°C and 0.75°C each further 0.5°C of tolerance is therefore worth roughly {(w(39.25)-w(38.0))/(2.0-.75)/2:.0f} L, almost linearly. For a fall of 0.5°C or less no constant-rate policy was accepted; the perfectly mixed bath would still need {fm[39.5]["mixed_l"]:.1f} L at 0.5°C.')
+para(f'The task asks for a bath close to its initial temperature without wasting much water, which is a trade-off rather than a single optimum. Figure @fig:frontier@ repeats the search while the allowed fall below 40°C changes from 0.25 to 3°C; the 1°C case is the baseline. With a fall of 2.5°C or more the stored heat suffices and no water is added. At 2°C the best constant rate adds {w(38.0):.1f} L, at 1.5°C {w(38.5):.1f} L, at 1°C {w(39.0):.1f} L and at 0.75°C {w(39.25):.1f} L. Between 2°C and 0.75°C each further 0.5°C of tolerance is therefore worth roughly {(w(39.25)-w(38.0))/(2.0-.75)/2:.0f} L, almost linearly. For a fall of 0.5°C or less no constant-rate policy was accepted; the perfectly mixed bath would still need {fm[39.5]["mixed_l"]:.1f} L at 0.5°C.')
 figure('frontier.png','Figure 7. Added water against the allowed temperature fall. The mixed optimum and energy bound are closed forms; markers on the brown curve are searched constant-rate policies, and the dotted line is the baseline.',height=182)
 para(f'The curve is the practical answer to “how close is close enough”: below a 2.5°C fall every degree of tolerance bought back costs about the same, so the tolerance is worth choosing deliberately. The perfectly mixed curve lies below the spatial one at every tolerance, and the gap widens as the tolerance tightens, from {fm[38.0]["constant_l"]-fm[38.0]["mixed_l"]:.1f} L at 2°C to {fm[39.25]["constant_l"]-fm[39.25]["mixed_l"]:.1f} L at 0.75°C: the stricter the comfort requirement, the more uneven mixing costs. Only constant-rate policies are searched here; scheduled flow (Section 7.1) lowers the baseline point by about 18% and would shift the brown curve down by a similar fraction, an expectation that was not recomputed at the other tolerances.')
 
@@ -282,7 +310,7 @@ for key in ['weak mixing','strong mixing','moving with added surface loss','stra
  v=sc[key]['policy'];rows.append([key.title(),f'{v["water_l"]:.2f}' if v['feasible'] else '—','Accepted' if v['feasible'] else 'None accepted'])
 table(rows,[224,116,128])
 para(f'Increasing D reduces the gradient created by the localized inlet. The strong-mixing scenario uses {sc["strong mixing"]["policy"]["water_l"]:.2f} L against {b["water_l"]:.2f} L, but motion may also increase heat loss. When D is increased together with a 20% increase in the surface coefficient (30 instead of 25 W/(m² K)), the need rises to {sc["moving with added surface loss"]["policy"]["water_l"]:.2f} L and most of the benefit disappears. The comparison deliberately separates transport improvement from its possible boundary cost.')
-para(f'Stratification is tested separately. A hot inlet layer is lighter than the water below, and the stable density gradient suppresses vertical mixing. With a cell height of 0.077 m, a vertical temperature difference of 1 K, a velocity scale of 0.02 m/s and an expansion coefficient of about 3.8e-4 per K, the gradient Richardson number is Ri = gβΔTℓ/u² ≈ 0.7. The Munk–Anderson stability function for scalars, (1 + 3.33 Ri)^(-3/2) [8], then reduces vertical diffusivity to about 0.15 of its neutral value. We test a vertical-to-horizontal ratio of 0.2. The best constant rate becomes {sc["stratified"]["policy"]["water_l"]:.2f} L against {b["water_l"]:.2f} L, but the maximum spread rises from {b["max_span"]:.2f} to {sc["stratified"]["policy"]["max_span"]:.2f}°C, close to the 1.50°C limit. Stratification therefore costs little water here and takes most of the uniformity margin; the ratio is an order-of-magnitude scenario and the Richardson estimate uses assumed velocity and temperature scales.')
+para(f'Stratification is tested separately. A hot inlet layer is lighter than the water below, and the stable density gradient suppresses vertical mixing. With a cell height of 0.077 m, a vertical temperature difference of 1 K, a velocity scale of 0.02 m/s and an expansion coefficient of about 3.8e-4 per K, the gradient Richardson number is $\\mathrm{{Ri}}=g\\beta\\,\\Delta T\\,\\ell/u^2\\approx 0.7$. The Munk–Anderson stability function for scalars, $(1+3.33\\,\\mathrm{{Ri}})^{{-3/2}}$ [8], then reduces vertical diffusivity to about 0.15 of its neutral value. We test a vertical-to-horizontal ratio of 0.2. The best constant rate becomes {sc["stratified"]["policy"]["water_l"]:.2f} L against {b["water_l"]:.2f} L, but the maximum spread rises from {b["max_span"]:.2f} to {sc["stratified"]["policy"]["max_span"]:.2f}°C, close to the 1.50°C limit. Stratification therefore costs little water here and takes most of the uniformity margin; the ratio is an order-of-magnitude scenario and the Richardson estimate uses assumed velocity and temperature scales.')
 para(f'The foam scenario multiplies only the effective surface coefficient by 0.4. With all other inputs fixed, the best constant rate falls to {sc["foam"]["policy"]["water_l"]:.2f} L. The assumed 60% reduction is a scenario, not an experimentally established property of bubble-bath additive. If the layer breaks up or motion raises evaporation, this result must be recomputed.')
 none=[k.title() for k,v in sc.items() if not v['policy']['feasible']]
 para('No accepted candidate exists for: '+', '.join(none)+'. They are reported as such, not hidden in a favorable average. Their outcomes identify where the restricted strategy must change. Potential responses include improved circulation, a different inlet path, a shorter bath, or a different comfort tolerance. The paper does not certify which response is safe or optimal without corresponding physical evidence.')
@@ -341,7 +369,7 @@ refs=[
 '[7] OpenAI, Codex (GPT-6-based assistant), and Anthropic, Claude Sonnet 5.5 in Claude Code. Used on 7 October 2026 for modeling, code, validation and report composition; exact builds not independently established. See Report on Use of AI Tools.',
 '[8] Munk, W. H., Anderson, E. R. Notes on a theory of the thermocline. Journal of Marine Research, 7(3), 276–295, 1948.',
 ]
-for ref in refs:para(escape(ref))
+for ref in refs:para(ref,'ref')
 para('Algorithm and computational record','heading')
 para('1. Form cell volumes and capacities; reject excessive body occupancy. Assemble symmetric face exchange, environmental/body conductances and the conservative stream. 2. Compute the mixed closed forms and energy lower bound. 3. Evaluate delayed constant-flow candidates with matrix exponentials and refine the first bracketed lower-temperature crossing. Reject spread or upper-limit violations. 4. Rank accepted candidates by added litres. 5. Independently integrate and check balances, analytic limits, parameter arithmetic and constraints; replay a finer mesh and perturb physical scenarios. 6. Optimize piecewise-constant schedules (multi-start SQP) and replay the best independently. 7. Rerun the constant-rate search at Sobol draws over the literature ranges. Independent RK45 checks use relative tolerance 2e-9, absolute 2e-10°C and steps of at most 5 s. AI assistance is acknowledged in [7].')
 
@@ -366,23 +394,10 @@ para('Outputs, corrections and verification','heading')
 para('AI-produced outputs are the model, validation and report-building sources; the mathematical derivations, scenario tables, figures and text in this document. Numerical values came from actual Python runs. Citations [1]–[4] were checked against the linked sources; [5] and [8] were not opened (their relations were checked against web summaries and a turbulence-model source) and [6] was read in full from the open-access author manuscript. The first baseline coefficients and the 40.5°C upper limit were replaced after anchoring and mesh refinement.')
 para('Record limitations','heading')
 para('A full exported interaction transcript and every intermediate AI output were not available in this artifact. The task description, tool identification, scope, code artifacts and numerical receipts are retained in the accompanying development record; this report does not invent a transcript. No independent human review or physical bath experiment is claimed.')
-para('Python, NumPy and SciPy performed the mathematics; Matplotlib generated plots and STIX vector formula outlines; ReportLab produced the PDF with embedded Times New Roman faces. These deterministic tools do not establish empirical validity. The service model/build beyond the available GPT-6-based identifier was not independently verified.')
+para('Python, NumPy and SciPy performed the mathematics; the report was typeset in XeLaTeX, with figures drawn by pgfplots and TikZ from the archived numerical record. These deterministic tools do not establish empirical validity. The service model/build beyond the available GPT-6-based identifier was not independently verified.')
 
-TOTAL=pages
-# Counting canvas with pages held in memory, so headers reflect final actual count.
-from reportlab.pdfgen.canvas import Canvas
-class Numbered(Canvas):
- def __init__(self,*x,**kw):super().__init__(*x,**kw);self.saved=[]
- def showPage(self):self.saved.append(dict(self.__dict__));self._startPage()
- def save(self):
-  n=len(self.saved)
-  for state in self.saved:
-   self.__dict__.update(state);self.setFont('Text',12);self.drawString(72,758,'Team # '+TEAM_CONTROL_NUMBER);self.drawRightString(540,758,f'Page {self._pageNumber} of {n}');self.setLineWidth(.4);self.line(72,751,540,751);super().showPage()
-  super().save()
-path=ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf')
-class Doc(SimpleDocTemplate):
- def afterFlowable(self,f):
-  if hasattr(f,'toc_text'):self.notify('TOCEntry',(f.toc_level,f.toc_text,self.page))
-Doc(str(path),pagesize=letter,leftMargin=72,rightMargin=72,topMargin=54,bottomMargin=54,title='A Hot Bath: Conserving Water Without Losing Uniformity',author='',pageCompression=1).multiBuild(flow,canvasmaker=Numbered)
-(ROOT/'report-content.json').write_text(json.dumps(content,indent=2))
-print(json.dumps({'pdf':str(path),'planned_pages':TOTAL,'equations':eqcount,'checks':len(checks)}))
+TOTAL=SEC[0]
+pdf=compile_pdf('main','A Hot Bath')
+(ROOT/'submission').mkdir(exist_ok=True)
+shutil.copyfile(pdf,ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf'))
+print(json.dumps({'pdf':str(ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf')),'sections':TOTAL,'equations':eqcount,'tables':tabcount,'figures':figcount[0],'checks':len(checks)}))

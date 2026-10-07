@@ -3,12 +3,11 @@
   "checked_on": "2026-10-07",
   "status": "local-reviewed-case; not a real contest submission",
   "pdf": {
-    "sha256": "097ca990a433ebd024172d7f258c4d7952b54a3251d68823420e60f8a3a85366",
-    "bytes": 862925,
-    "pages_total": 25,
-    "solution_pages": 24,
+    "sha256": "56a0f03e702f0f720ade67e4e3658c109738111f4d3357a92d4ca10985356394",
+    "bytes": 150617,
+    "pages_total": 22,
+    "solution_pages": 21,
     "ai_pages": 1,
-    "minimum_extracted_font_size_pt": 12.0,
     "text_bounds_checked": true,
     "pages_rendered_and_visually_reviewed": [
       1,
@@ -32,12 +31,10 @@
       19,
       20,
       21,
-      22,
-      23,
-      24,
-      25
+      22
     ],
-    "visual_review_note": "Layout checked on rendered pages at about 60 dpi; text proofread from extraction, not a full-resolution read"
+    "visual_review_note": "Layout checked on rendered pages at about 60 dpi; text proofread from extraction, not a full-resolution read",
+    "typesetting": "XeLaTeX (tectonic 0.17.0): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
   },
   "model_checks": {
     "total": 17,

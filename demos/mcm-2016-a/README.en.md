@@ -34,7 +34,7 @@ The **17 recorded checks** include independent heat-flow arithmetic and RK45 int
 </tr>
 </table>
 
-[Open the 25-page English report →](deliverables/7391856.pdf)
+[Open the 22-page English report →](deliverables/7391856.pdf)
 
 The PDF has 24 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
 

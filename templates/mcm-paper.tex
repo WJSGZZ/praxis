@@ -1,0 +1,72 @@
+% English paper skeleton in the style of the Praxis MCM case (XeLaTeX or tectonic).
+% Compile twice:  xelatex main.tex   (or: tectonic main.tex)
+% This is NOT an official COMAP Summary Sheet: compare the first page with the current official sheet before submitting.
+\documentclass[12pt,letterpaper]{article}
+\usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs,array,graphicx,xcolor,caption,fvextra,fancyhdr,lastpage,titlesec,needspace}
+\usepackage[hidelinks,pdfauthor={}]{hyperref}
+\urlstyle{same}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{fillbetween,groupplots}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{teal}{HTML}{17766E}
+\definecolor{clay}{HTML}{9E6440}
+\definecolor{slate}{HTML}{5D696E}
+\definecolor{sand}{HTML}{AAA69B}
+\definecolor{oiblue}{HTML}{0072B2}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oivermillion}{HTML}{D55E00}
+\linespread{1.12}
+\setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
+\newcommand{\TeamNumber}{0000000}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{Team \# \TeamNumber}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
+\begin{document}
+\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}
+\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\
+{\Large\textbf{?}}&\textbf{Summary Sheet}&{\Large\textbf{\TeamNumber}}\end{tabular*}\end{center}\hrule\vspace{10pt}
+\begin{center}{\LARGE\bfseries Title: state the answer, not the topic}\end{center}
+\begin{center}{\Large\bfseries Summary}\end{center}
+Write this page last: the problem, the main model, quantitative results with units, validation, limits and the recommendation.\par
+\textbf{Keywords:} keyword one; keyword two
+
+\clearpage\tableofcontents\clearpage
+\section{Define the decision before optimizing}
+Each requirement of the problem statement maps to a result, a figure and a section.
+
+\section{Assumptions, data and parameters}
+Every assumption has a reason; every parameter has a source and a range.
+\begin{table}[htbp]\centering\small\caption{Parameters, sources and ranges}
+\begin{tabular}{llll}\toprule Symbol & Meaning & Value (range) & Source\\ \midrule $k$ & example & 1.0 (0.5--2) & [1]\\ \bottomrule\end{tabular}\end{table}
+
+\section{Model and results}
+\begin{equation}J=\int_0^{t_f} q(t)\,dt\end{equation}
+% A figure drawn from data: python -c "from scripts import texplot; ..." writes the axis source.
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.9\linewidth,height=5cm,xlabel={Time (min)},ylabel={Temperature ($^\circ$C)},grid=major]
+\addplot[color=teal,line width=1.1pt,no marks] coordinates {(0,40) (15,39.6) (30,39.1)};
+\end{axis}
+\end{tikzpicture}
+\caption{One sentence on what the reader should see.}\end{figure}
+
+\section{Validation, sensitivity and limits}
+Compare with a simple baseline, perturb parameters and execution, and state what the model cannot support.
+
+\section{Conclusions and recommendation}
+
+\clearpage\section*{References}\addcontentsline{toc}{section}{References}
+\begingroup\small\setlength{\parindent}{0pt}\hangindent=1.5em
+[1] Author. Title. Publisher, year. \url{https://example.org/}\par
+\endgroup
+\clearpage\section*{Report on Use of AI Tools}\addcontentsline{toc}{section}{Report on Use of AI Tools}
+Name each tool and version, what it did, what was adopted or changed, how outputs were verified, and what the record cannot show.
+\end{document}

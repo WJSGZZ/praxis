@@ -1,0 +1,65 @@
+% 中文论文骨架（XeLaTeX 或 tectonic，需要 ctex 宏包）。编译两次：xelatex main.tex（或 tectonic main.tex）
+% 官方规范：A4、页边距不少于 2.5 厘米、页脚居中的阿拉伯页码、摘要页含标题和关键词、正文不含目录且不超过 30 页、
+% 附录含支撑材料文件清单和完整可运行源程序、论文中不得出现身份信息。字体与字号不做统一要求，以当年规定为准。
+\documentclass[a4paper,12pt]{ctexart}
+\usepackage[top=2.54cm,bottom=2.54cm,left=2.8cm,right=2.8cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs,graphicx,xcolor,caption,needspace,fvextra,array}
+\usepackage[hidelinks,pdfauthor={}]{hyperref}
+\urlstyle{same}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{fillbetween,groupplots}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{teal}{HTML}{17766E}
+\definecolor{clay}{HTML}{9E6440}
+\definecolor{slate}{HTML}{5D696E}
+\definecolor{sand}{HTML}{AAA69B}
+\definecolor{oiblue}{HTML}{0072B2}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oivermillion}{HTML}{D55E00}
+\renewcommand{\CJKttdefault}{\CJKrmdefault}
+\linespread{1.3}
+\setlength{\parskip}{0pt}
+\ctexset{section={format=\bfseries\zihao{4}\centering,name={,},number=\arabic{section},aftername=\quad,beforeskip=2.4ex plus .4ex,afterskip=1.6ex},
+ subsection={format=\bfseries\zihao{-4}\raggedright,name={,},number=\arabic{section}.\arabic{subsection},aftername=\quad,beforeskip=1.8ex plus .3ex,afterskip=1ex}}
+\DeclareCaptionLabelFormat{hei}{{\bfseries #1\,#2}}
+\captionsetup{labelformat=hei,labelsep=quad,font=small,justification=centering}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
+\pagestyle{plain}
+\begin{document}
+\begin{center}{\bfseries\zihao{3} 论文题目：写出结论，而不是只写主题}\end{center}
+\section*{摘\hspace{1em}要}
+最后写本页：按问题一、问题二……逐问给出方法、关键数值（含单位）、检验与结论，不超过一页。\par
+关键词：关键词一；关键词二
+
+\clearpage
+\section{问题重述与数据核对}
+\section{假设、定义与符号}
+\begin{table}[htbp]\centering\small\caption{符号与单位}
+\begin{tabular}{ll}\toprule 符号 & 含义与单位\\ \midrule $x_i$ & 示例变量，元\\ \bottomrule\end{tabular}\end{table}
+\section{模型与求解}
+\begin{equation}R(\mathbf{x})=\max_{i}\frac{q_ix_i}{M}\le\rho\end{equation}
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.9\linewidth,height=6cm,xlabel={风险上限（\%）},ylabel={净收益率（\%）},grid=major]
+\addplot[color=teal,line width=1.1pt,no marks] coordinates {(0,5) (1,20) (2,25)};
+\end{axis}
+\end{tikzpicture}
+\caption{图题用一句话说明读者应看到什么}\end{figure}
+\section{检验、敏感性与局限}
+与简单基线比较；扰动参数和执行误差；写明模型不能支持的结论。
+\section{结论与建议}
+
+\section*{参考文献}
+\begingroup\small\setlength{\parindent}{0pt}\hangindent=2em
+[1] 作者. 题名[J]. 刊名, 年, 卷(期): 页码.\par
+\endgroup
+\clearpage\section*{附录 A 支撑材料文件列表}
+\clearpage\section*{附录 B 完整源程序}
+\begin{Verbatim}[fontsize=\scriptsize,breaklines,breakanywhere,numbers=left]
+# 粘贴完整可运行源程序
+\end{Verbatim}
+\end{document}
