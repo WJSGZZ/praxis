@@ -6,7 +6,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import expm_multiply
 from scipy.optimize import brentq
 
-BASE=dict(L=1.5,W=.65,H=.23,body_volume=.060,body_area=1.15,body_temp=34.,air_temp=22.,initial=40.,inlet_temp=50.,rho=1000.,cp=4180.,h_surface=25.,h_wall=6.5,h_body=25.,D=1e-3,body_shape=[.40,.16,.12],foam=1.,horizon=1800.,floor=39.,ceiling=41.,span=1.5)
+BASE=dict(inlet_exclusion=.15,L=1.5,W=.65,H=.23,body_volume=.060,body_area=1.15,body_temp=34.,air_temp=22.,initial=40.,inlet_temp=50.,rho=1000.,cp=4180.,h_surface=25.,h_wall=6.5,h_body=25.,D=1e-3,body_shape=[.40,.16,.12],foam=1.,horizon=1800.,floor=39.,ceiling=41.,span=1.5)
 
 def network(p, grid=(8,4,3)):
     nx,ny,nz=grid; n=nx*ny*nz; step=np.array([p['L']/nx,p['W']/ny,p['H']/nz]); dv=float(np.prod(step))
@@ -37,7 +37,14 @@ def network(p, grid=(8,4,3)):
     for a in path: adv[a,a]-=p['rho']*p['cp']
     for a,b in zip(path,path[1:]): adv[b,a]+=p['rho']*p['cp']
     hot=np.zeros(n); hot[path[0]]=p['rho']*p['cp']*p['inlet_temp']
-    return dict(cap=cap,vol=vol,ha=ha,hb=hb,G=G,adv=adv,hot=hot,xyz=xyz,outlet=path[-1],grid=list(grid))
+    # The ceiling and the spread apply outside a jet-mixing zone around the inlet: the temperature of a point-source inlet cell depends on
+    # the mesh, the water a bather occupies does not. The floor applies to every cell (the energy bound needs that).
+    region=np.linalg.norm(xyz-xyz[path[0]],axis=1)>p['inlet_exclusion']
+    return dict(cap=cap,vol=vol,ha=ha,hb=hb,G=G,adv=adv,hot=hot,xyz=xyz,outlet=path[-1],inlet=path[0],region=region,grid=list(grid))
+
+def view(net,y):
+    """Temperatures in the cells where the ceiling and spread limits apply (all cells outside the inlet jet zone)."""
+    return np.asarray(y)[...,net['region']]
 
 def system(p,net,q):
     B=net['G']+q*net['adv']-np.diag(net['ha']+net['hb'])
@@ -60,7 +67,7 @@ def trajectory(p,net,q_lpm,delay=0.,dt=10.):
 
 def metrics(p,net,t,y,q,delay):
     mean=y@net['vol']/net['vol'].sum()
-    return dict(flow_lpm=float(q),delay_s=float(delay),water_l=float(q*(p['horizon']-delay)/60),min_temp=float(y.min()),max_temp=float(y.max()),max_span=float(np.ptp(y,axis=1).max()),final_mean=float(mean[-1]),final_min=float(y[-1].min()),final_max=float(y[-1].max()))
+    return dict(flow_lpm=float(q),delay_s=float(delay),water_l=float(q*(p['horizon']-delay)/60),min_temp=float(y.min()),max_temp=float(view(net,y).max()),max_span=float(np.ptp(view(net,y),axis=1).max()),inlet_cell_max_temp=float(y[:,net['inlet']].max()),final_mean=float(mean[-1]),final_min=float(y[-1].min()),final_max=float(y[-1].max()))
 
 def candidate(p,net,delay):
     # Locate the first feasible crossing on a stated flow grid; no global monotonicity claim.
@@ -99,7 +106,7 @@ def analytic(p,net):
 def run(output):
     output.mkdir(parents=True,exist_ok=True);p=BASE.copy();net=network(p);a=analytic(p,net);best=search(p,net)
     if not best.get('feasible'):raise RuntimeError('No feasible base policy; preserve failure rather than fabricate a policy')
-    variants={'weak mixing':dict(D=3e-4),'strong mixing':dict(D=3e-3),'moving with added surface loss':dict(D=3e-3,h_surface=30.),'loose comfort':dict(floor=38.),'tight comfort':dict(floor=39.5),'foam':dict(foam=.4),'shallow wide':dict(L=1.7,W=.75,H=(p['L']*p['W']*p['H'])/(1.7*.75)),'deep narrow':dict(L=1.3,W=.6,H=(p['L']*p['W']*p['H'])/(1.3*.6)),'small bath':dict(H=.20),'large bath':dict(H=.27),'larger body':dict(body_volume=.075,body_area=1.35),'long body':dict(body_shape=[.48,.12,.10]),'warmer skin':dict(body_temp=36.),'cooler skin':dict(body_temp=32.),'high loss':dict(h_surface=36.,h_wall=8.5,h_body=40.),'low loss':dict(h_surface=17.,h_wall=4.5,h_body=12.),'stratified':dict(Dz_ratio=.2),'cool supply':dict(inlet_temp=45.)}
+    variants={'weak mixing':dict(D=3e-4),'strong mixing':dict(D=3e-3),'moving with added surface loss':dict(D=3e-3,h_surface=30.),'loose comfort':dict(floor=38.),'tight comfort':dict(floor=39.5),'foam':dict(foam=.4),'shallow wide':dict(L=1.7,W=.75,H=(p['L']*p['W']*p['H'])/(1.7*.75)),'deep narrow':dict(L=1.3,W=.6,H=(p['L']*p['W']*p['H'])/(1.3*.6)),'small bath':dict(H=.20),'large bath':dict(H=.27),'deep bath':dict(H=.35),'larger body':dict(body_volume=.075,body_area=1.35),'long body':dict(body_shape=[.48,.12,.10]),'warmer skin':dict(body_temp=36.),'cooler skin':dict(body_temp=32.),'high loss':dict(h_surface=36.,h_wall=8.5,h_body=40.),'low loss':dict(h_surface=17.,h_wall=4.5,h_body=12.),'stratified':dict(Dz_ratio=.2),'cool supply':dict(inlet_temp=45.)}
     scenarios={}
     for label,changes in variants.items():
         pp={**p,**changes}; nn=network(pp); scenarios[label]=dict(changes=changes,analytic=analytic(pp,nn),policy=search(pp,nn))
@@ -108,7 +115,12 @@ def run(output):
     # Independent policy replay on a finer spatial mesh, with unchanged physical settings.
     fine=network(p,(12,6,4));fine_best=search(p,fine)
     _,yf=trajectory(p,fine,best['flow_lpm'],best['delay_s'],dt=5)
-    grid=dict(fine_policy=fine_best,coarse_policy_on_fine=metrics(p,fine,t,yf,best['flow_lpm'],best['delay_s']))
+    # Convergence of the constrained quantities: the same policy replayed on three meshes, with and without the inlet jet zone.
+    convergence=[]
+    for g in ((8,4,3),(12,6,4),(16,8,6)):
+        ng=network(p,g);_,yg=trajectory(p,ng,best['flow_lpm'],best['delay_s'],dt=10);m=metrics(p,ng,t,yg,best['flow_lpm'],best['delay_s'])
+        convergence.append(dict(grid=list(g),cells=int(np.prod(g)),max_temp=m['max_temp'],max_span=m['max_span'],min_temp=m['min_temp'],inlet_cell_max_temp=m['inlet_cell_max_temp'],excluded_cells=int((~ng['region']).sum())))
+    grid=dict(fine_policy=fine_best,coarse_policy_on_fine=metrics(p,fine,t,yf,best['flow_lpm'],best['delay_s']),convergence=convergence)
     result=dict(parameters=p,grid=net['grid'],analytic=a,policy=best,scenarios=scenarios,mesh=grid,scope='Conditional thermal-network scenarios; no measured bathtub data; candidate-family optimum only.')
     (output/'results.json').write_text(json.dumps(result,indent=2))
     return result

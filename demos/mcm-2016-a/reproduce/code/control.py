@@ -13,9 +13,11 @@ def piecewise(p,net,flows_lpm,dt=5.):
         _,yy=model.evolve(p,net,q/60000.,y,seg,dt);out.append(yy[1:]);y=yy[-1]
     return np.vstack(out)
 
-def margins(p,Y,buffer=0.):
-    """Constraint slack with the numerical reserve; `buffer` adds a further safety distance to all three limits."""
-    return np.r_[Y.min(1)-(p['floor']+RESERVE+buffer),p['ceiling']-buffer-Y.max(1),p['span']-buffer-np.ptp(Y,axis=1)]
+def margins(p,net,Y,buffer=0.):
+    """Constraint slack with the numerical reserve; `buffer` adds a further safety distance to all three limits.
+    The floor holds in every cell; the ceiling and the spread hold outside the inlet jet zone."""
+    V=model.view(net,Y)
+    return np.r_[Y.min(1)-(p['floor']+RESERVE+buffer),p['ceiling']-buffer-V.max(1),p['span']-buffer-np.ptp(V,axis=1)]
 
 def optimize(p,net,segments,starts=None,dt=15.,bound=3.,buffer=0.):
     """Multi-start SLSQP over piecewise-constant flow. Local optimum of a non-convex problem: no global claim."""
@@ -24,10 +26,10 @@ def optimize(p,net,segments,starts=None,dt=15.,bound=3.,buffer=0.):
     best=None
     for x0 in starts:
         r=minimize(lambda x:float(np.sum(x)*seg/60),x0,method='SLSQP',bounds=[(0,bound)]*K,
-                   constraints=[{'type':'ineq','fun':lambda x:margins(p,piecewise(p,net,x,dt),buffer)}],options={'maxiter':300,'ftol':1e-9})
-        Y=piecewise(p,net,r.x,5.);m=margins(p,Y,buffer).min()
+                   constraints=[{'type':'ineq','fun':lambda x:margins(p,net,piecewise(p,net,x,dt),buffer)}],options={'maxiter':300,'ftol':1e-9})
+        Y=piecewise(p,net,r.x,5.);m=margins(p,net,Y,buffer).min()
         if m>=-1e-6 and (best is None or r.fun<best['water_l']):
-            best=dict(segments=K,segment_s=seg,flow_lpm=[float(v) for v in r.x],water_l=float(r.fun),min_margin_c=float(m),min_temp=float(Y.min()),max_temp=float(Y.max()),max_span=float(np.ptp(Y,axis=1).max()))
+            best=dict(segments=K,segment_s=seg,flow_lpm=[float(v) for v in r.x],water_l=float(r.fun),min_margin_c=float(m),min_temp=float(Y.min()),max_temp=float(model.view(net,Y).max()),max_span=float(np.ptp(model.view(net,Y),axis=1).max()))
     return best
 
 RANGES=dict(h_surface=(17.,37.),h_wall=(4.5,8.5),h_body=(12.,40.),D=(3e-4,3e-3),air_temp=(20.,26.),body_temp=(32.,36.))
@@ -45,14 +47,15 @@ def literature_ranges(base,samples=64,seed=7):
     return dict(ranges=RANGES,samples=samples,feasible=len(ok),water_quantiles_l={q:float(np.quantile(water,q)) for q in (.05,.25,.5,.75,.95)} if len(ok) else {},spearman_with_water=corr,rows=rows)
 
 
-def _physical_slack(p,Y):
+def _physical_slack(p,net,Y):
     """Distance to the stated limits themselves (no reserve): the quantity a user actually experiences."""
-    return float(min(Y.min()-p['floor'],p['ceiling']-Y.max(),p['span']-np.ptp(Y,axis=1).max()))
+    V=model.view(net,Y)
+    return float(min(Y.min()-p['floor'],p['ceiling']-V.max(),p['span']-np.ptp(V,axis=1).max()))
 
 def execution_tolerance(p,net,flows,draws=200,seed=11):
     """How wrong may the tap be before a limit is crossed? Uniform scale error, random per-segment error, and the most critical segment."""
     flows=np.asarray(flows,float);rng=np.random.default_rng(seed)
-    slack=lambda f:_physical_slack(p,piecewise(p,net,np.clip(f,0,None),5.))
+    slack=lambda f:_physical_slack(p,net,piecewise(p,net,np.clip(f,0,None),5.))
     nominal=slack(flows)
     scales={f"{k:.2f}":slack(flows*k) for k in (.8,.9,1.,1.1,1.2)}
     def edge(lo,hi):  # bisection on the scale factor where slack changes sign; None when the sign does not change on the bracket

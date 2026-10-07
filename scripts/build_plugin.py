@@ -37,7 +37,7 @@ TREES = {
     'demos/mcm-2016-a/reproduce/reference': {'.npz', '.json'},
 }
 # Focused skills ship next to the core skill; links to the core are rewritten.
-FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-dialogue', 'praxis-report')
+FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
 LINK_TO_CORE = ('](../../', '](../praxis/')
 
 

@@ -21,7 +21,7 @@ for q in best['flow_lpm']:
     sol=solve_ivp(lambda t,v:rhs(t,v,q/60000.),(0,seg),y,method='RK45',rtol=2e-9,atol=2e-10,t_eval=np.arange(1.,seg+.5,1.),max_step=5.)
     samples.append(sol.y.T);y=sol.y[:,-1]
 Y=np.vstack(samples);ref=control.piecewise(p,net,best['flow_lpm'],1.)
-independent=dict(min_temp=float(Y.min()),max_temp=float(Y.max()),max_span=float(np.ptp(Y,axis=1).max()),max_difference_c=float(np.abs(Y[:len(ref)]-ref).max()) if Y.shape==ref.shape else None,
+independent=dict(min_temp=float(Y.min()),max_temp=float(model.view(net,Y).max()),max_span=float(np.ptp(model.view(net,Y),axis=1).max()),max_difference_c=float(np.abs(Y[:len(ref)]-ref).max()) if Y.shape==ref.shape else None,
                  water_l=float(sum(best['flow_lpm'])*seg/60))
 checks=[dict(name='control_independent_RK45_replay',passed=bool(independent['min_temp']>=p['floor']-.002 and independent['max_temp']<=p['ceiling']+.002 and independent['max_span']<=p['span']+.002 and independent['max_difference_c'] is not None and independent['max_difference_c']<2e-6),evidence=independent),
         dict(name='control_respects_energy_lower_bound',passed=bool(best['water_l']>=a['energy_lower_bound_l']-1e-9),evidence=dict(water_l=best['water_l'],bound_l=a['energy_lower_bound_l']))]

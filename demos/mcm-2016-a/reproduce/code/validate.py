@@ -13,6 +13,15 @@ from scipy.integrate import solve_ivp
 import model
 
 
+def jet_zone_mask(p, grid):
+    """Cells outside the inlet jet zone, from the geometry alone (independent of the model's own mask)."""
+    nx, ny, nz = grid
+    dx, dy, dz = p['L']/nx, p['W']/ny, p['H']/nz
+    inlet = np.array([.5*dx, (ny//2+.5)*dy, (nz-.5)*dz])
+    centres = np.array([[(i+.5)*dx, (j+.5)*dy, (k+.5)*dz] for i in range(nx) for j in range(ny) for k in range(nz)])
+    return np.sqrt(((centres-inlet)**2).sum(axis=1)) > p['inlet_exclusion']
+
+
 def validate(results_path):
     result = json.loads(results_path.read_text())
     p = result['parameters']
@@ -112,8 +121,9 @@ def validate(results_path):
     check('independent_RK45_vs_archived_matrix_exponential', error < 2e-6,
           maximum_temperature_difference_c=error, tolerance_c=2e-6,
           independence='Same physical coefficients; independently assembled RHS and adaptive integration')
-    minimum, maximum = float(states.min()), float(states.max())
-    span = float(np.ptp(states, axis=1).max())
+    zone = jet_zone_mask(p, tuple(result['grid']))
+    minimum, maximum = float(states.min()), float(states[:, zone].max())
+    span = float(np.ptp(states[:, zone], axis=1).max())
     check('one_second_sampled_policy_constraints', minimum >= p['floor']-.002 and maximum <= p['ceiling']+.002 and span <= p['span']+.002,
           minimum_c=minimum, maximum_c=maximum, max_span_c=span,
           floor_c=p['floor'], ceiling_c=p['ceiling'], span_limit_c=p['span'],
@@ -246,8 +256,9 @@ def validate(results_path):
         cy = segment(0.,switch,np.full(len(nn['cap']),pp['initial']),0.)
         hy = segment(switch,pp['horizon'],cy[-1],flow)
         yy = np.vstack([cy,hy[1:]])
-        independent_metrics = dict(min_temp=float(yy.min()),max_temp=float(yy.max()),
-            max_span=float(np.ptp(yy,axis=1).max()),
+        zone = jet_zone_mask(pp, tuple(result['grid']))
+        independent_metrics = dict(min_temp=float(yy.min()),max_temp=float(yy[:,zone].max()),
+            max_span=float(np.ptp(yy[:,zone],axis=1).max()),
             final_mean=float(yy[-1]@nn['vol']/nn['vol'].sum()),
             final_min=float(yy[-1].min()),final_max=float(yy[-1].max()))
         deviations = {key:float(abs(selected[key]-value)) for key,value in independent_metrics.items()}
