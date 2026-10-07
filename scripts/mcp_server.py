@@ -17,7 +17,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from modeling import decision, decision_models, dynamics, epidemic, experiment, forecast, graph, lessons, optimize, pde, queueing, routes, sensitivity, structure, weights  # noqa: E402
 from scripts import audit_data, check_references, literature  # noqa: E402
 
-VERSION = '0.1.0'
+def _project_version():
+    """The single source of the version number is pyproject.toml."""
+    import tomllib
+    return tomllib.loads((Path(__file__).resolve().parents[1] / 'pyproject.toml').read_text())['project']['version']
+
+
+VERSION = _project_version()
 FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
              'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum}
 
@@ -127,7 +133,13 @@ def _bc(spec):
 def _diffusion(a):
     r = pde.solve_diffusion(a['length'], a.get('cells', 100), a['k'], a['rho_c'], _profile(a['initial']), a['t_end'], a.get('steps', 200),
                             left=_bc(a.get('left')), right=_bc(a.get('right')), source=_profile(a['source']) if a.get('source') else None, theta=a.get('theta', .5))
-    return {k: (v.tolist() if hasattr(v, 'tolist') else v) for k, v in r.items()}
+    out = {k: (v.tolist() if hasattr(v, 'tolist') else v) for k, v in r.items()}
+    if a.get('points'):
+        ends = [None, None]
+        for i, bc in enumerate((_bc(a.get('left')), _bc(a.get('right')))):
+            ends[i] = float(bc[1]) if bc[0] == 'dirichlet' else None
+        out['values_at'] = pde.values_at(r, a['points'], left=ends[0], right=ends[1])
+    return out
 
 
 def _equilibria(a):
@@ -162,11 +174,11 @@ TOOLS = dict([
     _tool('check_references', 'Check each reference line with a DOI against Crossref (title and year); lines without a DOI are reported as no_doi. Needs internet.',
           {'references': {'type': 'array', 'items': {'type': 'string'}}, 'mailto': {'type': 'string'}}, ['references'],
           lambda a: check_references.check(a['references'], a.get('mailto', 'unknown@example.org'))),
-    _tool('solve_lp', 'Linear program (HiGHS) with a duality-gap certificate. bounds default to x>=0.',
-          {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'maximize': {'type': 'boolean'}}, ['c'],
+    _tool('solve_lp', 'Linear program (HiGHS) with a duality-gap certificate. Rows: A_ub x <= b_ub, A_ge x >= b_ge, A_eq x = b_eq; bounds default to x >= 0. Shadow prices (change in the optimal objective per unit increase of the right-hand side) are returned as ineq_duals (<= rows) and ge_duals (>= rows).',
+          {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_ge': MATRIX, 'b_ge': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'maximize': {'type': 'boolean'}}, ['c'],
           lambda a: optimize.solve_lp(a['c'], **{k: v for k, v in a.items() if k != 'c'})),
-    _tool('solve_milp', 'Mixed-integer linear program (HiGHS) with proved bound and gap. integrality: 1 for integer variables.',
-          {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'integrality': SERIES,
+    _tool('solve_milp', 'Mixed-integer linear program (HiGHS) with proved bound and gap. Rows: A_ub x <= b_ub, A_ge x >= b_ge, A_eq x = b_eq. integrality: 1 for integer variables.',
+          {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_ge': MATRIX, 'b_ge': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'integrality': SERIES,
            'maximize': {'type': 'boolean'}, 'time_limit': _num('seconds')}, ['c'],
           lambda a: optimize.solve_milp(a['c'], **{k: v for k, v in a.items() if k != 'c'})),
     _tool('search_literature', 'Search OpenAlex (free, no key) for papers: title, year, DOI, citations and a free full-text link when one exists. Needs internet.',
@@ -259,7 +271,8 @@ TOOLS = dict([
           lambda a: dict(lessons=lessons.search_lessons(Path(a['path']), a.get('query', ''), tags=a.get('tags'), limit=a.get('limit', 5)), patterns=lessons.patterns(Path(a['path'])))),
     _tool('solve_diffusion', 'One-dimensional heat/diffusion equation rho_c u_t = (k u_x)_x + s by finite volumes (theta scheme), with an energy account. Boundaries: ["dirichlet", value], ["neumann", flux_in], ["robin", h, u_inf].',
           {'length': _num(), 'cells': {'type': 'integer'}, 'k': _num(), 'rho_c': _num(), 'initial': {'type': 'string', 'description': 'expression in x'}, 't_end': _num(), 'steps': {'type': 'integer'},
-           'left': {'type': 'array'}, 'right': {'type': 'array'}, 'source': {'type': 'string', 'description': 'expression in x (W/m^3)'}, 'theta': _num()},
+           'left': {'type': 'array'}, 'right': {'type': 'array'}, 'source': {'type': 'string', 'description': 'expression in x (W/m^3)'}, 'theta': _num(),
+           'points': {'type': 'array', 'items': {'type': 'number'}, 'description': 'positions at which to return the temperature (linear interpolation; Dirichlet end values are used at the ends)'}},
           ['length', 'k', 'rho_c', 'initial', 't_end'], _diffusion),
     _tool('grid_convergence_index', 'Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity.',
           {'f_fine': _num(), 'f_medium': _num(), 'f_coarse': _num(), 'refinement_ratio': _num(), 'safety_factor': _num()}, ['f_fine', 'f_medium', 'f_coarse', 'refinement_ratio'],
@@ -285,6 +298,32 @@ TOOLS = dict([
           {'F': MATRIX, 'H': MATRIX, 'Q': MATRIX, 'R': MATRIX, 'x0': SERIES, 'P0': MATRIX, 'observations': {'type': 'array'}}, ['F', 'H', 'Q', 'R', 'x0', 'P0', 'observations'],
           lambda a: dynamics.kalman_filter(a['F'], a['H'], a['Q'], a['R'], a['x0'], a['P0'], a['observations'])),
 ])
+
+
+# One minimal, runnable call per tool that needs a shape to be guessed; a test calls every example, so they stay correct.
+EXAMPLES = {
+    'solve_lp': dict(c=[2, 3], A_ge=[[1, 1]], b_ge=[4]),
+    'solve_milp': dict(c=[-1, -1], A_ub=[[2, 2]], b_ub=[5], integrality=[1, 1], bounds=[[0, 10], [0, 10]]),
+    'probe_structure': dict(property='convexity', expression='x**2 + y**2', names=['x', 'y'], bounds=[[-1, 1], [-1, 1]]),
+    'dimensional_analysis': dict(matrix=[[0, 0, 0, 1], [0, 1, 1, 0], [1, 0, -2, 0]], names=['T', 'L', 'g', 'm']),
+    'check_total_unimodularity': dict(matrix=[[1, 1, 0], [-1, 0, 1], [0, -1, -1]]),
+    'route_graph': dict(question='Ship goods at least cost', operations=[dict(op='add_path', key='lp', title='linear program'), dict(op='add_path', key='greedy', title='greedy rule'),
+                                                                         dict(op='kill', key='greedy', reason='no optimality guarantee')]),
+    'test_conjecture': dict(lhs='x**2', rhs='x', relation='<=', names=['x'], bounds=[[0, 3]]),
+    'find_counterexample': dict(claim='isprime(n*n + n + 41)', names=['n'], domain=[['int', 0, 100]]),
+    'guess_sequence': dict(sequence=[1, 3, 11, 41, 153, 571, 2131, 7953, 29681, 110771, 413403, 1542841], holdout=3),
+    'check_recurrence': dict(sequence=[1, 3, 11, 41, 153, 571, 2131, 7953, 29681, 110771, 413403, 1542841], coefficients=[4, -1], order_bound=8),
+    'find_relation': dict(value='zeta(2)', constants={'pi2': 'pi**2'}),
+    'solve_diffusion': dict(length=1, k=1, rho_c=1, initial='sin(3.141592653589793*x)', t_end=0.1, cells=100, steps=100, left=['dirichlet', 0], right=['dirichlet', 0], points=[0.5]),
+    'matrix_game': dict(payoff=[[3, 2], [1, 4]]),
+    'equilibria': dict(rhs=['x*(1-x)'], names=['x'], bounds=[[-0.5, 2]]),
+    'sir_fit': dict(infected=[10, 14, 20, 28, 40, 57, 80, 112, 156, 215], population=1000000),
+    'lesson_search': dict(path='planning/lessons.jsonl', query='recurrence'),
+    'eoq': dict(demand=1200, order_cost=50, holding_cost=2),
+    'newsvendor': dict(price=10, cost=6, salvage=2, mean=100, sd=20),
+}
+for _name, _example in EXAMPLES.items():
+    TOOLS[_name]['schema']['examples'] = [_example]
 
 
 def _json(value):

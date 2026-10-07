@@ -9,13 +9,30 @@ def _bounds(bounds, n):
     return [tuple(b) for b in bounds]
 
 
-def solve_lp(c, *, A_ub=None, b_ub=None, A_eq=None, b_eq=None, bounds=None, maximize=False, tol=1e-7):
+def _with_ge(A_ub, b_ub, A_ge, b_ge):
+    """Append rows A_ge x >= b_ge to the <= rows (as -A_ge x <= -b_ge); returns the merged matrices and the number of original <= rows."""
+    n_ub = 0 if b_ub is None else len(b_ub)
+    if A_ge is None:
+        return A_ub, b_ub, n_ub
+    A = -np.asarray(A_ge, float)
+    b = -np.asarray(b_ge, float)
+    if A_ub is not None:
+        A, b = np.vstack([np.asarray(A_ub, float), A]), np.r_[np.asarray(b_ub, float), b]
+    return A, b, n_ub
+
+
+def solve_lp(c, *, A_ub=None, b_ub=None, A_ge=None, b_ge=None, A_eq=None, b_eq=None, bounds=None, maximize=False, tol=1e-7):
     """Solve an LP with HiGHS and compare the primal objective with the dual objective.
+
+    Constraints: A_ub x <= b_ub, A_ge x >= b_ge, A_eq x = b_eq. Shadow prices are reported as the change in the optimal objective
+    per unit increase of the right-hand side: `ineq_duals` for the <= rows, `ge_duals` for the >= rows (non-negative for a binding
+    >= row of a minimisation, as in textbooks).
 
     A zero gap with finite bounds certifies optimality of this LP; it says nothing about whether
     the LP represents the real problem."""
     c = np.asarray(c, float)
     sign = -1. if maximize else 1.
+    A_ub, b_ub, n_ub = _with_ge(A_ub, b_ub, A_ge, b_ge)
     result = linprog(sign * c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=_bounds(bounds, len(c)), method='highs')
     out = dict(status=int(result.status), message=result.message, success=bool(result.success))
     if not result.success:
@@ -33,14 +50,16 @@ def solve_lp(c, *, A_ub=None, b_ub=None, A_eq=None, b_eq=None, bounds=None, maxi
     gap = abs(result.fun - dual)
     out.update(x=result.x.tolist(), objective=float(sign * result.fun), dual_objective=float(sign * dual),
                duality_gap=float(gap), certified=bool(gap <= tol * max(1., abs(result.fun))),
-               ineq_duals=(result.ineqlin.marginals * sign).tolist() if A_ub is not None else None)
+               ineq_duals=(result.ineqlin.marginals[:n_ub] * sign).tolist() if n_ub else None,
+               ge_duals=(-result.ineqlin.marginals[n_ub:] * sign).tolist() if A_ge is not None else None)
     return out
 
 
-def solve_milp(c, *, A_ub=None, b_ub=None, A_eq=None, b_eq=None, bounds=None, integrality=None, maximize=False, time_limit=None):
-    """Mixed-integer program via HiGHS. Reports the proved bound and the remaining gap, not just the incumbent."""
+def solve_milp(c, *, A_ub=None, b_ub=None, A_ge=None, b_ge=None, A_eq=None, b_eq=None, bounds=None, integrality=None, maximize=False, time_limit=None):
+    """Mixed-integer program via HiGHS (A_ub x <= b_ub, A_ge x >= b_ge, A_eq x = b_eq). Reports the proved bound and the remaining gap, not just the incumbent."""
     c = np.asarray(c, float)
     n = len(c)
+    A_ub, b_ub, _ = _with_ge(A_ub, b_ub, A_ge, b_ge)
     sign = -1. if maximize else 1.
     constraints = []
     if A_ub is not None:

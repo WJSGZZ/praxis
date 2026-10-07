@@ -59,7 +59,8 @@ def check_monotone(f: Callable, bounds: Sequence[Sequence[float]], variable: int
         kind = 'nonincreasing'
     else:
         kind = 'not monotone'
-    out = dict(kind=kind, proved=(kind == 'not monotone'), trials=int(trials))
+    out = dict(kind=kind, proved=(kind == 'not monotone'), trials=int(trials),
+               note='A violation proves the function is not monotone; otherwise this is evidence on sampled points. Prove monotonicity by the sign of the derivative.')
     if kind == 'not monotone':
         i = int(np.argmax(np.abs(d)))
         out['witness'] = dict(low_point=base[i].tolist(), high_point=up[i].tolist(), change=float(d[i]))
@@ -109,8 +110,10 @@ def check_power_law(f: Callable, bounds: Sequence[Sequence[float]], *, trials: i
     ex = np.array([scaling_exponents(f, p)['exponents'] for p in pts])
     spread = ex.max(0) - ex.min(0)
     if (spread < tol).all():
-        return dict(power_law=True, proved=False, exponents=[float(v) for v in ex.mean(0)], max_spread=float(spread.max()))
-    return dict(power_law=False, proved=True, exponent_range=[[float(a), float(b)] for a, b in zip(ex.min(0), ex.max(0))])
+        return dict(power_law=True, proved=False, exponents=[float(v) for v in ex.mean(0)], max_spread=float(spread.max()),
+                    criterion=f'elasticities equal at all {trials} sampled points within {tol:g}')
+    return dict(power_law=False, proved=True, exponent_range=[[float(a), float(b)] for a, b in zip(ex.min(0), ex.max(0))],
+                criterion=f'elasticities equal at all {trials} sampled points within {tol:g}')
 
 
 def check_invariant(rhs: Callable, invariant: Callable, bounds: Sequence[Sequence[float]], *, trials: int = 500, step: float = 1e-6,

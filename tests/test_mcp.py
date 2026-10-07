@@ -124,3 +124,20 @@ def test_recurrence_tools_and_route_modes_through_the_server():
     assert g['graph']['paths']['b']['status'] == 'chosen' and g['graph']['mode'] == 'standard'
     kept = server.call('route_graph', dict(graph=g['graph'], operations=[dict(op='keep_result', key='r', statement='x', status='proved_finite_check')]))
     assert kept['graph']['partial_results']['r']['status'] == 'proved_finite_check'
+
+
+def test_server_version_comes_from_pyproject():
+    import tomllib
+    from scripts import mcp_server as server
+    project = tomllib.loads((Path(__file__).resolve().parents[1] / 'pyproject.toml').read_text())['project']['version']
+    assert server.VERSION == project
+
+
+def test_every_tool_example_runs(tmp_path):
+    from scripts import mcp_server as server
+    lessons = tmp_path / 'planning' / 'lessons.jsonl'
+    for name, example in server.EXAMPLES.items():
+        arguments = {**example, 'path': str(lessons)} if 'path' in example else example
+        result = server.call(name, arguments)
+        assert result is not None, name
+    assert 'examples' in server.TOOLS['solve_lp']['schema']

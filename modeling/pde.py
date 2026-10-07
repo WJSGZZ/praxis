@@ -76,11 +76,29 @@ def solve_diffusion(length: float, cells: int, k: float, rho_c: float, initial: 
                 energy_residual=stored - stored0 - boundary_energy - source_energy)
 
 
+def values_at(result: dict, points, *, left: float | None = None, right: float | None = None) -> list[float]:
+    """Linear interpolation of a cell-centred solution at points. The cell centres exclude the ends, so give the boundary values (left, right)
+    for Dirichlet ends; without them, points outside the first and last centre are rejected."""
+    x, u = np.asarray(result['x'], float), np.asarray(result['u'], float)
+    length = float(x[-1] + x[0])
+    xs, us = list(x), list(u)
+    if left is not None:
+        xs, us = [0.0] + xs, [left] + us
+    if right is not None:
+        xs, us = xs + [length], us + [right]
+    pts = np.asarray(points, float)
+    if (pts < xs[0] - 1e-12).any() or (pts > xs[-1] + 1e-12).any():
+        raise ValueError('A point lies outside the interpolation range; pass the boundary values left/right')
+    return np.interp(pts, xs, us).tolist()
+
+
 def convergence_study(solver: Callable[[int], np.ndarray], exact: np.ndarray | Callable[[np.ndarray], np.ndarray], cell_counts=(20, 40, 80, 160)) -> dict:
     """Max-norm errors of solver(cells) against an exact function of x, and the observed orders between successive refinements.
 
     solver(cells) returns (x, u). An observed order near the scheme's design order is evidence that the code solves the stated
-    equation; an order near zero means the error is not coming from the mesh."""
+    equation; an order near zero means the error is not coming from the mesh. Refine space and time separately (a fine time step while
+    refining the mesh, then a fine mesh while refining the step) or tie dt to dx for a second-order scheme; point values read off by
+    interpolation add their own error, so use a mesh point or a higher-order interpolant when the order looks wrong."""
     errors = []
     for n in cell_counts:
         x, u = solver(n)

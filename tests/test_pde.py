@@ -67,3 +67,12 @@ def test_grid_convergence_index_recovers_a_planted_order_and_limit():
         pde.grid_convergence_index(1.0, 1.2, 1.1, 2.0)       # oscillatory, not monotone
     with pytest.raises(ValueError):
         pde.grid_convergence_index(1.0, 1.3, 1.4, 2.0)       # successive changes grow on refinement: observed order negative
+
+
+def test_values_at_interpolates_with_boundary_values_and_rejects_outside_points():
+    r = pde.solve_diffusion(1.0, 200, 1.0, 1.0, lambda x: np.sin(np.pi * x), 0.05, 100, left=('dirichlet', 0.), right=('dirichlet', 0.))
+    exact = np.exp(-np.pi ** 2 * 0.05) * np.sin(np.pi * 0.37)
+    assert abs(pde.values_at(r, [0.37], left=0., right=0.)[0] - exact) < 1e-4
+    assert abs(pde.values_at(r, [0.0, 1.0], left=0., right=0.)[0]) < 1e-12
+    with pytest.raises(ValueError):
+        pde.values_at(r, [0.0])

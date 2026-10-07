@@ -10,9 +10,13 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 按用户目标，把原始问题推进为有相称证据的回答。按实际场景、团队能力和交付时间安排工作；以完成为首要目标时，优先可交付的完整成果，复杂度服从剩余时间。以任务为工作单元，问题、模型、验证和交付使用相同任务 ID；不按外部项目来源拼流程，也不按算法库现有功能选题。
 
+## 小任务直通
+
+只要一个数或一个判断，且有成熟标准解法（单个线性规划、一道排队或热传导的数值题、一个结构判断）时：在 [model-library.md](references/model-library.md) 找到对应一行 → 用工具（`uv run --locked python -m scripts.mcp_server --list`，`--describe 工具名` 看输入格式和示例）→ 用手算或独立方法核对 → 回答里写一行“为什么选它、放弃了什么、怎样核对”。不建案例、不写 tasks.md、不读 agent-compatibility。工具自带的证书（对偶间隙、收敛阶、反例）是验证的一部分，结论强度仍按 [methods.md](references/methods.md)。
+
 ## 接续与统一入口
 
-首次在新宿主执行工具前读 [references/agent-compatibility.md](references/agent-compatibility.md)，核对文件、终端和文档能力；不假设专有工具或界面存在。解析本文件真实路径得到技能目录 BUNDLE；用户工作项目 WORKSPACE 与技能目录可以不同。先读工作项目规则与已有状态，检查 Git 和有效改动，接续已有案例。没有题目时索取原文或文件，先做不依赖题目的环境检查，不造题或结果。PDF 必须查看原页的图表和公式；比赛规则由当前项目与当届官方要求提供。
+宿主不明或工具调用失败时，读 [references/agent-compatibility.md](references/agent-compatibility.md)，核对文件、终端和文档能力；不假设专有工具或界面存在。解析本文件真实路径得到技能目录 BUNDLE；用户工作项目 WORKSPACE 与技能目录可以不同。先读工作项目规则与已有状态，检查 Git 和有效改动，接续已有案例。没有题目时索取原文或文件，先做不依赖题目的环境检查，不造题或结果。PDF 必须查看原页的图表和公式；比赛规则由当前项目与当届官方要求提供。
 
 读 [references/methods.md](references/methods.md)：这是唯一的推理主线，定义各环节的输入、产出、推进条件、方法选择与失败返回位置。按当前请求进入和结束，不默认每次全流程，不要求逐步审批。
 

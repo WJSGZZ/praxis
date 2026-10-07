@@ -116,3 +116,15 @@ def test_assignment_matches_brute_force_and_tsp_is_bracketed():
     optimum = min(sum(dist[t[i], t[(i + 1) % 7]] for i in range(7)) for t in ((0,) + p for p in itertools.permutations(range(1, 7))))
     r = tsp(dist)
     assert r['lower_bound'] <= optimum + 1e-9 <= r['length'] + 2e-9
+
+
+def test_lp_greater_equal_rows_and_shadow_prices():
+    from modeling import optimize
+    # min 2x + 3y s.t. x + y >= 4 : optimum x = 4, y = 0, value 8; one more unit of demand costs 2 (the textbook dual y1 = 2)
+    r = optimize.solve_lp([2, 3], A_ge=[[1, 1]], b_ge=[4])
+    assert abs(r['objective'] - 8) < 1e-9 and abs(r['ge_duals'][0] - 2) < 1e-9 and r['certified']
+    # mixed row types: max x + y s.t. x <= 3 (<=), x + y >= 1, y <= 2 (<=): value 5, shadow price of x <= 3 is 1
+    r = optimize.solve_lp([1, 1], A_ub=[[1, 0], [0, 1]], b_ub=[3, 2], A_ge=[[1, 1]], b_ge=[1], maximize=True)
+    assert abs(r['objective'] - 5) < 1e-9 and np.allclose(r['ineq_duals'], [1, 1]) and abs(r['ge_duals'][0]) < 1e-9
+    m = optimize.solve_milp([-1, -1], A_ub=[[2, 2]], b_ub=[5], A_ge=[[1, 0]], b_ge=[1], integrality=[1, 1], bounds=[(0, 10), (0, 10)])
+    assert abs(m['objective'] + 2) < 1e-9 and m['x'][0] >= 1 - 1e-9
