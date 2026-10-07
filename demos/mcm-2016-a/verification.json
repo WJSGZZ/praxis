@@ -74,6 +74,7 @@
     "archived": "reproduce/reference/extended.json",
     "schedules": "3-, 6- and 12-segment piecewise-constant, multi-start SLSQP, local optima",
     "sobol_draws": 64,
-    "draws_with_accepted_policy": 37
+    "draws_with_accepted_policy": 37,
+    "execution_tolerance": "uniform scaling, 200 random 10%/20% segment errors, one-segment +/-20%, buffer price at 0, 0.1, 0.2, 0.3 C on 6 segments"
   }
 }

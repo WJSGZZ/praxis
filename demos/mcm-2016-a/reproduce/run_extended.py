@@ -25,6 +25,14 @@ independent=dict(min_temp=float(Y.min()),max_temp=float(Y.max()),max_span=float(
                  water_l=float(sum(best['flow_lpm'])*seg/60))
 checks=[dict(name='control_independent_RK45_replay',passed=bool(independent['min_temp']>=p['floor']-.002 and independent['max_temp']<=p['ceiling']+.002 and independent['max_span']<=p['span']+.002 and independent['max_difference_c'] is not None and independent['max_difference_c']<2e-6),evidence=independent),
         dict(name='control_respects_energy_lower_bound',passed=bool(best['water_l']>=a['energy_lower_bound_l']-1e-9),evidence=dict(water_l=best['water_l'],bound_l=a['energy_lower_bound_l']))]
-out=dict(parameters=p,provenance=literature.provenance(),constant_rate=constant,frontier=frontier,analytic=a,control=dict(runs=runs,best=best,independent=independent),literature_ranges=control.literature_ranges(p),checks=checks)
+# Execution tolerance of the optimized schedule, and the water price of buying a safety buffer (6 segments keeps the run short).
+tolerance=control.execution_tolerance(p,net,best['flow_lpm'])
+price=[]
+for buffer in (0.,.1,.2,.3):
+    r=control.optimize(p,net,6,buffer=buffer)
+    price.append(dict(buffer_c=buffer,water_l=None if r is None else r['water_l'],flow_lpm=None if r is None else r['flow_lpm']))
+robust=next((x for x in price if x['buffer_c']==.1 and x['water_l'] is not None),None)
+robust_tolerance=control.execution_tolerance(p,net,robust['flow_lpm']) if robust else None
+out=dict(parameters=p,provenance=literature.provenance(),constant_rate=constant,frontier=frontier,analytic=a,control=dict(runs=runs,best=best,independent=independent,tolerance=tolerance,buffer_price=price,robust_tolerance=robust_tolerance),literature_ranges=control.literature_ranges(p),checks=checks)
 (HERE/'reproduced').mkdir(exist_ok=True);(HERE/'reproduced/extended.json').write_text(json.dumps(out,indent=1))
 print(json.dumps(dict(constant=constant['water_l'],control=[r and round(r['water_l'],3) for r in runs],checks=[c['passed'] for c in checks],feasible=out['literature_ranges']['feasible'],q=out['literature_ranges']['water_quantiles_l']),indent=1))
