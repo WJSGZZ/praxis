@@ -16,7 +16,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 </div>
 
-**Praxis equips AI agents for mathematical modeling**, combining a portable skill, computing scripts, evidence workflows, and plugin export. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
+**Praxis is an agent plugin for mathematical modeling**: one coordinating skill for whole problems, four focused skills you can call on their own, and the scripts and evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
 
 Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
@@ -73,6 +73,8 @@ git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
 
 For Claude Code, use `~/.claude/skills/praxis`. See [Agent compatibility](#agent-compatibility) for other locations. Enable only one copy per host; existing installations are not migrated automatically.
 
+This installs the entry skill, which reads the focused skills by path. To have a host discover all four on their own, export the plugin described under "Tools and plugins".
+
 ### 2. Prepare the computing environment
 
 Running scripts requires **Python 3.12**, [uv](https://docs.astral.sh/uv/), and a host with local file and terminal access:
@@ -99,18 +101,19 @@ Or start with a focused request:
 
 This is the English project overview. The skill instructions and most detailed references are currently in Chinese; an English README does not imply a fully translated instruction set.
 
-## Capabilities
+## Skills
 
-| Capability | What it provides | Reference |
+The entry skill takes a problem end to end; each focused skill handles one kind of request. If you only need one thing, call that skill instead of running the whole workflow.
+
+| Skill | Ask it to | What it covers |
 |---|---|---|
-| Problem analysis | Requirements, variables, constraints, success criteria, and task dependencies | [Shared methodology](references/methods.md) |
-| Models and mathematical reasoning | Baselines and necessary extensions; conditional guidance on dimensions, invariance, identifiability, and optimization structure | [Mathematical reasoning](references/mathematical-reasoning.md) |
-| Data and computation | CSV/Excel audits, preserved inputs, reproducible runs, Sobol analysis, and TOPSIS evaluation | [Data and computation](references/data-computing.md) |
-| Independent validation | Appropriate comparisons and checks, failed-run records, stale-evidence detection, and numerical task evidence links | [Execution contract](references/automation.md) |
-| Visualization and writing | Figures, arguments, and reports grounded in valid results, with consistent numbers, units, and sources | [Visualization](references/visualization.md) · [Writing](references/writing.md) |
-| Coordination and delivery | Starting strategies for one-, two-, and three-person teams; ownership, handoffs, fallback approaches, and delivery reserves | [Team adaptation](references/context-and-team.md) · [Solo delivery](references/solo-delivery.md) |
+| [`praxis`](SKILL.md) | "Take this problem all the way" | The shared line of reasoning, the task record, team and deadline coordination, handoffs |
+| [`praxis-model`](skills/praxis-model/SKILL.md) | "How should I model this? Where do the parameters come from?" | Problem definition, assumptions and parameter grounding, route and model choice, identifiability and optimization structure |
+| [`praxis-compute`](skills/praxis-compute/SKILL.md) | "Run it and keep it reproducible" | CSV/Excel audit, preserved inputs, model and validator runs, stale-result detection, evidence links |
+| [`praxis-verify`](skills/praxis-verify/SKILL.md) | "Can I trust this? Did I claim too much?" | Independent checks, bounds and optimality, sensitivity, strength of each claim |
+| [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Paper structure, propositions and proofs, figures, sources and AI disclosure, PDF checks and freezing |
 
-Capabilities follow the same reasoning workflow; you do not have to activate every capability for every request. See [Capability handoffs](references/capabilities.md) for shared inputs and outputs.
+All five share the [methodology](references/methods.md) and one task record; see [capability handoffs](references/capabilities.md) for how work passes between them.
 
 ### Competitions are one application
 
@@ -159,7 +162,7 @@ See the [Execution contract](references/automation.md) for the complete interfac
 </details>
 
 <details>
-<summary><strong>Plugin: export from the same maintained source</strong></summary>
+<summary><strong>Plugin: export all five skills from one source</strong></summary>
 
 Run from the repository root. The output directory must not already exist:
 
@@ -167,7 +170,7 @@ Run from the repository root. The output directory must not already exist:
 uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 ```
 
-The export includes the skill, scripts, references, locked dependencies, both README versions, and license notices. Set up the environment explicitly and keep user materials in the workspace.
+The export holds all five skills (`skills/praxis` carries every reference and script; the four focused skills sit beside it), plus the scripts, references, locked dependencies, both README versions, and license notices. Set up the environment explicitly and keep user materials in the workspace.
 
 The skill is the cross-host entry point. The current plugin export follows OpenAI's plugin format, which does not imply universal plugin installation across hosts. Directory export is implemented; host installation and discovery remain unverified, and the plugin has not been published to the official directory.
 
@@ -180,7 +183,7 @@ See [Architecture](ARCHITECTURE.md) for the layout and conditions for future ext
 | Status | Current evidence |
 |---|---|
 | **Validated** | 45 local tool tests have previously passed, covering analytical answers, input protection, failed and stale evidence, PDF helpers, and self-contained plugin export; synthetic exercises and complete historical CUMCM and MCM cases are recorded |
-| **Implemented guidance; field testing pending** | Context and team adaptation, solo deadline coordination, capability handoffs, and writing guidance |
+| **Implemented guidance; field testing pending** | Context and team adaptation, solo deadline coordination, capability handoffs, writing guidance, and the focused skills triggering on their own |
 | **Not yet completed** | Full cases in other agent hosts, real team competition runs, a complete three-day exercise, and host plugin installation tests |
 
 Passing automatic checks does not establish real-world model validity. Weight-scenario shares are not objective probabilities, and execution logs are not complete AI conversations. Review task coverage against the original problem; PDF formulas, figures, and layout still need visual inspection. Large files and unsupported formats are explicitly marked for deferred auditing.

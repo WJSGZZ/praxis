@@ -2,6 +2,12 @@
 
 Praxis 的目标是帮助个人或团队完成有证据的建模成果，适用于研究、课程、应用与比赛。赛事规则、实际人数和分工按 references/context-and-team.md 配置，单人策略为条件分支。按职责组织能力，而不是按上游项目、算法数量或目录大小组织。统一推理主线仍是 references/methods.md；插件只改变分发方式，不增加必经步骤。通用 Skill 与宿主插件不同：当前插件导出按 OpenAI 文档实现，不代表各宿主插件清单或安装方式通用。
 
+## 一个入口，四个专项技能
+
+按请求类型的触发条件拆分，而不是按流程阶段或上游项目拆分：`praxis` 管整题、团队与交接；`praxis-model`、`praxis-compute`、`praxis-verify`、`praxis-report` 各管一类单独出现的请求（建模、计算、验证审查、写作交付）。拆分的原因是单个描述无法同时让宿主正确触发“做完整题”与“只审查这份模型”，且专项请求不必加载整条主线。它们共用 references/methods.md 与同一任务记录，不增加必经步骤。
+
+维护源中核心技能在仓库根目录，专项技能在 skills/praxis-*/SKILL.md，只含触发说明与指向核心参考的链接。直接安装根目录得到入口技能，由它按路径读取专项文件；导出插件时专项技能与 skills/praxis 并列，打包器把指向核心的链接从 ../../ 改为 ../praxis/，测试检查两种布局下链接都有效。
+
 ## 两个相互配合的部分
 
 **可复用能力包**以 Agent Skills 标准为通用入口，宿主差异见 references/agent-compatibility.md。它保存 Skill、专业参考、脚本、数学封装、锁定依赖和许可。当前仓库是唯一维护源，兼容现有直接 Skill 安装；scripts/build_plugin.py 从明确的公开文件清单生成插件，不维护第二套源码。
@@ -33,6 +39,10 @@ praxis-plugin/
   LICENSE
   README.md
   build-receipt.json
+  skills/praxis-model/SKILL.md
+  skills/praxis-compute/SKILL.md
+  skills/praxis-verify/SKILL.md
+  skills/praxis-report/SKILL.md
   skills/praxis/
     SKILL.md
     agents/

@@ -36,6 +36,9 @@ TREES = {
     'demos/mcm-2016-a/reproduce/code': {'.py'},
     'demos/mcm-2016-a/reproduce/reference': {'.npz', '.json'},
 }
+# Focused skills ship next to the core skill; links to the core are rewritten.
+FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-report')
+LINK_TO_CORE = ('](../../', '](../praxis/')
 
 
 def public_files(source: Path) -> list[Path]:
@@ -49,6 +52,9 @@ def public_files(source: Path) -> list[Path]:
                 raise ValueError(f'Symlink is not a public resource: {path}')
             if path.is_file() and (extensions is None or path.suffix in extensions):
                 selected.add(path)
+    for name in FOCUSED:
+        path = source / 'skills' / name / 'SKILL.md'
+        selected.add(path)
     for path in selected:
         if path.is_symlink() or not path.is_file():
             raise ValueError(f'Missing or symlinked public resource: {path}')
@@ -71,16 +77,25 @@ def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
     skill = output / 'skills/praxis'
     hashes = {}
     for path in files:
-        target = skill / path.relative_to(source)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(path, target)
+        relative = path.relative_to(source)
+        if relative.parts[0] == 'skills':
+            # Focused skill: sibling of the core skill, links point at ../praxis/.
+            target = output / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(path.read_text().replace(*LINK_TO_CORE))
+        else:
+            target = skill / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, target)
         hashes[target.relative_to(output).as_posix()] = hashlib.sha256(target.read_bytes()).hexdigest()
     (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n')
     (output / 'LICENSE').write_bytes((source / 'LICENSE').read_bytes())
     (output / 'README.md').write_text('''# Praxis plugin
 
 This directory is generated from the maintained Praxis skill repository.
-The portable entry point is plugin.json; the complete skill is skills/praxis/.
+The portable entry point is plugin.json. skills/praxis/ is the core skill with
+all references and scripts; skills/praxis-model, -compute, -verify and -report
+are focused skills that read the core's references through ../praxis/.
 
 Before running Python helpers, explicitly prepare their environment:
 

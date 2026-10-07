@@ -16,7 +16,7 @@
 
 </div>
 
-**Praxis 是面向通用数学建模的 Agent 能力包**，把可移植技能、计算脚本、证据工作流和插件导出组织在一起。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查模型、验证结果或改进论文。
+**Praxis 是面向通用数学建模的 Agent 插件**：一个负责整题推进的入口技能，加四个可单独调用的专项技能，配套计算脚本和证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查模型、验证结果或改进论文。
 
 研究、课程、比赛，以及资源分配、环境分析、公共服务和工程决策等现实问题，都可以使用这套工作方式。先明确目标、约束与数据，再建立可解释的基线，按需要增加复杂度；让需求、计算、验证和报告中的结论彼此对应，减少整理、重复计算与协作交接的负担，把精力留给关键判断。
 
@@ -73,6 +73,8 @@ git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
 
 Claude Code 使用 `~/.claude/skills/praxis`。其他位置见 [Agent 兼容](#agent-兼容)；同一宿主只启用一个同名版本，已有安装不自动迁移。
 
+这样安装得到入口技能，专项技能由它按路径读取。要让四个专项技能也能被宿主单独发现，用下文“工具与插件”导出插件包。
+
 ### 2. 准备计算环境
 
 执行脚本需要 **Python 3.12**、[uv](https://docs.astral.sh/uv/) 和宿主的本地文件／终端能力：
@@ -97,18 +99,19 @@ uv sync --project ~/.agents/skills/praxis --locked
 
 **技能目录保存可复用能力，你的工作区保存题目、数据、案例和论文。** 程序负责执行与追溯，助手负责题意、选择和科学判断。
 
-## 能力概览
+## 技能一览
 
-| 能力 | 你能得到什么 | 入口 |
+一个入口负责整题，四个专项各管一类请求。只想做一件事时，直接调用对应技能，不必走完整流程。
+
+| 技能 | 适合的请求 | 内容 |
 |---|---|---|
-| 问题分析 | 原始要求、变量、约束、成功条件与任务依赖 | [统一方法](references/methods.md) |
-| 模型与数学思想 | 基线、必要扩展、量纲、不变性、可辨识性与优化结构等条件指导 | [数学推理](references/mathematical-reasoning.md) |
-| 数据与计算 | CSV／Excel 审计、原件保全、可复现运行；Sobol 与 TOPSIS 工具 | [数据计算](references/data-computing.md) |
-| 独立验证 | 相称的对照与检查、失败记录、过期检测和数值任务证据索引 | [执行契约](references/automation.md) |
-| 图表与写作 | 从有效结果形成图表、论证和报告，保持数字、单位与来源一致 | [图表](references/visualization.md) · [写作](references/writing.md) |
-| 协调与交付 | 一／二／三人分工起点、责任与交接、限时简化路线和交付余量 | [团队适配](references/context-and-team.md) · [单人策略](references/solo-delivery.md) |
+| [`praxis`](SKILL.md) | “把这道题做完” | 统一主线、任务记录、团队与限时协调、环节交接 |
+| [`praxis-model`](skills/praxis-model/SKILL.md) | “这题怎么做？参数怎么定？” | 读题与定义、假设和参数依据、路线与模型选择、可辨识性与优化结构 |
+| [`praxis-compute`](skills/praxis-compute/SKILL.md) | “跑一下，保存可复现的结果” | CSV／Excel 审计、原件保全、模型与验证器执行、过期检测、证据索引 |
+| [`praxis-verify`](skills/praxis-verify/SKILL.md) | “结果可信吗？结论说过头了吗？” | 独立检查、界与最优性、敏感性、证据与结论强度审查 |
+| [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 论文结构、命题与证明、图表、来源与 AI 披露、PDF 检查与冻结 |
 
-这些能力沿同一条主线调用，不要求每次走完全部环节。专业分工与共享交接内容见 [能力分工](references/capabilities.md)。
+五个技能共用 [统一方法](references/methods.md) 和同一份任务记录；能力之间的交接见 [能力分工](references/capabilities.md)。
 
 ### 比赛是一个使用场景
 
@@ -157,7 +160,7 @@ WORKSPACE="/absolute/path/to/your/project"
 </details>
 
 <details>
-<summary><strong>插件：从同一维护源导出能力包</strong></summary>
+<summary><strong>插件：从同一维护源导出五个技能</strong></summary>
 
 在仓库根目录运行，输出目录须尚不存在：
 
@@ -165,7 +168,7 @@ WORKSPACE="/absolute/path/to/your/project"
 uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 ```
 
-导出包含 Skill、脚本、参考、锁定依赖和来源许可。环境需要显式准备，用户材料继续保存在工作区。
+导出包含五个技能（`skills/praxis` 带全部参考与脚本，四个专项技能与它并列）、锁定依赖和来源许可。环境需要显式准备，用户材料继续保存在工作区。
 
 通用 Skill 是跨宿主入口；当前插件导出按 OpenAI 插件格式组织，不能等同于所有宿主的插件安装方式。目录导出已实现，宿主插件安装／发现尚未验证，也未在官方插件目录上架。
 
@@ -178,7 +181,7 @@ uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 | 状态 | 当前证据 |
 |---|---|
 | **已验证** | 本地工具累计 45 项测试通过，涵盖解析答案、输入保护、失败与过期证据、PDF 辅助及自包含插件导出；有合成演练及国赛、美赛两份完整历史题目案例 |
-| **已实现，待实战验证** | 场景与团队适配、单人限时协调、专业能力交接与写作指导 |
+| **已实现，待实战验证** | 场景与团队适配、单人限时协调、专业能力交接与写作指导；四个专项技能的独立触发 |
 | **尚未完成** | 其他 Agent 完整案例实测、真实多人赛程、完整三天限时演练及宿主插件安装验证 |
 
 自动检查通过不证明模型适用于现实；权重情景份额不是客观概率；日志不是完整 AI 对话。任务清单的完整性须对照原题审查，PDF 的公式、图表与版面仍需视觉核验。大文件或不支持格式会明确延后审计。

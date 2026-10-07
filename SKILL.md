@@ -26,6 +26,19 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
 - 引入外部方法按 methods.md 的统一规则，出处与实际复用范围见 [references/upstream-review.md](references/upstream-review.md) 和 THIRD_PARTY_NOTICES.md。
 
+## 专项技能
+
+只涉及一项能力时，直接读对应专项技能，不必走整题流程；它们与本技能共用 methods.md 主线和同一份任务记录。作为插件安装时它们是独立可发现的技能，直接安装本目录时按路径读取。
+
+| 技能 | 用于 |
+|---|---|
+| [praxis-model](skills/praxis-model/SKILL.md) | 读题、假设与参数依据、路线与模型选择 |
+| [praxis-compute](skills/praxis-compute/SKILL.md) | 数据审计、模型运行、可复现证据 |
+| [praxis-verify](skills/praxis-verify/SKILL.md) | 独立验证、敏感性、证据与结论强度审查 |
+| [praxis-report](skills/praxis-report/SKILL.md) | 论文结构、图表、披露、PDF 检查与交付 |
+
+整题推进、团队与限时协调、跨环节交接由本技能负责。
+
 ## 执行边界
 
 技术选择通常自行形成并说明。未知若不影响当前可逆步骤就先推进；只有关键输入、目标或真实偏好会改变结论才问。假设写明依据和影响，不默认为事实，不声称用户已人工核验。

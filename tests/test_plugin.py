@@ -68,3 +68,25 @@ def test_export_rejects_links_to_external_content(tmp_path):
     with pytest.raises(ValueError, match='Symlink'):
         build_plugin(tmp_path / 'plugin', source)
     assert not (tmp_path / 'plugin').exists()
+
+
+FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-report')
+
+
+def _links(text):
+    import re
+    return [m for m in re.findall(r'\]\(([^)#]+)(?:#[^)]*)?\)', text) if '://' not in m]
+
+
+def test_focused_skills_are_valid_and_links_resolve_in_repo_and_export(tmp_path):
+    output = tmp_path / 'plugin'
+    build_plugin(output)
+    for name in FOCUSED:
+        for root in (BUNDLE / 'skills' / name, output / 'skills' / name):
+            text = (root / 'SKILL.md').read_text()
+            header = text.split('---')[1]
+            assert f'name: {name}\n' in header
+            description = [l for l in header.splitlines() if l.startswith('description:')][0]
+            assert 0 < len(description) < 1100
+            for link in _links(text):
+                assert (root / link).resolve().is_file(), (root, link)
