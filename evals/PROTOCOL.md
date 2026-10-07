@@ -34,3 +34,5 @@ uv run --locked python -m evals.planted check queue 101 '{"mean_wait": ...}'   #
 ```
 
 赛题类的评测：把题面交给 Agent，按 [Praxis 的完整流程](../SKILL.md) 做一次，保存全部产物和过程记录；评分由评委按预先写好的标准完成。结果与失败一并记入 [学习回路](../references/learning-loop.md)。
+
+评委的说明、评分表与校准做法见 [judging.md](judging.md)，聚合脚本为 `evals/aggregate.py`。
