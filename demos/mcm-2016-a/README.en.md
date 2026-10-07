@@ -63,7 +63,7 @@ It re-optimizes 3-, 6- and 12-segment schedules, replays the best one with an in
 
 ## Attribution and limits
 
-The task is [COMAP’s 2016 MCM Problem A](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf). Kathleen M. Shannon’s [judges’ commentary](https://faculty.winthrop.edu/abernathyz/MathComps/2016_MCM_A-Com.pdf) informed the emphasis on explanation and usable advice. This is an original development case, not an official solution or an award-winning entry. Source documents are linked, not redistributed.
+The task is [COMAP’s 2016 MCM Problem A](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf). No judges’ commentary, award-winning paper or other solution to this problem was read or copied. This is an original development case, not an official solution or an award-winning entry. The problem statement is linked, not redistributed.
 
 The historical problem is formatted using the [current 2027 instructions](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php), checked on 7 October 2026: English text of at least 12pt, anonymous headers, page numbering, a single-page summary and the problem’s single-page user explanation. Times New Roman is a typesetting choice. AI participation is disclosed; a complete interaction export and independent human review are not claimed. [Sources](sources.json) · [Verification](verification.json) · [AI record](AI-use.md)
 

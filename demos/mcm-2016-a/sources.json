@@ -8,18 +8,6 @@
       "use": "task requirements only; original PDF stays in private case"
     },
     {
-      "id": "commentary",
-      "author": "Kathleen M. Shannon",
-      "title": "Judges' Commentary: Hot Bath Problem",
-      "journal": "The UMAP Journal",
-      "volume": "37(3)",
-      "pages": "277-281",
-      "year": 2016,
-      "url": "https://faculty.winthrop.edu/abernathyz/MathComps/2016_MCM_A-Com.pdf",
-      "read": "all five pages extracted text",
-      "use": "evaluation guidance, not copied solution; no redistribution"
-    },
-    {
       "id": "rules",
       "url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php",
       "edition": "2027 current rules",

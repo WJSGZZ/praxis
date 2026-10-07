@@ -63,7 +63,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py
 
 ## 来源与边界
 
-使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)，并阅读 Kathleen M. Shannon 的[评委评述](https://faculty.winthrop.edu/abernathyz/MathComps/2016_MCM_A-Com.pdf)作为论证与表达参考；没有复制获奖论文，也不声称这是标准答案或获奖成果。原题及评述仅提供链接，不重新分发。
+使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；没有读取或复制同题的评委评述、获奖论文或他人解答，也不声称这是标准答案或获奖成果。原题仅提供链接，不重新分发。
 
 历史题按核查于 2026-10-07 的 [2027 当前提交规范](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php)编排；字体至少 12pt，使用匿名页眉及页码，Summary 和用户说明分别单页。Times New Roman 是本稿选择，不是官方强制字体。AI 参与范围真实披露，未声称具有完整聊天导出或独立人工审核。[来源记录](sources.json) · [验收记录](verification.json) · [AI 记录](AI-use.md)
 
