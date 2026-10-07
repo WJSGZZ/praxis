@@ -12,16 +12,29 @@ def net(data,x):
     r,q,p,u=data.T.copy();r/=100;p/=100
     fees=np.where(x>1e-7,p*np.maximum(x,u),0);return float((.05*(M-x.sum()-fees.sum())+r@x-fees.sum())/M)
 def risk(data,x):return float(np.max(data[:,1]/100*x)/M)
+def spent(data,x):
+    r,q,p,u=data.T.copy();p/=100
+    return float(x.sum()+np.where(x>1e-7,p*np.maximum(x,u),0).sum())
+def within_budget(data,x):
+    """A noisy execution cannot spend more than M: scale the purchases down (bisection, fees depend on the amounts) until it fits."""
+    if spent(data,x)<=M*(1+1e-12):return x,False
+    lo,hi=0.,1.
+    for _ in range(80):
+        mid=(lo+hi)/2
+        if spent(data,x*mid)<=M:lo=mid
+        else:hi=mid
+    return x*lo,True
 out={'seed':20261007,'draws':N,'groups':{}}
 for key,name in [('four','assets4.csv'),('fifteen','assets15.csv')]:
     data=load(name);g=rec['groups'][key];cap=g['knee_risk'];x0=np.array(g['investments_yuan']);nom=model.solve(data,M,cap)
     res={'cap':cap,'nominal_net_return':nom['net_return'],'nominal_risk':risk(data,x0)}
     ex={}
     for e in (.05,.10):
-        rs=[];nr=[]
+        rs=[];nr=[];cut=0
         for _ in range(N):
-            x=x0*(1+rng.uniform(-e,e,len(x0)));rs.append(risk(data,x)/cap-1);nr.append(net(data,x))
-        rs=np.array(rs);ex[f'{e:.2f}']={'share_within_cap':float((rs<=1e-9).mean()),'median_overshoot':float(np.median(rs)),'p95_overshoot':float(np.quantile(rs,.95)),'median_net_return':float(np.median(nr))}
+            x,scaled=within_budget(data,x0*(1+rng.uniform(-e,e,len(x0))));cut+=scaled
+            rs.append(risk(data,x)/cap-1);nr.append(net(data,x))
+        rs=np.array(rs);ex[f'{e:.2f}']={'share_within_cap':float((rs<=1e-9).mean()),'median_overshoot':float(np.median(rs)),'p95_overshoot':float(np.quantile(rs,.95)),'median_net_return':float(np.median(nr)),'share_scaled_to_budget':cut/N}
     res['execution_error']=ex
     res['buffer_price']=[{'buffer':b,'cap':cap*(1-b),'net_return':model.solve(data,M,cap*(1-b))['net_return']} for b in (0,.05,.10)]
     dr=[];same=[];over=[];short=[]

@@ -9,15 +9,17 @@
       "execution_error": {
         "0.05": {
           "share_within_cap": 0.105,
-          "median_overshoot": 0.03068427078366931,
-          "p95_overshoot": 0.04744089714809436,
-          "median_net_return": 0.20185609687797357
+          "median_overshoot": 0.021948570437393622,
+          "p95_overshoot": 0.04199910638736469,
+          "median_net_return": 0.20119204735129168,
+          "share_scaled_to_budget": 0.495
         },
         "0.10": {
           "share_within_cap": 0.06,
-          "median_overshoot": 0.06179403293320873,
-          "p95_overshoot": 0.09637211060592239,
-          "median_net_return": 0.20247157184103404
+          "median_overshoot": 0.03993967229408457,
+          "p95_overshoot": 0.08255489221649549,
+          "median_net_return": 0.20111026469633816,
+          "share_scaled_to_budget": 0.515
         }
       },
       "buffer_price": [
@@ -60,16 +62,18 @@
       "nominal_risk": 0.08,
       "execution_error": {
         "0.05": {
-          "share_within_cap": 0.03,
-          "median_overshoot": 0.038637461846276366,
-          "p95_overshoot": 0.049215857097449925,
-          "median_net_return": 0.32341308792251167
+          "share_within_cap": 0.035,
+          "median_overshoot": 0.030898339992298407,
+          "p95_overshoot": 0.045439926988445865,
+          "median_net_return": 0.32242483686640055,
+          "share_scaled_to_budget": 0.59
         },
         "0.10": {
           "share_within_cap": 0.03,
-          "median_overshoot": 0.07775140477032416,
-          "p95_overshoot": 0.0981693319488929,
-          "median_net_return": 0.32399984757176914
+          "median_overshoot": 0.06236320747897495,
+          "p95_overshoot": 0.09348499055461508,
+          "median_net_return": 0.32206777568874567,
+          "share_scaled_to_budget": 0.555
         }
       },
       "buffer_price": [

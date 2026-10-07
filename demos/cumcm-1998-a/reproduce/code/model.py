@@ -42,9 +42,13 @@ def solve(data, budget, cap, risk_scale=1.0, interpretation='amount'):
              constraints=LinearConstraint(np.array(rows),np.array(lb),np.array(ub)),
              options={'mip_rel_gap':1e-9,'time_limit':20})
     if not res.success:raise RuntimeError(res.message)
-    x=np.maximum(res.x[ix],0)*budget
-    fees=np.where(x>1e-7,p*np.maximum(x,data[:,3]),0)
+    active=res.x[ky]>.5  # the solver's binaries decide which assets are bought; a residual x on an inactive asset is rounding noise
+    x=np.where(active,np.maximum(res.x[ix],0),0)*budget
+    fees=np.where(active,p*np.maximum(x,data[:,3]),0)
     bank=budget-x.sum()-fees.sum()
+    if bank<0:
+        assert bank>-1e-6*budget,'budget exceeded beyond solver tolerance'
+        bank=0.0
     profit=.05*bank+np.dot(r,x)-fees.sum()
     risk=float(np.max(q*x)/budget) if interpretation=='amount' else float(max(q[x>1e-7],default=0))
     return {'budget_yuan':budget,'risk_cap':float(cap),'risk_scale':risk_scale,

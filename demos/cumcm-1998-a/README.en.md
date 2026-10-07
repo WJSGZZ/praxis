@@ -32,8 +32,8 @@ Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divide
 ## Evidence
 
 - **12 model checks** cover constraints, fees, boundaries and parameter scenarios, plus 4 capital-threshold checks and 2 knee checks. They are different kinds of check, not 12 independent algorithms.
-- **The recommended plan uses the whole risk cap, so following it loosely breaks the cap.** With ±5% error on each amount, more than 90% of random trials exceed the cap (median overshoot 3–4%). With ±10% error on every data field the same assets are chosen in over 99.5% of trials. The margin to keep is therefore on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
-- **How far simple rules go.** At CNY 1,000,000, greedy by return minus fee rate, buying each asset up to its risk allowance, matches the integer optimum in all six cases tested: the minimum fee is inactive at this scale, and the integer model matters at small budgets. Ranking by return over risk loses up to 4.3 points; equal weights reach only 11.8% and 22.0%.
+- **The recommended plan uses the whole risk cap, so following it loosely breaks the cap.** With ±5% error on each amount, about nine in ten random trials exceed the cap (median overshoot 2–3%). With ±10% error on every data field the same assets are chosen in over 99.5% of trials. The margin to keep is therefore on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
+- **How far simple rules go.** At CNY 1,000,000, greedy by the per-budget gain from the paper's Proposition 2, buying each asset up to its risk allowance, matches the integer optimum in all six cases tested: the minimum fee is inactive at this scale, and the integer model matters at small budgets. Ranking by return over risk loses up to 4.3 points; equal weights reach only 11.8% and 22.0%.
 - **Every chosen asset matters.** Removing any one lowers net return noticeably.
 - **The risk definition changes the answer.** Reading risk as a standard deviation with independent returns, the same caps give net returns of only 13.4% and 17.4%, and the stated max-loss knee portfolios carry several times the cap under that reading. The paper answers as stated and flags this as something to confirm with the decision maker.
 
@@ -50,7 +50,7 @@ Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divide
 </tr>
 </table>
 
-**[Read the complete 18-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
+**[Read the complete 19-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
 
 ## Run it yourself
 
@@ -71,7 +71,7 @@ The whole set takes a few minutes. Results go to `reproduce/reproduced/`, exclud
 
 ```text
 deliverables/                 # the two electronic submission files
-  paper.pdf                   # 18 pages, with file list and full source appendix
+  paper.pdf                   # 19 pages, with file list and full source appendix
   supporting_materials.zip    # 25 files, including the LaTeX sources and AI-use details
 reproduce/                    # entry points, archived numbers and check scripts
 assets/                       # images for the homepage and this page

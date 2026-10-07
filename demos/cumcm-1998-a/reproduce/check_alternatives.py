@@ -45,6 +45,7 @@ for key,name in [('four','assets4.csv'),('fifteen','assets15.csv')]:
         res['baselines'].append({'cap':c,'optimal':opt,'bank_only':.05,
             'greedy_return_over_risk':net(data,greedy(data,c,lambda r,q,p:(r-p)/np.maximum(q,1e-9))),
             'greedy_net_return':net(data,greedy(data,c,lambda r,q,p:r-p)),
+            'greedy_eta':net(data,greedy(data,c,lambda r,q,p:(r-p)/(1+p))),
             'equal_weight_eligible':net(data,equal_weight(data,c))})
     chosen=[int(i) for i in np.flatnonzero(x0>1e-6)];nom=model.solve(data,M,cap)['net_return']
     res['drop_one']=[{'asset':i+1,'net_return_without':model.solve(np.delete(data,i,axis=0),M,cap)['net_return']} for i in chosen]
