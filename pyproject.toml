@@ -1,7 +1,7 @@
 [project]
 name = "praxis"
 version = "0.1.0"
-description = "A portable Agent Skill for evidence-based mathematical modeling"
+description = "An agent plugin for evidence-based mathematical modeling: skills and math tools"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "numpy>=2,<3",

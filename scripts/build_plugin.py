@@ -89,11 +89,15 @@ def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
             shutil.copyfile(path, target)
         hashes[target.relative_to(output).as_posix()] = hashlib.sha256(target.read_bytes()).hexdigest()
     (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    mcp = json.loads((source / 'packaging/mcp.json').read_text())
+    (output / 'mcp.json').write_text(json.dumps(mcp, indent=2) + '\n')
+    hashes['mcp.json'] = hashlib.sha256((output / 'mcp.json').read_bytes()).hexdigest()
     (output / 'LICENSE').write_bytes((source / 'LICENSE').read_bytes())
     (output / 'README.md').write_text('''# Praxis plugin
 
 This directory is generated from the maintained Praxis skill repository.
-The portable entry point is plugin.json. skills/praxis/ is the core skill with
+The portable entry point is plugin.json; mcp.json starts the praxis-tools MCP server
+(computation tools, run with uv). skills/praxis/ is the core skill with
 all references and scripts; skills/praxis-model, -compute, -verify and -report
 are focused skills that read the core's references through ../praxis/.
 

@@ -16,7 +16,7 @@ scripts/pipeline.py 使用标准 Python 与文件接口，不调用某家 Agent 
 
 安装目录见 README 表格；目标文件夹名应为 praxis。确认宿主实际加载了这份 SKILL.md，再执行。Codex 可用 `$praxis`，Claude Code 的直接技能可用 `/praxis`；自然语言“使用 Praxis …”可作跨宿主请求，但自动选择与交互入口仍取决于宿主。
 
-agents/openai.yaml 仅提供 Codex 的展示与调用元数据。通用规则放在 SKILL.md 与 references，不依赖该文件被其他宿主理解，不加入专有动态插值或固定工具授权。packaging/plugin.json 是当前 OpenAI portable 插件导出的来源，不作为 Claude/Gemini 等产品的通用插件清单。
+agents/openai.yaml 仅提供 Codex 的展示与调用元数据。通用规则放在 SKILL.md 与 references，不依赖该文件被其他宿主理解，不加入专有动态插值或固定工具授权。packaging/plugin.json 与 packaging/mcp.json 是 Agent Plugins 1.0 导出的来源；各宿主自己的插件目录与清单格式可能不同，宿主不读取该格式时，用技能目录加命令行工具（`python -m scripts.mcp_server --call`）。
 
 共享个人目录适用于本地宿主，不能据此声称云端会话或远程机器自动拥有本地文件。远程环境需在那里安装技能并准备执行依赖；仍以实际文件／终端能力判断可执行范围。
 

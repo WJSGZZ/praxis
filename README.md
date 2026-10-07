@@ -12,11 +12,11 @@
 
 **简体中文** · [English](README.en.md)
 
-[数学建模案例](#两个完整案例两种建模问题) · [快速开始](#快速开始) · [能力](#能力概览) · [兼容](#agent-兼容) · [可靠性](#可靠性)
+[数学建模案例](#两个完整案例两种建模问题) · [快速开始](#快速开始) · [技能](#技能一览) · [工具](#数学工具) · [兼容](#agent-兼容) · [可靠性](#可靠性)
 
 </div>
 
-**Praxis 是面向通用数学建模的 Agent 插件**：一个负责整题推进的入口技能，加四个可单独调用的专项技能，配套计算脚本和证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查模型、验证结果或改进论文。
+**Praxis 是面向通用数学建模的 Agent 插件**：五个技能（一个负责整题，四个各管一类请求）加一组可直接调用的数学工具，并带着证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查模型、验证结果或改进论文。
 
 研究、课程、比赛，以及资源分配、环境分析、公共服务和工程决策等现实问题，都可以使用这套工作方式。先明确目标、约束与数据，再建立可解释的基线，按需要增加复杂度；让需求、计算、验证和报告中的结论彼此对应，减少整理、重复计算与协作交接的负担，把精力留给关键判断。
 
@@ -63,31 +63,39 @@
 
 ## 快速开始
 
-### 1. 安装技能
+### 1. 获取并接入
 
-以下示例适用于支持共享个人技能目录的本地 Agent，目标目录须尚不存在：
+**作为插件使用（技能加数学工具）。** 克隆仓库后导出插件包，交给支持 Agent Plugins 格式的宿主安装：
+
+```bash
+git clone https://github.com/WJSGZZ/praxis.git
+cd praxis
+uv run --locked python -m scripts.build_plugin --output ../praxis-plugin
+```
+
+插件包含五个技能和 `praxis-tools` 工具服务（`mcp.json`；首次启动时 uv 按锁文件准备环境）。输出目录须尚不存在。
+
+**只用技能。** 把仓库放进宿主的技能目录即可（目标目录须尚不存在），不含 MCP 工具，需要时用命令行调用同样的工具：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
 ```
 
-Claude Code 使用 `~/.claude/skills/praxis`。其他位置见 [Agent 兼容](#agent-兼容)；同一宿主只启用一个同名版本，已有安装不自动迁移。
-
-这样安装得到入口技能，专项技能由它按路径读取。要让四个专项技能也能被宿主单独发现，用下文“工具与插件”导出插件包。
+Claude Code 使用 `~/.claude/skills/praxis`，其他位置见 [Agent 兼容](#agent-兼容)。同一宿主只启用一个同名版本。这样得到入口技能，专项技能由它按路径读取。
 
 ### 2. 准备计算环境
 
-执行脚本需要 **Python 3.12**、[uv](https://docs.astral.sh/uv/) 和宿主的本地文件／终端能力：
+脚本和工具需要 **Python 3.12**、[uv](https://docs.astral.sh/uv/) 和宿主的本地文件／终端能力：
 
 ```bash
-uv sync --project ~/.agents/skills/praxis --locked
+uv sync --project /path/to/praxis --locked
 ```
 
-仅使用分析方法，无需先准备 Python 环境。若安装位置不同，替换命令中的技能路径。
+仅使用分析方法时无需准备环境。
 
 ### 3. 在你的项目中使用
 
-重载技能或重新开始会话，确认宿主加载了 Praxis，然后提出任务：
+重载或重新开始会话，确认宿主加载了 Praxis，然后提出任务：
 
 > 使用 Praxis 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
 
@@ -119,9 +127,23 @@ uv sync --project ~/.agents/skills/praxis --locked
 
 单人限时任务默认只给用户一个当前事项，边取得结果边写报告；多人任务按能力和依赖安排主责与复核。通用项目不套用赛事规则。
 
+## 数学工具
+
+`praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可用 `python -m scripts.mcp_server --call 工具名 '参数'`。每个工具都有独立答案的测试：教科书例题、闭式解或暴力枚举。
+
+| 类别 | 工具 |
+|---|---|
+| 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`shortest_path`、`max_flow`（附最小割）、`minimum_spanning_tree` |
+| 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
+| 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc` |
+| 不确定性 | `sobol_sensitivity` |
+| 数据与文献 | `audit_data`、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
+
+每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。常规的 MATLAB 与 R 用法，Python 基本都能覆盖。
+
 ## Agent 兼容
 
-同一份 `SKILL.md`、参考与 Python 工具，按宿主选择发现目录：
+只用技能时，同一份 `SKILL.md`、参考与 Python 工具按宿主选择发现目录：
 
 | Agent | 项目内目录 | 本地个人目录 |
 |---|---|---|
@@ -135,7 +157,7 @@ uv sync --project ~/.agents/skills/praxis --locked
 
 官方依据、专用调用方式和能力条件见 [跨 Agent 兼容说明](references/agent-compatibility.md)。
 
-## 工具与插件
+## 命令行与插件结构
 
 <details>
 <summary><strong>命令行：在独立工作区建立案例</strong></summary>
@@ -160,25 +182,26 @@ WORKSPACE="/absolute/path/to/your/project"
 </details>
 
 <details>
-<summary><strong>插件：从同一维护源导出五个技能</strong></summary>
+<summary><strong>插件包的结构</strong></summary>
 
-在仓库根目录运行，输出目录须尚不存在：
+导出目录按 [Agent Plugins 1.0](https://agent-plugins.org/specification) 组织，这一版规范包含的两类组件都有：
 
-```bash
-uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
+```text
+praxis-plugin/
+  plugin.json
+  mcp.json                  # praxis-tools 工具服务
+  skills/
+    praxis/                 # 入口技能，带全部参考、脚本与工具代码
+    praxis-model/  praxis-compute/  praxis-verify/  praxis-report/
 ```
 
-导出包含五个技能（`skills/praxis` 带全部参考与脚本，四个专项技能与它并列）、锁定依赖和来源许可。环境需要显式准备，用户材料继续保存在工作区。
-
-通用 Skill 是跨宿主入口；当前插件导出按 OpenAI 插件格式组织，不能等同于所有宿主的插件安装方式。目录导出已实现，宿主插件安装／发现尚未验证，也未在官方插件目录上架。
-
-结构与扩展条件见 [架构说明](ARCHITECTURE.md)。
+用户的题目、数据与案例继续保存在你的工作区，不进入插件。结构与扩展条件见 [架构说明](ARCHITECTURE.md)。
 
 </details>
 
 ## 可靠性
 
-- 46 项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助和插件导出。
+- 60 项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
 - 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
 - 每个结论标明依据与适用条件；失败的运行保留，不改写。
 

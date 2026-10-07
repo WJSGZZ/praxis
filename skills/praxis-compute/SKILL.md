@@ -14,6 +14,8 @@ BUNDLE 指 `praxis` 技能目录；脚本在 `BUNDLE/scripts/`。需要 Python 3
 - 运行：模型与独立验证器写完并审核后，才用 `scripts/pipeline.py` 执行。命令、产物布局和过期规则见 [automation.md](../../references/automation.md)。参数、种子、失败运行保留，不覆盖。
 - 证据：任务清单与 planning/tasks.md 使用同一组 ID。evidence 只证明已记录的连接，不证明题目被完整覆盖；程序检查、科学判断和人工核验分别表述。
 
+- 工具：`praxis-tools` MCP 提供规划、网络、权重、排队、传染病、预测基线、敏感性与参考文献核对；宿主没有 MCP 时用 `python -m scripts.mcp_server --call` 或直接调用 `modeling/` 模块。清单与检查见 [model-library.md](../../references/model-library.md)。
+
 ## 交接
 
 结果、单位、不确定性、可用结论和未解决问题写回对应任务 ID。运行失败先定位原因：实现错误修代码，模型不适用回 praxis-model，不用改假设掩盖错误。

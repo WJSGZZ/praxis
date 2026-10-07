@@ -90,3 +90,19 @@ def test_focused_skills_are_valid_and_links_resolve_in_repo_and_export(tmp_path)
             assert 0 < len(description) < 1100
             for link in _links(text):
                 assert (root / link).resolve().is_file(), (root, link)
+
+
+def test_export_declares_a_working_mcp_server(tmp_path):
+    output = tmp_path / 'plugin'
+    build_plugin(output)
+    config = json.loads((output / 'mcp.json').read_text())
+    assert config['$schema'].endswith('/mcp.schema.json')
+    server = config['mcpServers']['praxis-tools']
+    assert server['type'] == 'stdio' and server['cwd'] == '${PLUGIN_ROOT}/skills/praxis'
+    # Same module the manifest launches, started from the exported copy.
+    request = json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/list'}) + '\n'
+    result = subprocess.run([sys.executable, '-m', 'scripts.mcp_server'], cwd=output / 'skills/praxis',
+                            input=request, capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stderr
+    names = {t['name'] for t in json.loads(result.stdout)['result']['tools']}
+    assert {'solve_lp', 'ahp_weights', 'check_references'} <= names

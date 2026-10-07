@@ -12,11 +12,11 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 [简体中文](README.md) · **English**
 
-[Modeling cases](#two-complete-cases-to-explore) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Compatibility](#agent-compatibility) · [Reliability](#reliability)
+[Modeling cases](#two-complete-cases-to-explore) · [Quick start](#quick-start) · [Skills](#skills) · [Tools](#math-tools) · [Compatibility](#agent-compatibility) · [Reliability](#reliability)
 
 </div>
 
-**Praxis is an agent plugin for mathematical modeling**: one coordinating skill for whole problems, four focused skills you can call on their own, and the scripts and evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
+**Praxis is an agent plugin for mathematical modeling**: five skills (one for whole problems, four for single kinds of request), a set of math tools your agent can call, and an evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
 
 Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
@@ -63,31 +63,39 @@ Explore either case or bring your own problem. **Star Praxis** if you would like
 
 ## Quick start
 
-### 1. Install the skill
+### 1. Get it and connect it
 
-For local agents that support the shared personal skills directory, clone into a destination that does not already exist:
+**As a plugin (skills plus math tools).** Clone the repository, export the plugin, and hand it to a host that reads the Agent Plugins format:
+
+```bash
+git clone https://github.com/WJSGZZ/praxis.git
+cd praxis
+uv run --locked python -m scripts.build_plugin --output ../praxis-plugin
+```
+
+The plugin carries the five skills and a `praxis-tools` server (`mcp.json`; on first launch uv prepares the environment from the lock file). The output directory must not exist yet.
+
+**Skills only.** Drop the repository into your host's skills directory (the destination must not exist). It has no MCP tools, but the same tools run from the command line:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
 ```
 
-For Claude Code, use `~/.claude/skills/praxis`. See [Agent compatibility](#agent-compatibility) for other locations. Enable only one copy per host; existing installations are not migrated automatically.
-
-This installs the entry skill, which reads the focused skills by path. To have a host discover all four on their own, export the plugin described under "Tools and plugins".
+Claude Code uses `~/.claude/skills/praxis`; other locations are under [Agent compatibility](#agent-compatibility). Enable one copy per host. This gives you the entry skill, which reads the focused skills by path.
 
 ### 2. Prepare the computing environment
 
-Running scripts requires **Python 3.12**, [uv](https://docs.astral.sh/uv/), and a host with local file and terminal access:
+Scripts and tools need **Python 3.12**, [uv](https://docs.astral.sh/uv/), and a host with local file and terminal access:
 
 ```bash
-uv sync --project ~/.agents/skills/praxis --locked
+uv sync --project /path/to/praxis --locked
 ```
 
-You can use the methodological guidance without setting up Python. Adjust the skill path if you installed elsewhere.
+The methodology works without Python.
 
 ### 3. Use Praxis in your project
 
-Reload skills or start a new session, confirm that your host has loaded Praxis, and describe the work:
+Reload or start a new session, confirm that your host has loaded Praxis, and describe the work:
 
 > Use Praxis to analyze this problem and its data, choose an appropriate approach, and work through implementation, independent validation, and the report.
 
@@ -115,11 +123,26 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 
 All five share the [methodology](references/methods.md) and one task record; see [capability handoffs](references/capabilities.md) for how work passes between them.
 
+
 ### Competitions are one application
 
 Real-world and social questions, research, coursework, and competitions use the same modeling core. For a competition, verify the applicable edition and institutional rules, then configure team eligibility, report language, formats, attachments, AI disclosure, and deadlines.
 
 For solo work under time pressure, Praxis defaults to one current user action and develops the report as results become available. Team tasks are assigned around skills and dependencies. Competition requirements are not applied to unrelated projects.
+
+## Math tools
+
+`praxis-tools` turns common methods into callable tools with JSON in and out. Hosts without MCP can run `python -m scripts.mcp_server --call <tool> '<json>'`. Every tool is tested against an answer derived separately: a textbook example, a closed form, or brute-force enumeration.
+
+| Group | Tools |
+|---|---|
+| Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `shortest_path`, `max_flow` (with the minimum cut), `minimum_spanning_tree` |
+| Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
+| Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc` |
+| Uncertainty | `sobol_sensitivity` |
+| Data and literature | `audit_data`, `check_references` (DOI, title and year against Crossref) |
+
+When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). Python covers the ordinary uses of MATLAB and R.
 
 ## Agent compatibility
 
@@ -137,7 +160,7 @@ Use the same `SKILL.md`, references, and Python tools, with the discovery direct
 
 Official sources, invocation differences, and required capabilities are documented in [Host compatibility](references/agent-compatibility.md).
 
-## Tools and plugins
+## Command line and plugin layout
 
 <details>
 <summary><strong>CLI: initialize a case in a separate workspace</strong></summary>
@@ -162,25 +185,26 @@ See the [Execution contract](references/automation.md) for the complete interfac
 </details>
 
 <details>
-<summary><strong>Plugin: export all five skills from one source</strong></summary>
+<summary><strong>Plugin layout</strong></summary>
 
-Run from the repository root. The output directory must not already exist:
+The export follows [Agent Plugins 1.0](https://agent-plugins.org/specification) and includes both component types that version defines:
 
-```bash
-uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
+```text
+praxis-plugin/
+  plugin.json
+  mcp.json                  # the praxis-tools server
+  skills/
+    praxis/                 # entry skill, with all references, scripts and tool code
+    praxis-model/  praxis-compute/  praxis-verify/  praxis-report/
 ```
 
-The export holds all five skills (`skills/praxis` carries every reference and script; the four focused skills sit beside it), plus the scripts, references, locked dependencies, both README versions, and license notices. Set up the environment explicitly and keep user materials in the workspace.
-
-The skill is the cross-host entry point. The current plugin export follows OpenAI's plugin format, which does not imply universal plugin installation across hosts. Directory export is implemented; host installation and discovery remain unverified, and the plugin has not been published to the official directory.
-
-See [Architecture](ARCHITECTURE.md) for the layout and conditions for future extensions.
+Your problems, data, and cases stay in your own workspace, never in the plugin. See [Architecture](ARCHITECTURE.md) for the layout and when to extend it.
 
 </details>
 
 ## Reliability
 
-- 46 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, and plugin export.
+- 60 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 

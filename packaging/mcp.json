@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "praxis-tools": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--locked", "--project", "${PLUGIN_ROOT}/skills/praxis", "python", "-m", "scripts.mcp_server"],
+      "cwd": "${PLUGIN_ROOT}/skills/praxis"
+    }
+  }
+}
