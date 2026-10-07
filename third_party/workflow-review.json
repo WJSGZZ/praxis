@@ -1,0 +1,26 @@
+[
+  {
+    "repository": "user0928/math-modeling-contest-workflow",
+    "reviewed_commit": "40155106a7051fccff9c0b2ab60cdff2588524b4",
+    "review_date": "2026-10-07",
+    "license_status": "No LICENSE found in reviewed tree; GitHub metadata license null; permission not established",
+    "read_files": [
+      "README.md",
+      "references/stages/10-definition-audit.md",
+      "references/stages/40-independent-audit.md",
+      "references/stages/50-cross-question-integration.md"
+    ],
+    "decision": "Read for comparison only; no text, code, skill or data copied. Praxis guidance and examples independently authored."
+  },
+  {
+    "repository": "drivendataorg/cookiecutter-data-science",
+    "reviewed_commit": "17c991b0b03668f6e36503a4416202900196f501",
+    "review_date": "2026-10-07",
+    "license_status": "MIT verified in LICENSE",
+    "read_files": [
+      "LICENSE",
+      "docs/docs/opinions.md"
+    ],
+    "decision": "Workflow inspiration for traceability and lightweight JSON experiment records. No template generator or library installed; copyright notice retained."
+  }
+]

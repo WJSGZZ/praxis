@@ -146,6 +146,8 @@ def source_snapshot(case):
     paths = [p for p in (case / 'code').rglob('*') if p.is_file()
              and '__pycache__' not in p.parts and p.suffix not in ['.pyc', '.pyo']]
     paths += [case / 'planning/tasks.md']
+    if (case / 'planning/requirements.json').is_file():
+        paths.append(case / 'planning/requirements.json')
     return {str(p.relative_to(case)): digest(p) for p in paths}
 
 
@@ -267,6 +269,84 @@ def status(case):
     return report
 
 
+def result_pointer(value, pointer):
+    """Resolve a non-root RFC 6901 pointer; never evaluate expressions."""
+    if not isinstance(pointer, str) or not pointer.startswith('/'):
+        raise ValueError('result_pointer must start with / and name a result field')
+    for escaped in pointer[1:].split('/'):
+        if re.search(r'~(?![01])', escaped):
+            raise ValueError('Invalid JSON pointer escape')
+        token = escaped.replace('~1', '/').replace('~0', '~')
+        try:
+            if isinstance(value, dict):
+                value = value[token]
+            elif isinstance(value, list) and re.fullmatch(r'0|[1-9][0-9]*', token):
+                value = value[int(token)]
+            else:
+                raise KeyError(token)
+        except (KeyError, IndexError):
+            raise ValueError(f'Result field does not exist: {pointer}') from None
+    if value is None or value == '' or value == [] or value == {}:
+        raise ValueError(f'Result field is empty: {pointer}')
+    return value
+
+
+def evidence_index(case):
+    """Link recorded requirements to the latest run, without certifying completeness."""
+    case = under_project(case)
+    manifest = case / 'planning/requirements.json'
+    definition = read_json(manifest)
+    tasks = definition.get('requirements') if isinstance(definition, dict) else None
+    if not isinstance(tasks, list) or not tasks:
+        raise ValueError('Record a nonempty requirements list before building evidence')
+    ids = set()
+    for task in tasks:
+        if not isinstance(task, dict) or any(not isinstance(task.get(k), str) or not task[k].strip()
+                for k in ['id', 'question', 'unit', 'result_pointer']):
+            raise ValueError('Each requirement needs id, question, unit and result_pointer strings')
+        names = task.get('checks')
+        if not isinstance(names, list) or not names or any(not isinstance(n,str) or not n.strip() for n in names) or len(set(names)) != len(names):
+            raise ValueError('Each requirement needs unique named independent checks')
+        if task['id'] in ids:
+            raise ValueError('Requirement ids must be unique')
+        ids.add(task['id'])
+    report = status(case)
+    if not report['runs']:
+        raise ValueError('Run the model and independent validator before building evidence')
+    latest = report['runs'][-1]
+    if not latest['usable_automatic_evidence']:
+        raise ValueError('Latest run failed or is stale; resolve it rather than falling back silently')
+    run = Path(latest['run'])
+    results = read_json(run / 'output/results.json')
+    checks = read_json(run / 'checks.json')
+    names = [check['name'] for check in checks]
+    if len(set(names)) != len(names):
+        raise ValueError('Check names must be unique for unambiguous evidence links')
+    lookup = {check['name']: check for check in checks}
+    entries = []
+    for task in tasks:
+        entry = dict(task)
+        errors = []
+        try:
+            entry['value'] = result_pointer(results, task['result_pointer'])
+        except ValueError as exc:
+            errors.append(str(exc))
+        missing = [name for name in task['checks'] if name not in lookup]
+        if missing:
+            errors.append('Missing independent checks: ' + ', '.join(missing))
+        entry['check_evidence'] = [lookup[name] for name in task['checks'] if name in lookup]
+        entry['linked'] = not errors
+        entry['errors'] = errors
+        entries.append(entry)
+    complete = all(entry['linked'] for entry in entries)
+    return {'status': 'evidence-linked' if complete else 'evidence-incomplete',
+            'run': str(run), 'requirements_sha256': digest(manifest),
+            'run_receipt_sha256': digest(run / 'receipt.json'),
+            'covered': sum(entry['linked'] for entry in entries), 'recorded_requirements': len(entries),
+            'entries': entries, 'paper_ready': False,
+            'note': 'Links cover recorded requirements only. Review task completeness, units, check independence and claim strength; links do not certify scientific validity.'}
+
+
 def main():
     global PROJECT
     parser = argparse.ArgumentParser(description=__doc__)
@@ -287,6 +367,8 @@ def main():
     run.add_argument('--timeout', type=int, default=120)
     show = commands.add_parser('status')
     show.add_argument('--case', type=Path, required=True)
+    evidence = commands.add_parser('evidence')
+    evidence.add_argument('--case', type=Path, required=True)
     args = parser.parse_args()
     PROJECT = args.workspace.resolve()
     try:
@@ -294,10 +376,12 @@ def main():
             result = init_case(args.case_root or PROJECT / 'cases',args.name,args.problem,args.data,args.phase,args.encoding)
         elif args.action == 'run':
             result = run_case(args.case,args.model,args.validator,args.timeout)
+        elif args.action == 'evidence':
+            result = evidence_index(args.case)
         else:
             result = status(args.case)
         print(json.dumps(result,ensure_ascii=False,indent=2))
-        if result.get('status') == 'failed':
+        if result.get('status') in ['failed', 'evidence-incomplete']:
             raise SystemExit(1)
     except (ValueError, FileExistsError, FileNotFoundError, json.JSONDecodeError) as exc:
         parser.error(str(exc))

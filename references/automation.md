@@ -52,3 +52,32 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
 ## 写作连接
 
 按实际任务组织报告，将有效运行编号、指标与来源记到工作项目记录。数据或代码变化就重跑并同步文稿。论文沿用用户当前源文件，按实际期刊、课程或比赛的规定检查格式；不硬编码某比赛的页数与字体规则。scripts/check_pdf.py 只检查可提取文字、元数据、页数与显式配置限制，不检查字体或渲染布局；逐页视觉检查仍需 PDF 查看工具。scripts/freeze_pdf.py 创建字节一致的新副本与哈希回执，不是正式提交回执。
+
+
+## 数值任务的证据索引
+
+模型运行前，由助手对照原题创建案例 planning/requirements.json，例如：
+
+```json
+{
+  "requirements": [
+    {
+      "id": "Q1",
+      "question": "在 x=4 时预测 y，并说明验证依据",
+      "unit": "dimensionless",
+      "result_pointer": "/prediction",
+      "checks": ["independent arithmetic"]
+    }
+  ]
+}
+```
+
+清单应覆盖实际数值任务，每项 id 唯一，unit 必须写明（无量纲可用 dimensionless），result_pointer 使用 JSON Pointer 访问 results.json，例如 /forecast/0/value。检查名必须对应验证器实际生成的独立检查；名称唯一，不要关联到不相干的检查。单位是否正确及验证是否独立仍需助手审核。
+
+```bash
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" evidence --case "$WORKSPACE/cases/example"
+```
+
+返回结果字段值、验证证据、运行回执与清单哈希，以及已链接数量。缺字段或缺检查返回 evidence-incomplete 并退出非零；最新运行失败或过期时拒绝，不能偷偷改用以前成功的运行。空清单拒绝，修改清单使旧运行失效，须重跑后再建索引。旧案例未提供清单时仍可 run/status，但不可声称已通过任务覆盖检查。
+
+evidence-linked 只表示清单中的连接存在；不能证明所有任务已列入，也不能证明检查有意义、单位正确或论文已完成。论证、图表和格式等非数值要求仍在 tasks.md 中跟踪。该命令输出 JSON，不覆盖运行原件；如需保存，将标准输出写到工作项目的报告目录。

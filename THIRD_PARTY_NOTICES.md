@@ -10,3 +10,11 @@ Praxis assembles an agent workflow and locally authored adapters; it does not cl
 Other installed scientific dependencies (NumPy, pandas, SciPy, matplotlib, scikit-learn, NetworkX, SymPy, statsmodels, openpyxl and their transitive dependencies) are not vendored; inspect each installed distribution's own license when redistributing dependencies. uv.lock records versions and archive hashes. third_party/dependencies.json distinguishes repository review commits from installed releases.
 
 No guarantee of legal clearance or exclusive rights to the project name is made. This repository is not a fork of MathModelHub, is not endorsed by upstream authors, and does not include users' case files or conversations.
+
+
+Workflow review additions:
+
+- [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science), © 2016 DrivenData, Inc., MIT. Inspiration for reproducible data flow and lightweight experiment records; license retained in third_party/licenses/cookiecutter-data-science-LICENSE. No generator, templates or implementation copied.
+- [Math Modeling Contest Workflow](https://github.com/user0928/math-modeling-contest-workflow/tree/40155106a7051fccff9c0b2ab60cdff2588524b4) was read for comparison. No clear license was found at the reviewed commit; no text, code, skill or evaluation dataset is included. Praxis's definition examples and evidence-index implementation are independently authored. This link is acknowledgment of comparison, not a claim of reuse permission.
+
+Review scope and adoption decisions are documented in references/upstream-review.md and third_party/workflow-review.json.
