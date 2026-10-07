@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "checked_on": "2026-10-07",
+  "status": "local-reviewed-case; not a real contest submission",
+  "pdf": {
+    "sha256": "f19ac51bbeb618592fef71be777149ad184cc70d8ec2c14adfcb25ddc5b3973e",
+    "bytes": 548853,
+    "pages_total": 19,
+    "solution_pages": 18,
+    "ai_pages": 1,
+    "minimum_extracted_font_size_pt": 12.0,
+    "text_bounds_checked": true,
+    "pages_rendered_and_visually_reviewed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  "model_checks": {
+    "total": 17,
+    "passed": 17,
+    "independence": "Independent RHS and integrator; same assumed physical model"
+  },
+  "reproduction_checks": {
+    "total": 18,
+    "passed": 18,
+    "extra": "Archived report water amount"
+  },
+  "scope": "Uncalibrated physical scenarios; two-grid diagnostic; no claim of award, full transcript or independent human review",
+  "submission_files": [
+    "7391856.pdf"
+  ],
+  "template_review": {
+    "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
+    "checked_on": "2026-10-07",
+    "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
+    "year_handling": "Year omitted for historical demo: official current sample comment says 2027 but visible heading says 2026",
+    "numbering": "Every page includes control number and Page x of total, including summary; explicit current rule preferred over empty-header sample",
+    "not_identical_to_official_tex": true,
+    "team_control_number": "7391856",
+    "example_only": true
+  },
+  "publication_scope": "Curated historical case; report, reproduction sources and presentation assets only"
+}

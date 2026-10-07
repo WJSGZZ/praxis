@@ -1,0 +1,12 @@
+{
+  "checked_on": "2026-10-07",
+  "sources": [
+    {"id": "problem", "url": "https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf", "read": "one page; text and rendered original", "use": "task requirements only; original PDF stays in private case"},
+    {"id": "commentary", "author": "Kathleen M. Shannon", "title": "Judges' Commentary: Hot Bath Problem", "journal": "The UMAP Journal", "volume": "37(3)", "pages": "277-281", "year": 2016, "url": "https://faculty.winthrop.edu/abernathyz/MathComps/2016_MCM_A-Com.pdf", "read": "all five pages extracted text", "use": "evaluation guidance, not copied solution; no redistribution"},
+    {"id": "rules", "url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php", "edition": "2027 current rules", "use": "English >=12pt; single PDF; summary; anonymous headers; solution <=25 pages; AI report follows and is excluded from solution count"},
+    {"id": "summary", "url": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex", "use": "three-column heading and newtx example, not a required Times font; downloaded source labels 2027 in comments but 2026 in visible heading, so no year blindly copied"},
+    {"id": "ai", "url": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/Contest_AI_Policy.pdf", "edition": "v102025", "use": "inline/reference disclosure and appended AI report; no invented complete interaction transcript"},
+    {"id": "heat", "author": "U.S. Department of Energy", "title": "DOE Fundamentals Handbook: Thermodynamics, Heat Transfer, and Fluid Flow", "identifier": "DOE-HDBK-1012/2-92", "year": 1992, "url": "https://engineeringlibrary.org/reference/convection-heat-transfer-doe-handbook", "read": "chapter; Qdot=h A deltaT and empirical dependence of heat-transfer coefficient", "use": "heat-balance form only, not assumed tub coefficient values"},
+    {"id": "water", "author": "IAPWS", "title": "Revised Release on the IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use", "year": 2018, "url": "https://iapws.org/technical-guidance/release/IAPWS-95", "read": "release page", "use": "context for water property approximation; density 1000 and cp4180 are explicitly rounded scenario constants, not claimed database evaluations"}
+  ]
+}

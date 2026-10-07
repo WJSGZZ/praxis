@@ -12,7 +12,7 @@
 
 **简体中文** · [English](README.en.md)
 
-[查看 Demo](demos/cumcm-1998-a/README.md) · [快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
+[国赛 Demo](demos/cumcm-1998-a/README.md) · [美赛 Demo](demos/mcm-2016-a/README.md) · [快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
 
 </div>
 
@@ -64,6 +64,16 @@
 </table>
 
 </details>
+
+## 再看一个不同类型的问题：美赛的空间热模型
+
+**2016 MCM A《A Hot Bath》：平均水温够高，远处的水就一定够暖吗？**
+
+[![美赛案例：三维水温、策略与能量证据](demos/mcm-2016-a/assets/overview-zh.png)](demos/mcm-2016-a/README.md)
+
+这次从可证明的理想模型出发，用三维热网络检查策略是否仍成立。19 页英文报告包含 17 项检查、16 个变化情景、网格诊断及一页使用者说明；最终提交目录只保留一份 PDF。热损与混合参数明确作为情景，结果不冒充实测。
+
+**[查看完整美赛案例 →](demos/mcm-2016-a/README.md)** · [阅读英文论文](demos/mcm-2016-a/deliverables/7391856.pdf)
 
 如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 

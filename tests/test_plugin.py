@@ -28,6 +28,11 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
     assert (output / 'skills/praxis/design/style.py').is_file()
     assert (demo / 'reproduce/run_demo.py').is_file()
     assert not (demo / 'reproduce/reproduced').exists()
+    bath = output / 'skills/praxis/demos/mcm-2016-a'
+    assert (bath / 'deliverables/7391856.pdf').read_bytes() == (BUNDLE / 'demos/mcm-2016-a/deliverables/7391856.pdf').read_bytes()
+    assert (bath / 'assets/overview-zh.png').is_file()
+    assert (bath / 'reproduce/reference/trajectory.npz').is_file()
+    assert not (bath / 'reproduce/reproduced').exists()
     problem = tmp_path / 'synthetic.md'
     problem.write_text('Synthetic packaging check only.')
     workspace = tmp_path / 'workspace'

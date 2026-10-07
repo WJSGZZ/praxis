@@ -21,7 +21,7 @@ TREES = {
     'third_party/licenses': None,
     'packaging': {'.json'},
     'design': {'.py', '.md', '.json'},
-    # Only this explicitly curated public demo; never user cases or generated reruns.
+    # Only explicitly curated public demos; never user cases or generated reruns.
     'demos/cumcm-1998-a': {'.md', '.json'},
     'demos/cumcm-1998-a/assets': {'.png', '.py'},
     'demos/cumcm-1998-a/deliverables': {'.pdf', '.zip'},
@@ -29,6 +29,12 @@ TREES = {
     'demos/cumcm-1998-a/reproduce/code': {'.py'},
     'demos/cumcm-1998-a/reproduce/data': {'.csv'},
     'demos/cumcm-1998-a/reproduce/reference': {'.csv', '.json'},
+    'demos/mcm-2016-a': {'.md', '.json'},
+    'demos/mcm-2016-a/assets': {'.png', '.py'},
+    'demos/mcm-2016-a/deliverables': {'.pdf'},
+    'demos/mcm-2016-a/reproduce': {'.py', '.md'},
+    'demos/mcm-2016-a/reproduce/code': {'.py'},
+    'demos/mcm-2016-a/reproduce/reference': {'.npz', '.json'},
 }
 
 

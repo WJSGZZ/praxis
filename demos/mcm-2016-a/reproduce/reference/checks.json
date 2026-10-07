@@ -1,0 +1,95 @@
+[
+  {
+    "name": "finite_positive_heat_capacities",
+    "passed": true,
+    "evidence": "{\"samples\": 1801, \"smallest_capacity_j_per_k\": 2767.209159305976}"
+  },
+  {
+    "name": "instantaneous_energy_balance_with_overflow",
+    "passed": true,
+    "evidence": "{\"formulation\": \"sum(C_i dT_i/dt) = air + body + rho cp q (Tin - Tout)\", \"max_residual_w\": 2.730189407884609e-10, \"tolerance_w\": 1e-07}"
+  },
+  {
+    "name": "cumulative_energy_balance_with_overflow",
+    "passed": true,
+    "evidence": "{\"integrated_boundary_energy_j\": -541987.9468211936, \"quadrature\": \"One-second trapezoids, split exactly at control switch\", \"residual_j\": 0.0033388612791895866, \"stored_energy_change_j\": -541987.9434823323, \"tolerance_j\": 30.0}"
+  },
+  {
+    "name": "internal_exchange_is_conservative",
+    "passed": true,
+    "evidence": "{\"max_column_sum_w_per_k\": 2.8421709430404007e-13}"
+  },
+  {
+    "name": "advection_has_only_one_overflow_sink",
+    "passed": true,
+    "evidence": "{\"max_column_sum_defect\": 0.0}"
+  },
+  {
+    "name": "independent_RK45_vs_archived_matrix_exponential",
+    "passed": true,
+    "evidence": "{\"independence\": \"Same physical coefficients; independently assembled RHS and adaptive integration\", \"maximum_temperature_difference_c\": 2.97492839251845e-07, \"tolerance_c\": 2e-06}"
+  },
+  {
+    "name": "one_second_sampled_policy_constraints",
+    "passed": true,
+    "evidence": "{\"ceiling_c\": 40.5, \"floor_c\": 39.0, \"limitation\": \"Sampled check, not a continuous-time feasibility certificate\", \"max_span_c\": 0.5638764996033032, \"maximum_c\": 40.18260311417148, \"minimum_c\": 39.029999995732915, \"numerical_tolerance_c\": 0.002, \"span_limit_c\": 1.5}"
+  },
+  {
+    "name": "policy_summary_vs_one_second_replay",
+    "passed": true,
+    "evidence": "{\"absolute_metric_differences_c\": {\"max_span\": 1.3689039235487144e-08, \"max_temp\": 3.19720783181765e-09, \"min_temp\": 8.97657059795165e-10}, \"interpretation\": \"Checks reporting and coarse-time sampling bias; does not prove the policy is globally optimal\", \"tolerance_c\": 0.002}"
+  },
+  {
+    "name": "continuous_envelope_contraction_premise",
+    "passed": true,
+    "evidence": "{\"condition\": \"Metzler A and nonpositive row sums\", \"segment_matrices\": [{\"max_row_sum\": -1.4409301042919709e-05, \"min_off_diagonal\": 0.0}, {\"max_row_sum\": -1.4409301042919709e-05, \"min_off_diagonal\": 0.0}]}"
+  },
+  {
+    "name": "continuous_time_policy_envelope",
+    "passed": true,
+    "evidence": "{\"ceiling_c\": 40.5, \"derivative_bound_c_per_s\": 0.02651480889352111, \"feasibility_tolerance_c\": 0.002, \"floor_c\": 39.0, \"integration_allowance_c\": 2e-06, \"largest_sample_gap_s\": 1.0, \"lower_temperature_bound_c\": 39.01674059128615, \"proof\": \"Contractive positive semigroup bounds derivative norm; nearest-sample distance <= gap/2.\", \"scope\": \"Conditional continuous-time envelope for the stated thermal network; floating-point integration is not interval arithmetic or empirical validation\", \"segment_initial_derivative_norms_c_per_s\": [0.0026476089775006716, 0.02651480889352111], \"span_limit_c\": 1.5, \"span_upper_bound_c\": 0.5903953084968243, \"upper_temperature_bound_c\": 40.19586251861824}"
+  },
+  {
+    "name": "uniform_zero_flow_analytic_cooling",
+    "passed": true,
+    "evidence": "{\"decay_per_s\": 0.0011111111111111111, \"max_error_c\": 3.979039320256561e-13, \"simplified_problem\": \"No body loss; ha_i = k C_i; initially uniform temperature\"}"
+  },
+  {
+    "name": "positive_system_and_steady_bounds_coast",
+    "passed": true,
+    "evidence": "{\"invariant_bounds_c\": [22.0, 50.0], \"min_off_diagonal_per_s\": 0.0, \"steady_max_c\": 26.035950562845, \"steady_min_c\": 26.00692804218771}"
+  },
+  {
+    "name": "positive_system_and_steady_bounds_flow",
+    "passed": true,
+    "evidence": "{\"invariant_bounds_c\": [22.0, 50.0], \"min_off_diagonal_per_s\": 0.0, \"steady_max_c\": 35.552807846571206, \"steady_min_c\": 34.79482717963255}"
+  },
+  {
+    "name": "independent_closed_form_arithmetic",
+    "passed": true,
+    "evidence": "{\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"coast_s\": 2.2737367544323206e-13, \"energy_lower_bound_l\": 1.7763568394002505e-15, \"hold_lpm\": 1.1102230246251565e-16, \"mixed_optimum_l\": 3.552713678800501e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"coast_s\": 1237.9008466198134, \"energy_lower_bound_l\": 5.98427577207481, \"hold_lpm\": 0.6972031317964332, \"mixed_optimum_l\": 6.531621501946496, \"volume_l\": 164.25000000000003}}"
+  },
+  {
+    "name": "policy_respects_optimistic_energy_lower_bound",
+    "passed": true,
+    "evidence": "{\"assumptions\": \"All cells at least floor; inlet fixed; overflow at least floor; constant thermal coefficients\", \"energy_lower_bound_l\": 5.98427577207481, \"ideal_mixed_water_l\": 6.531621501946496, \"selected_policy_water_l\": 10.482856492264881}"
+  },
+  {
+    "name": "all_scenario_geometry_arithmetic",
+    "passed": true,
+    "evidence": "{\"independence\": \"Physical dimensions and coefficients used directly, not sums of the assembled network\", \"scenarios\": {\"cool supply\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"cooler skin\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"deep narrow\": {\"absolute_differences\": {\"air_conductance\": 7.105427357601002e-15, \"body_conductance\": 5.329070518200751e-15, \"volume_l\": 2.842170943040401e-14}, \"independent_values\": {\"air_conductance\": 23.402500000000003, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"foam\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 16.84, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"high loss\": {\"absolute_differences\": {\"air_conductance\": 7.105427357601002e-15, \"body_conductance\": 3.552713678800501e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 41.055, \"body_conductance\": 20.7, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"large bath\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 2.842170943040401e-14}, \"independent_values\": {\"air_conductance\": 28.23, \"body_conductance\": 13.799999999999999, \"volume_l\": 203.25000000000003}, \"passed\": true}, \"larger body\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 0.0, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 16.200000000000003, \"volume_l\": 149.25000000000006}, \"passed\": true}, \"long body\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 0.0, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"loose comfort\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"moving with added surface loss\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 30.880000000000006, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"shallow wide\": {\"absolute_differences\": {\"air_conductance\": 7.105427357601002e-15, \"body_conductance\": 0.0, \"volume_l\": 2.842170943040401e-14}, \"independent_values\": {\"air_conductance\": 33.63411764705882, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"small bath\": {\"absolute_differences\": {\"air_conductance\": 0.0, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 2.842170943040401e-14}, \"independent_values\": {\"air_conductance\": 26.725, \"body_conductance\": 13.799999999999999, \"volume_l\": 135.00000000000003}, \"passed\": true}, \"strong mixing\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"tight comfort\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"warmer skin\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}, \"weak mixing\": {\"absolute_differences\": {\"air_conductance\": 3.552713678800501e-15, \"body_conductance\": 1.7763568394002505e-15, \"volume_l\": 0.0}, \"independent_values\": {\"air_conductance\": 27.37, \"body_conductance\": 13.799999999999999, \"volume_l\": 164.25000000000003}, \"passed\": true}}, \"tolerance\": 1e-08}",
+    "requirements": [
+      "Q2",
+      "Q3"
+    ]
+  },
+  {
+    "name": "independent_scenario_RK45_replay",
+    "passed": true,
+    "evidence": "{\"interpretation\": \"Feasible scenarios independently integrated with RK45; constraints are sampled only. Cases with no accepted candidate are search outcomes, not proofs of physical or mathematical infeasibility.\", \"maximum_sampling_interval_s\": 5.0, \"no_accepted_candidate\": [\"weak mixing\", \"tight comfort\", \"high loss\"], \"scenarios\": {\"cool supply\": {\"absolute_summary_differences_c\": {\"final_max\": 1.4050378638330585e-08, \"final_mean\": 3.907985046680551e-13, \"final_min\": 9.024674341162608e-10, \"max_span\": 1.3147911204214324e-08, \"max_temp\": 4.618001270273453e-08, \"min_temp\": 9.024674341162608e-10}, \"independent_metrics\": {\"final_max\": 39.58812739412184, \"final_mean\": 39.20961560168106, \"final_min\": 39.029999999098024, \"max_span\": 0.558127395023817, \"max_temp\": 40.16595185477474, \"min_temp\": 39.029999999098024}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"cooler skin\": {\"absolute_summary_differences_c\": {\"final_max\": 1.2597709542205848e-08, \"final_mean\": 5.826450433232822e-13, \"final_min\": 7.804530355315364e-10, \"max_span\": 1.1817256506674312e-08, \"max_temp\": 4.301887202018406e-08, \"min_temp\": 7.804530355315364e-10}, \"independent_metrics\": {\"final_max\": 39.67148760631379, \"final_mean\": 39.23487949674484, \"final_min\": 39.02999999922073, \"max_span\": 0.6414876070930617, \"max_temp\": 40.22058831471145, \"min_temp\": 39.02999999922073}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"deep narrow\": {\"absolute_summary_differences_c\": {\"final_max\": 9.166001291305292e-13, \"final_mean\": 9.663381206337363e-13, \"final_min\": 9.947598300641403e-13, \"max_span\": 7.815970093361102e-14, \"max_temp\": 1.840200525293767e-08, \"min_temp\": 9.947598300641403e-13}, \"independent_metrics\": {\"final_max\": 39.309955859341564, \"final_mean\": 39.11235488181245, \"final_min\": 39.030000001701055, \"max_span\": 0.279955857640509, \"max_temp\": 40.08716040829172, \"min_temp\": 39.030000001701055}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"foam\": {\"absolute_summary_differences_c\": {\"final_max\": 1.0315554987982978e-07, \"final_mean\": 1.8332002582610585e-12, \"final_min\": 1.7618255299112207e-08, \"max_span\": 1.6352318965573431e-07, \"max_temp\": 0.0, \"min_temp\": 1.7618255299112207e-08}, \"independent_metrics\": {\"final_max\": 39.0465218612988, \"final_mean\": 39.0280354972619, \"final_min\": 39.01110939382129, \"max_span\": 0.03688064248308365, \"max_temp\": 40.0, \"min_temp\": 39.01110939382129}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"large bath\": {\"absolute_summary_differences_c\": {\"final_max\": 5.115907697472721e-13, \"final_mean\": 4.973799150320701e-13, \"final_min\": 4.547473508864641e-13, \"max_span\": 5.684341886080802e-14, \"max_temp\": 7.532236168117379e-09, \"min_temp\": 4.547473508864641e-13}, \"independent_metrics\": {\"final_max\": 39.32994057457318, \"final_mean\": 39.12235022525137, \"final_min\": 39.03000000333434, \"max_span\": 0.2999405712388423, \"max_temp\": 40.07951715776152, \"min_temp\": 39.03000000333434}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"larger body\": {\"absolute_summary_differences_c\": {\"final_max\": 1.017658490809481e-08, \"final_mean\": 1.1368683772161603e-12, \"final_min\": 4.6711079448868986e-11, \"max_span\": 1.0129873828645941e-08, \"max_temp\": 1.1618503492627497e-08, \"min_temp\": 4.6711079448868986e-11}, \"independent_metrics\": {\"final_max\": 39.8310692403178, \"final_mean\": 39.30329970050739, \"final_min\": 39.030000001491985, \"max_span\": 0.8010692388258178, \"max_temp\": 40.28058950858688, \"min_temp\": 39.030000001491985}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"long body\": {\"absolute_summary_differences_c\": {\"final_max\": 1.631968871151912e-08, \"final_mean\": 1.2221335055073723e-12, \"final_min\": 3.9882053215478663e-10, \"max_span\": 1.5920868179364334e-08, \"max_temp\": 9.369145459459105e-10, \"min_temp\": 3.9882053215478663e-10}, \"independent_metrics\": {\"final_max\": 39.59338248245781, \"final_mean\": 39.20171831469228, \"final_min\": 39.02999999411374, \"max_span\": 0.5633824883440752, \"max_temp\": 40.1963463115964, \"min_temp\": 39.02999999411374}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"loose comfort\": {\"absolute_summary_differences_c\": {\"final_max\": 2.319596603683749e-08, \"final_mean\": 2.8421709430404007e-13, \"final_min\": 8.043691934744857e-09, \"max_span\": 3.2305386810094205e-08, \"max_temp\": 0.0, \"min_temp\": 8.043691934744857e-09}, \"independent_metrics\": {\"final_max\": 38.595761626616365, \"final_mean\": 38.57036588214205, \"final_min\": 38.542477046757504, \"max_span\": 0.056436070501447944, \"max_temp\": 40.0, \"min_temp\": 38.542477046757504}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"moving with added surface loss\": {\"absolute_summary_differences_c\": {\"final_max\": 6.159282861517568e-09, \"final_mean\": 2.8137492336099967e-12, \"final_min\": 3.6645531054091407e-10, \"max_span\": 5.7928275509766536e-09, \"max_temp\": 0.0, \"min_temp\": 3.6645531054091407e-10}, \"independent_metrics\": {\"final_max\": 39.28467651008574, \"final_mean\": 39.111557039445906, \"final_min\": 39.02999999963525, \"max_span\": 0.2546765104504871, \"max_temp\": 40.0, \"min_temp\": 39.02999999963525}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"shallow wide\": {\"absolute_summary_differences_c\": {\"final_max\": 8.935231221585127e-09, \"final_mean\": 3.126388037344441e-13, \"final_min\": 4.6135539832903305e-11, \"max_span\": 8.889095681752224e-09, \"max_temp\": 1.8203934359917184e-08, \"min_temp\": 4.6135539832903305e-11}, \"independent_metrics\": {\"final_max\": 40.17336615310834, \"final_mean\": 39.42530077702777, \"final_min\": 39.030000001310896, \"max_span\": 1.1433661517974443, \"max_temp\": 40.44866526118508, \"min_temp\": 39.030000001310896}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"small bath\": {\"absolute_summary_differences_c\": {\"final_max\": 1.3308081747709366e-08, \"final_mean\": 1.3358203432289883e-12, \"final_min\": 2.1242385628283955e-10, \"max_span\": 1.3095657891426526e-08, \"max_temp\": 2.1845650621798995e-08, \"min_temp\": 2.1242385628283955e-10}, \"independent_metrics\": {\"final_max\": 39.88404823393272, \"final_mean\": 39.31863390762164, \"final_min\": 39.02999996556818, \"max_span\": 0.8540482683645365, \"max_temp\": 40.313607029896154, \"min_temp\": 39.02999996556818}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"strong mixing\": {\"absolute_summary_differences_c\": {\"final_max\": 6.8036385414416145e-09, \"final_mean\": 6.181721801112872e-13, \"final_min\": 4.050306756653299e-10, \"max_span\": 6.398607865776285e-09, \"max_temp\": 0.0, \"min_temp\": 4.050306756653299e-10}, \"independent_metrics\": {\"final_max\": 39.21128454128481, \"final_mean\": 39.088151830393635, \"final_min\": 39.029999967667166, \"max_span\": 0.1812845736176456, \"max_temp\": 40.0, \"min_temp\": 39.029999967667166}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}, \"warmer skin\": {\"absolute_summary_differences_c\": {\"final_max\": 6.03788734565569e-08, \"final_mean\": 8.526512829121202e-13, \"final_min\": 3.695660666380718e-09, \"max_span\": 5.6683212790176185e-08, \"max_temp\": 2.43918663045406e-09, \"min_temp\": 3.695660666380718e-09}, \"independent_metrics\": {\"final_max\": 39.51510074085867, \"final_mean\": 39.18599074495527, \"final_min\": 39.02999999630392, \"max_span\": 0.4851007445547495, \"max_temp\": 40.146435779887675, \"min_temp\": 39.02999999630392}, \"passed\": true, \"sampled_constraints_passed\": true, \"samples\": 361}}, \"summary_tolerance_c\": 0.002}",
+    "requirements": [
+      "Q2",
+      "Q3"
+    ]
+  }
+]

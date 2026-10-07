@@ -12,7 +12,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 [简体中文](README.md) · **English**
 
-[Explore the demo](demos/cumcm-1998-a/README.en.md) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Agent compatibility](#agent-compatibility) · [Validation and limitations](#validation-and-limitations)
+[CUMCM case](demos/cumcm-1998-a/README.en.md) · [MCM case](demos/mcm-2016-a/README.en.md) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Agent compatibility](#agent-compatibility) · [Validation and limitations](#validation-and-limitations)
 
 </div>
 
@@ -64,6 +64,14 @@ At a CNY 1,000,000 budget, the four-asset solution returns **21.90%** net at a 1
 </table>
 
 </details>
+
+## A second case: when spatial detail changes the decision
+
+[![A Hot Bath: compare a spatial policy, an ideal optimum, and an energy bound](demos/mcm-2016-a/assets/overview-en.png)](demos/mcm-2016-a/README.en.md)
+
+**MCM 2016 A, A Hot Bath.** A proved well-mixed benchmark and a three-dimensional thermal network recommend different replenishment strategies. Follow the argument through a 19-page English report, 17 recorded checks, 16 scenario variations, a resolution diagnostic, and a one-page user guide. The submission is one PDF; the assumed coefficients are kept distinct from measured data.
+
+[Inspect the MCM case →](demos/mcm-2016-a/README.en.md) · [Read the report](demos/mcm-2016-a/deliverables/7391856.pdf)
 
 Try the case or bring your own problem. **Star Praxis** if you would like to follow its development.
 
