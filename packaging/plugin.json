@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "praxis",
+  "version": "0.1.0",
+  "description": "Evidence-based mathematical modeling, validation and report workflows for Codex.",
+  "author": {"name": "WJSGZZ"},
+  "repository": "https://github.com/WJSGZZ/praxis",
+  "license": "MIT"
+}

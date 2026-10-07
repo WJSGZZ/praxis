@@ -1,6 +1,6 @@
 # Praxis
 
-**一个用于 Codex 的数学建模 Skill：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
+**一个用于 Codex 的数学建模能力包：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
 
 Praxis 围绕同一任务组织五个环节：明确问题、形成路线、取得结果、判断证据、完成回答。模型与验证一起选择，失败按原因返回对应环节；方法按任务条件调用，多个模型只有输入输出关系明确且确有用途时才组合。工具负责原始输入、审计、运行与证据追溯，助手负责含义、选择与科学判断。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)，新增工作流对照与改进见 [审查记录](references/upstream-review.md)。
 
@@ -28,6 +28,16 @@ WORKSPACE="/absolute/path/to/your/project"
 ```
 
 助手按 [执行契约](references/automation.md) 写并审核案例内的 model.py 与 validate.py 后，才运行 `run`；命令行脚本本身不会自动理解问题或生成模型。数据、案例与输出默认不进入 Git。项目规则与比赛规则由工作项目提供。
+
+## 工作区与插件
+
+同一份维护源既支持现有 Skill 安装，也能导出含 Skill、脚本、锁定依赖和许可的 portable 插件包：
+
+```bash
+uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
+```
+
+导出目录必须尚不存在。题目、数据、案例与论文继续保存在用户工作区；环境需要显式准备。当前已支持目录导出，尚未验证宿主插件安装／发现，也未在官方插件目录上架。架构、职责和后续扩展条件见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 
 ## 方法与工具的分工
 
