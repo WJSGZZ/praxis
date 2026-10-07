@@ -2,7 +2,7 @@
 
 **一个用于 Codex 的数学建模 Skill：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
 
-全流程建模并不是新发明。Praxis 的工作是把方法选择指导与实际可执行的工具结合：保留原始输入、审计数据、由助手实现模型与独立验证器、记录运行证据、检查结果是否因文件变化而过期。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)，新增工作流对照与改进见 [审查记录](references/upstream-review.md)。
+Praxis 围绕同一任务组织五个环节：明确问题、形成路线、取得结果、判断证据、完成回答。模型与验证一起选择，失败按原因返回对应环节；方法按任务条件调用，多个模型只有输入输出关系明确且确有用途时才组合。工具负责原始输入、审计、运行与证据追溯，助手负责含义、选择与科学判断。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)，新增工作流对照与改进见 [审查记录](references/upstream-review.md)。
 
 ## 安装与使用
 
@@ -28,6 +28,10 @@ WORKSPACE="/absolute/path/to/your/project"
 ```
 
 助手按 [执行契约](references/automation.md) 写并审核案例内的 model.py 与 validate.py 后，才运行 `run`；命令行脚本本身不会自动理解问题或生成模型。数据、案例与输出默认不进入 Git。项目规则与比赛规则由工作项目提供。
+
+## 方法与工具的分工
+
+统一推理主线在 [methods.md](references/methods.md)，各环节更新同一份任务记录。定义歧义的例子按需读取；算法封装按输入条件调用；运行与证据脚本服务于主线，不决定题意或结论。用户只要求分析就完成分析，完整建模才推进至实际结果与报告。
 
 ## 已实现与限制
 
