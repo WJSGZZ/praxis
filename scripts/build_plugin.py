@@ -9,7 +9,7 @@ import shutil
 
 BUNDLE = Path(__file__).resolve().parents[1]
 FILES = ('SKILL.md', 'README.md', 'README.en.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
-         'pyproject.toml', 'uv.lock', 'ARCHITECTURE.md')
+         'pyproject.toml', 'uv.lock')
 # Explicit public resources, never the repository, environment or user cases.
 TREES = {
     'agents': {'.yaml'},

@@ -197,7 +197,7 @@ praxis-plugin/
     praxis-model/  praxis-compute/  praxis-verify/  praxis-report/
 ```
 
-用户的题目、数据与案例继续保存在你的工作区，不进入插件。结构与扩展条件见 [架构说明](ARCHITECTURE.md)。
+用户的题目、数据与案例继续保存在你的工作区，不进入插件。
 
 </details>
 

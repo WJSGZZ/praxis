@@ -198,7 +198,7 @@ praxis-plugin/
     praxis-model/  praxis-compute/  praxis-verify/  praxis-report/
 ```
 
-Your problems, data, and cases stay in your own workspace, never in the plugin. See [Architecture](ARCHITECTURE.md) for the layout and when to extend it.
+Your problems, data, and cases stay in your own workspace, never in the plugin.
 
 </details>
 
