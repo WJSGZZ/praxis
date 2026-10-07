@@ -32,12 +32,12 @@ def wall_coefficient(thickness=.005,conductivity=.19,h_inside=300.,h_outside=8.)
     return 1./(1./h_inside+thickness/conductivity+1./h_outside)
 
 
-def body_uptake_anchor(mass=75.,specific_heat=3470.,mean_body_rise=(1.0,2.0),minutes=30.,water_minus_skin=6.,area=1.15):
+def body_uptake_anchor(mass=73.,specific_heat=3470.,mean_body_rise=(1.0,2.0),minutes=30.,water_minus_skin=6.,area=1.15):
     """Average heat uptake implied by measured core warming, and the equivalent skin-to-water coefficient.
 
     Menzies et al. (2025) report a rectal-temperature rise of 0.9 +/- 0.3 C after 30 min of shoulder-deep 40 C immersion.
     Mean body temperature rises more than core temperature because the skin warms toward the water; the
-    1-2 C range for the mean rise is an assumption, as are the mass and the fixed 6 K driving difference."""
+    1-2 C range for the mean rise and the fixed 6 K driving difference are assumptions. The 73 kg mass is the mean of the study's 22 participants (13 men 80.3 kg, 9 women 62.1 kg); the paper's full text reports no whole-body skin temperature."""
     out=[]
     for rise in mean_body_rise:
         watts=mass*specific_heat*rise/(minutes*60.)

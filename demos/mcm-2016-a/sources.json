@@ -58,8 +58,17 @@
       "journal": "Experimental Physiology",
       "year": 2025,
       "doi": "10.1113/EP092761",
-      "read": "abstract only: 30 min at 40 C shoulder-deep, rectal temperature +0.9 +/- 0.3 C",
+      "read": "full text (open-access manuscript): 30 min at 40 C shoulder-deep, rectal temperature +0.9 +/- 0.3 C; 22 participants, mean mass 72.9 kg from the reported group means",
       "use": "order-of-magnitude anchor for body heat uptake and the 40-42 C comfort window; body mass and mean-body-temperature rise are our assumptions"
+    },
+    {
+      "id": "stratification",
+      "authors": "Munk, Anderson",
+      "title": "Notes on a theory of the thermocline",
+      "journal": "Journal of Marine Research",
+      "year": 1948,
+      "read": "not opened; the scalar stability function (1+3.33 Ri)^(-3/2) was checked against a turbulence-model source file and a web summary",
+      "use": "order-of-magnitude reduction of vertical mixing under stable stratification for the stratified scenario; velocity and temperature scales are assumptions"
     }
   ]
 }

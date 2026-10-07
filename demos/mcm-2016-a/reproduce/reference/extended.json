@@ -57,13 +57,13 @@
    "anchor": [
     {
      "mean_body_rise_c": 1.0,
-     "average_uptake_w": 144.58333333333334,
-     "equivalent_h_body": 20.95410628019324
+     "average_uptake_w": 140.7277777777778,
+     "equivalent_h_body": 20.39533011272142
     },
     {
      "mean_body_rise_c": 2.0,
-     "average_uptake_w": 289.1666666666667,
-     "equivalent_h_body": 41.90821256038648
+     "average_uptake_w": 281.4555555555556,
+     "equivalent_h_body": 40.79066022544284
     }
    ],
    "used_baseline": 25.0
@@ -81,6 +81,64 @@
   "final_min": 39.030000001268945,
   "final_max": 40.23927883845962
  },
+ "frontier": [
+  {
+   "floor": 37.0,
+   "fall": 3.0,
+   "constant_l": 0.0,
+   "mixed_l": 0.0,
+   "bound_l": 0.0
+  },
+  {
+   "floor": 37.5,
+   "fall": 2.5,
+   "constant_l": 0.0,
+   "mixed_l": 0.0,
+   "bound_l": 0.0
+  },
+  {
+   "floor": 38.0,
+   "fall": 2.0,
+   "constant_l": 1.8703274683347815,
+   "mixed_l": 0.3431758450595755,
+   "bound_l": 0.0
+  },
+  {
+   "floor": 38.5,
+   "fall": 1.5,
+   "constant_l": 12.8589999721167,
+   "mixed_l": 7.6793842841765665,
+   "bound_l": 6.368113168296231
+  },
+  {
+   "floor": 39.0,
+   "fall": 1.0,
+   "constant_l": 24.142452539529156,
+   "mixed_l": 16.01403309042278,
+   "bound_l": 15.413214441061328
+  },
+  {
+   "floor": 39.25,
+   "fall": 0.75,
+   "constant_l": 29.826829992378027,
+   "mixed_l": 20.594753241812022,
+   "bound_l": 20.251291866028705
+  },
+  {
+   "floor": 39.5,
+   "fall": 0.5,
+   "constant_l": null,
+   "mixed_l": 25.474986528742644,
+   "bound_l": 25.319753930280246
+  },
+  {
+   "floor": 39.75,
+   "fall": 0.25,
+   "constant_l": null,
+   "mixed_l": 30.6749488625257,
+   "bound_l": 30.635458046446498
+  }
+ ],
  "analytic": {
   "volume_l": 164.25000000000003,
   "air_conductance": 37.141000000000005,

@@ -34,9 +34,9 @@ The **17 recorded checks** include independent heat-flow arithmetic and RK45 int
 </tr>
 </table>
 
-[Open the 23-page English report →](deliverables/7391856.pdf)
+[Open the 25-page English report →](deliverables/7391856.pdf)
 
-The PDF has 22 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
+The PDF has 24 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
 
 `deliverables/` contains **one PDF only**, matching the MCM submission structure. `7391856` is an example control number, not an actual team identity. Reproduction sources, this guide and verification records are development resources outside the submission directory; there is no CUMCM-style support ZIP.
 
@@ -49,7 +49,7 @@ uv sync --locked
 uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py
 ```
 
-The script recalculates the baseline, 17 variations and a finer grid. It runs the 17 model checks and adds one comparison with the water amount archived for the report. A run typically takes about a minute, depending on hardware. Results go to `reproduce/reproduced/`; an existing directory is preserved by refusing to overwrite it. The extra reproduction check does not change the report’s model-check count.
+The script recalculates the baseline, 18 variations and a finer grid. It runs the 17 model checks and adds one comparison with the water amount archived for the report. A run typically takes about a minute, depending on hardware. Results go to `reproduce/reproduced/`; an existing directory is preserved by refusing to overwrite it. The extra reproduction check does not change the report’s model-check count.
 
 An optional second entry point runs the schedule optimization and the literature-range analysis (about 4–5 minutes):
 
@@ -57,13 +57,13 @@ An optional second entry point runs the schedule optimization and the literature
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py
 ```
 
-It re-optimizes 3-, 6- and 12-segment schedules, replays the best one with an independent RK45 integrator (two checks), and reruns the constant-rate search at 64 Sobol points. Results go to the same `reproduced/` directory.
+It re-optimizes 3-, 6- and 12-segment schedules, replays the best one with an independent RK45 integrator (two checks), and reruns the constant-rate search at 64 Sobol points and eight allowed-fall levels. Results go to the same `reproduced/` directory.
 
 [Report-building instructions](reproduce/README.md) document the separate PDF tool and font requirements. Mathematical reproduction requires no AI service or report-rendering library.
 
 ## Attribution and limits
 
-The task is [COMAP’s 2016 MCM Problem A](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf). No judges’ commentary, award-winning paper or other solution to this problem was read or copied. This is an original development case, not an official solution or an award-winning entry. The problem statement is linked, not redistributed.
+The task is [COMAP’s 2016 MCM Problem A](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf). No award-winning paper or other solution to this problem was read or copied. COMAP’s judges’ commentary was read once during development; the changes it prompted were removed, so this is not a fully blind case. This is an original development case, not an official solution or an award-winning entry. The problem statement is linked, not redistributed.
 
 The historical problem is formatted using the [current 2027 instructions](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php), checked on 7 October 2026: English text of at least 12pt, anonymous headers, page numbering, a single-page summary and the problem’s single-page user explanation. Times New Roman is a typesetting choice. AI participation is disclosed; a complete interaction export and independent human review are not claimed. [Sources](sources.json) · [Verification](verification.json) · [AI record](AI-use.md)
 

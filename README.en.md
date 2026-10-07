@@ -47,7 +47,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 <tr>
 <td valign="top"><strong>17-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
-<td valign="top"><strong>23-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a 12-segment schedule 19.77 L (18% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients are literature-derived with ranges, not measured.</td>
+<td valign="top"><strong>25-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a 12-segment schedule 19.77 L (18% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients are literature-derived with ranges, not measured.</td>
 </tr>
 <tr>
 <td valign="top"><strong>Report PDF + supporting ZIP</strong><br>Modeling code and reproduction evidence are available on the case page.</td>
@@ -111,7 +111,7 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-model`](skills/praxis-model/SKILL.md) | "How should I model this? Where do the parameters come from?" | Problem definition, assumptions and parameter grounding, route and model choice, identifiability and optimization structure |
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | "Run it and keep it reproducible" | CSV/Excel audit, preserved inputs, model and validator runs, stale-result detection, evidence links |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | "Can I trust this? Did I claim too much?" | Independent checks, bounds and optimality, sensitivity, strength of each claim |
-| [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Paper structure, propositions and proofs, figures, sources and AI disclosure, PDF checks and freezing |
+| [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Paper structure, propositions and proofs, figures, reference checking against Crossref, AI disclosure, PDF checks and freezing |
 
 All five share the [methodology](references/methods.md) and one task record; see [capability handoffs](references/capabilities.md) for how work passes between them.
 

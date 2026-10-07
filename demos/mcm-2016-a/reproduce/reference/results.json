@@ -1228,6 +1228,48 @@
         ]
       }
     },
+    "stratified": {
+      "changes": {
+        "Dz_ratio": 0.2
+      },
+      "analytic": {
+        "volume_l": 164.25000000000003,
+        "air_conductance": 37.141000000000005,
+        "body_conductance": 28.749999999999993,
+        "equilibrium": 27.235919928366545,
+        "coast_s": 850.0830919843082,
+        "hold_lpm": 1.011501087429317,
+        "mixed_optimum_l": 16.01403309042278,
+        "energy_lower_bound_l": 15.413214441061328,
+        "constant_at_target_lpm": 1.2072315789473684,
+        "constant_at_target_l": 36.21694736842105
+      },
+      "policy": {
+        "feasible": true,
+        "flow_lpm": 0.8138500179991541,
+        "delay_s": 0.0,
+        "water_l": 24.415500539974623,
+        "min_temp": 39.0300000070507,
+        "max_temp": 40.7645392508875,
+        "max_span": 1.4402167770984704,
+        "final_mean": 39.434287703239356,
+        "final_min": 39.0300000070507,
+        "final_max": 40.47021678414917,
+        "candidates": [
+          {
+            "flow_lpm": 0.8138500179991541,
+            "delay_s": 0.0,
+            "water_l": 24.415500539974623,
+            "min_temp": 39.0300000070507,
+            "max_temp": 40.7645392508875,
+            "max_span": 1.4402167770984704,
+            "final_mean": 39.434287703239356,
+            "final_min": 39.0300000070507,
+            "final_max": 40.47021678414917
+          }
+        ]
+      }
+    },
     "cool supply": {
       "changes": {
         "inlet_temp": 45.0

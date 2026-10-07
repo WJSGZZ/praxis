@@ -36,7 +36,7 @@
 </tr>
 </table>
 
-**[阅读完整 23 页报告 →](deliverables/7391856.pdf)**：22 页常规解答及情景附录，后接 1 页 AI 使用披露。包括一页非技术使用者说明；正文不加入开发进度旁注。参考文献在使用处引用，参数与假设分开。
+**[阅读完整 25 页报告 →](deliverables/7391856.pdf)**：24 页常规解答及情景附录，后接 1 页 AI 使用披露。包括一页非技术使用者说明；正文不加入开发进度旁注。参考文献在使用处引用，参数与假设分开。
 
 `deliverables/` **仅含一份英文 PDF**，遵循美赛的单文件提交形态。`7391856` 是案例占位编号，未借用真实队伍身份。源码、验证记录和本页属于开发案例，放在提交目录之外；没有沿用国赛支撑 ZIP 的结构。
 
@@ -49,7 +49,7 @@ uv sync --locked
 uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py
 ```
 
-脚本重算基准、17 个变化情景和细网格，执行 17 项模型检查，再增加 1 项与论文归档水量的比较。约需一分钟，实际时间随设备而变。输出写入 `reproduce/reproduced/`，存在时拒绝覆盖；它不会修改归档证据或最终 PDF。这里的 18 项复现检查不能回写成论文中 17 项模型检查。
+脚本重算基准、18 个变化情景和细网格，执行 17 项模型检查，再增加 1 项与论文归档水量的比较。约需一分钟，实际时间随设备而变。输出写入 `reproduce/reproduced/`，存在时拒绝覆盖；它不会修改归档证据或最终 PDF。这里的 18 项复现检查不能回写成论文中 17 项模型检查。
 
 分段流量优化与文献范围分析是可选的第二个入口，约需 4–5 分钟：
 
@@ -57,13 +57,13 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py
 ```
 
-它重算 3、6、12 段的最优方案、用独立 RK45 回放并检查 2 项，再对 64 个 Sobol 点做恒定流量搜索，结果写入同一个 `reproduced/` 目录。
+它重算 3、6、12 段的最优方案、用独立 RK45 回放并检查 2 项，再对 64 个 Sobol 点和 8 档允许降温幅度做恒定流量搜索，结果写入同一个 `reproduced/` 目录。
 
 [排版源与构建说明](reproduce/README.md)另列 PDF 工具、字体及命令。数学复现不依赖 AI 服务或排版库。
 
 ## 来源与边界
 
-使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；没有读取或复制同题的评委评述、获奖论文或他人解答，也不声称这是标准答案或获奖成果。原题仅提供链接，不重新分发。
+使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；没有读取或复制同题的获奖论文或他人解答；开发中曾读过一次评委评述，由它引起的改动已全部撤回，所以这不是完全盲做的案例。也不声称这是标准答案或获奖成果。原题仅提供链接，不重新分发。
 
 历史题按核查于 2026-10-07 的 [2027 当前提交规范](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php)编排；字体至少 12pt，使用匿名页眉及页码，Summary 和用户说明分别单页。Times New Roman 是本稿选择，不是官方强制字体。AI 参与范围真实披露，未声称具有完整聊天导出或独立人工审核。[来源记录](sources.json) · [验收记录](verification.json) · [AI 记录](AI-use.md)
 

@@ -47,7 +47,7 @@
 </tr>
 <tr>
 <td valign="top"><strong>17 页中文报告 · 12 项模型检查</strong><br>资金 100 万元时，四资产风险上限 1% 下的净收益率为 21.90%；十五资产风险上限 10% 下为 33.53%。结果基于题目参数及所述风险定义。</td>
-<td valign="top"><strong>23 页英文报告 · 17 项模型检查</strong><br>30 分钟基准情景中，最佳恒定流量补水 24.14 L，分段方案 19.77 L（少 18%），理想完混 16.01 L，能量下界 15.41 L。系数取自文献推导并给出范围，结果不冒充实测。</td>
+<td valign="top"><strong>25 页英文报告 · 17 项模型检查</strong><br>30 分钟基准情景中，最佳恒定流量补水 24.14 L，分段方案 19.77 L（少 18%），理想完混 16.01 L，能量下界 15.41 L。系数取自文献推导并给出范围，结果不冒充实测。</td>
 </tr>
 <tr>
 <td valign="top"><strong>论文 PDF + 支撑材料 ZIP</strong><br>完整代码与复现证据在案例页开放。</td>
@@ -109,7 +109,7 @@ uv sync --project ~/.agents/skills/praxis --locked
 | [`praxis-model`](skills/praxis-model/SKILL.md) | “这题怎么做？参数怎么定？” | 读题与定义、假设和参数依据、路线与模型选择、可辨识性与优化结构 |
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | “跑一下，保存可复现的结果” | CSV／Excel 审计、原件保全、模型与验证器执行、过期检测、证据索引 |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | “结果可信吗？结论说过头了吗？” | 独立检查、界与最优性、敏感性、证据与结论强度审查 |
-| [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 论文结构、命题与证明、图表、来源与 AI 披露、PDF 检查与冻结 |
+| [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 论文结构、命题与证明、图表、参考文献核对、AI 披露、PDF 检查与冻结 |
 
 五个技能共用 [统一方法](references/methods.md) 和同一份任务记录；能力之间的交接见 [能力分工](references/capabilities.md)。
 

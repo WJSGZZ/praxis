@@ -30,7 +30,7 @@ def network(p, grid=(8,4,3)):
         for axis,(ii,jj,kk) in enumerate([(i+1,j,k),(i,j+1,k),(i,j,k+1)]):
          if ii<nx and jj<ny and kk<nz:
           b=idx(ii,jj,kk); area=dv/step[axis]
-          g=p['rho']*p['cp']*p['D']*area/step[axis]*min(1-occupied[a],1-occupied[b])
+          g=p['rho']*p['cp']*p['D']*(p.get('Dz_ratio',1.) if axis==2 else 1.)*area/step[axis]*min(1-occupied[a],1-occupied[b])
           G[a,b]+=g; G[b,a]+=g; G[a,a]-=g; G[b,b]-=g
     # An explicit conservative surface stream models inlet-to-overflow short circuit.
     path=[idx(i,ny//2,nz-1) for i in range(nx)]
@@ -99,7 +99,7 @@ def analytic(p,net):
 def run(output):
     output.mkdir(parents=True,exist_ok=True);p=BASE.copy();net=network(p);a=analytic(p,net);best=search(p,net)
     if not best.get('feasible'):raise RuntimeError('No feasible base policy; preserve failure rather than fabricate a policy')
-    variants={'weak mixing':dict(D=3e-4),'strong mixing':dict(D=3e-3),'moving with added surface loss':dict(D=3e-3,h_surface=30.),'loose comfort':dict(floor=38.),'tight comfort':dict(floor=39.5),'foam':dict(foam=.4),'shallow wide':dict(L=1.7,W=.75,H=(p['L']*p['W']*p['H'])/(1.7*.75)),'deep narrow':dict(L=1.3,W=.6,H=(p['L']*p['W']*p['H'])/(1.3*.6)),'small bath':dict(H=.20),'large bath':dict(H=.27),'larger body':dict(body_volume=.075,body_area=1.35),'long body':dict(body_shape=[.48,.12,.10]),'warmer skin':dict(body_temp=36.),'cooler skin':dict(body_temp=32.),'high loss':dict(h_surface=36.,h_wall=8.5,h_body=40.),'low loss':dict(h_surface=17.,h_wall=4.5,h_body=12.),'cool supply':dict(inlet_temp=45.)}
+    variants={'weak mixing':dict(D=3e-4),'strong mixing':dict(D=3e-3),'moving with added surface loss':dict(D=3e-3,h_surface=30.),'loose comfort':dict(floor=38.),'tight comfort':dict(floor=39.5),'foam':dict(foam=.4),'shallow wide':dict(L=1.7,W=.75,H=(p['L']*p['W']*p['H'])/(1.7*.75)),'deep narrow':dict(L=1.3,W=.6,H=(p['L']*p['W']*p['H'])/(1.3*.6)),'small bath':dict(H=.20),'large bath':dict(H=.27),'larger body':dict(body_volume=.075,body_area=1.35),'long body':dict(body_shape=[.48,.12,.10]),'warmer skin':dict(body_temp=36.),'cooler skin':dict(body_temp=32.),'high loss':dict(h_surface=36.,h_wall=8.5,h_body=40.),'low loss':dict(h_surface=17.,h_wall=4.5,h_body=12.),'stratified':dict(Dz_ratio=.2),'cool supply':dict(inlet_temp=45.)}
     scenarios={}
     for label,changes in variants.items():
         pp={**p,**changes}; nn=network(pp); scenarios[label]=dict(changes=changes,analytic=analytic(pp,nn),policy=search(pp,nn))
