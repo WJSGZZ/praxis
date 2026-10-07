@@ -16,9 +16,9 @@ with showcase_style() as s:
         fig, canvas = s.canvas()
         s.header(canvas, 'CASE 01  /  RESULTS')
         s.text(canvas, .065, .825, '风险的边界，收益的选择。' if lang == 'zh' else
-               'Risk limits. Return choices.', lang=lang, role='display', size=30)
-        s.text(canvas, .065, .745, '费用、风险与预算进入同一个模型；代表结果另有解析上界核验。' if lang == 'zh' else
-               'Fees, risk, and budget in one model. Representative solutions checked against analytical bounds.',
+               'Portfolio returns under risk constraints.', lang=lang, role='display', size=30)
+        s.text(canvas, .065, .745, '两组资产的最优方案与风险收益曲线，计算结果经过独立核验。' if lang == 'zh' else
+               'Two asset sets, with selected solutions verified against analytical upper bounds.',
                lang=lang, role='body', color='muted', size=12)
         for i, key in enumerate(['four', 'fifteen']):
             left = .085 + i*.465
@@ -30,7 +30,7 @@ with showcase_style() as s:
             selected = results['groups'][key]['selected'][1]
             title = ('四资产' if key == 'four' else '十五资产') if lang == 'zh' else ('4 assets' if key == 'four' else '15 assets')
             s.text(canvas, left, .675, title, lang=lang, role='section', size=19)
-            s.text(canvas, left+.36, .688, f"{selected['net_return']:.2%}", role='metric', color='accent' if key == 'four' else 'comparison', ha='right')
+            s.text(canvas, left+.36, .688, f"{selected['net_return']:.2%}", lang=lang, role='metric', color='accent' if key == 'four' else 'comparison', ha='right')
             s.text(canvas, left+.36, .64, ('风险上限 ' if lang == 'zh' else 'Risk limit: ')+f"{selected['risk_cap']:.0%}",
                    lang=lang, role='note', color='muted', ha='right')
             ax.plot(x, y, color=color, lw=TOKENS['chart']['line_width'])
@@ -45,6 +45,8 @@ with showcase_style() as s:
             ax.spines[['top','right']].set_visible(False)
             for side in ['left','bottom']: ax.spines[side].set_color(s.c['rule'])
             ax.tick_params(colors=s.c['muted'], length=0, pad=8, labelsize=11)
+            for tick in ax.get_xticklabels()+ax.get_yticklabels():
+                tick.set_fontproperties(s.font(lang)); tick.set_fontsize(11)
             ax.grid(axis='y', color=s.c['ink'], alpha=TOKENS['chart']['grid_alpha'])
         canvas.plot([.065,.935], [.145,.145], color=s.c['rule'], lw=.8)
         s.text(canvas, .065, .12, '资金 100 万元 · 虚线为 5% 银行收益率 · 两组采用不同风险上限' if lang == 'zh' else

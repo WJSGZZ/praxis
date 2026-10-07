@@ -15,15 +15,15 @@ TOKENS = json.loads(Path(__file__).with_name('tokens.json').read_text())
 
 
 class Style:
-    def __init__(self, serif, sans):
+    def __init__(self, display, regular):
         self.c = TOKENS['palette']
         self.type = TOKENS['typography']
-        self.serif, self.sans = serif, sans
+        self.display, self.regular = display, regular
 
     def font(self, lang='en', role='body'):
         display = role in {'display', 'section'}
         if lang == 'zh':
-            return FontProperties(fname=str(self.serif if display else self.sans))
+            return FontProperties(fname=str(self.display if display else self.regular))
         return FontProperties(family=self.type['latin_serif' if display else 'latin_sans'])
 
     def canvas(self):
@@ -58,16 +58,30 @@ class Style:
 
 @contextmanager
 def showcase_style():
-    """Use installed CJK fonts; extract a regular TTC face only in session scratch."""
-    sans = Path(os.environ.get('PRAXIS_CJK_SANS', '/System/Library/Fonts/Supplemental/Arial Unicode.ttf'))
-    serif = Path(os.environ.get('PRAXIS_CJK_SERIF', '/System/Library/Fonts/Supplemental/Songti.ttc'))
-    if not sans.is_file() or not serif.is_file():
-        raise FileNotFoundError('Set PRAXIS_CJK_SANS and PRAXIS_CJK_SERIF to installed CJK font files.')
+    """Use separately selected Chinese faces, never implicit collection fallbacks."""
+    paths = sorted(Path('/System/Library/AssetsV2').glob('com_apple_MobileAsset_Font*/*.asset/AssetData/PingFang.ttc'))
+    default = paths[0] if paths else Path('/System/Library/Fonts/PingFang.ttc')
+    regular = Path(os.environ.get('PRAXIS_ZH_REGULAR', str(default)))
+    display = Path(os.environ.get('PRAXIS_ZH_DISPLAY', '/System/Library/Fonts/Supplemental/Songti.ttc'))
+    if not regular.is_file() or not display.is_file():
+        raise FileNotFoundError('Set PRAXIS_ZH_REGULAR and PRAXIS_ZH_DISPLAY to locally installed Chinese font files.')
     scratch = BUNDLE / '.session/showcase-fonts'; scratch.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=scratch) as temp:
-        if serif.suffix.lower() == '.ttc':
-            from fontTools.ttLib import TTFont
-            font = TTFont(serif, fontNumber=int(os.environ.get('PRAXIS_CJK_SERIF_INDEX', '6')))
-            serif = Path(temp) / 'cjk-serif.ttf'; font.save(serif); font.close()
-        yield Style(serif, sans)
+        def face(source, name, target):
+            if source.suffix.lower() != '.ttc':
+                return source
+            from fontTools.ttLib import TTCollection
+            collection = TTCollection(source)
+            try:
+                chosen = next((f for f in collection.fonts if f['name'].getDebugName(6) == name), None)
+                if chosen is None:
+                    raise ValueError(f'Font face not present in collection: {name}')
+                path = Path(temp) / target
+                chosen.save(path)
+                return path
+            finally:
+                collection.close()
+        regular = face(regular, os.environ.get('PRAXIS_ZH_REGULAR_FACE', TOKENS['typography']['chinese_regular_face']), 'regular.ttf')
+        display = face(display, os.environ.get('PRAXIS_ZH_DISPLAY_FACE', TOKENS['typography']['chinese_display_face']), 'display.ttf')
+        yield Style(display, regular)
     scratch.rmdir()

@@ -15,7 +15,7 @@
     1,
     7
   ],
-  "preview_visual_review": "All three PNG previews inspected",
+  "preview_visual_review": "All four final localized showcase graphics reviewed; original report page previews unchanged.",
   "reproduction_environment": "Existing locked project environment; no fresh-install or Windows claim",
   "homepage_visuals": [
     "overview-zh.png",
@@ -26,7 +26,20 @@
     "report-proof.png"
   ],
   "homepage_visual_review": "Four new showcase PNGs inspected at full size; Chinese cover and chart also inspected at 900px and 390px. Small-print reading on mobile requires opening the full image.",
-  "local_readme_links_checked": 92,
-  "visual_system_version": 1,
-  "plugin_export_checks_passed": 3
+  "local_readme_links_checked": 91,
+  "visual_system_version": 2,
+  "plugin_export_checks_passed": 3,
+  "chinese_font_faces": {
+    "display": "STSongti-SC-Regular",
+    "section": "STSongti-SC-Regular",
+    "body": "PingFangSC-Regular",
+    "metric": "PingFangSC-Regular"
+  },
+  "localization": "Independently authored Chinese and English headlines, explanatory copy, and line breaks",
+  "font_selection_review": [
+    "STSongti-SC-Regular",
+    "STSongti-SC-Light",
+    "PingFangSC-Medium"
+  ],
+  "font_selection": "Regular Songti headings for the reference editorial tone; PingFang Regular for explanations and data"
 }

@@ -2,9 +2,9 @@
 
 # Praxis
 
-### Give your AI agent a mathematical modeling workflow.
+### A modeling workflow your agent can put to work.
 
-From problem framing to model validation and report delivery — one reusable toolkit.
+Build a model, challenge its conclusions, and deliver the evidence.
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-portable-334155?style=flat-square)](https://agentskills.io/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)

@@ -1,6 +1,6 @@
 # Praxis 展示语言
 
-用于 GitHub 首页、公开案例、结果图与项目分享。定位为**研究出版**：清楚、克制、有证据，让读者先理解项目，再看到可以核查的成果。
+用于 GitHub 首页、公开案例、结果图与项目分享。定位为**清晰的研究展示**：清楚、克制、有证据，让读者先理解项目，再看到可以核查的成果。
 
 本规范约束公开展示；比赛论文按当届格式要求另行处理。展示规则不进入每个建模任务的必经流程。
 
@@ -17,14 +17,17 @@
 
 主强调每幅图只用一种；第二强调仅在数据比较时启用。序列还必须用标题、位置、标注区分，不能只靠颜色。较大的空白用于分组和阅读，不填装饰纹理。
 
-## 字体有层级
+## 中英文分别设计
 
-- **标题用衬线体**：中文常规宋体、西文 DejaVu Serif，形成出版物的阅读气质。标题不超过三行，句子直接表达用途或结果。
-- **说明与数字用无衬线体**：中文清晰的 CJK 无衬线体、西文 DejaVu Sans。标签不和标题争夺注意力，数据使用易辨认的数字。
-- **项目名保持文字标识**：`P R A X I S` 只用于页眉；正文写 `Praxis`。当前没有注册标识或专属图标的含义。
-- 不混入第三套装饰字体，不使用斜体中文，不用超细字重。图中真实论文页保留原字体。
+共用配色、信息层级、案例编号与真实证据，分别选择字体、文案、换行和阅读节奏。中英文不必具有相同字数、标题句式或每个文本块的位置。
 
-字号、色值、画布和图表线宽由 [tokens.json](tokens.json) 维护。[style.py](style.py) 提供共同页眉、文字角色、字体选择、画布与边界检查。
+- **中文按角色搭配**：标题与分组标题固定用常规宋体 `STSongti-SC-Regular`，保留笔画对比与书卷气；正文、数字、轴标签与说明固定用苹方 `PingFangSC-Regular`，保证清晰。两种字体各司其职，并在所有中文展示图中保持相同分工，不再混入 Arial Unicode 或不明系统回退。报告原页保留论文原有字体。
+- **英文独立搭配**：展示标题使用 DejaVu Serif，正文和数据使用 DejaVu Sans。英文句子按产品说明与科研表达重新写，不将中文标语逐词翻译。
+- **字重必须是真实字面**：TTC 字体集合按 PostScript 名称选择已确定的常规字面，找不到指定字面时报错，不猜索引、不合成中文粗体。
+- **文案独立，事实一致**：中文可从“从一道题到完整报告”切入，英文可从 workflow 与 runnable evidence 切入；同一数据的数值、定义和证据不能随语言改变。参考图的气质优先于机械套用字体分类；先比较实际字形，再决定搭配。
+- 项目文字标识固定为 `P R A X I S`，避免每张图片自行增加装饰图标、字体或字距。小字使用常规字重，不为显得精致而变成难读的细体。
+
+字号、色值、画布和图表线宽由 [tokens.json](tokens.json) 维护。[style.py](style.py) 提供共同页眉、文字角色、各语言字体、画布与边界检查。统一品牌不等于强行统一两种文字的字形。
 
 ## 同一版式，不同职责
 
@@ -57,9 +60,9 @@ uv run --locked python demos/cumcm-1998-a/assets/build_overview.py
 uv run --locked python demos/cumcm-1998-a/assets/build_preview.py
 ```
 
-默认使用 macOS 已安装的宋体与 CJK 无衬线字体，不分发字体文件。其他平台设置 `PRAXIS_CJK_SERIF`、`PRAXIS_CJK_SANS` 为有权使用的本地字体路径；宋体 TTC 的常规字面默认索引为 6，可用 `PRAXIS_CJK_SERIF_INDEX` 配置。生成脚本使用现有 Matplotlib 及其字体工具，不新增运行依赖。
+默认发现 macOS 已安装的宋体和苹方，并按 `STSongti-SC-Regular`、`PingFangSC-Regular` 名称提取所需字面到会话暂存区；结束即清理，不分发字体文件。其他平台设置 `PRAXIS_ZH_REGULAR`、`PRAXIS_ZH_DISPLAY` 为有权使用的本地字体文件。使用 TTC 集合时，另设置 `PRAXIS_ZH_REGULAR_FACE`、`PRAXIS_ZH_DISPLAY_FACE` 为所选字面的 PostScript 名称；不能默默改用外观不同的字体。生成脚本使用现有 Matplotlib 及其字体工具，不新增运行依赖。
 
-每次交付检查：图片原尺寸、README 约 900px 显示宽度和手机宽度；标题可读，数字与条件对应，无截断／重叠／缺字；再核对图片路径、点击入口与完整材料。自动文字边界检查只证明未越出画布，仍需视觉查看。手机上可以把完整数据图点开查看，不能假称所有脚注在缩略图中都可读。
+每次交付先确认：该语言的字体字面真实、文案自然、与其他同语言图片一致。再检查图片原尺寸、README 约 900px 显示宽度和手机宽度；标题可读，数字与条件对应，无截断／重叠／缺字；再核对图片路径、点击入口与完整材料。自动文字边界检查只证明未越出画布，仍需视觉查看。手机上可以把完整数据图点开查看，不能假称所有脚注在缩略图中都可读。
 
 新增案例沿用 tokens 与公共函数，替换案例编号、文案、原页与有效数据。修改公共样式后重生成相关图片；不要在每个脚本里另设一套颜色和字体。
 
@@ -67,6 +70,8 @@ uv run --locked python demos/cumcm-1998-a/assets/build_preview.py
 
 ## English overview
 
-Praxis uses an editorial research style: warm paper, dark ink, a restrained teal accent, serif headings, and clear sans-serif labels. Terracotta is reserved for a second data series. Covers explain the workflow; charts explain results and conditions; report previews preserve the original pages.
+Praxis shares color, hierarchy, case identity, and evidence across languages, while choosing typography and copy independently. Chinese showcase graphics use Songti SC Regular headings for an editorial tone and PingFang SC Regular explanations and data for clarity. Each role keeps the same face across the complete set of graphics. English graphics use DejaVu Serif headings and DejaVu Sans labels. Original report pages retain their own typography.
 
-All showcase assets share a 16:9 canvas, consistent gutters, a project/case header, and the tokens in this directory. Use the shared Python renderer, keep quantitative content tied to recorded data, and review both full-size and README-scale exports. CJK fonts are locally installed, not distributed. Competition report formatting remains separate from the public showcase style.
+Write each language for its readers; do not translate slogans word for word or force identical line breaks. The English story can emphasize a workflow and runnable evidence while the Chinese story emphasizes completing the model and report. Quantitative claims remain identical.
+
+All assets share the maintained tokens and renderer. Review at full size and README scale. Fonts are locally installed, not distributed; Chinese TTC faces are selected by verified PostScript names, with an explicit error instead of an unknown fallback. Competition report formatting remains separate.
