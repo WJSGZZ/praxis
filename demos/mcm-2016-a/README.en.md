@@ -34,9 +34,9 @@ The **17 recorded checks** include independent heat-flow arithmetic and RK45 int
 </tr>
 </table>
 
-[Open the 20-page English report →](deliverables/7391856.pdf)
+[Open the 23-page English report →](deliverables/7391856.pdf)
 
-The PDF has 19 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
+The PDF has 22 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
 
 `deliverables/` contains **one PDF only**, matching the MCM submission structure. `7391856` is an example control number, not an actual team identity. Reproduction sources, this guide and verification records are development resources outside the submission directory; there is no CUMCM-style support ZIP.
 

@@ -13,7 +13,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,PageBreak,Table,TableStyle,Image,Flowable,KeepTogether
+from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,PageBreak,Table,TableStyle,Image,Flowable,KeepTogether,Preformatted
+from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT=Path(__file__).resolve().parent
 sys.path.insert(0,str(ROOT/'code'))
@@ -44,7 +45,7 @@ def para(s,kind='body'):
 def page(title,hard=False):
  global pages
  if hard and pages:flow.append(PageBreak())
- pages+=1;para(title,'title' if hard else 'section');content.append({'page':pages})
+ pages+=1;para(title,'title' if hard else 'section');flow[-1].toc_level=1 if re.match(r'\d+\.\d+ ',title) else 0;flow[-1].toc_text=title;content.append({'page':pages})
 def table(rows,widths=None):
  data=[[Paragraph(escape(str(x)),styles['table']) for x in row] for row in rows]
  t=Table(data,colWidths=widths or [468/len(rows[0])]*len(rows[0]),repeatRows=1,hAlign='LEFT')
@@ -94,6 +95,17 @@ ax2.fill_between(tc,Yc.min(1),Yc.max(1),color='#17766e',alpha=.14);ax2.plot(tc,Y
 ax2.set(xlabel='Time (min)',ylim=(38.85,41.15));ax2.set_ylabel('Temp. (°C)',fontsize=13);ax2.legend(loc='lower left',ncol=2,fontsize=12)
 fig.savefig(ROOT/'figures'/'control.png');plt.close(fig)
 
+fig,ax=plt.subplots(figsize=(8,1.9));ax.axis('off');ax.set_xlim(0,100);ax.set_ylim(0,24)
+boxes=[(0,'Assumptions\nand anchors\n§2'),(17,'Mixed benchmark\nand bound\n§3–4'),(34,'Spatial network\nand solver\n§5–6'),(51,'Rate, schedule,\nscenarios\n§7–9'),(68,'Validation,\nranges, mesh\n§10–11'),(85,'Conclusion,\nuser guide\n§12–13')]
+for x,txt in boxes:
+ ax.add_patch(plt.Rectangle((x,3),15,18,fill=False,lw=1.2,ec='#17766e'));ax.text(x+7.5,12,txt,ha='center',va='center',fontsize=7.5)
+for x,_ in boxes[:-1]:ax.annotate('',xy=(x+16.9,12),xytext=(x+15.1,12),arrowprops=dict(arrowstyle='->',color='#9e6440',lw=1.3))
+fig.savefig(ROOT/'figures'/'roadmap.png');plt.close(fig)
+rows=lr['rows'];okr=[r_ for r_ in rows if r_['feasible']];bad=[r_ for r_ in rows if not r_['feasible']]
+fig,ax=plt.subplots(figsize=(8,3.4));ax.scatter([r_['inputs']['h_surface'] for r_ in okr],[r_['water_l'] for r_ in okr],s=26,color='#17766e',label='Accepted policy')
+top=max(r_['water_l'] for r_ in okr)*1.08;ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),marker='x',s=30,color='#9e6440',label='None accepted')
+ax.axvline(p['h_surface'],color='black',ls=':',lw=1);ax.set(xlabel='Surface coefficient (W/(m² K))',ylabel='Added water (L)');ax.legend(loc='upper left',fontsize=12);fig.tight_layout();fig.savefig(ROOT/'figures'/'ranges.png');plt.close(fig)
+
 cube=T[-1].reshape(tuple(r['grid']))
 fig,axes=plt.subplots(1,3,figsize=(8,3.4),layout='constrained')
 for k,ax in enumerate(axes):
@@ -123,7 +135,11 @@ para('We prove a coast-then-hold policy optimal for a well-mixed bath, then use 
 para(f'In a 164.25 L water-volume scenario lasting 30 minutes, with an initial temperature of 40°C and a 39°C lower limit, the best constant-rate policy adds <b>{b["water_l"]:.2f} L</b> at {b["flow_lpm"]:.3f} L/min from the start, and a {ctl["segments"]}-segment schedule found by constrained optimization needs <b>{ctl["water_l"]:.2f} L</b>, {save:.0f}% less. The well-mixed optimum is {a["mixed_optimum_l"]:.2f} L, while an independent energy argument gives a {a["energy_lower_bound_l"]:.2f} L lower bound for the spatial problem. A finer mesh changes the constant-rate result by {100*abs(r["mesh"]["fine_policy"]["water_l"]-b["water_l"])/b["water_l"]:.2f}%.')
 para(f'The answer depends strongly on the surface and body loss coefficients. Across {lr["samples"]} Sobol draws over literature-based ranges, {lr["feasible"]} had an accepted constant-rate policy, with required water from {qq["0.05"]:.0f} to {qq["0.95"]:.0f} L (5th–95th percentile, median {qq["0.5"]:.0f} L). Weak mixing yields no accepted candidate under the stated temperature limits; stronger mixing saves water, but added surface loss can reverse that benefit. In the assumed foam scenario replenishment falls to {sc["foam"]["policy"]["water_l"]:.1f} L. These are conditional calculations, not measurements or product claims.')
 para(f'Independent integration, analytic limits, energy accounting and a between-samples envelope support the results: {len(checks)} model checks and {len(ctl_checks)} for the schedule. A one-page user guide and the limitations follow; AI assistance is disclosed in the references and appended report.')
+para('<b>Keywords:</b> thermal network; energy balance; lower bound; optimal control; sensitivity analysis')
 
+flow.append(PageBreak());para('Contents','title')
+toc=TableOfContents();toc.levelStyles=[ParagraphStyle('toc0',parent=styles['body'],fontName='Bold',fontSize=12,leading=17,spaceAfter=2),ParagraphStyle('toc1',parent=styles['body'],fontSize=12,leading=16,leftIndent=22,spaceAfter=0)];toc.dotsMinLevel=0
+flow.append(toc)
 page('1. Define the decision before optimizing',True)
 para('The task is to preserve both warmth and spatial uniformity in an overflowing, unheated tub, and to examine geometry, the bather and motion, and a bubble-bath layer [1]. The report separates physical requirements from preference assumptions. There is no supplied temperature record or measured heat-transfer coefficient to fit.')
 para('The decision variables are an inlet flow rate and the time at which a constant trickle begins. The tub is already full: added water displaces an equal volume through the overflow. The horizon is 1,800 s. Our baseline accepts cell averages between 39°C and 41°C, with an instantaneous spread of at most 1.5°C. These choices operationalize comfort; they are not medical limits or numbers specified by the problem.')
@@ -133,11 +149,17 @@ para('Here q is in m³/s and J is in litres. We prioritize the least water withi
 table([['Requirement','Where answered'],['Temperature in space and time','Sections 3, 5–7; Figures 1–2'],['Water-use strategy and its scope','Sections 4, 6–7 and 12'],['Tub/body geometry, size and temperature','Section 8'],['Motion and bubble-bath additive','Section 9'],['Validation and sensitivity','Sections 8–11'],['One-page non-technical explanation','Section 13']],[210,258])
 para('Spatial temperature means a control-volume average. It does not bound the unresolved temperature of a faucet jet or a skin-contact film. This distinction determines which practical conclusions the simulation can support.')
 
+para('<b>Modeling options.</b> A lumped model (Newton cooling) keeps one temperature and cannot see a cold corner. A flow solver resolves velocity but needs a turbulence closure and a faucet jet that nothing available here can constrain. A finite-volume thermal network sits between them: it keeps conservation exact, resolves where heat is lost and delivered, and makes mixing an explicit, testable parameter [5]. We use the lumped model as a proved benchmark (Sections 3–4) and the network for the decision (Sections 5–11).')
+table([['Option','Resolves','Evidence it needs','Role here'],['Lumped (Newton)','Mean temperature','Two loss coefficients','Proved benchmark'],['Thermal network','Cells, heat paths, overflow','Loss, body and mixing coefficients','Decision model'],['Flow solver','Velocity and buoyancy','Turbulence closure, jet data','Not used']],[100,120,130,118])
+figure('roadmap.png','Figure 1. Roadmap: how the sections build from assumptions to a recommendation.',height=111)
 page('2. Physical assumptions and scenario inputs')
-para('A constant-density, constant-heat-capacity liquid stores sensible heat. The exchange law is proportional to temperature difference; coefficients depend on the situation and normally require empirical calibration [2]. Rounded water-property constants are used as approximations, not as an evaluated IAPWS property-table dataset [3].')
+para('Each assumption below is paired with its reason and, where it matters, the scenario that tests it. Coefficients cannot be identified from the problem statement alone, so they come from the anchors in Section 2.1.')
 table([['Quantity','Baseline / units','Status'],['Tub L × W × H','1.50 × 0.65 × 0.23 m','Assumed geometry'],['Displaced body volume / area','0.060 m³ / 1.15 m²','Assumed'],['Water density / heat capacity','1000 kg/m³ / 4180 J/(kg K)','Rounded constants'],['Air / skin / inlet temperature','22 / 34 / 50°C','Fixed reservoirs'],['Surface / wall / body coefficient','25 / 6.5 / 25 W/(m² K)','Literature-anchored (next page)'],['Mixing diffusivity D','0.001 m²/s','Uncalibrated closure; range tested'],['Initial / lower / upper limit','40 / 39 / 41°C','Preference scenario'],['Time / allowed spread','1800 s / 1.5°C','Preference scenario']],[182,188,98])
-para('The surface coefficient aggregates convection, linearized radiation and evaporation over a narrow temperature range. The shell coefficient aggregates water-side transfer, wall conduction and external loss to room air. This avoids adding an evaporation term twice; it does not predict humidity or foam chemistry separately. Evaporation-related volume change is neglected relative to the water volume; the boundary coefficient models its heat effect only.')
-para('Skin temperature is held fixed as an effective reservoir. A 30-minute bath can change skin temperature; the fixed value is therefore varied, not claimed to resolve thermoregulation. Bath motion is represented through D, with an additional surface-loss scenario. Coefficients cannot be identified from this problem statement alone.')
+para('<b>A1. Constant density and heat capacity.</b> Water properties change by under 1% between 39 and 41°C, and the constants are rounded values, not an evaluated IAPWS table [3]. <i>Reason:</i> the resulting capacity error is small next to the loss coefficients.')
+para('<b>A2. Heat exchange proportional to temperature difference.</b> Surface, shell and body exchange follow Newton’s law with effective coefficients [2]. <i>Reason:</i> the temperature span is narrow, so linearization is acceptable. The surface coefficient aggregates convection, radiation and evaporation, so evaporation is not added twice; evaporative volume change is neglected.')
+para('<b>A3. Skin held at a fixed temperature.</b> <i>Reason:</i> thermoregulation is outside the problem; skin temperature is varied (32 and 36°C) instead of resolved.')
+para('<b>A4. Inlet-to-overflow surface stream.</b> The hot water travels along a prescribed surface path to the overflow, so short circuit is possible. <i>Reason:</i> a different inlet geometry would need its own transport network and evidence.')
+para('<b>A5. Mixing as one effective diffusivity D.</b> Motion enters through D, with a separate surface-loss scenario. <i>Reason:</i> molecular diffusion alone would not represent circulation; D has no anchor and is tested over a range.')
 
 page('2.1 Where the coefficients come from')
 sf=prov['surface'];wl=prov['wall'];bd=prov['body']
@@ -147,6 +169,7 @@ para('Mixing has no anchor: D = 0.001 m²/s is a scenario inside the range 0.000
 table([['Coefficient','Relation or anchor','Derived value','Used (range tested)'],['Surface, W/(m² K)','Convection + radiation + evaporation [5]',f'{sf["open_water_total"]:.1f} open; {sf["central"]:.1f} at 70%','25 (17–37)'],['Shell, W/(m² K)','Series resistance, typical shell values',f'{wl["central"]:.1f} ({wl["range"][0]:.1f}–{wl["range"][1]:.1f})','6.5 (4.5–8.5)'],['Body, W/(m² K)','Uptake implied by core rise [6]',f'{bd["anchor"][0]["equivalent_h_body"]:.0f}–{bd["anchor"][1]["equivalent_h_body"]:.0f} at fixed skin','25 (12–40)'],['Mixing D, m²/s','No anchor; scenario','—','0.001 (0.0003–0.003)']],[96,162,110,100])
 
 page('3. A transparent well-mixed benchmark')
+table([['Symbol','Meaning'],['C','Heat capacity of the water, J/K'],['Ha, Hb','Air/shell and body conductance, W/K'],['Ta, Tb, Tin','Room, skin and inlet temperature, °C'],['Tmin, Tmax','Lower and upper limit, °C'],['q, J','Inlet flow, m³/s; added water, L'],['D','Effective mixing diffusivity, m²/s']],[110,358])
 para('Let C be total water heat capacity, Ha the air/shell conductance and Hb the body conductance. A well-mixed overflow has the same temperature as the bath. Integrating the physical energy balance gives')
 eq(r'C\dot T=H_a(T_a-T)+H_b(T_b-T)+\rho c_pq(T_{\rm in}-T)')
 eq(r'C=\rho c_p(LWH-V_b),\quad H_b=h_bA_b')
@@ -181,7 +204,7 @@ para('Baseline b = (0.55L, W/2, 0.45H), with widths s = (0.40, 0.16, 0.12) m. Fl
 para('A fixed envelope volume is preserved by balancing inlet and overflow. In the baseline the exact displaced-water volume is 164.25 L. Shape scenarios preserve envelope volume when isolating aspect-ratio effects. Volume scenarios deliberately change water depth and hence both storage and side-wall area.')
 
 page('5.1 Spatial evidence: the mean is not the whole bath')
-figure('spatial.png','Figure 1. Final temperatures in the three horizontal cell layers. All layers use one color scale; the top layer contains the prescribed inlet-to-overflow stream. Geometry is in metres, and values are cell averages.',height=199)
+figure('spatial.png','Figure 4. Final temperatures in the three horizontal cell layers. All layers use one color scale; the top layer contains the prescribed inlet-to-overflow stream. Geometry is in metres, and values are cell averages.',height=199)
 para('The heat map is calculated from the same archived trajectory as Figure 2. It shows where the imposed transport path and environmental/body sinks leave temperature differences. The plots are horizontal slices through a three-dimensional network with exchange between layers, not three independent two-dimensional models.')
 para('A temperature range summarizes the spread but cannot show its location. The maps make the physical interpretation inspectable: localized replenishment and distributed losses must be balanced through mixing. Every cell contributes to the comfort test; a high mean cannot compensate for a cold region.')
 para('The Gaussian body representation changes both storage and exchange distribution. A map does not prove that this homogenized representation captures anatomy, recirculation or buoyancy. Its role is to reveal the actual implications of the declared model, not to create the appearance of a resolved flow simulation. The refinement table separately checks how cell size affects the result.')
@@ -197,7 +220,7 @@ para('Starts are tested at 0, 120, …, 1200 seconds. For each, rates from 0 to 
 para('This is a reproducible candidate search. Nonmonotone flow responses, untested delays, pulsed inputs, inlet relocation and feedback are not excluded by the calculation. A failed search means no candidate was accepted, not that every possible action is infeasible. The independent checks further examine the chosen trajectory between samples.')
 
 page('7. The spatial result and the mixing penalty')
-figure('temperature.png','Figure 2. Matrix-exponential cell temperatures under the selected policy. The shaded range includes all cells; the mean alone would hide cold and hot locations.',height=208)
+figure('temperature.png','Figure 5. Matrix-exponential cell temperatures under the selected policy. The shaded range includes all cells; the mean alone would hide cold and hot locations.',height=208)
 table([['Result','Baseline'],['Rate / start',f'{b["flow_lpm"]:.3f} L/min / {b["delay_s"]/60:.1f} min'],['Added water',f'{b["water_l"]:.2f} L'],['Minimum / maximum',f'{b["min_temp"]:.3f} / {b["max_temp"]:.3f}°C'],['Maximum simultaneous spread',f'{b["max_span"]:.3f}°C'],['Final volume-weighted mean',f'{b["final_mean"]:.3f}°C']],[300,168])
 para('Within the constant-rate family, starting the trickle immediately ranks ahead of delayed starts here, even though waiting is optimal in the ideal mixed model. The distant water needs time to receive heat; larger late rates create a warmer inlet region before they solve the cold-region constraint. This is a concrete consequence of resolving space.')
 para(f'Holding a perfectly mixed bath at 40°C throughout would use {a["constant_at_target_l"]:.2f} L. This is a stricter reference service, not a like-for-like optimum. Our accepted 1°C cooling allowance uses less water partly because it provides a different service. The comparable mixed model with the same lower limit uses {a["mixed_optimum_l"]:.2f} L. The gap also reflects our restricted control family and 0.03°C numerical reserve; it cannot be attributed purely to imperfect mixing.')
@@ -209,7 +232,10 @@ rows=[['Policy','Water (L)','Change','Min / max (°C)','Spread (°C)'],['Best co
 for run in ct:rows.append([f'{run["segments"]} segments',f'{run["water_l"]:.2f}',f'{100*(run["water_l"]/b["water_l"]-1):+.1f}%',f'{run["min_temp"]:.2f} / {run["max_temp"]:.2f}',f'{run["max_span"]:.2f}'])
 rows+=[['Perfect-mixing optimum',f'{a["mixed_optimum_l"]:.2f}','','',''],['Energy lower bound',f'{a["energy_lower_bound_l"]:.2f}','','','']]
 table(rows,[150,70,70,100,78])
-figure('control.png',f'Figure 3. Best {K}-segment schedule against the best constant rate (top) and the range of cell temperatures (bottom); dotted lines mark the limits.',height=176)
+pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,  max_i T_i(t) <= Tmax,\n              max_i T_i(t) - min_i T_i(t) <= span   (every 15 s)\nreplay the best x at 5 s; keep it only if all margins >= 0'''
+box=Table([[Preformatted(pseudo,ParagraphStyle('code',fontName='Courier',fontSize=8.5,leading=11))]],colWidths=[468],hAlign='LEFT');box.setStyle(TableStyle([('BOX',(0,0),(-1,-1),.6,colors.black),('LEFTPADDING',(0,0),(-1,-1),8),('TOPPADDING',(0,0),(-1,-1),5),('BOTTOMPADDING',(0,0),(-1,-1),5)]))
+flow.extend([box,Spacer(1,8)]);content.append({'algorithm':pseudo})
+figure('control.png',f'Figure 6. Best {K}-segment schedule against the best constant rate (top) and the range of cell temperatures (bottom); dotted lines mark the limits.',height=176)
 para(f'The {K}-segment schedule is {"off" if lead else "on"} for the first {lead*seg_min:.1f} minutes and off for the last {trail*seg_min:.1f} minutes, with a peak of {max(flows):.2f} L/min between. It adds {ctl["water_l"]:.2f} L, {save:.1f}% below the constant rate, and narrows the gap to the energy lower bound from {b["water_l"]-a["energy_lower_bound_l"]:.1f} L to {ctl["water_l"]-a["energy_lower_bound_l"]:.1f} L. Refining from 3 to {K} segments gains only {100*(ct[0]["water_l"]-ctl["water_l"])/ct[0]["water_l"]:.1f}%: the saving comes from the shape. The optimum touches the lower limit and the spread limit ({ctl["max_span"]:.2f}°C) and comes close to the upper limit ({ctl["max_temp"]:.2f}°C).')
 para('We have not isolated why the best schedule stops at the end. One candidate explanation, an inference rather than a model result, is that hot water added late leaves through the overflow before it warms the remote cells, while stored heat carries the final minutes. ')
 
@@ -234,7 +260,7 @@ none=[k.title() for k,v in sc.items() if not v['policy']['feasible']]
 para('No accepted candidate exists for: '+', '.join(none)+'. They are reported as such, not hidden in a favorable average. Their outcomes identify where the restricted strategy must change. Potential responses include improved circulation, a different inlet path, a shorter bath, or a different comfort tolerance. The paper does not certify which response is safe or optimal without corresponding physical evidence.')
 
 page('10. Validation: independent evidence and remaining error')
-figure('bounds.png','Figure 4. Water-use comparison under the same lower limit. The energy bound is conditional on the network assumptions; the feasible spatial result remains above it.',height=208)
+figure('bounds.png','Figure 7. Water-use comparison under the same lower limit. The energy bound is conditional on the network assumptions; the feasible spatial result remains above it.',height=208)
 num=lambda name:json.loads(next(c['evidence'] for c in checks if c['name']==name))
 energy=num('instantaneous_energy_balance_with_overflow');rk=num('independent_RK45_vs_archived_matrix_exponential');env=num('continuous_time_policy_envelope')
 para(f'All {len(checks)} recorded checks pass. Independent heat-flow arithmetic sums environmental losses, body exchange and local-temperature overflow; the largest instantaneous residual is {energy["max_residual_w"]:.2e} W. An adaptive RK45 integration with independently assembled right-hand side agrees with the archived matrix-exponential trajectory within {rk["maximum_temperature_difference_c"]:.2e}°C. This tests numerical implementation, not a second physical model.')
@@ -251,6 +277,7 @@ para(f'The selected water amounts differ by {100*abs(f["water_l"]-b["water_l"])/
 para('Parameter uncertainty concerns heat loss, body exchange and mixing. Structural uncertainty concerns the prescribed surface stream, fixed skin reservoir, homogenized body and constant effective D. These are different errors. The scenario table explores parameter dependence and one coupled motion effect; it is not a probability distribution or confidence interval.')
 names_lr={'h_surface':'surface coefficient','h_body':'body coefficient','air_temp':'room temperature','body_temp':'skin temperature','h_wall':'shell coefficient','D':'mixing diffusivity'}
 para(f'Literature-range analysis. Section 2 gives ranges for six inputs. {lr["samples"]} scrambled Sobol points cover them (D log-uniform), and the constant-rate search runs at each. {lr["feasible"]} points have an accepted candidate. Among those, the required water is {qq["0.05"]:.1f}, {qq["0.25"]:.1f}, {qq["0.5"]:.1f}, {qq["0.75"]:.1f} and {qq["0.95"]:.1f} L at the 5th, 25th, 50th, 75th and 95th percentiles. The remaining {lr["samples"]-lr["feasible"]} points, mostly at high loss, have none. The baseline of {b["water_l"]:.1f} L sits in the upper half of this distribution.')
+figure('ranges.png','Figure 8. Required water against the surface coefficient for each Sobol draw. Crosses at the top mark draws with no accepted policy; the vertical line is the baseline.',height=182)
 para('Spearman rank correlations with water, over accepted draws: '+', '.join(f'{names_lr[k]} {v:+.2f}' for k,v in sorted(sp.items(),key=lambda kv:-abs(kv[1])))+'.')
 para('The correlations use accepted draws only, so they understate inputs that push draws into infeasibility. The draws are uniform over ranges that we chose; they are not a probability distribution for any real tub. The main message is that the loss coefficients and the room temperature, not the mixing closure, decide how much water is needed, which is why Section 2 anchors them in outside evidence.')
 para('A calibration plan should begin with an inlet-free cooling experiment, recording water volume and room conditions. Multiple temperature probes distinguish aggregate heat loss from mixing. A separate inlet experiment records flow and inlet/outlet temperatures, allowing overflow energy to be checked. Motion and foam need matched trials because both can alter transfer coefficients. Reserve an entire experiment for prediction checks after fitting. A single mean-temperature series cannot separate the surface, shell and body coefficients, so only calibrated and independently tested parameters would support advice for a particular bath.')
@@ -259,6 +286,8 @@ page('12. Conclusions and a policy with clear scope')
 para(f'The model supports four linked findings. First, tolerating a modest temperature decline lets stored heat replace some inlet water. Second, spatial transport changes the ideal mixed recommendation: the best constant rate starts at once, and a schedule that withholds water at both ends needs {save:.0f}% less. Third, the water required is dominated by the surface and body loss coefficients: from {qq["0.05"]:.0f} to {qq["0.95"]:.0f} L across the literature-based ranges. Fourth, improving mixing helps only to the extent that it does not create offsetting boundary loss or hot-water short circuit.')
 para(f'For the stated baseline, the best constant trickle is {b["flow_lpm"]:.3f} L/min for {b["water_l"]:.2f} L over 30 minutes; the {K}-segment schedule uses {ctl["water_l"]:.2f} L. These are the best accepted results of the documented searches, with all-cell constraints and independent numerical checks. Neither is a universal faucet prescription or a proved global optimum over all time-varying controls.')
 para('The spatial model earns its complexity by explaining a disagreement with a proved simple benchmark and by rejecting strategies that a mean-only calculation would accept. Conservative accounting, anchored coefficients with stated ranges, a feasible-policy versus lower-bound gap, and an explicit refinement check make the recommendation inspectable.')
+para(f'<b>Strengths.</b> The conservation laws hold exactly and are checked by an independently assembled integrator; the benchmark and the lower bound are proved, so the spatial result is bracketed; the coefficients carry sources, ranges and a sensitivity analysis; the optimized schedule shrinks the gap to the bound from {b["water_l"]-a["energy_lower_bound_l"]:.1f} to {ctl["water_l"]-a["energy_lower_bound_l"]:.1f} L.')
+para('<b>Weaknesses.</b> The surface stream and the effective D stand in for flow physics; the body coefficient rests on assumed mass and temperature rise; the schedule is a local optimum; the inlet-cell limit depends on mesh resolution; and no bath experiment was run.')
 para('The limitations are consequential. Three-dimensional geometry is represented, but fluid momentum, buoyancy, jet entrainment, free-surface motion and detailed body anatomy are not solved. No bath experiment was conducted. Temperature limits express a preference assumption. Coarse cell averages cannot establish burn safety near the inlet, and the shape scenarios do not resolve stable vertical layers.')
 para('Before using a numerical rate in practice, identify the real tub’s cooling and mixing behavior. Until then, the defensible transferable advice is to avoid unnecessary replenishment, distinguish cold-region temperature from the mean, improve distribution before increasing flow, and reconsider a strategy when geometry or motion changes. The following page translates these principles without requiring the user to interpret the equations.')
 
@@ -300,7 +329,7 @@ for part in range(2):
 
 page('Report on Use of AI Tools',True)
 para('Tool and scope','heading')
-para('OpenAI Codex, a GPT-6-based assistant, was used on 7 October 2026. The later revision (literature-based coefficients, schedule optimization, range analysis and rebuilding of this report) used Anthropic’s Claude, Sonnet 5.5, through Claude Code on the same date. The assistant selected the historical problem, located and read sources, formulated the mixed and spatial models, wrote and revised Python code, designed checks, interpreted numerical runs, generated figures, and drafted and typeset the English report. An assistant sub-agent wrote the independent-RHS validation routine; this is AI-assisted code review, not review by another human.')
+para('OpenAI Codex, a GPT-6-based assistant, was used on 7 October 2026. The later revision (literature-based coefficients, schedule optimization, range analysis and rebuilding of this report) used Anthropic’s Claude, Sonnet 5.5, through Claude Code on the same date. Structure and presentation were informed by five Outstanding papers on other problems; none on this problem was read. The assistant selected the historical problem, located and read sources, formulated the mixed and spatial models, wrote and revised Python code, designed checks, interpreted numerical runs, generated figures, and drafted and typeset the English report. An assistant sub-agent wrote the independent-RHS validation routine; this is AI-assisted code review, not review by another human.')
 para('Task','heading')
 para('The task was to select a classic historical MCM problem and build a rigorous, professional case from it. The conversation wording is not reproduced in this report or in the development record.')
 para('Outputs, corrections and verification','heading')
@@ -321,6 +350,9 @@ class Numbered(Canvas):
    self.__dict__.update(state);self.setFont('Text',12);self.drawString(72,758,'Team # '+TEAM_CONTROL_NUMBER);self.drawRightString(540,758,f'Page {self._pageNumber} of {n}');self.setLineWidth(.4);self.line(72,751,540,751);super().showPage()
   super().save()
 path=ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf')
-SimpleDocTemplate(str(path),pagesize=letter,leftMargin=72,rightMargin=72,topMargin=54,bottomMargin=54,title='A Hot Bath: Conserving Water Without Losing Uniformity',author='',pageCompression=1).build(flow,canvasmaker=Numbered)
+class Doc(SimpleDocTemplate):
+ def afterFlowable(self,f):
+  if hasattr(f,'toc_text'):self.notify('TOCEntry',(f.toc_level,f.toc_text,self.page))
+Doc(str(path),pagesize=letter,leftMargin=72,rightMargin=72,topMargin=54,bottomMargin=54,title='A Hot Bath: Conserving Water Without Losing Uniformity',author='',pageCompression=1).multiBuild(flow,canvasmaker=Numbered)
 (ROOT/'report-content.json').write_text(json.dumps(content,indent=2))
 print(json.dumps({'pdf':str(path),'planned_pages':TOTAL,'equations':eqcount,'checks':len(checks)}))

@@ -3,10 +3,10 @@
   "checked_on": "2026-10-07",
   "status": "local-reviewed-case; not a real contest submission",
   "pdf": {
-    "sha256": "3d1757a94bb93521abac5b0b81198318c642b90b902381045c68a08ca3494f4e",
-    "bytes": 629647,
-    "pages_total": 20,
-    "solution_pages": 19,
+    "sha256": "c4d10b77dc949cef5953d68079cef6a44bd033181c47813bb3f14b86a1118f1e",
+    "bytes": 765693,
+    "pages_total": 23,
+    "solution_pages": 22,
     "ai_pages": 1,
     "minimum_extracted_font_size_pt": 12.0,
     "text_bounds_checked": true,
@@ -30,7 +30,10 @@
       17,
       18,
       19,
-      20
+      20,
+      21,
+      22,
+      23
     ],
     "visual_review_note": "Layout checked on rendered pages at about 60 dpi; text proofread from extraction, not a full-resolution read"
   },
