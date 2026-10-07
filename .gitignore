@@ -10,3 +10,4 @@ cases/
 
 # Public demo inputs and reference records are curated; runtime results stay local.
 demos/**/reproduced/
+demos/**/paper/

@@ -139,7 +139,7 @@ def main() -> dict:
         dict(op='attack', key='guess', claim='the recurrence continues to hold', method='4 held-out terms, exhaustive check to n = 60, finite-check proof', outcome='survived'),
         dict(op='kill', key='polynomial', reason='growth is exponential (ratio -> 2 + sqrt(3)); no polynomial of degree <= 8 fits'),
         dict(op='attack', key='split', claim='the case analysis is exhaustive', method='compare A_m, B_m with backtracking counts for small boards', outcome='survived'),
-        dict(op='keep_result', key='order_bound_result', statement='finite check on 10 consecutive terms proves a(n)=4a(n-1)-a(n-2) for all n', status='proved_finite_check', source_path='guess'),
+        dict(op='keep_result', key='order_bound_result', statement='eight consecutive equations (a(0)..a(9)) prove a(n)=4a(n-1)-a(n-2) for all n', status='proved_finite_check', source_path='guess'),
         dict(op='choose', key='split', why='a direct proof, cross-checked by the finite check'),
     ]
     graph = routes.apply(None, ops, question='Count domino tilings of a 3 x 2n rectangle', mode='exploratory')

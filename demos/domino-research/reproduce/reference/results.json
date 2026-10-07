@@ -1,0 +1,140 @@
+{
+ "counts": {
+  "backtracking_n0_to_5": [
+   1,
+   3,
+   11,
+   41,
+   153,
+   571
+  ],
+  "transfer_matrix_n0_to_16": [
+   1,
+   3,
+   11,
+   41,
+   153,
+   571,
+   2131,
+   7953,
+   29681,
+   110771,
+   413403,
+   1542841,
+   5757961,
+   21489003,
+   80198051,
+   299303201,
+   1117014753
+  ],
+  "coupled_recurrences_n0_to_16": [
+   1,
+   3,
+   11,
+   41,
+   153,
+   571,
+   2131,
+   7953,
+   29681,
+   110771,
+   413403,
+   1542841,
+   5757961,
+   21489003,
+   80198051,
+   299303201,
+   1117014753
+  ],
+  "corner_removed_backtracking_m1_to_8": [
+   1,
+   0,
+   4,
+   0,
+   15,
+   0,
+   56,
+   0
+  ],
+  "corner_removed_recurrence_m1_to_8": [
+   1,
+   0,
+   4,
+   0,
+   15,
+   0,
+   56,
+   0
+  ]
+ },
+ "guess": {
+  "found": true,
+  "order": 2,
+  "coefficients": [
+   "4",
+   "-1"
+  ],
+  "equations": 11,
+  "unknowns": 2,
+  "note": "Fits every equation; still a conjecture beyond the data.",
+  "holdout_terms": 4,
+  "holdout_mismatches": [],
+  "holdout_ok": true
+ },
+ "guess_on_first_13_terms": {
+  "found": true,
+  "order": 2,
+  "coefficients": [
+   "4",
+   "-1"
+  ],
+  "equations": 11,
+  "unknowns": 2,
+  "note": "Fits every equation; still a conjecture beyond the data."
+ },
+ "polynomial_formula": {
+  "found": false,
+  "tested_up_to": 8
+ },
+ "finite_check": {
+  "order": 2,
+  "equations": 15,
+  "mismatches": [],
+  "holds_on_data": true,
+  "order_bound": 8,
+  "terms_needed": 10,
+  "proof_by_finite_check": true,
+  "statement": "Complete proof if the order bound is itself justified (e.g. by a transfer matrix of that size); otherwise it is evidence."
+ },
+ "counterexample_search_n2_to_60": {
+  "found": false,
+  "proved_for_domain": true,
+  "cases": 59
+ },
+ "closed_form_matches_n0_to_60": true,
+ "growth_rate": {
+  "limit_of_ratio": 3.732050807568877,
+  "ratios_n_8_12_16": [
+   3.732050807568877
+  ]
+ },
+ "route_issues": [],
+ "lesson": {
+  "problem": "domino tilings of 3 x 2n",
+  "structure": "transfer: the count is u^T M^n v for an 8x8 integer matrix M (column profiles); local: the leftmost column splits the rectangle into smaller ones: A_m = A_{m-2} + 2 B_{m-1}, B_m = A_{m-1} + B_{m-2}",
+  "recognized": "the leftmost column splits the rectangle into smaller ones: A_m = A_{m-2} + 2 B_{m-1}, B_m = A_{m-1} + B_{m-2}",
+  "routes_tried": [
+   "guess: guess a linear recurrence from data, test on held-out terms",
+   "polynomial: guess a polynomial formula in n",
+   "split: prove it from the column decomposition"
+  ],
+  "what_failed": "polynomial: growth is exponential (ratio -> 2 + sqrt(3)); no polynomial of degree <= 8 fits",
+  "what_worked": "split: prove it from the column decomposition. a direct proof, cross-checked by the finite check",
+  "verified_by": "compare A_m, B_m with backtracking counts for small boards (the case analysis is exhaustive)",
+  "principle": "When a count looks like a linear recurrence, guess it from data, hold terms out, then prove it twice: from a local decomposition and from an order bound plus a finite check.",
+  "tags": [
+   "recurrence",
+   "experimental-mathematics"
+  ]
+ }
+}

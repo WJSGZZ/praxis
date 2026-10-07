@@ -209,10 +209,11 @@ def _is_number(s):
 def check_linear_recurrence(sequence: Sequence, coefficients: Sequence, *, order_bound: int | None = None) -> dict:
     """Does a_n = c_1 a_{n-1} + ... + c_d a_{n-d} hold for every n >= d in the data? Reports the failing indices.
 
-    If the sequence is known to satisfy SOME constant-coefficient linear recurrence of order at most `order_bound` (for example it equals
-    u^T M^n v for an N x N matrix M, so N is a bound by Cayley-Hamilton), then the difference b_n = a_n - sum c_i a_{n-i} satisfies one of
-    order at most order_bound + d. Vanishing on order_bound + d consecutive terms then proves it vanishes for all n, so a clean check on
-    that many terms is a complete proof, not just evidence."""
+    If the sequence is known to satisfy a constant-coefficient linear recurrence P(E) a = 0 of order at most `order_bound` (for example it
+    equals u^T M^n v for an N x N matrix M, so P is the characteristic polynomial of M by Cayley-Hamilton), then the difference
+    b = Q(E) a, with Q the candidate recurrence, also satisfies P(E) b = Q(E) P(E) a = 0, because polynomials in the shift commute. A
+    sequence obeying a monic recurrence of order N is zero as soon as its first N terms are, so `order_bound` consecutive equations holding
+    from the start (order_bound + d terms of the data) prove the candidate for all n: a complete proof, not just evidence."""
     a = [sp.nsimplify(x) for x in sequence]
     c = [sp.nsimplify(x) for x in coefficients]
     d = len(c)
@@ -221,7 +222,7 @@ def check_linear_recurrence(sequence: Sequence, coefficients: Sequence, *, order
     bad = [n for n in range(d, len(a)) if a[n] != sum(c[i] * a[n - 1 - i] for i in range(d))]
     out = dict(order=d, equations=len(a) - d, mismatches=bad, holds_on_data=not bad)
     if order_bound is not None:
-        needed = order_bound + d
-        out.update(order_bound=order_bound, terms_needed=needed, proof_by_finite_check=bool(not bad and len(a) - d >= needed),
+        out.update(order_bound=order_bound, equations_needed=order_bound, terms_needed=order_bound + d,
+                   proof_by_finite_check=bool(not bad and len(a) - d >= order_bound),
                    statement='Complete proof if the order bound is itself justified (e.g. by a transfer matrix of that size); otherwise it is evidence.')
     return out

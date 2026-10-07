@@ -37,6 +37,11 @@ TREES = {
     'demos/mcm-2016-a/reproduce': {'.py', '.md'},
     'demos/mcm-2016-a/reproduce/code': {'.py'},
     'demos/mcm-2016-a/reproduce/reference': {'.npz', '.json'},
+    'demos/domino-research': {'.md'},
+    'demos/domino-research/assets': {'.png'},
+    'demos/domino-research/deliverables': {'.pdf'},
+    'demos/domino-research/reproduce': {'.py'},
+    'demos/domino-research/reproduce/reference': {'.json', '.md'},
 }
 # Focused skills ship next to the core skill; links to the core are rewritten.
 FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-explore', 'praxis-dialogue', 'praxis-report')

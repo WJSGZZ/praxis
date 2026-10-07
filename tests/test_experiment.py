@@ -63,9 +63,10 @@ def test_holdout_and_finite_check_proof_of_a_recurrence():
     assert held['holdout_ok'] and held['holdout_mismatches'] == [] and held['holdout_terms'] == 4
     wrong = ex.guess_linear_recurrence([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 99, 144], max_order=2, holdout=2)
     assert not wrong['found'] or not wrong.get('holdout_ok', True)
-    # transfer-matrix bound: 8 states, candidate of order 2 -> 10 consecutive terms of the difference must vanish
+    # transfer-matrix bound: 8 states, candidate of order 2 -> 8 consecutive equations (10 terms) prove it for all n
     proof = ex.check_linear_recurrence(tilings, [4, -1], order_bound=8)
-    assert proof['holds_on_data'] and proof['terms_needed'] == 10 and proof['proof_by_finite_check']
+    assert proof['holds_on_data'] and proof['equations_needed'] == 8 and proof['terms_needed'] == 10 and proof['proof_by_finite_check']
+    assert ex.check_linear_recurrence(tilings[:10], [4, -1], order_bound=8)['proof_by_finite_check']
     short = ex.check_linear_recurrence(tilings[:9], [4, -1], order_bound=8)
     assert short['holds_on_data'] and not short['proof_by_finite_check']
     bad = ex.check_linear_recurrence([1, 3, 11, 41, 152], [4, -1])
