@@ -15,10 +15,10 @@ with showcase_style() as s:
     for lang, home in [(l, h) for h in (False, True) for l in ('zh', 'en')]:
         fig, canvas = s.canvas()
         s.header(canvas, 'CASE 01  /  CUMCM 1998 A' if home else 'CASE 01  /  RESULTS')
-        s.text(canvas, .065, .825, '风险的边界，收益的选择。' if lang == 'zh' else
-               'Portfolio returns under risk constraints.', lang=lang, role='display', size=30)
-        s.text(canvas, .065, .745, '两组资产的最优方案与风险收益曲线，计算结果经过独立核验。' if lang == 'zh' else
-               'Two asset sets, with selected solutions verified against analytical upper bounds.',
+        s.text(canvas, .065, .825, '风险的边界，收益的选择' if lang == 'zh' else
+               'Portfolio returns under risk constraints', lang=lang, role='display', size=30)
+        s.text(canvas, .065, .745, '两组资产的最优方案与风险收益曲线，计算结果经过独立核验' if lang == 'zh' else
+               'Two asset sets, with selected solutions verified against analytical upper bounds',
                lang=lang, role='body', color='muted', size=12)
         for i, key in enumerate(['four', 'fifteen']):
             left = .085 + i*.465
