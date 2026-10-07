@@ -60,5 +60,5 @@
     "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
   },
   "format_review": "Level-1 headings centered, level-2 left; captions centered (figure below, table above) with note lines; three-line tables; true subscripts and equations; pgfplots figures labelled in Chinese with the knee marked; references with breakable URLs; code appendix with line numbers. Official CUMCM rules checked: A4, margins at least 2.5 cm, centered Arabic page numbers, abstract page with title and keywords, no identity information, body at most 30 pages, appendix with file list and full code; font and size are free.",
-  "typesetting": "XeLaTeX via tectonic 0.17.0 (ctex, newtxtext/newtxmath, pgfplots, booktabs); sources in the support archive under paper/; compile log clean of missing glyphs; every page rendered and inspected"
+  "typesetting": "XeLaTeX (TeX Live 2026) (ctex, newtxtext/newtxmath, pgfplots, booktabs); sources in the support archive under paper/; compile log clean of missing glyphs; every page rendered and inspected"
 }

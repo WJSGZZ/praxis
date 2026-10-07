@@ -108,6 +108,7 @@ PREAMBLE=r'''\documentclass[12pt,letterpaper]{article}
 \captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
 \captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
 \setcounter{tocdepth}{2}
+\setlength{\emergencystretch}{3em}
 \pagestyle{fancy}\fancyhf{}
 \fancyhead[L]{Team \# 7391856}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.4pt}

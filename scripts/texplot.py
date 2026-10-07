@@ -189,7 +189,7 @@ def heatmap_panels(cubes: Sequence[Sequence[Sequence[float]]], titles: Sequence[
     return "\n".join(out)
 
 
-def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.35cm") -> str:
+def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.22cm") -> str:
     """Left-to-right roadmap of boxes joined by arrows (TikZ)."""
     nodes = []
     for i, text in enumerate(boxes):
