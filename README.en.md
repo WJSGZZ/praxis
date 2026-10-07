@@ -22,21 +22,21 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 ---
 
-Praxis helps individuals and teams turn problems and data into **interpretable models, independent checks, and traceable reports**. Use it for research, coursework, practical applications, or mathematical modeling competitions. Start with your problem; you do not need to choose an algorithm first.
+The difficult part of modeling is deciding what to model, which assumptions to trust, and whether the results answer the question. Praxis gives your agent a workflow for those decisions, connecting **model development, independent validation, and reporting**. It works for individual and team projects in research, coursework, practical applications, and competitions.
 
-A shared task record connects the entire workflow. Methods are selected as needed, validation is designed alongside the model, and verified results feed into the report. You can also use a single capability, such as reviewing assumptions or improving an argument.
+Bring a problem and data, or ask for a focused review of a model, a result, or a draft. Start with an interpretable baseline and add complexity when the task calls for it. A shared record links the requirements to the calculations, checks, and claims in the report.
 
 <table>
 <tr>
-<td width="33%"><strong>Finish first</strong><br>Build a baseline and a complete draft, then improve within the remaining budget.</td>
-<td width="33%"><strong>Keep evidence connected</strong><br>Link requirements, results, independent checks, and report locations.</td>
-<td width="33%"><strong>Adapt to the team</strong><br>Assign ownership and handoffs around actual skills, team size, and availability.</td>
+<td width="33%"><strong>Get to a complete draft</strong><br>Establish a baseline, finish the report, then improve as time allows.</td>
+<td width="33%"><strong>Make claims inspectable</strong><br>Keep each result connected to its checks and its place in the report.</td>
+<td width="33%"><strong>Work with the team you have</strong><br>Plan responsibilities around skills, availability, and team size.</td>
 </tr>
 </table>
 
-## See a complete case
+## Follow the workflow through a real problem
 
-**CUMCM 1998 A: from fee thresholds and risk constraints to an optimal portfolio, independent checks, and a complete report.**
+**Explore an investment-allocation problem from CUMCM 1998: the model, the optimality argument, and the finished report are all available.**
 
 [![CUMCM case: risk-return frontiers and verifiable results](demos/cumcm-1998-a/assets/risk-return.png)](demos/cumcm-1998-a/README.en.md)
 
@@ -65,7 +65,7 @@ At a CNY 1,000,000 budget, the four-asset solution returns **21.90%** net at a 1
 
 </details>
 
-If this is the kind of complete, verifiable modeling work you want to build, **star Praxis** or try the quick start below.
+Try the case or bring your own problem. **Star Praxis** if you would like to follow its development.
 
 ## Quick start
 
