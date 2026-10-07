@@ -44,7 +44,7 @@
 </tr>
 </table>
 
-[阅读全文：18 页 PDF →](deliverables/paper.pdf)
+[阅读全文：16 页 PDF →](deliverables/paper.pdf)
 
 ## 自己跑一次
 
@@ -67,8 +67,8 @@ uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py
 
 ```text
 deliverables/                 # 两份电子提交文件
-  paper.pdf                   # 18 页；含支撑清单与完整建模源程序
-  supporting_materials.zip    # 22 文件；含 AI工具使用详情.pdf
+  paper.pdf                   # 16 页；含支撑清单与完整建模源程序
+  supporting_materials.zip    # 25 文件；含 LaTeX 源文件与 AI工具使用详情.pdf
 reproduce/                    # 开发版直接复现入口与计算证据
 assets/                       # 报告页预览及结果图生成脚本
 manifest.json                 # 两份交付文件的字节数、MD5、SHA-256

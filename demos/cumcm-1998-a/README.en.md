@@ -35,7 +35,7 @@ The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount div
 <tr><td><strong>The answer</strong><br>Definitions, method, and quantitative results.</td><td><strong>The argument</strong><br>An upper bound, exchange proof, and sufficient capital condition.</td></tr>
 </table>
 
-[Read the complete 18-page report →](deliverables/paper.pdf)
+[Read the complete 16-page report →](deliverables/paper.pdf)
 
 ## Reproduce it
 
@@ -54,7 +54,7 @@ The first script recalculates both groups, runs the model checks, and compares r
 
 Alternatively, extract the supporting ZIP and follow its instructions to reproduce the mathematics without Praxis or an AI service. The supplementary threshold script belongs to this development case and does not alter the report's support-file list.
 
-`deliverables/` contains exactly two electronic submission files: the PDF with its full modeling-code appendix and the ZIP with 20 supporting files, including AI-use details. Previews, this case guide, runnable development sources, and file hashes remain outside that directory. The PDF was rendered and reviewed page by page; the ZIP was independently extracted and rerun, and its file list matches the appendix.
+`deliverables/` contains exactly two electronic submission files: the PDF with its full modeling-code appendix and the ZIP with 25 supporting files, including AI-use details. Previews, this case guide, runnable development sources, and file hashes remain outside that directory. The PDF was rendered and reviewed page by page; the ZIP was independently extracted and rerun, and its file list matches the appendix.
 
 ## Sources and scope
 
