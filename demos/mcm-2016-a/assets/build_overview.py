@@ -29,6 +29,6 @@ with showcase_style() as s:
    y=.64-j*.125;s.text(canvas,.64,y,label,lang=lang,role='body',size=17,color='muted');s.text(canvas,.64,y-.043,f'{value:.2f} L',role='metric',size=32,color=color)
   footer='40°C 起始 · 39–41°C 窗口 · 30 分钟 · 系数取自文献推导，非实测' if lang=='zh' else '40°C start · 39–41°C window · 30 min · Literature-derived coefficients, not measured data'
   s.text(canvas,.065,.145,footer,lang=lang,role='note',size=15,color='muted')
-  link='21 页完整报告（含 AI 披露） · 17 项检查 · 查看美赛 Demo →' if lang=='zh' else 'Read the 21-page report with AI disclosure · Inspect 17 recorded checks →'
+  link='20 页完整报告（含 AI 披露） · 17 项检查 · 查看美赛 Demo →' if lang=='zh' else 'Read the 20-page report with AI disclosure · Inspect 17 recorded checks →'
   s.text(canvas,.065,.08,link,lang=lang,role='body',size=17,color='accent')
   s.save(fig,HERE/f'overview-{lang}.png')

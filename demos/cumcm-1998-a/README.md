@@ -32,7 +32,7 @@
 <table>
 <tr>
 <td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-abstract.png" alt="报告第 1 页：摘要与量化结果" width="100%"></a></td>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="报告第 7 页：解析上界与资金规模条件" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="报告第 8 页：解析上界证明与证书" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>摘要：问题、方法、结果</strong><br>明确风险口径、费用处理与代表数值。</td>

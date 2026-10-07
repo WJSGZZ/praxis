@@ -28,7 +28,7 @@ The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount div
 <table>
 <tr>
 <td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-abstract.png" alt="Report page 1: abstract and numerical results" width="100%"></a></td>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="Report page 7: analytical bound and capital condition" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="Report page 8: proof of the analytical bound and optimality certificate" width="100%"></a></td>
 </tr>
 <tr><td><strong>The answer</strong><br>Definitions, method, and quantitative results.</td><td><strong>The argument</strong><br>An upper bound, exchange proof, and sufficient capital condition.</td></tr>
 </table>
