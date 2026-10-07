@@ -88,12 +88,12 @@ def mcm(lang: str, out: Path):
         "zh": dict(title="水温要均匀，策略就不能只看平均值", sub="三维热网络 · 解析基线 · 独立积分与能量核验",
                    cap="最佳恒定流量下 · 青绿：均值 · 虚线：最冷单元 · 阴影：入口射流区以外的温度范围", yl="水温 / °C", xl="时间 / min",
                    m=["最佳恒定流量", f"时变方案（{best['segments']} 段）", "理想充分混合", "能量下界"],
-                   foot="40°C 起始 · 39–41°C 窗口 · 30 分钟 · 系数取自文献推导，非实测",
+                   foot="40°C 起始 · 39–41°C 窗口 · 30 分钟 · 系数由教材关联式推导，非实测",
                    link=f"{pages('mcm-2016-a')} 页完整报告（含 AI 披露） · 17 项检查 · 查看美赛 Demo →"),
         "en": dict(title="A warm average can hide a cold corner", sub="Spatial heat balance, a proved benchmark, and independent numerical checks",
                    cap="Best constant rate: mean (teal) · coldest cell (dashed) · range outside the inlet jet zone (shade)", yl="Temperature / °C", xl="Time / min",
                    m=["Best constant rate", f"Time-varying schedule ({best['segments']} segments)", "Ideal well-mixed optimum", "Conditional energy lower bound"],
-                   foot="40°C start · 39–41°C window · 30 min · Literature-derived coefficients, not measured data",
+                   foot="40°C start · 39–41°C window · 30 min · Textbook-correlation coefficients, not measured data",
                    link=f"Read the {pages('mcm-2016-a')}-page report with AI disclosure · Inspect 17 recorded checks →"),
     }[lang]
     c = Canvas(lang)
