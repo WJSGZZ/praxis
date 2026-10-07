@@ -49,10 +49,10 @@ def _coords(x: Iterable[float], y: Iterable[float], limit: int = 700) -> str:
 class Axis:
     """One pgfplots axis with line, band, step, scatter and reference-line series."""
 
-    def __init__(self, xlabel: str = "", ylabel: str = "", *, width: str = r"\linewidth", height: str = "5.4cm",
+    def __init__(self, xlabel: str = "", ylabel: str = "", *, width: str = r"0.84\linewidth", height: str = "5.4cm",
                  xmin=None, xmax=None, ymin=None, ymax=None, legend: str | None = "above", legend_columns: int | None = None,
                  extra: str = ""):
-        self.opts = [f"width={width}", f"height={height}", f"xlabel={{{xlabel}}}", f"ylabel={{{ylabel}}}",
+        self.opts = [f"width={width}", f"height={height}", "scale only axis", f"xlabel={{{xlabel}}}", f"ylabel={{{ylabel}}}",
                      "axis lines=left", "axis line style={gray!70}", "grid=major", "grid style={gray!18}",
                      "tick label style={font=\\footnotesize}", "label style={font=\\small}",
                      "every axis plot/.append style={line cap=round}", "clip=false"]
@@ -141,14 +141,14 @@ def figure_env(axes_tex: str, caption: str, *, placement: str = "htbp", label: s
     return "\\begin{figure}[%s]\\centering\n\\begin{tikzpicture}\n%s\n\\end{tikzpicture}\n\\caption{%s}%s\n\\end{figure}\n" % (placement, axes_tex, caption, lab)
 
 
-def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[str], xlabel: str, *, width=r"\linewidth",
+def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[str], xlabel: str, *, width=r"0.66\linewidth",
                height="5.4cm", xmax: float | None = None, unit: str = "L") -> str:
     """Horizontal bar chart with value labels; labels are listed top to bottom."""
     n = len(labels)
     xm = xmax if xmax is not None else max(values) * 1.3
     step = 5 if xm > 12 else 1
     ticks = ",".join(str(v) for v in range(0, int(xm) + 1, step))
-    opts = [f"width={width}", f"height={height}", "xbar", "bar width=11pt", "xmin=0", f"xmax={_fmt(xm)}", "y dir=reverse",
+    opts = [f"width={width}", f"height={height}", "scale only axis", "xbar", "bar width=11pt", "xmin=0", f"xmax={_fmt(xm)}", "y dir=reverse",
             "ytick={%s}" % ",".join(str(i) for i in range(n)), "yticklabels={%s}" % ",".join("{%s}" % l for l in labels),
             "xtick={%s}" % ticks, f"xlabel={{{xlabel}}}", "xmajorgrids=true", "ymajorgrids=false", "grid style={gray!22}",
             "tick label style={font=\\footnotesize}", "label style={font=\\small}", "enlarge y limits=0.12", "ytick style={draw=none}"]

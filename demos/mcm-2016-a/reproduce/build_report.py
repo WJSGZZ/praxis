@@ -79,7 +79,7 @@ def page(title,hard=False):
 def table(rows,widths=None):
     global tabcount
     tabcount+=1;n=len(rows[0]);tot=float(sum(widths)) if widths else 1
-    if widths:cols=''.join(r'>{\raggedright\arraybackslash}p{%.3f\linewidth}'%((w/tot)*0.98-0.02*0) for w in widths)
+    if widths:cols='@{}'+''.join(r'>{\raggedright\arraybackslash}p{%.4f\dimexpr\linewidth-%d\tabcolsep\relax}'%(w/tot,2*(n-1)) for w in widths)+'@{}'
     else:cols='l'*n
     lines=[' & '.join(tx(c) for c in row) for row in rows]
     tex.append(r'\begin{table}[htbp]\centering\small\caption{'+CAPS[tabcount-1]+'}\n\\begin{tabular}{'+cols+'}\n\\toprule\n'+lines[0]+r' \\ \midrule'+'\n'+(r' \\ '+'\n').join(lines[1:])+r' \\ \bottomrule'+'\n\\end{tabular}\n\\end{table}\n')
@@ -137,10 +137,10 @@ labels=['Constant rate','Constant rate, fine grid','Optimized schedule','Perfect
 FIG['bounds.png']=texplot.hbar_chart(labels,values,['main','main','main','muted','muted'],'Added water over 30 min (L)',height='5.0cm',xmax=max(values)*1.3)
 seg_min=ctl['segment_s']/60;edges=list(np.arange(len(ctl['flow_lpm'])+1)*seg_min)
 Yc=control.piecewise(p,model.network(p),ctl['flow_lpm'],5.);tc=np.linspace(0,30,len(Yc))
-a1=texplot.Axis('','Flow (L/min)',width='0.74\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend=None,extra='scale only axis,name=top,xticklabels={}')
+a1=texplot.Axis('','Flow (L/min)',width='0.62\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend=None,extra='scale only axis,name=top,xticklabels={}')
 a1.stairs(ctl['flow_lpm'],edges).line([0,30],[b['flow_lpm']]*2,color='muted',style='dashed')
 a1.label(30,ctl['flow_lpm'][-1]+0.0,'Optimized schedule',color='main').label(30,b['flow_lpm'],'Best constant rate',color='muted',dy='-6pt')
-a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.74\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend=None,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm')
+a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.62\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend=None,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm')
 a2.band(tc,Yc.min(1),Yc.max(1)).line(tc,Yc.min(1),color='accent',style='dashed').line(tc,Yc.max(1)).hline(p['floor']).hline(p['ceiling'])
 a2.label(25.5,float(np.interp(25.5,tc,Yc.max(1)))+0.1,'Hottest cell',color='main',anchor='south west',dx='0pt').label(8,float(np.interp(8,tc,Yc.min(1)))-0.03,'Coldest cell',color='accent',anchor='north',dx='0pt')
 FIG['control.png']=a1.tex()+'\n'+a2.tex()
@@ -271,7 +271,7 @@ for run in ct:rows.append([f'{run["segments"]} segments',f'{run["water_l"]:.2f}'
 rows+=[['Perfect-mixing optimum',f'{a["mixed_optimum_l"]:.2f}','','',''],['Energy lower bound',f'{a["energy_lower_bound_l"]:.2f}','','','']]
 table(rows,[150,70,70,100,78])
 pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,  max_i T_i(t) <= Tmax,\n              max_i T_i(t) - min_i T_i(t) <= span   (every 15 s)\nreplay the best x at 5 s; keep it only if all margins >= 0'''
-tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\medskip\n')
+tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt,xleftmargin=5pt,xrightmargin=5pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\medskip\n')
 
 figure('control.png',f'Figure 6. Best {K}-segment schedule against the best constant rate (top) and the range of cell temperatures (bottom); dotted lines mark the limits.',height=176)
 para(f'The {K}-segment schedule is {"off" if lead else "on"} for the first {lead*seg_min:.1f} minutes and off for the last {trail*seg_min:.1f} minutes, with a peak of {max(flows):.2f} L/min between. It adds {ctl["water_l"]:.2f} L, {save:.1f}% below the constant rate, and narrows the gap to the energy lower bound from {b["water_l"]-a["energy_lower_bound_l"]:.1f} L to {ctl["water_l"]-a["energy_lower_bound_l"]:.1f} L. Refining from 3 to {K} segments gains only {100*(ct[0]["water_l"]-ctl["water_l"])/ct[0]["water_l"]:.1f}%: the saving comes from the shape. The optimum touches the lower limit and the spread limit ({ctl["max_span"]:.2f}°C) and comes close to the upper limit ({ctl["max_temp"]:.2f}°C).')

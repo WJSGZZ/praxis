@@ -3,9 +3,9 @@
   "checked_on": "2026-10-07",
   "status": "local-reviewed-case; not a real contest submission",
   "pdf": {
-    "sha256": "7c19e20e095dae0c191fd842d3b640a2f54553aeac7bb1bae727769536c3fcb8",
-    "bytes": 149471,
-    "pages_total": 22,
+    "sha256": "833286158446ee541757d11e76c4d84aa26ffc30cd18831826faaf88ed16bbd2",
+    "bytes": 149396,
+    "pages_total": 23,
     "solution_pages": 21,
     "ai_pages": 1,
     "text_bounds_checked": true,
@@ -31,9 +31,10 @@
       19,
       20,
       21,
-      22
+      22,
+      23
     ],
-    "visual_review_note": "Layout checked on rendered pages at about 60 dpi; text proofread from extraction, not a full-resolution read",
+    "visual_review_note": "Every page rendered and checked; ink margins measured per page so figures, tables and code boxes stay inside the text block and centred",
     "typesetting": "XeLaTeX (tectonic 0.17.0): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
   },
   "model_checks": {

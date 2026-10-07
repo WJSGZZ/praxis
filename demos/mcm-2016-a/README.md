@@ -54,7 +54,7 @@
 </tr>
 </table>
 
-**[阅读完整 22 页英文论文 →](deliverables/7391856.pdf)** 用 XeLaTeX 排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；21 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：字体不小于 12 磅，匿名页眉与页码，Summary 单页。
+**[阅读完整 23 页英文论文 →](deliverables/7391856.pdf)** 用 XeLaTeX 排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；21 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：字体不小于 12 磅，匿名页眉与页码，Summary 单页。
 
 ## 自己跑一次
 
@@ -71,7 +71,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # 分段优
 ## 文件地图
 
 ```text
-deliverables/7391856.pdf      # 唯一提交文件（英文，22 页）
+deliverables/7391856.pdf      # 唯一提交文件（英文，23 页）
 reproduce/                    # 复现入口、归档数值、论文构建器
 assets/                       # 首页与案例页图片
 sources.json                  # 来源记录
