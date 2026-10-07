@@ -222,6 +222,5 @@ uv run --locked python -m examples.structural_reasoning_demo
 
 ## 来源与许可
 
-本地原创代码与文档采用 [MIT](LICENSE)。工作流参考 MathModelHub，Sobol 与 TOPSIS 分别使用 SALib 和 pyMCDM；实际复用范围、上游许可与取舍见 [第三方声明](THIRD_PARTY_NOTICES.md) 和 [审查记录](references/upstream-review.md)。报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
+本地原创代码与文档采用 [MIT](LICENSE)。工作流参考 MathModelHub，Sobol 与 TOPSIS 分别使用 SALib 和 pyMCDM；实际复用范围与上游许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
 
-首页与案例图片使用同一套 [Praxis 展示语言](design/README.md)，颜色、字体层级和版式由共享配置维护。
