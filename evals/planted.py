@@ -18,8 +18,9 @@ from dataclasses import dataclass
 from typing import Callable
 
 import numpy as np
+from scipy.optimize import minimize_scalar
 
-from modeling import epidemic, optimize, queueing, structure
+from modeling import decision_models, epidemic, optimize, pde, queueing, structure
 
 
 @dataclass
@@ -125,12 +126,81 @@ def gen_structure(seed):
     return task, dict(properties=_true_properties(expr))
 
 
-GENERATORS: dict[str, Callable] = dict(lp=gen_lp, queue=gen_queue, sir=gen_sir, assignment=gen_assignment, structure=gen_structure)
+def gen_pde(seed):
+    """Heat decay of a sum of sine modes with fixed zero ends: the temperature at a point is known in closed form."""
+    r = _rng('pde', seed)
+    L, k, rc = float(r.integers(1, 4)), float(r.integers(1, 5)), float(r.integers(1, 4))
+    coeffs = [float(c) for c in r.integers(-3, 4, 3)]
+    if not any(coeffs):
+        coeffs[0] = 2.0
+    t_end = float(round(r.uniform(.05, .4) * rc * L ** 2 / k, 4))
+    x0 = float(round(r.uniform(.2, .8) * L, 3))
+    truth = sum(a * np.exp(-k * (m * np.pi / L) ** 2 * t_end / rc) * np.sin(m * np.pi * x0 / L) for m, a in enumerate(coeffs, 1))
+    task = Task('pde', seed, 'A rod of length L with both ends held at temperature 0 has conductivity k and volumetric heat capacity rho_c. Its initial temperature is the sum over m=1..3 of coeffs[m-1]*sin(m*pi*x/L). Report the temperature at x0 at time t_end.',
+                dict(L=L, k=k, rho_c=rc, coeffs=coeffs, x0=x0, t_end=t_end), ['temperature'])
+    return task, dict(temperature=float(truth))
+
+
+def gen_markov(seed):
+    r = _rng('markov', seed)
+    P = r.random((4, 4)) + .05
+    P /= P.sum(axis=1, keepdims=True)
+    w, v = np.linalg.eig(P.T)
+    pi = np.real(v[:, np.argmin(abs(w - 1))])
+    pi = pi / pi.sum()
+    task = Task('markov', seed, 'A system moves among 4 states with the given one-step transition matrix. Report the long-run fraction of time spent in state 0 (index 0).',
+                dict(P=np.round(P, 6).tolist()), ['state0'])
+    P = np.round(P, 6)
+    P /= P.sum(axis=1, keepdims=True)          # the matrix the solver sees is the rounded one, renormalised
+    w, v = np.linalg.eig(P.T)
+    pi = np.real(v[:, np.argmin(abs(w - 1))])
+    task.data['P'] = np.round(P, 9).tolist()
+    P = np.array(task.data['P'])
+    w, v = np.linalg.eig(P.T)
+    pi = np.real(v[:, np.argmin(abs(w - 1))])
+    pi = pi / pi.sum()
+    return task, dict(state0=float(pi[0]))
+
+
+def gen_game(seed):
+    """A 2x2 zero-sum game without a saddle point: the value has the closed form (ad - bc)/(a + d - b - c)."""
+    r = _rng('game', seed)
+    while True:
+        A = r.integers(-9, 10, (2, 2)).astype(float)
+        if A.min(axis=1).max() == A.max(axis=0).min():      # a saddle point: the closed form below does not apply
+            continue
+        break
+    a, b, c, d = A[0, 0], A[0, 1], A[1, 0], A[1, 1]
+    value = (a * d - b * c) / (a + d - b - c)
+    task = Task('game', seed, 'Two players play a zero-sum matrix game; the row player picks a row and receives the entry. Report the value of the game under optimal mixed strategies.', dict(payoff=A.tolist()), ['value'])
+    return task, dict(value=float(value))
+
+
+def gen_inventory(seed):
+    """Newsvendor: the best order quantity is found here by brute force on the expected profit, not by the critical-fractile formula."""
+    r = _rng('inventory', seed)
+    price = float(r.integers(8, 15))
+    cost = float(r.integers(3, int(price) - 2))
+    salvage = float(r.integers(0, int(cost)))
+    mean, sd = float(r.integers(80, 200)), float(r.integers(10, 40))
+    xs = np.linspace(mean - 8 * sd, mean + 8 * sd, 20001)
+    pdf = np.exp(-.5 * ((xs - mean) / sd) ** 2) / (sd * np.sqrt(2 * np.pi))
+
+    def expected_loss(q):
+        return -np.trapezoid((np.where(xs < q, price * xs + salvage * (q - xs), price * q) - cost * q) * pdf, xs)
+
+    best = minimize_scalar(expected_loss, bounds=(mean - 4 * sd, mean + 4 * sd), method='bounded', options={'xatol': 1e-6})
+    task = Task('inventory', seed, 'Demand is normal with the given mean and standard deviation. Each unit costs `cost`, sells at `price`, and unsold units return `salvage`. Report the order quantity that maximises expected profit.',
+                dict(price=price, cost=cost, salvage=salvage, mean=mean, sd=sd), ['order_quantity'])
+    return task, dict(order_quantity=float(best.x))
+
+
+GENERATORS: dict[str, Callable] = dict(lp=gen_lp, queue=gen_queue, sir=gen_sir, assignment=gen_assignment, structure=gen_structure, pde=gen_pde, markov=gen_markov, game=gen_game, inventory=gen_inventory)
 
 
 # ----------------------------------------------------------------------------------------------- scoring
 
-TOLERANCE = dict(value=1e-6, mean_wait=1e-6, total=1e-9, r0=0.1, final_size=0.03)
+TOLERANCE = dict(value=1e-6, mean_wait=1e-6, total=1e-9, r0=0.1, final_size=0.03, temperature=2e-3, state0=1e-6, order_quantity=0.2)
 
 
 def score(kind: str, seed: int, answer: dict) -> dict:
@@ -148,7 +218,7 @@ def score(kind: str, seed: int, answer: dict) -> dict:
             detail[key] = dict(ok=str(got) == want)
         else:
             tol = TOLERANCE[key]
-            detail[key] = dict(ok=abs(float(got) - want) <= tol * max(1.0, abs(want)) if key in ('value', 'mean_wait', 'total') else abs(float(got) - want) <= tol)
+            detail[key] = dict(ok=abs(float(got) - want) <= tol * max(1.0, abs(want)) if key in ('value', 'mean_wait', 'total', 'temperature', 'state0', 'order_quantity') else abs(float(got) - want) <= tol)
     return dict(kind=kind, seed=seed, correct=all(d['ok'] for d in detail.values()), detail=detail)
 
 
@@ -183,6 +253,16 @@ def solve_with_tools(task: Task) -> dict:
         if structure.check_monotone(f, box, 0)['kind'] in ('nondecreasing', 'constant'):
             found.append('increasing_in_x')
         return dict(properties=sorted(found))
+    if task.kind == 'pde':
+        r = pde.solve_diffusion(d['L'], 400, d['k'], d['rho_c'], lambda x: sum(c * np.sin((m + 1) * np.pi * x / d['L']) for m, c in enumerate(d['coeffs'])), d['t_end'], 400,
+                                left=('dirichlet', 0.0), right=('dirichlet', 0.0), theta=.5)
+        return dict(temperature=float(np.interp(d['x0'], r['x'], r['u'])))
+    if task.kind == 'markov':
+        return dict(state0=decision_models.markov_stationary(d['P'])['stationary'][0])
+    if task.kind == 'game':
+        return dict(value=decision_models.matrix_game(d['payoff'])['value'])
+    if task.kind == 'inventory':
+        return dict(order_quantity=decision_models.newsvendor(d['price'], d['cost'], d['salvage'], d['mean'], d['sd'])['order_quantity'])
     raise KeyError(task.kind)
 
 
