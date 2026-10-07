@@ -20,7 +20,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 **Praxis is an agent plugin for mathematical modeling**: seven skills (one for whole problems, six for single kinds of request), a set of math tools your agent can call, and an evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
 
-Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
+Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. On an unfamiliar problem it looks for the mathematical structure first and compares several different routes on record; with no answer key it produces conclusions labelled by how sure they are, through conjectures, counterexample searches and high-precision checks. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
 <table>
 <tr>
