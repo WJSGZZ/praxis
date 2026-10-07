@@ -1,28 +1,40 @@
 # Praxis
 
-**一个用于 Codex 的数学建模能力包：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
+**一个面向支持 Agent Skills 的 AI Agent 的数学建模能力包：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
 
 Praxis 围绕同一任务组织五个环节：明确问题、形成路线、取得结果、判断证据、完成回答。模型与验证一起选择，失败按原因返回对应环节；方法按任务条件调用，多个模型只有输入输出关系明确且确有用途时才组合。工具负责原始输入、审计、运行与证据追溯，助手负责含义、选择与科学判断。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)，新增工作流对照与改进见 [审查记录](references/upstream-review.md)。
 
 ## 安装与使用
 
-需要 Python 3.12、[uv](https://docs.astral.sh/uv/) 与支持本地 skills 的 Codex。将仓库克隆到技能目录（该目录必须尚不存在）：
+Praxis 使用开放的 `SKILL.md` 格式，建模主线、参考和 Python 工具不依赖某一家模型。脚本执行需要 Python 3.12、[uv](https://docs.astral.sh/uv/) 以及宿主的本地文件／终端能力；仅使用分析方法不必先准备 Python 环境。
+
+按宿主选择安装位置（`praxis` 是技能目录）：
+
+| 宿主 | 项目内目录 | 本地个人目录 | 当前证据 |
+|---|---|---|---|
+| Codex | `.agents/skills/praxis` | `~/.agents/skills/praxis` | 当前 Codex 会话已使用；新发现路径依据官方文档，未重新安装验证 |
+| Claude Code | `.claude/skills/praxis` | `~/.claude/skills/praxis` | 官方格式／路径已核对，宿主实测待完成 |
+| Gemini CLI | `.agents/skills/praxis` 或 `.gemini/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.gemini/skills/praxis` | 官方格式／路径已核对，宿主实测待完成 |
+| GitHub Copilot | `.github/skills/praxis` 或 `.agents/skills/praxis` | CLI 可用 `~/.copilot/skills/praxis` 或 `~/.agents/skills/praxis` | 官方格式／路径已核对，不同运行表面仍需实测 |
+| Cursor | `.agents/skills/praxis` 或 `.cursor/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.cursor/skills/praxis` | 官方格式／路径已核对，宿主实测待完成 |
+
+例如安装到共享个人目录（目标目录必须尚不存在）：
 
 ```bash
-git clone https://github.com/WJSGZZ/praxis.git ~/.codex/skills/praxis
-uv sync --project ~/.codex/skills/praxis --locked
+git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
+uv sync --project ~/.agents/skills/praxis --locked
 ```
 
-让 Codex 重新发现技能后，在你的工作项目中说：
+Claude Code 使用表中的 `.claude` 路径。同一宿主只启用一个同名版本；已有 Codex 旧安装不自动迁移。重载技能或重新开始会话后，在工作项目中说：
 
-> 用 $praxis 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
+> 使用 Praxis 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
 
-也可以只要求读题、比较路线或审查已有模型，不必每次运行全套。技能目录保存工具，案例保存到当前工作项目；不会把新题目写入技能安装目录。
+也可以只要求读题、比较路线或审查已有模型。自然语言请求不保证宿主必定加载技能，应核对实际加载；专用调用入口随宿主而异。技能目录保存工具，案例保存到当前工作项目。官方来源、能力条件、调用差异和验证边界见 [跨 Agent 兼容说明](references/agent-compatibility.md)。
 
 命令行建立案例的例子：
 
 ```bash
-BUNDLE="$HOME/.codex/skills/praxis"
+BUNDLE="$HOME/.agents/skills/praxis"
 WORKSPACE="/absolute/path/to/your/project"
 "$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" init   --name example --problem "$WORKSPACE/problem.pdf" --data "$WORKSPACE/data.csv"
 ```
@@ -31,13 +43,13 @@ WORKSPACE="/absolute/path/to/your/project"
 
 ## 工作区与插件
 
-同一份维护源既支持现有 Skill 安装，也能导出含 Skill、脚本、锁定依赖和许可的 portable 插件包：
+同一份维护源既支持通用 Skill 安装，也能导出含 Skill、脚本、锁定依赖和许可的 portable 插件包：
 
 ```bash
 uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 ```
 
-导出目录必须尚不存在。题目、数据、案例与论文继续保存在用户工作区；环境需要显式准备。当前已支持目录导出，尚未验证宿主插件安装／发现，也未在官方插件目录上架。架构、职责和后续扩展条件见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+导出目录必须尚不存在。题目、数据、案例与论文继续保存在用户工作区；环境需要显式准备。通用 Skill 是跨宿主入口，当前插件导出按 OpenAI 插件格式组织，各宿主插件安装不能直接等同。当前已支持目录导出，尚未验证宿主插件安装／发现，也未在官方插件目录上架。架构、职责和后续扩展条件见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 
 ## 方法与工具的分工
 
