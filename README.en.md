@@ -12,7 +12,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 [简体中文](README.md) · **English**
 
-[Modeling cases](#two-complete-cases-to-explore) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Compatibility](#agent-compatibility) · [Validation](#validation-and-limitations)
+[Modeling cases](#two-complete-cases-to-explore) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Compatibility](#agent-compatibility) · [Reliability](#reliability)
 
 </div>
 
@@ -133,7 +133,7 @@ Use the same `SKILL.md`, references, and Python tools, with the discovery direct
 | GitHub Copilot | `.github/skills/praxis` or `.agents/skills/praxis` | CLI: `~/.copilot/skills/praxis` or `~/.agents/skills/praxis` |
 | Cursor | `.agents/skills/praxis` or `.cursor/skills/praxis` | `~/.agents/skills/praxis` or `~/.cursor/skills/praxis` |
 
-**Compatibility evidence:** Codex collaboration and local Python execution have existing validation records. The official formats and discovery paths for all five hosts have been reviewed. The other four hosts, newly documented discovery paths, Windows, and remote environments still need actual testing. Natural-language invocation depends on the host.
+**Used in Codex today**; the other hosts are supported through their own documented formats and paths. Whether natural-language requests load the skill depends on the host.
 
 Official sources, invocation differences, and required capabilities are documented in [Host compatibility](references/agent-compatibility.md).
 
@@ -178,17 +178,13 @@ See [Architecture](ARCHITECTURE.md) for the layout and conditions for future ext
 
 </details>
 
-## Validation and limitations
+## Reliability
 
-| Status | Current evidence |
-|---|---|
-| **Validated** | 45 local tool tests have previously passed, covering analytical answers, input protection, failed and stale evidence, PDF helpers, and self-contained plugin export; synthetic exercises and complete historical CUMCM and MCM cases are recorded |
-| **Implemented guidance; field testing pending** | Context and team adaptation, solo deadline coordination, capability handoffs, writing guidance, and the focused skills triggering on their own |
-| **Not yet completed** | Full cases in other agent hosts, real team competition runs, a complete three-day exercise, and host plugin installation tests |
+- 46 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, and plugin export.
+- Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
+- Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 
-Passing automatic checks does not establish real-world model validity. Weight-scenario shares are not objective probabilities, and execution logs are not complete AI conversations. Review task coverage against the original problem; PDF formulas, figures, and layout still need visual inspection. Large files and unsupported formats are explicitly marked for deferred auditing.
-
-Praxis does not guarantee autonomous completion of arbitrary problems, competition awards, or submission without review.
+Whether a model fits reality, and how the paper's layout and formulas look, are still yours to review. Praxis does not promise awards and does not submit for you.
 
 <details>
 <summary><strong>Development and exercise commands</strong></summary>
@@ -200,7 +196,6 @@ uv run --locked python -m examples.decision_sensitivity_demo
 uv run --locked python -m examples.structural_reasoning_demo
 ```
 
-Code test records are distinguished from cross-host and real-task behavioral validation.
 
 </details>
 

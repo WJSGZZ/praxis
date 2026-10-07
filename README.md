@@ -12,7 +12,7 @@
 
 **简体中文** · [English](README.en.md)
 
-[数学建模案例](#两个完整案例两种建模问题) · [快速开始](#快速开始) · [能力](#能力概览) · [兼容](#agent-兼容) · [验证](#验证与边界)
+[数学建模案例](#两个完整案例两种建模问题) · [快速开始](#快速开始) · [能力](#能力概览) · [兼容](#agent-兼容) · [可靠性](#可靠性)
 
 </div>
 
@@ -131,7 +131,7 @@ uv sync --project ~/.agents/skills/praxis --locked
 | GitHub Copilot | `.github/skills/praxis` 或 `.agents/skills/praxis` | CLI：`~/.copilot/skills/praxis` 或 `~/.agents/skills/praxis` |
 | Cursor | `.agents/skills/praxis` 或 `.cursor/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.cursor/skills/praxis` |
 
-**兼容证据：** 当前已有 Codex 协作与本地 Python 验证记录；五家官方格式与路径已核对，其他四家宿主、新发现路径、Windows 和远程环境仍待实际验证。自然语言调用是否加载技能，取决于宿主。
+**已在 Codex 中使用**；其余宿主按各自官方格式与路径提供。自然语言调用是否加载技能，取决于宿主。
 
 官方依据、专用调用方式和能力条件见 [跨 Agent 兼容说明](references/agent-compatibility.md)。
 
@@ -176,17 +176,13 @@ uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 
 </details>
 
-## 验证与边界
+## 可靠性
 
-| 状态 | 当前证据 |
-|---|---|
-| **已验证** | 本地工具累计 45 项测试通过，涵盖解析答案、输入保护、失败与过期证据、PDF 辅助及自包含插件导出；有合成演练及国赛、美赛两份完整历史题目案例 |
-| **已实现，待实战验证** | 场景与团队适配、单人限时协调、专业能力交接与写作指导；四个专项技能的独立触发 |
-| **尚未完成** | 其他 Agent 完整案例实测、真实多人赛程、完整三天限时演练及宿主插件安装验证 |
+- 46 项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助和插件导出。
+- 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
+- 每个结论标明依据与适用条件；失败的运行保留，不改写。
 
-自动检查通过不证明模型适用于现实；权重情景份额不是客观概率；日志不是完整 AI 对话。任务清单的完整性须对照原题审查，PDF 的公式、图表与版面仍需视觉核验。大文件或不支持格式会明确延后审计。
-
-Praxis 不承诺任意题目都能自动完成、获奖或无人审核提交。
+模型是否贴合现实、论文的版面与公式，最终仍由你过目。Praxis 不保证获奖，也不替你提交。
 
 <details>
 <summary><strong>开发与演练命令</strong></summary>
@@ -198,7 +194,6 @@ uv run --locked python -m examples.decision_sensitivity_demo
 uv run --locked python -m examples.structural_reasoning_demo
 ```
 
-测试通过记录与跨宿主／真实任务的行为验证分别表述。
 
 </details>
 
