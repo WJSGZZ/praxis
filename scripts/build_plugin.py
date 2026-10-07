@@ -8,7 +8,7 @@ from pathlib import Path
 import shutil
 
 BUNDLE = Path(__file__).resolve().parents[1]
-FILES = ('SKILL.md', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
+FILES = ('SKILL.md', 'README.md', 'README.en.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
          'pyproject.toml', 'uv.lock', 'ARCHITECTURE.md')
 # Explicit public resources, never the repository, environment or user cases.
 TREES = {

@@ -2,13 +2,15 @@
 
 # Praxis
 
-### 从问题出发，让模型、证据与报告连起来。
+### 让 AI Agent 成为你的数学建模伙伴。
 
-面向 AI Agent 的数学建模能力包 · 中文工作流 · 通用建模与赛事协作
+从问题拆解到模型验证与报告交付，一套可复用的建模工作流。
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-portable-334155?style=flat-square)](https://agentskills.io/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
 [![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
+
+**简体中文** · [English](README.en.md)
 
 [快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
 
