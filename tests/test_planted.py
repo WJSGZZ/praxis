@@ -35,3 +35,10 @@ def test_command_line_round_trip():
     truth = planted.GENERATORS['assignment'](5)[1]['total']
     ok = subprocess.run([sys.executable, '-m', 'evals.planted', 'check', 'assignment', '5', json.dumps(dict(total=truth))], capture_output=True, text=True, check=True).stdout
     assert json.loads(ok)['correct']
+
+
+def test_non_object_answers_get_a_helpful_error_and_the_task_carries_a_template():
+    with pytest.raises(ValueError, match='JSON object with the keys'):
+        planted.score('structure', 3, ['convex'])
+    out = subprocess.run([sys.executable, '-m', 'evals.planted', 'new', 'structure', '3'], capture_output=True, text=True, check=True).stdout
+    assert json.loads(out)['answer_template'] == {'properties': []}

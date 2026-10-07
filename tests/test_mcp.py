@@ -96,3 +96,31 @@ def test_model_tools_through_the_server():
     assert len(kf['filtered_mean']) == 3
     cv = server.call('cvar_portfolio', dict(returns=[[.01, .05], [.02, -.04], [.01, .09], [.015, .0]], target=.02, alpha=.75))
     assert abs(sum(cv['weights']) - 1) < 1e-9
+
+
+def test_missing_and_unknown_fields_are_reported_with_the_schema():
+    from scripts import mcp_server as server
+    with pytest.raises(ValueError, match=r"missing field\(s\) \['names'\].*required"):
+        server.call('probe_structure', dict(property='convexity', expression='x', bounds=[[0, 1]]))
+    with pytest.raises(ValueError, match=r"unknown field\(s\) \['kind'\]"):
+        server.call('probe_structure', dict(kind='convexity', property='convexity', expression='x', names=['x'], bounds=[[0, 1]]))
+    listing = subprocess.run([sys.executable, '-m', 'scripts.mcp_server', '--list'], capture_output=True, text=True, check=True).stdout
+    assert 'probe_structure(property*, expression*, names*, bounds*' in listing
+    described = json.loads(subprocess.run([sys.executable, '-m', 'scripts.mcp_server', '--describe', 'find_counterexample'], capture_output=True, text=True, check=True).stdout)
+    assert 'domain' in described['input']['properties']
+
+
+def test_recurrence_tools_and_route_modes_through_the_server():
+    from scripts import mcp_server as server
+    seq = [1, 3, 11, 41, 153, 571, 2131, 7953, 29681, 110771, 413403, 1542841, 5757961, 21489003]
+    held = server.call('guess_sequence', dict(sequence=seq, holdout=3))
+    assert held['recurrence']['holdout_ok'] and held['recurrence']['coefficients'] == ['4', '-1']
+    proof = server.call('check_recurrence', dict(sequence=seq, coefficients=[4, -1], order_bound=8))
+    assert proof['proof_by_finite_check']
+    small = server.call('find_counterexample', dict(claim='n*n+n+41 > 0', names=['n'], domain=[['int', 0, 900]], exhaustive_limit=1000))
+    assert small['proved_for_domain']
+    g = server.call('route_graph', dict(question='q', mode='standard', operations=[dict(op='add_path', key='a', title='A'), dict(op='add_path', key='b', title='B'),
+                                                                                 dict(op='attack', key='b', claim='c', method='m', outcome='survived'), dict(op='choose', key='b', why='w')]))
+    assert g['graph']['paths']['b']['status'] == 'chosen' and g['graph']['mode'] == 'standard'
+    kept = server.call('route_graph', dict(graph=g['graph'], operations=[dict(op='keep_result', key='r', statement='x', status='proved_finite_check')]))
+    assert kept['graph']['partial_results']['r']['status'] == 'proved_finite_check'

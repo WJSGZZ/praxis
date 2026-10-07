@@ -22,7 +22,7 @@ def test_cannot_choose_without_alternatives_or_surviving_attack():
     assert g['paths']['P1']['status'] == 'chosen'
     only = routes.apply(None, [dict(op='add_path', key='X', title='唯一路线'),
                                dict(op='attack', key='X', claim='c', method='m', outcome='survived')], question='q')['graph']
-    with pytest.raises(ValueError, match='fewer than two'):
+    with pytest.raises(ValueError, match='fewer than 2'):
         routes.choose(only, 'X', '没有别的')
 
 
@@ -88,3 +88,16 @@ def test_draft_lesson_reads_the_record_and_requires_a_principle():
         assert lessons.add_lesson(pathlib.Path(d) / 'l.jsonl', draft)['id'] == 'L0001'
     with pytest.raises(ValueError, match='exactly one chosen'):
         routes.draft_lesson(build()['graph'], problem='x', principle='y')
+
+
+def test_standard_mode_needs_only_one_alternative():
+    ops = [dict(op='add_path', key='baseline', title='simple rule'), dict(op='add_path', key='lp', title='linear program'),
+           dict(op='attack', key='lp', claim='integral optimum', method='tiny brute force', outcome='survived')]
+    g = routes.apply(None, ops, question='familiar assignment', mode='standard')['graph']
+    routes.choose(g, 'lp', 'standard method, checked against a brute-force case')
+    assert g['paths']['lp']['status'] == 'chosen'
+    strict = routes.apply(None, ops, question='same record, exploratory')['graph']
+    with pytest.raises(ValueError, match='fewer than 2'):
+        routes.choose(strict, 'lp', 'x')
+    with pytest.raises(ValueError, match='mode'):
+        routes.new_graph('q', 'sloppy')

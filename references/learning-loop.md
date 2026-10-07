@@ -39,7 +39,7 @@ uv run --locked python -m evals.planted new queue 7
 uv run --locked python -m evals.planted check queue 7 '{"mean_wait": 0.42}'
 ```
 
-题目由 (类型, 种子) 生成，题面不含答案；`check` 按种子重算真值并评分。用没见过的种子做盲测，可以检验方法和工具，不能代表现实问题上的能力。
+题目由 (类型, 种子) 生成，题面不含答案；`new` 输出的 `report` 字段给出答案要用的键名（如 `{"r0": ..., "final_size": ...}`）；`check` 按种子重算真值并评分。用没见过的种子做盲测，可以检验方法和工具，不能代表现实问题上的能力。
 
 ## 成长的边界
 

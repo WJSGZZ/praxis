@@ -53,3 +53,22 @@ def test_integer_relations_and_safe_evaluation():
     assert not none['found'] or max(abs(c) for c in none['coefficients'].values()) > 20
     with pytest.raises(ValueError):
         ex.find_relation('().__class__', {'one': '1'})
+
+
+def test_holdout_and_finite_check_proof_of_a_recurrence():
+    tilings = [1, 3, 11, 41, 153, 571, 2131, 7953, 29681, 110771, 413403, 1542841, 5757961, 21489003, 80198051, 299303201, 1117014753]  # 3 x 2n domino tilings
+    r = ex.guess_linear_recurrence(tilings[:13], holdout=0)
+    assert r['coefficients'] == ['4', '-1'] and r['equations'] == 11
+    held = ex.guess_linear_recurrence(tilings, holdout=4)
+    assert held['holdout_ok'] and held['holdout_mismatches'] == [] and held['holdout_terms'] == 4
+    wrong = ex.guess_linear_recurrence([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 99, 144], max_order=2, holdout=2)
+    assert not wrong['found'] or not wrong.get('holdout_ok', True)
+    # transfer-matrix bound: 8 states, candidate of order 2 -> 10 consecutive terms of the difference must vanish
+    proof = ex.check_linear_recurrence(tilings, [4, -1], order_bound=8)
+    assert proof['holds_on_data'] and proof['terms_needed'] == 10 and proof['proof_by_finite_check']
+    short = ex.check_linear_recurrence(tilings[:9], [4, -1], order_bound=8)
+    assert short['holds_on_data'] and not short['proof_by_finite_check']
+    bad = ex.check_linear_recurrence([1, 3, 11, 41, 152], [4, -1])
+    assert bad['mismatches'] == [4] and not bad['holds_on_data']
+    with pytest.raises(ValueError):
+        ex.guess_linear_recurrence([1, 2, 3], holdout=3)

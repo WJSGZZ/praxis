@@ -30,7 +30,7 @@
 ```bash
 git tag eval-1            # 封存被测版本
 uv run --locked python -m evals.planted new queue 101      # 生成一道盲题，只看题面和数据
-uv run --locked python -m evals.planted check queue 101 '{"mean_wait": ...}'
+uv run --locked python -m evals.planted check queue 101 '{"mean_wait": ...}'   # 键名取自题目输出里的 report 字段
 ```
 
 赛题类的评测：把题面交给 Agent，按 [Praxis 的完整流程](../SKILL.md) 做一次，保存全部产物和过程记录；评分由评委按预先写好的标准完成。结果与失败一并记入 [学习回路](../references/learning-loop.md)。

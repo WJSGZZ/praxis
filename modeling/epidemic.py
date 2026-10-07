@@ -47,6 +47,10 @@ def fit_sir(infected, population, *, recovered=None, starts=((.4, .2), (.2, .1),
     cov = np.linalg.pinv(jac.T @ jac) * (2 * best.cost / max(1, len(y) - 2))
     sd = np.sqrt(np.diag(cov))
     corr = float(cov[0, 1] / (sd[0] * sd[1])) if sd.min() > 0 else float('nan')
-    return dict(beta=float(best.x[0]), gamma=float(best.x[1]), r0=float(best.x[0] / best.x[1]), rmse=float(np.sqrt(2 * best.cost / len(y))),
+    r0 = float(best.x[0] / best.x[1])
+    return dict(beta=float(best.x[0]), gamma=float(best.x[1]), r0=r0, final_size=float(final_size(r0)), rmse=float(np.sqrt(2 * best.cost / len(y))),
                 std_error=sd.tolist(), parameter_correlation=corr, jacobian_condition=cond,
-                weakly_identified=bool(cond > 1e6 or abs(corr) > .98))
+                weakly_identified=bool(cond > 1e6 or abs(corr) > .98),
+                assumptions=dict(initial_infected=float(y[0]), initial_recovered=0.0, population=float(population), model='SIR, fully susceptible start',
+                                 weakly_identified_rule='condition number of the Jacobian above 1e6 or |parameter correlation| above 0.98',
+                                 std_error_note='Local standard errors assuming the model is right and noise is independent; with noiseless or smooth data they are far too small to be believed.'))

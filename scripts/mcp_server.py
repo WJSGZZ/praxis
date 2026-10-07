@@ -226,8 +226,8 @@ TOOLS = dict([
     _tool('check_total_unimodularity', 'Is a constraint matrix totally unimodular (integral LP vertices)? Exact for incidence-type matrices and small matrices.',
           {'matrix': MATRIX}, ['matrix'], lambda a: structure.is_network_matrix(a['matrix'])),
     _tool('route_graph', 'Keep the record of routes tried on a problem. Pass the current graph (or a question to start) and a list of operations: add_structure, add_assumption, add_path, attack, kill, keep_result, merge, choose. Returns the graph, record problems and a readable trace.',
-          {'graph': {'type': 'object'}, 'question': {'type': 'string'}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
-          lambda a: routes.apply(a.get('graph'), a['operations'], question=a.get('question'))),
+          {'graph': {'type': 'object'}, 'question': {'type': 'string'}, 'mode': {'type': 'string', 'enum': ['exploratory', 'standard']}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
+          lambda a: routes.apply(a.get('graph'), a['operations'], question=a.get('question'), mode=a.get('mode', 'exploratory'))),
     _tool('route_to_lesson', 'Draft a lesson from a finished route record (one chosen route); you supply the transferable principle. Pass the result to lesson_add.',
           {'graph': {'type': 'object'}, 'problem': {'type': 'string'}, 'principle': {'type': 'string'}, 'verified_by': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}},
           ['graph', 'problem', 'principle'], lambda a: routes.draft_lesson(a['graph'], problem=a['problem'], principle=a['principle'], verified_by=a.get('verified_by', ''), tags=a.get('tags'))),
@@ -237,12 +237,16 @@ TOOLS = dict([
           ['lhs', 'rhs', 'relation', 'names', 'bounds'], _conjecture),
     _tool('find_counterexample', 'Search for a counterexample of a claim (arithmetic, comparisons, and/or, abs/min/max/gcd/isprime) over integer or real ranges; exhaustive when the integer domain is small, with shrinking.',
           {'claim': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}},
-           'domain': {'type': 'array', 'items': {'type': 'array'}, 'description': "[['int'|'real', lo, hi], ...] one per name"}, 'trials': {'type': 'integer'}},
+           'domain': {'type': 'array', 'items': {'type': 'array'}, 'description': "[['int'|'real', lo, hi], ...] one per name"}, 'trials': {'type': 'integer'},
+           'exhaustive_limit': {'type': 'integer', 'description': 'integer domains with at most this many cases are checked exhaustively (default 200000)'}},
           ['claim', 'names', 'domain'],
-          lambda a: experiment.find_counterexample(_predicate(a['claim'], a['names']), [tuple(d) for d in a['domain']], trials=a.get('trials', 20000))),
+          lambda a: experiment.find_counterexample(_predicate(a['claim'], a['names']), [tuple(d) for d in a['domain']], trials=a.get('trials', 20000), exhaustive_limit=a.get('exhaustive_limit', 200000))),
+    _tool('check_recurrence', 'Check that a sequence satisfies a_n = c_1 a_{n-1} + ... + c_d a_{n-d} and list failing indices; with order_bound (e.g. a transfer-matrix size) a clean check on order_bound + d terms is a complete proof.',
+          {'sequence': SERIES, 'coefficients': SERIES, 'order_bound': {'type': 'integer'}}, ['sequence', 'coefficients'],
+          lambda a: experiment.check_linear_recurrence(a['sequence'], a['coefficients'], order_bound=a.get('order_bound'))),
     _tool('guess_sequence', 'Guess a constant-coefficient linear recurrence and a polynomial formula for a sequence of rationals (exact). Results are conjectures beyond the data.',
-          {'sequence': SERIES, 'max_order': {'type': 'integer'}, 'max_degree': {'type': 'integer'}}, ['sequence'],
-          lambda a: dict(recurrence=experiment.guess_linear_recurrence(a['sequence'], a.get('max_order', 6)),
+          {'sequence': SERIES, 'max_order': {'type': 'integer'}, 'max_degree': {'type': 'integer'}, 'holdout': {'type': 'integer', 'description': 'last terms kept out of the fit and used to test the guess'}}, ['sequence'],
+          lambda a: dict(recurrence=experiment.guess_linear_recurrence(a['sequence'], a.get('max_order', 6), a.get('holdout', 0)),
                          polynomial=experiment.guess_polynomial(a['sequence'], a.get('max_degree', 8)))),
     _tool('find_relation', 'Integer relation (PSLQ) between a value and constants, e.g. value "zeta(2)", constants {"pi2": "pi**2"}. A hint to prove, not a proof.',
           {'value': {'type': 'string'}, 'constants': {'type': 'object'}, 'dps': {'type': 'integer'}, 'max_coeff': {'type': 'integer'}}, ['value', 'constants'],
@@ -296,7 +300,14 @@ def _json(value):
 def call(name, arguments):
     if name not in TOOLS:
         raise KeyError(f'Unknown tool: {name}')
-    return TOOLS[name]['function'](arguments or {})
+    schema = TOOLS[name]['schema']
+    given = arguments or {}
+    missing = [k for k in schema.get('required', []) if k not in given]
+    unknown = [k for k in given if k not in schema['properties']]
+    if missing or unknown:
+        raise ValueError(f'{name}: ' + (f'missing field(s) {missing}; ' if missing else '') + (f'unknown field(s) {unknown}; ' if unknown else '')
+                         + f'required: {schema.get("required", [])}; all fields: {list(schema["properties"])}')
+    return TOOLS[name]['function'](given)
 
 
 def handle(message):
@@ -340,12 +351,18 @@ def serve():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--list', action='store_true')
+    parser.add_argument('--list', action='store_true', help='list tools with their fields (* = required)')
+    parser.add_argument('--describe', metavar='TOOL', help='print one tool\'s full input schema')
     parser.add_argument('--call', nargs=2, metavar=('TOOL', 'JSON'))
     args = parser.parse_args()
     if args.list:
         for name, tool in TOOLS.items():
-            print(f'{name}: {tool["description"]}')
+            required = tool['schema'].get('required', [])
+            fields = ', '.join(f'{k}*' if k in required else k for k in tool['schema']['properties'])
+            print(f'{name}({fields}): {tool["description"]}')
+    elif args.describe:
+        tool = TOOLS[args.describe]
+        print(json.dumps(dict(name=args.describe, description=tool['description'], input=tool['schema']), ensure_ascii=False, indent=1))
     elif args.call:
         print(_json(call(args.call[0], json.loads(args.call[1]))))
     else:

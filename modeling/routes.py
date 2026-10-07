@@ -12,13 +12,21 @@ from typing import Any
 STATUS = ('open', 'exploring', 'killed', 'merged', 'chosen')
 OUTCOME = ('survived', 'weakened', 'killed')
 EVIDENCE = ('derived', 'cited', 'checked', 'assumed', 'unknown')
+LADDER = ('observed', 'conjectured', 'checked_to_N', 'proved_sketch', 'proved_finite_check', 'proved', 'refuted')   # research-mode confidence ladder
 CRITERIA = ('assumptions', 'information', 'tractability', 'robustness', 'verifiability', 'explanatory_power')
 
 
-def new_graph(question: str) -> dict:
+MODES = ('exploratory', 'standard')
+
+
+def new_graph(question: str, mode: str = 'exploratory') -> dict:
+    """mode 'exploratory' (default) asks for three routes before a choice; 'standard' is for familiar problems with a known method and asks
+    for the baseline plus one alternative, so the record stays a few lines."""
     if not question.strip():
         raise ValueError('A route graph starts from a question')
-    return dict(question=question, structures={}, paths={}, assumptions={}, attacks=[], partial_results={}, edges=[], log=[])
+    if mode not in MODES:
+        raise ValueError(f'mode must be one of {MODES}')
+    return dict(question=question, mode=mode, structures={}, paths={}, assumptions={}, attacks=[], partial_results={}, edges=[], log=[])
 
 
 def _need(g, kind, key):
@@ -90,8 +98,8 @@ def kill(g, key, reason):
 def keep_result(g, key, statement, *, status='checked', source_path=None, reusable_in=()):
     """A partial result worth keeping even if its route dies (a bound, an identity, a failed approach's lesson)."""
     _fresh(g, 'partial_results', key)
-    if status not in EVIDENCE:
-        raise ValueError(f'status must be one of {EVIDENCE}')
+    if status not in EVIDENCE + LADDER:
+        raise ValueError(f'status must be one of {EVIDENCE + LADDER}')
     if source_path:
         _need(g, 'paths', source_path)
     g['partial_results'][key] = dict(statement=statement, status=status, source=source_path, reusable_in=list(reusable_in))
@@ -127,8 +135,9 @@ def check_choice(g, key):
     p = _need(g, 'paths', key)
     issues = []
     others = [k for k in g['paths'] if k != key]
-    if len(others) < 2:
-        issues.append('fewer than two alternative routes were considered')
+    need = 1 if g.get('mode') == 'standard' else 2
+    if len(others) < need:
+        issues.append(f'fewer than {need} alternative route{"s" if need > 1 else ""} {"was" if need == 1 else "were"} considered')
     if not any(a['path'] == key and a['outcome'] == 'survived' for a in g['attacks']):
         issues.append('no attack on this route has been survived')
     if any(a['path'] == key and a['outcome'] == 'killed' for a in g['attacks']):
@@ -160,9 +169,9 @@ def validate(g) -> list[str]:
     return issues
 
 
-def apply(graph: dict | None, operations: list[dict[str, Any]], *, question: str | None = None) -> dict:
+def apply(graph: dict | None, operations: list[dict[str, Any]], *, question: str | None = None, mode: str = 'exploratory') -> dict:
     """Apply operations [{"op": "add_path", ...}, ...] to a copy of the graph; the first call may pass question instead of a graph."""
-    g = copy.deepcopy(graph) if graph else new_graph(question or '')
+    g = copy.deepcopy(graph) if graph else new_graph(question or '', mode)
     table = dict(add_structure=add_structure, add_assumption=add_assumption, add_path=add_path, attack=attack, kill=kill,
                  keep_result=keep_result, merge=merge, choose=choose)
     for number, step in enumerate(operations, 1):
@@ -180,7 +189,7 @@ def apply(graph: dict | None, operations: list[dict[str, Any]], *, question: str
 
 def trace_markdown(g) -> str:
     """The route record as a readable trace: what was considered, why routes died, what was chosen, what depends on what."""
-    out = [f'# 路线记录：{g["question"]}', '']
+    out = [f'# 路线记录：{g["question"]}（{g.get("mode", "exploratory")}）', '']
     if g['structures']:
         out += ['## 发现的结构', *[f'- **{k}**（{s["evidence"]}）：{s["text"]}' for k, s in g['structures'].items()], '']
     out += ['## 候选路线']

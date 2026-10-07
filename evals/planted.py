@@ -135,6 +135,8 @@ TOLERANCE = dict(value=1e-6, mean_wait=1e-6, total=1e-9, r0=0.1, final_size=0.03
 
 def score(kind: str, seed: int, answer: dict) -> dict:
     _, truth = GENERATORS[kind](seed)
+    if not isinstance(answer, dict):
+        raise ValueError(f'The answer must be a JSON object with the keys {sorted(truth)}, e.g. {json.dumps(_template(truth))}')
     detail = {}
     for key, want in truth.items():
         got = answer.get(key)
@@ -184,6 +186,10 @@ def solve_with_tools(task: Task) -> dict:
     raise KeyError(task.kind)
 
 
+def _template(truth: dict) -> dict:
+    return {k: ([] if isinstance(v, list) else '' if isinstance(v, str) else 0.0) for k, v in truth.items()}
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest='cmd', required=True)
@@ -200,7 +206,7 @@ def main():
         print('\n'.join(GENERATORS))
     elif a.cmd == 'new':
         t = GENERATORS[a.kind](a.seed)[0]
-        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys), ensure_ascii=False))
+        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=_template(GENERATORS[a.kind](a.seed)[1])), ensure_ascii=False))
     else:
         print(json.dumps(score(a.kind, a.seed, json.loads(a.answer))))
 

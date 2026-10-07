@@ -12,3 +12,12 @@ def test_relative_links_in_documentation_resolve():
             if not target.startswith(('http', 'mailto')) and not (page.parent / target).exists():
                 broken.append((str(page.relative_to(ROOT)), target))
     assert not broken, broken
+
+
+def test_the_route_example_in_the_guide_is_valid():
+    import json
+    from modeling import routes
+    text = (ROOT / 'references/path-search.md').read_text()
+    block = re.search(r'```json\n(.*?)\n```', text, re.S).group(1)
+    result = routes.apply(None, json.loads(block), question='example')
+    assert result['issues'] == [] and result['graph']['paths']['lp']['status'] == 'chosen'

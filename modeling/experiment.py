@@ -114,11 +114,14 @@ def test_conjecture(lhs: Callable, rhs: Callable, relation: str, bounds: Sequenc
         mp.mp.dps = old
 
 
-def guess_linear_recurrence(sequence: Sequence, max_order: int = 6) -> dict:
+def guess_linear_recurrence(sequence: Sequence, max_order: int = 6, holdout: int = 0) -> dict:
     """Smallest constant-coefficient linear recurrence a_n = c_1 a_{n-1} + ... + c_d a_{n-d} fitting the data exactly (rationals).
 
     Needs at least 2d+2 terms so that the fit is checked on more equations than unknowns; otherwise the order is not tested."""
-    a = [sp.Rational(Fraction(x).limit_denominator(10 ** 12)) if not isinstance(x, sp.Basic) else x for x in sequence]
+    full = [sp.Rational(Fraction(x).limit_denominator(10 ** 12)) if not isinstance(x, sp.Basic) else x for x in sequence]
+    if holdout < 0 or holdout >= len(full):
+        raise ValueError('holdout must be between 0 and len(sequence) - 1')
+    a, held = (full[:len(full) - holdout], full[len(full) - holdout:]) if holdout else (full, [])
     for d in range(1, max_order + 1):
         if len(a) < 2 * d + 2:
             return dict(found=False, reason=f'need at least {2 * d + 2} terms to test order {d}', tested_up_to=d - 1)
@@ -130,8 +133,13 @@ def guess_linear_recurrence(sequence: Sequence, max_order: int = 6) -> dict:
         except ValueError:
             continue
         if params.shape[0] == 0:
-            return dict(found=True, order=d, coefficients=[str(c) for c in sol], equations=len(rhs),
-                        note='Fits every equation; still a conjecture beyond the data.')
+            out = dict(found=True, order=d, coefficients=[str(c) for c in sol], equations=len(rhs), unknowns=d,
+                       note='Fits every equation; still a conjecture beyond the data.')
+            if holdout:
+                coeffs = [sp.Rational(c) for c in sol]
+                bad = [len(a) + i for i, v in enumerate(held) if v != sum(coeffs[j] * (a + held)[len(a) + i - 1 - j] for j in range(d))]
+                out.update(holdout_terms=holdout, holdout_mismatches=bad, holdout_ok=not bad)
+            return out
     return dict(found=False, tested_up_to=max_order)
 
 
@@ -196,3 +204,24 @@ def _is_number(s):
         return True
     except ValueError:
         return False
+
+
+def check_linear_recurrence(sequence: Sequence, coefficients: Sequence, *, order_bound: int | None = None) -> dict:
+    """Does a_n = c_1 a_{n-1} + ... + c_d a_{n-d} hold for every n >= d in the data? Reports the failing indices.
+
+    If the sequence is known to satisfy SOME constant-coefficient linear recurrence of order at most `order_bound` (for example it equals
+    u^T M^n v for an N x N matrix M, so N is a bound by Cayley-Hamilton), then the difference b_n = a_n - sum c_i a_{n-i} satisfies one of
+    order at most order_bound + d. Vanishing on order_bound + d consecutive terms then proves it vanishes for all n, so a clean check on
+    that many terms is a complete proof, not just evidence."""
+    a = [sp.nsimplify(x) for x in sequence]
+    c = [sp.nsimplify(x) for x in coefficients]
+    d = len(c)
+    if len(a) <= d:
+        raise ValueError('Need more terms than coefficients')
+    bad = [n for n in range(d, len(a)) if a[n] != sum(c[i] * a[n - 1 - i] for i in range(d))]
+    out = dict(order=d, equations=len(a) - d, mismatches=bad, holds_on_data=not bad)
+    if order_bound is not None:
+        needed = order_bound + d
+        out.update(order_bound=order_bound, terms_needed=needed, proof_by_finite_check=bool(not bad and len(a) - d >= needed),
+                   statement='Complete proof if the order bound is itself justified (e.g. by a transfer matrix of that size); otherwise it is evidence.')
+    return out

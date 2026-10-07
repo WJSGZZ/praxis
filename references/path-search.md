@@ -21,6 +21,32 @@
 5. **重组**：把存活路线的有用部分合成新路线：线性松弛给界，仿真给检验；解析解给初值，数值优化精修；简化模型给基线，复杂模型给修正。合并时写明怎样连接、单位与假设是否一致。
 6. **收敛**：按下面的比较维度选出最终路线，写明理由、放弃了什么、哪个假设失效时转向哪条路。
 
+## 两种记录粒度
+
+- **`mode: "exploratory"`（默认）**：陌生或高影响的问题，选定前要有三条路线、一次存活的攻击、每个假设的后备。
+- **`mode: "standard"`**：已有成熟标准解法的熟悉题，只要基线加一条备选、一次存活的攻击，记录几行即可。
+- 明显站不住的备选（例如一个过于简单的基线）可以直接 `kill` 并写一行原因，不必为它编造攻击；攻击留给仍然活着的路线。
+
+## 一个完整的最小例子
+
+`route_graph` 的 `operations`（JSON）：
+
+```json
+[
+ {"op": "add_structure", "key": "tu", "text": "约束矩阵是有向图关联矩阵", "evidence": "checked"},
+ {"op": "add_assumption", "key": "integral", "text": "供给与容量为整数", "evidence": "assumed", "if_false": "改解整数规划"},
+ {"op": "add_path", "key": "lp", "title": "最小费用流（线性规划）", "structure": "tu", "assumptions": ["integral"]},
+ {"op": "add_path", "key": "milp", "title": "弧流量整数规划"},
+ {"op": "add_path", "key": "greedy", "title": "按单位费用贪心"},
+ {"op": "attack", "key": "lp", "claim": "线性规划顶点是整数", "method": "check_total_unimodularity", "outcome": "survived"},
+ {"op": "kill", "key": "greedy", "reason": "无最优性保证；仅作基线"},
+ {"op": "keep_result", "key": "bound", "statement": "线性规划松弛给出费用下界", "status": "derived", "source_path": "lp"},
+ {"op": "choose", "key": "lp", "why": "整数最优且有对偶证书"}
+]
+```
+
+字段名以 `--describe route_graph` 和 `modeling/routes.py` 的函数签名为准；`add_path` 的 `structure` 只能写已登记结构的 key。
+
 ## 比较维度
 
 评分只用来迫使自己说出理由，不当作客观结论。每个维度 1–5，并在备注或攻击里给依据：
@@ -42,7 +68,7 @@
 - `attack`（被攻击的断言、方法、结果：survived / weakened / killed）；
 - `kill`（必须写原因）、`keep_result`、`merge`、`choose`。
 
-记录会拒绝：没有原因就淘汰、没有经过存活的攻击就选定、候选少于三条（含选中者）就选定、假设没有“若不成立”的后备。`choose` 之后，工具返回一份可读的路线记录，可压缩成论文里“为什么这样建模”的一小节或附录。
+记录会拒绝：没有原因就淘汰、没有经过存活的攻击就选定、备选不足（默认模式下少于三条路线，`standard` 模式少于两条）就选定、假设没有“若不成立”的后备。`choose` 之后，工具返回一份可读的路线记录，可压缩成论文里“为什么这样建模”的一小节或附录。
 
 ## 预算与停止
 

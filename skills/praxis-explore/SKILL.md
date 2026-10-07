@@ -15,12 +15,31 @@ BUNDLE 指 `praxis` 技能目录。标准题不必展开：写一行“为什么
 3. **没有答案时**：按 [research-mode.md](../../references/research-mode.md) 做实验数学：算小例子 → `guess_sequence`、`find_relation` 猜规律 → `test_conjecture`、`find_counterexample` 检验与证伪 → 尝试证明；每条结论标把握等级，声称新之前先检索文献。
 4. **留下经验**：任务收尾按 [learning-loop.md](../../references/learning-loop.md) 复盘，`lesson_add` 存课程，新题开始前 `lesson_search`；用 `evals.planted` 的已知答案题做回归与盲测。
 
+## 怎么调用
+
+在仓库（或插件）根目录运行；命令行与 Python 两种入口等价：
+
+```bash
+uv run --locked python -m scripts.mcp_server --list                  # 工具及字段（带 * 的必填）
+uv run --locked python -m scripts.mcp_server --describe probe_structure   # 一个工具的完整输入格式
+uv run --locked python -m scripts.mcp_server --call probe_structure '{"property":"convexity","expression":"x**2+y**2","names":["x","y"],"bounds":[[-1,1],[-1,1]]}'
+```
+
+| 工具 | Python 入口 |
+|---|---|
+| `probe_structure`、`dimensional_analysis`、`check_total_unimodularity` | `modeling.structure` |
+| `route_graph`、`route_to_lesson` | `modeling.routes.apply`、`modeling.routes.draft_lesson` |
+| `lesson_add`、`lesson_search` | `modeling.lessons.add_lesson`、`search_lessons` |
+| `test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`、`find_relation` | `modeling.experiment`（`test_conjecture` 另有 mpmath 高精度版） |
+
+不在仓库根目录用 Python 导入时设置 `PYTHONPATH` 指向它。字段缺失或写错时，报错会列出必填字段与全部字段。
+
 ## 边界
 
 - 结构是假设：探测找不到反例只是证据，找到反例才是证明。结论里按证据等级表述。
 - 探索有预算。证据足够就停，不为显得全面而增加路线。
 - 工具只记录和探测，不替人判断路线是否合适；选择及理由由人和 Agent 共同负责，必要时与用户按 [praxis-dialogue](../praxis-dialogue/SKILL.md) 讨论。
-- 路线记录和课程放在用户项目里，不上传，不写入未公开材料。
+- 结构探测给出的是证据：要把“凸”“单调”这类结论升级成“已推导”，需要另外做解析推导（如 Hessian、导数符号）；工具的 `proved` 字段只在找到反例时为真。路线记录和课程放在用户项目里，不上传，不写入未公开材料。
 
 ## 产出与交接
 
