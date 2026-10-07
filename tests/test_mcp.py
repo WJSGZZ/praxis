@@ -78,3 +78,21 @@ def test_lesson_tools_round_trip(tmp_path):
     assert server.call('lesson_add', dict(path=path, lesson=lesson))['id'] == 'L0001'
     found = server.call('lesson_search', dict(path=path, query='rule'))
     assert found['lessons'][0]['id'] == 'L0001' and found['patterns']['lessons'] == 1
+
+
+def test_model_tools_through_the_server():
+    from scripts import mcp_server as server
+    heat = server.call('solve_diffusion', dict(length=1, k=1, rho_c=1, initial='sin(3.141592653589793*x)', t_end=.1, cells=100, steps=100, left=['dirichlet', 0], right=['dirichlet', 0]))
+    exact = float(__import__('math').exp(-__import__('math').pi ** 2 * .1) * __import__('math').sin(__import__('math').pi * heat['x'][50]))
+    assert abs(heat['u'][50] - exact) < 1e-3
+    assert abs(server.call('matrix_game', dict(payoff=[[3, 2], [1, 4]]))['value'] - 2.5) < 1e-9
+    assert abs(server.call('newsvendor', dict(price=10, cost=6, salvage=2, mean=100, sd=20))['order_quantity'] - 100) < 1e-9
+    assert server.call('markov_stationary', dict(matrix=[[.7, .3], [.1, .9]]))['stationary'][0] == pytest.approx(.25)
+    assert abs(server.call('eoq', dict(demand=1200, order_cost=50, holding_cost=2))['order_quantity'] - 244.9489742783178) < 1e-6
+    eq = server.call('equilibria', dict(rhs=['x*(1-x)'], names=['x'], bounds=[[-.5, 2]]))
+    assert sorted(e['kind'] for e in eq['equilibria']) == ['stable node', 'unstable node']
+    assert server.call('pareto_front', dict(points=[[1, 5], [2, 4], [3, 3], [2, 2]], senses=[1, 1]))['indices'] == [0, 1, 2]
+    kf = server.call('kalman_filter', dict(F=[[1]], H=[[1]], Q=[[.1]], R=[[1]], x0=[0], P0=[[1]], observations=[[1.0], [1.2], [0.9]]))
+    assert len(kf['filtered_mean']) == 3
+    cv = server.call('cvar_portfolio', dict(returns=[[.01, .05], [.02, -.04], [.01, .09], [.015, .0]], target=.02, alpha=.75))
+    assert abs(sum(cv['weights']) - 1) < 1e-9

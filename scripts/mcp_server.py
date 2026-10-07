@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modeling import decision, epidemic, experiment, forecast, graph, lessons, optimize, queueing, routes, sensitivity, structure, weights  # noqa: E402
+from modeling import decision, decision_models, dynamics, epidemic, experiment, forecast, graph, lessons, optimize, pde, queueing, routes, sensitivity, structure, weights  # noqa: E402
 from scripts import audit_data, check_references, literature  # noqa: E402
 
 VERSION = '0.1.0'
@@ -110,6 +110,30 @@ def _conjecture(a):
     tol = a.get('tolerance', 1e-9)
     return dict(holds=worst <= tol, proved=worst > tol, worst_violation=worst, at=where, precision='double',
                 note='Double precision; use modeling.experiment.test_conjecture for high precision.' if worst <= tol else 'Violation found.')
+
+
+def _profile(expression):
+    """Function of x (array) from an arithmetic expression in x."""
+    model = _compile(expression, ['x'])
+    return lambda xs: model(np.asarray(xs, float)[:, None])
+
+
+def _bc(spec):
+    if spec is None:
+        return ('neumann', 0.0)
+    return tuple(spec)
+
+
+def _diffusion(a):
+    r = pde.solve_diffusion(a['length'], a.get('cells', 100), a['k'], a['rho_c'], _profile(a['initial']), a['t_end'], a.get('steps', 200),
+                            left=_bc(a.get('left')), right=_bc(a.get('right')), source=_profile(a['source']) if a.get('source') else None, theta=a.get('theta', .5))
+    return {k: (v.tolist() if hasattr(v, 'tolist') else v) for k, v in r.items()}
+
+
+def _equilibria(a):
+    names = a['names']
+    funcs = [_scalar(e, names) for e in a['rhs']]
+    return dynamics.equilibria(lambda x: [f(x) for f in funcs], a['bounds'], starts=a.get('starts', 200))
 
 
 def _sobol(a):
@@ -226,6 +250,30 @@ TOOLS = dict([
     _tool('lesson_search', 'Search the project memory for lessons by keywords and tags before starting a new problem; also returns recurring structures.',
           {'path': {'type': 'string'}, 'query': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}, 'limit': {'type': 'integer'}}, ['path'],
           lambda a: dict(lessons=lessons.search_lessons(Path(a['path']), a.get('query', ''), tags=a.get('tags'), limit=a.get('limit', 5)), patterns=lessons.patterns(Path(a['path'])))),
+    _tool('solve_diffusion', 'One-dimensional heat/diffusion equation rho_c u_t = (k u_x)_x + s by finite volumes (theta scheme), with an energy account. Boundaries: ["dirichlet", value], ["neumann", flux_in], ["robin", h, u_inf].',
+          {'length': _num(), 'cells': {'type': 'integer'}, 'k': _num(), 'rho_c': _num(), 'initial': {'type': 'string', 'description': 'expression in x'}, 't_end': _num(), 'steps': {'type': 'integer'},
+           'left': {'type': 'array'}, 'right': {'type': 'array'}, 'source': {'type': 'string', 'description': 'expression in x (W/m^3)'}, 'theta': _num()},
+          ['length', 'k', 'rho_c', 'initial', 't_end'], _diffusion),
+    _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
+    _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
+          {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
+    _tool('matrix_game', 'Value and optimal mixed strategies of a zero-sum matrix game (row player maximises), by linear programming.', {'payoff': MATRIX}, ['payoff'], lambda a: decision_models.matrix_game(a['payoff'])),
+    _tool('eoq', 'Economic order quantity, optionally with planned backorders (stockout_cost per unit per year).',
+          {'demand': _num(), 'order_cost': _num(), 'holding_cost': _num(), 'stockout_cost': _num()}, ['demand', 'order_cost', 'holding_cost'],
+          lambda a: decision_models.eoq(a['demand'], a['order_cost'], a['holding_cost'], stockout_cost=a.get('stockout_cost'))),
+    _tool('newsvendor', 'Newsvendor order quantity for normal demand: critical fractile, expected lost sales and expected profit.',
+          {'price': _num(), 'cost': _num(), 'salvage': _num(), 'mean': _num(), 'sd': _num()}, ['price', 'cost', 'salvage', 'mean', 'sd'],
+          lambda a: decision_models.newsvendor(a['price'], a['cost'], a['salvage'], a['mean'], a['sd'])),
+    _tool('cvar_portfolio', 'Minimum-CVaR portfolio for scenario returns (rows are scenarios) with expected return at least target (linear program). Conditional on the scenarios; not a forecast.',
+          {'returns': MATRIX, 'target': _num(), 'alpha': _num(), 'long_only': {'type': 'boolean'}}, ['returns', 'target'],
+          lambda a: decision_models.cvar_portfolio(a['returns'], a['target'], alpha=a.get('alpha', .95), long_only=a.get('long_only', True))),
+    _tool('pareto_front', 'Non-dominated rows of a table of objective values; senses is +1 to maximise a column and -1 to minimise.',
+          {'points': MATRIX, 'senses': {'type': 'array', 'items': {'type': 'integer'}}}, ['points', 'senses'], lambda a: decision_models.pareto_front(a['points'], a['senses'])),
+    _tool('equilibria', 'Equilibria of dx/dt = rhs(x) inside a box, classified by Jacobian eigenvalues (random multi-start; completeness not guaranteed).',
+          {'rhs': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'starts': {'type': 'integer'}}, ['rhs', 'names', 'bounds'], _equilibria),
+    _tool('kalman_filter', 'Linear-Gaussian Kalman filter: state x_{t+1}=F x_t+w (cov Q), observation y_t=H x_t+v (cov R); returns filtered means, covariances and the log-likelihood.',
+          {'F': MATRIX, 'H': MATRIX, 'Q': MATRIX, 'R': MATRIX, 'x0': SERIES, 'P0': MATRIX, 'observations': {'type': 'array'}}, ['F', 'H', 'Q', 'R', 'x0', 'P0', 'observations'],
+          lambda a: dynamics.kalman_filter(a['F'], a['H'], a['Q'], a['R'], a['x0'], a['P0'], a['observations'])),
 ])
 
 
