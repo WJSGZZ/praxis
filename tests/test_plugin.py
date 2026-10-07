@@ -68,7 +68,7 @@ def test_export_rejects_links_to_external_content(tmp_path):
     assert not (tmp_path / 'plugin').exists()
 
 
-FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-report')
+FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-dialogue', 'praxis-report')
 
 
 def _links(text):

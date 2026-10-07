@@ -16,6 +16,8 @@ BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.
 - 最优性：可行解与证明界分开报告，最大化用上界、最小化用下界；受限决策族只能称族内最优，须用更宽的族检验差距。见 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的“结构、松弛与界”。
 - 审查现成材料时按同一标准逐条给出：结论、它依赖的证据、证据是否独立、应降低到什么强度，而不是给泛泛评语。
 
+- 用户在场时，把审查结果讲成白话，请用户指出不合直觉之处，一起复盘并判断是否换方法，做法见 [praxis-dialogue](../praxis-dialogue/SKILL.md)。
+
 ## 产出
 
 对每项任务写明允许表达的结论、适用范围、失败或限制。证据不足就降低结论强度或返回对应环节，不以预设轮次结束判定通过。

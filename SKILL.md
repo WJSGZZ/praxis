@@ -35,6 +35,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 | [praxis-model](skills/praxis-model/SKILL.md) | 读题、假设与参数依据、路线与模型选择 |
 | [praxis-compute](skills/praxis-compute/SKILL.md) | 数据审计、模型运行、可复现证据 |
 | [praxis-verify](skills/praxis-verify/SKILL.md) | 独立验证、敏感性、证据与结论强度审查 |
+| [praxis-dialogue](skills/praxis-dialogue/SKILL.md) | 向不懂数学的用户讲清模型、复盘与共同思考 |
 | [praxis-report](skills/praxis-report/SKILL.md) | 论文结构、图表、披露、PDF 检查与交付 |
 
 整题推进、团队与限时协调、跨环节交接由本技能负责。计算类工作可调用 `praxis-tools`（插件里的 MCP 服务，或 `python -m scripts.mcp_server --call 工具名 'JSON'`）；方法清单见 [model-library.md](references/model-library.md)。

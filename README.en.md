@@ -15,7 +15,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 </div>
 
-**Praxis is an agent plugin for mathematical modeling**: five skills (one for whole problems, four for single kinds of request), a set of math tools your agent can call, and an evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
+**Praxis is an agent plugin for mathematical modeling**: six skills (one for whole problems, five for single kinds of request), a set of math tools your agent can call, and an evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
 
 Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
@@ -72,7 +72,7 @@ cd praxis
 uv run --locked python -m scripts.build_plugin --output ../praxis-plugin
 ```
 
-The plugin carries the five skills and a `praxis-tools` server (`mcp.json`; on first launch uv prepares the environment from the lock file). The output directory must not exist yet.
+The plugin carries the six skills and a `praxis-tools` server (`mcp.json`; on first launch uv prepares the environment from the lock file). The output directory must not exist yet.
 
 **Skills only.** Drop the repository into your host's skills directory (the destination must not exist). It has no MCP tools, but the same tools run from the command line:
 
@@ -116,9 +116,10 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-model`](skills/praxis-model/SKILL.md) | "How should I model this? Where do the parameters come from?" | Problem definition, assumptions and parameter grounding, route and model choice, identifiability and optimization structure |
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | "Run it and keep it reproducible" | CSV/Excel audit, preserved inputs, model and validator runs, stale-result detection, evidence links |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | "Can I trust this? Did I claim too much?" | Independent checks, bounds and optimality, sensitivity, strength of each claim |
+| [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | "Explain this model", "something feels off" | Plain-language explanation, review after results, and joint checking with inversion, pre-mortems and falsification |
 | [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Paper structure, propositions and proofs, figures, reference checking against Crossref, AI disclosure, PDF checks and freezing |
 
-All five share the [methodology](references/methods.md) and one task record; see [capability handoffs](references/capabilities.md) for how work passes between them.
+All six share the [methodology](references/methods.md) and one task record; see [capability handoffs](references/capabilities.md) for how work passes between them.
 
 
 ### Competitions are one application
@@ -194,7 +195,7 @@ praxis-plugin/
   mcp.json                  # the praxis-tools server
   skills/
     praxis/                 # entry skill, with all references, scripts and tool code
-    praxis-model/  praxis-compute/  praxis-verify/  praxis-report/
+    praxis-model/  praxis-compute/  praxis-verify/  praxis-dialogue/  praxis-report/
 ```
 
 Your problems, data, and cases stay in your own workspace, never in the plugin.
