@@ -106,7 +106,7 @@ PREAMBLE=r'''\documentclass[12pt,letterpaper]{article}
 \titlespacing*{\section}{0pt}{16pt plus 3pt}{8pt}
 \titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
 \captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
-\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
 \setcounter{tocdepth}{2}
 \pagestyle{fancy}\fancyhf{}
 \fancyhead[L]{Team \# 7391856}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
@@ -128,34 +128,37 @@ def compile_pdf(stem,title):
 
 # Figures are pgfplots/TikZ source built from the numerical record; fonts match the paper.
 FIG={}
+# Colour rules: blue = the quantity of interest, vermilion = the contrast (coldest cell, accepted-policy failures, constant-rate search), grey = bounds and context.
 t=z['t']/60;T=z['T'];mean=T@z['volume']/z['volume'].sum()
-ax=texplot.Axis('Time (min)','Temperature (°C)',height='5.0cm',xmin=0,xmax=30,ymin=38.85,ymax=p['ceiling']+.2,legend='south west',legend_columns=2)
-ax.band(t,T.min(1),T.max(1),label='Spatial range').line(t,mean,label='Volume-weighted mean').line(t,T.min(1),color='clay',style='dashed',label='Coldest cell').hline(p['floor']).hline(p['ceiling'])
+ax=texplot.Axis('Time (min)','Temperature (°C)',height='5.0cm',xmin=0,xmax=30,ymin=38.85,ymax=p['ceiling']+.2)
+ax.band(t,T.min(1),T.max(1),label='Spatial range').line(t,mean,label='Volume-weighted mean').line(t,T.min(1),color='accent',style='dashed',label='Coldest cell').hline(p['floor']).hline(p['ceiling'])
 FIG['temperature.png']=ax.tex().replace('°C','$^\\circ$C')
 labels=['Constant rate','Constant rate, fine grid','Optimized schedule','Perfect mixing','Energy bound'];values=[b['water_l'],r['mesh']['fine_policy']['water_l'],ctl['water_l'],a['mixed_optimum_l'],a['energy_lower_bound_l']]
-FIG['bounds.png']=texplot.hbar_chart(labels,values,['sand','sand','teal','clay','slate'],'Added water over 30 min (L)',height='5.0cm',xmax=max(values)*1.3)
+FIG['bounds.png']=texplot.hbar_chart(labels,values,['main','main','main','muted','muted'],'Added water over 30 min (L)',height='5.0cm',xmax=max(values)*1.3)
 seg_min=ctl['segment_s']/60;edges=list(np.arange(len(ctl['flow_lpm'])+1)*seg_min)
 Yc=control.piecewise(p,model.network(p),ctl['flow_lpm'],5.);tc=np.linspace(0,30,len(Yc))
-a1=texplot.Axis('','Flow (L/min)',width='0.9\\linewidth',height='2.6cm',xmin=0,xmax=30,ymin=0,legend='north east',extra='scale only axis,name=top,xticklabels={}')
-a1.stairs(ctl['flow_lpm'],edges,label='Optimized schedule').line([0,30],[b['flow_lpm']]*2,color='clay',style='dashed',label='Best constant rate')
-a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.9\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend='south west',legend_columns=2,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm')
-a2.band(tc,Yc.min(1),Yc.max(1)).line(tc,Yc.min(1),color='clay',style='dashed',label='Coldest cell').line(tc,Yc.max(1),label='Hottest cell').hline(p['floor']).hline(p['ceiling'])
+a1=texplot.Axis('','Flow (L/min)',width='0.74\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend=None,extra='scale only axis,name=top,xticklabels={}')
+a1.stairs(ctl['flow_lpm'],edges).line([0,30],[b['flow_lpm']]*2,color='muted',style='dashed')
+a1.label(30,ctl['flow_lpm'][-1]+0.0,'Optimized schedule',color='main').label(30,b['flow_lpm'],'Best constant rate',color='muted',dy='-6pt')
+a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.74\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend=None,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm')
+a2.band(tc,Yc.min(1),Yc.max(1)).line(tc,Yc.min(1),color='accent',style='dashed').line(tc,Yc.max(1)).hline(p['floor']).hline(p['ceiling'])
+a2.label(25.5,float(np.interp(25.5,tc,Yc.max(1)))+0.1,'Hottest cell',color='main',anchor='south west',dx='0pt').label(8,float(np.interp(8,tc,Yc.min(1)))-0.03,'Coldest cell',color='accent',anchor='north',dx='0pt')
 FIG['control.png']=a1.tex()+'\n'+a2.tex()
 boxes=['Assumptions\nand anchors\n§2','Mixed benchmark\nand bound\n§3–4','Spatial network\nand solver\n§5–6','Rate, schedule,\nscenarios\n§7–9','Validation,\nranges, mesh\n§10–11','Conclusion,\nuser guide\n§12–13']
 FIG['roadmap.png']=texplot.flow_diagram(boxes,node_width='2.1cm')
 rows_=lr['rows'];okr=[r_ for r_ in rows_ if r_['feasible']];bad=[r_ for r_ in rows_ if not r_['feasible']]
 top=max(r_['water_l'] for r_ in okr)*1.08
-ax=texplot.Axis('Surface coefficient (W/(m$^2$ K))','Added water (L)',height='5.0cm',legend='north west')
-ax.scatter([r_['inputs']['h_surface'] for r_ in okr],[r_['water_l'] for r_ in okr],color='teal',label='Accepted policy')
-if bad:ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),color='clay',mark='x',size=2.6,label='None accepted')
+ax=texplot.Axis('Surface coefficient (W/(m$^2$ K))','Added water (L)',height='5.0cm')
+ax.scatter([r_['inputs']['h_surface'] for r_ in okr],[r_['water_l'] for r_ in okr],label='Accepted policy')
+if bad:ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),color='accent',mark='x',size=2.6,label='None accepted')
 ax.vline(p['h_surface'])
 FIG['ranges.png']=ax.tex()
 fr=E['frontier'];okf=[f_ for f_ in fr if f_['constant_l'] is not None]
-ax=texplot.Axis('Allowed fall below the starting temperature ($^\\circ$C)','Added water (L)',height='5.0cm',legend='north east')
-ax.line([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],label='Perfectly mixed optimum (proved)').line([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='slate',style='dashed',width=0.9,label='Energy lower bound')
-ax.line([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='clay',marks='*',label='Best constant rate, spatial model')
+ax=texplot.Axis('Allowed fall below the starting temperature ($^\\circ$C)','Added water (L)',height='5.0cm',legend_columns=2)
+ax.line([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],label='Perfectly mixed optimum (proved)').line([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='muted',style='dashed',width=0.9,label='Energy lower bound')
+ax.line([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='accent',marks='*',label='Best constant rate, spatial model')
 badf=[f_ for f_ in fr if f_['constant_l'] is None]
-if badf:ax.scatter([f_['fall'] for f_ in badf],[0]*len(badf),color='clay',mark='x',size=2.6,label='None accepted')
+if badf:ax.scatter([f_['fall'] for f_ in badf],[0]*len(badf),color='accent',mark='x',size=2.6,label='None accepted')
 ax.vline(p['initial']-p['floor'])
 FIG['frontier.png']=ax.tex()
 cube=T[-1].reshape(tuple(r['grid']))
@@ -268,7 +271,7 @@ for run in ct:rows.append([f'{run["segments"]} segments',f'{run["water_l"]:.2f}'
 rows+=[['Perfect-mixing optimum',f'{a["mixed_optimum_l"]:.2f}','','',''],['Energy lower bound',f'{a["energy_lower_bound_l"]:.2f}','','','']]
 table(rows,[150,70,70,100,78])
 pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,  max_i T_i(t) <= Tmax,\n              max_i T_i(t) - min_i T_i(t) <= span   (every 15 s)\nreplay the best x at 5 s; keep it only if all margins >= 0'''
-tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\n')
+tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\medskip\n')
 
 figure('control.png',f'Figure 6. Best {K}-segment schedule against the best constant rate (top) and the range of cell temperatures (bottom); dotted lines mark the limits.',height=176)
 para(f'The {K}-segment schedule is {"off" if lead else "on"} for the first {lead*seg_min:.1f} minutes and off for the last {trail*seg_min:.1f} minutes, with a peak of {max(flows):.2f} L/min between. It adds {ctl["water_l"]:.2f} L, {save:.1f}% below the constant rate, and narrows the gap to the energy lower bound from {b["water_l"]-a["energy_lower_bound_l"]:.1f} L to {ctl["water_l"]-a["energy_lower_bound_l"]:.1f} L. Refining from 3 to {K} segments gains only {100*(ct[0]["water_l"]-ctl["water_l"])/ct[0]["water_l"]:.1f}%: the saving comes from the shape. The optimum touches the lower limit and the spread limit ({ctl["max_span"]:.2f}°C) and comes close to the upper limit ({ctl["max_temp"]:.2f}°C).')
@@ -316,7 +319,7 @@ none=[k.title() for k,v in sc.items() if not v['policy']['feasible']]
 para('No accepted candidate exists for: '+', '.join(none)+'. They are reported as such, not hidden in a favorable average. Their outcomes identify where the restricted strategy must change. Potential responses include improved circulation, a different inlet path, a shorter bath, or a different comfort tolerance. The paper does not certify which response is safe or optimal without corresponding physical evidence.')
 
 page('10. Validation: independent evidence and remaining error')
-figure('bounds.png','Figure 8. Water-use comparison under the same lower limit. The energy bound is conditional on the network assumptions; the feasible spatial result remains above it.',height=208)
+figure('bounds.png','Figure 8. Water-use comparison under the same lower limit. Blue bars are simulated policies; grey bars are analytic bounds, and the energy bound is conditional on the network assumptions.',height=208)
 num=lambda name:json.loads(next(c['evidence'] for c in checks if c['name']==name))
 energy=num('instantaneous_energy_balance_with_overflow');rk=num('independent_RK45_vs_archived_matrix_exponential');env=num('continuous_time_policy_envelope')
 para(f'All {len(checks)} recorded checks pass. Independent heat-flow arithmetic sums environmental losses, body exchange and local-temperature overflow; the largest instantaneous residual is {energy["max_residual_w"]:.2e} W. An adaptive RK45 integration with independently assembled right-hand side agrees with the archived matrix-exponential trajectory within {rk["maximum_temperature_difference_c"]:.2e}°C. This tests numerical implementation, not a second physical model.')

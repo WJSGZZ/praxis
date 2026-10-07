@@ -35,7 +35,7 @@ The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount div
 <tr><td><strong>The answer</strong><br>Definitions, method, and quantitative results.</td><td><strong>The argument</strong><br>An upper bound, exchange proof, and sufficient capital condition.</td></tr>
 </table>
 
-[Read the complete 16-page report →](deliverables/paper.pdf)
+[Read the complete 17-page report →](deliverables/paper.pdf)
 
 ## Reproduce it
 

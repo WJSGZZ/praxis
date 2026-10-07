@@ -3,8 +3,8 @@
   "checked_on": "2026-10-07",
   "status": "local-reviewed-case; not a real contest submission",
   "pdf": {
-    "sha256": "56a0f03e702f0f720ade67e4e3658c109738111f4d3357a92d4ca10985356394",
-    "bytes": 150617,
+    "sha256": "7c19e20e095dae0c191fd842d3b640a2f54553aeac7bb1bae727769536c3fcb8",
+    "bytes": 149471,
     "pages_total": 22,
     "solution_pages": 21,
     "ai_pages": 1,

@@ -12,14 +12,18 @@
 \pgfplotsset{compat=1.17}
 \usepgfplotslibrary{fillbetween,groupplots}
 \usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{main}{HTML}{0072B2}
+\definecolor{accent}{HTML}{D55E00}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{light}{HTML}{B8BDC2}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oisky}{HTML}{56B4E9}
+\definecolor{oiyellow}{HTML}{F0E442}
 \definecolor{teal}{HTML}{17766E}
 \definecolor{clay}{HTML}{9E6440}
 \definecolor{slate}{HTML}{5D696E}
 \definecolor{sand}{HTML}{AAA69B}
-\definecolor{oiblue}{HTML}{0072B2}
-\definecolor{oiorange}{HTML}{E69F00}
-\definecolor{oigreen}{HTML}{009E73}
-\definecolor{oivermillion}{HTML}{D55E00}
 \linespread{1.12}
 \setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
 \titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
@@ -53,7 +57,7 @@ Every assumption has a reason; every parameter has a source and a range.
 \begin{figure}[htbp]\centering
 \begin{tikzpicture}
 \begin{axis}[width=0.9\linewidth,height=5cm,xlabel={Time (min)},ylabel={Temperature ($^\circ$C)},grid=major]
-\addplot[color=teal,line width=1.1pt,no marks] coordinates {(0,40) (15,39.6) (30,39.1)};
+\addplot[color=main,line width=1.1pt,no marks] coordinates {(0,40) (15,39.6) (30,39.1)};
 \end{axis}
 \end{tikzpicture}
 \caption{One sentence on what the reader should see.}\end{figure}

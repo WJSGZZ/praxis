@@ -17,8 +17,12 @@ PREAMBLE = r"""\usepackage{pgfplots}
 """ + "\n".join(
     r"\definecolor{%s}{HTML}{%s}" % (name, code)
     for name, code in [
+        # Colour carries meaning: main = the quantity of interest, accent = the contrast or highlight, muted = context/bounds.
+        # Okabe-Ito blue and vermilion stay distinguishable for colour-blind readers and in grayscale (with the dash styles).
+        ("main", "0072B2"), ("accent", "D55E00"), ("muted", "7A7F85"), ("light", "B8BDC2"),
+        ("oigreen", "009E73"), ("oiorange", "E69F00"), ("oisky", "56B4E9"), ("oiyellow", "F0E442"),
+        # project identity colours, for cover graphics only
         ("teal", "17766E"), ("clay", "9E6440"), ("slate", "5D696E"), ("sand", "AAA69B"),
-        ("oiblue", "0072B2"), ("oiorange", "E69F00"), ("oigreen", "009E73"), ("oivermillion", "D55E00"),
     ]
 )
 
@@ -46,29 +50,31 @@ class Axis:
     """One pgfplots axis with line, band, step, scatter and reference-line series."""
 
     def __init__(self, xlabel: str = "", ylabel: str = "", *, width: str = r"\linewidth", height: str = "5.4cm",
-                 xmin=None, xmax=None, ymin=None, ymax=None, legend: str | None = "north east", legend_columns: int = 1,
+                 xmin=None, xmax=None, ymin=None, ymax=None, legend: str | None = "above", legend_columns: int | None = None,
                  extra: str = ""):
         self.opts = [f"width={width}", f"height={height}", f"xlabel={{{xlabel}}}", f"ylabel={{{ylabel}}}",
-                     "grid=major", "grid style={gray!22}", "tick label style={font=\\footnotesize}",
-                     "label style={font=\\small}", "every axis plot/.append style={line cap=round}"]
+                     "axis lines=left", "axis line style={gray!70}", "grid=major", "grid style={gray!18}",
+                     "tick label style={font=\\footnotesize}", "label style={font=\\small}",
+                     "every axis plot/.append style={line cap=round}", "clip=false"]
         for key, val in (("xmin", xmin), ("xmax", xmax), ("ymin", ymin), ("ymax", ymax)):
             if val is not None:
                 self.opts.append(f"{key}={_fmt(val)}")
         if legend:
-            self.opts.append("legend style={font=\\footnotesize,draw=gray!50,fill=white,fill opacity=0.85,text opacity=1,"
-                             f"at={{(0.98,0.97)}},anchor=north east,legend columns={legend_columns}}}" if legend == "north east"
-                             else "legend style={font=\\footnotesize,draw=gray!50,fill=white,fill opacity=0.85,text opacity=1,"
-                                  f"at={{(0.02,0.03)}},anchor=south west,legend columns={legend_columns}}}" if legend == "south west"
-                             else "legend style={font=\\footnotesize,draw=gray!50,fill=white,fill opacity=0.85,text opacity=1,"
-                                  f"at={{(0.98,0.03)}},anchor=south east,legend columns={legend_columns}}}" if legend == "south east"
-                             else "legend style={font=\\footnotesize,draw=gray!50,fill=white,fill opacity=0.85,text opacity=1,"
-                                  f"at={{(0.02,0.97)}},anchor=north west,legend columns={legend_columns}}}")
+            base = "legend style={font=\\footnotesize,draw=none,fill=none,"
+            where = {"above": "at={(0.5,1.04)},anchor=south," + ("" if legend_columns else "legend columns=-1,") + "/tikz/every even column/.append style={column sep=8pt},",
+                     "right": "at={(1.02,0.5)},anchor=west,",
+                     "north east": "at={(0.98,0.97)},anchor=north east,draw=gray!50,fill=white,",
+                     "south west": "at={(0.02,0.03)},anchor=south west,draw=gray!50,fill=white,",
+                     "south east": "at={(0.98,0.03)},anchor=south east,draw=gray!50,fill=white,",
+                     "north west": "at={(0.02,0.97)},anchor=north west,draw=gray!50,fill=white,"}[legend]
+            cols = f"legend columns={legend_columns}," if legend_columns else ""
+            self.opts.append(base + where + cols + "}")
         if extra:
             self.opts.append(extra)
         self.body: list[str] = []
         self._band = 0
 
-    def line(self, x, y, color="teal", style="solid", width=1.1, label=None, marks=None):
+    def line(self, x, y, color="main", style="solid", width=1.1, label=None, marks=None):
         opt = [f"color={color}", f"line width={width}pt"]
         if DASH[style]:
             opt.append(DASH[style])
@@ -80,7 +86,7 @@ class Axis:
                          + (r"\addlegendentry{%s}" % label if label else ""))
         return self
 
-    def band(self, x, lo, hi, color="teal", opacity=0.14, label=None):
+    def band(self, x, lo, hi, color="main", opacity=0.14, label=None):
         self._band += 1
         a, b = f"lo{self._band}", f"hi{self._band}"
         self.body.append(r"\addplot[name path=%s,draw=none,forget plot] coordinates {%s};" % (a, _coords(x, lo)))
@@ -89,7 +95,7 @@ class Axis:
                          + (r"\addlegendentry{%s}" % label if label else ""))
         return self
 
-    def stairs(self, values: Sequence[float], edges: Sequence[float], color="teal", width=1.3, label=None, style="solid"):
+    def stairs(self, values: Sequence[float], edges: Sequence[float], color="main", width=1.3, label=None, style="solid"):
         """Piecewise-constant series: values[i] holds on [edges[i], edges[i+1]]."""
         if len(edges) != len(values) + 1:
             raise ValueError("edges must have one more entry than values")
@@ -101,7 +107,7 @@ class Axis:
                          + (r"\addlegendentry{%s}" % label if label else ""))
         return self
 
-    def scatter(self, x, y, color="teal", mark="*", size=2.0, label=None):
+    def scatter(self, x, y, color="main", mark="*", size=2.0, label=None):
         self.body.append(r"\addplot[only marks,mark=%s,mark size=%spt,color=%s] coordinates {%s};" % (mark, size, color, _coords(x, y, limit=5000))
                          + (r"\addlegendentry{%s}" % label if label else ""))
         return self
@@ -118,6 +124,11 @@ class Axis:
 
     def note(self, x, y, text, anchor="south west"):
         self.body.append(r"\node[anchor=%s,font=\footnotesize] at (axis cs:%s,%s) {%s};" % (anchor, _fmt(x), _fmt(y), text))
+        return self
+
+    def label(self, x, y, text, color="black", anchor="west", dx="3pt", dy="0pt"):
+        """Direct label next to a curve (preferred to a legend when there are few series)."""
+        self.body.append(r"\node[anchor=%s,font=\footnotesize,text=%s,xshift=%s,yshift=%s] at (axis cs:%s,%s) {%s};" % (anchor, color, dx, dy, _fmt(x), _fmt(y), text))
         return self
 
     def tex(self) -> str:
