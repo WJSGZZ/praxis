@@ -3,22 +3,25 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 0.2.0 · 2026-10-08
+
+在 0.1.0 之上，让 Praxis 能面对陌生问题：先找结构、比较路线、没有答案时也能产出带把握等级的结论。
+On top of 0.1.0, Praxis can now face an unfamiliar problem: find the structure first, compare routes, and produce conclusions labelled by confidence even when there is no answer key.
+
+- 新技能 `praxis-explore`（结构发现、路径搜索、实验数学、经验沉淀）与 `praxis-dialogue`（向不懂数学的用户讲清模型、结果出来后共同复盘）；新参考：结构发现、路径搜索、研究模式、学习回路、科研基础（不确定性、数值收敛、统计检验）、竞赛题型与丢分点、领域机制速查。
+  New skills `praxis-explore` and `praxis-dialogue`, and new references on structure discovery, route search, research mode, the learning loop, scientific foundations, contest playbook and domain mechanisms.
+- 新工具共 20 余个：结构探测（凸、单调、对称、幂律、守恒量、量纲分析、全单模）、路线记录 `route_graph`、实验数学（反例搜索、猜想检验、递推猜测与有限核对证明、整数关系）、经验记忆、一维热扩散（附收敛阶与网格收敛指数）、马尔可夫链、矩阵博弈、库存、CVaR 组合、Pareto 前沿、平衡点稳定性、卡尔曼滤波；线性规划支持 ≥ 约束与影子价格；每个工具带可运行示例，字段缺失时报错会列出必填字段。
+  More than twenty new tools: structure probes, the route record, experimental mathematics, lesson memory, finite-volume diffusion with convergence indices, Markov chains, games, inventory, CVaR portfolios, Pareto fronts, equilibria and Kalman filtering; LP gains >= rows and shadow prices; every tool carries a runnable example.
+- 证据分七层并要求写证伪陈述；`evals.planted` 提供九类已知答案的合成题与盲测规程；新增研究模式案例（3×2n 多米诺铺法数）。
+  Evidence has seven layers with a falsification statement; `evals.planted` offers nine kinds of known-answer problems with a blind-evaluation protocol; a research-mode case (domino tilings) is added.
+- 国赛案例补三张图并按独立审计修正；美赛案例按独立审计重算：被约束的温度改为在入口射流区之外施加并在三套网格上收敛，分段方案 19.35 L，论文 24 页。
+  Both cases were corrected after independent audits; the MCM case was recomputed with mesh-converged constraints (schedule 19.35 L, 24-page paper).
+- 修复：`sir_fit` 给出终态规模并说明假设；`mcp_server` 版本号取自 `pyproject.toml`。
+  Fixes: `sir_fit` reports the final size and its assumptions; the server reads its version from `pyproject.toml`.
+
 ## 未发布 · Unreleased
 
 （发布前把这一节改成新版本号。版本号只增不改：已发布的版本不再修改，修复发下一个小版本。小改动只提交，不发版；新增或改名技能与工具、结果格式变化才升次版本号。）
-
-## 未发布 · Unreleased
-
-- 新技能 `praxis-explore`：结构发现、路径搜索（`route_graph` 记录路线的产生、攻击、淘汰、重组与选定）、没有标准答案时的实验数学、经验沉淀；对应参考文件 `structure-discovery`、`path-search`、`research-mode`、`learning-loop`。
-  New skill `praxis-explore`: structure discovery, route search recorded by `route_graph`, experimental mathematics when there is no answer key, and lessons that carry over.
-- 新技能 `praxis-dialogue`：向不懂数学的用户讲清模型，结果出来后共同复盘。
-  New skill `praxis-dialogue`: explain models in plain language and review results together.
-- 新工具：`probe_structure`、`dimensional_analysis`、`check_total_unimodularity`、`test_conjecture`、`find_counterexample`、`guess_sequence`、`find_relation`、`lesson_add`、`lesson_search`、`solve_diffusion`、`markov_stationary`、`markov_absorption`、`matrix_game`、`eoq`、`newsvendor`、`cvar_portfolio`、`pareto_front`、`equilibria`、`kalman_filter`。
-  New tools for structure probes, experimental mathematics, lesson memory, finite-volume diffusion, Markov chains, games, inventory, CVaR portfolios, Pareto fronts, equilibria and Kalman filtering.
-- `evals.planted`：已知答案的合成题，用于盲测与回归。
-  `evals.planted`: synthetic problems with known answers for blind checks and regression.
-- 证据分七层并要求写证伪陈述；国赛案例补三张图并修正审计发现的问题。
-  Evidence now has seven layers with a falsification statement; the CUMCM case gains three figures and fixes found in an independent audit.
 
 ## 0.1.0 · 2026-10-07
 
