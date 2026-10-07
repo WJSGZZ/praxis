@@ -6,7 +6,7 @@ license: MIT
 
 # Praxis · 独立验证与审查
 
-BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.md) 的“证据的三个层次”“失败回到原因所在的环节”。
+BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.md) 的“证据的层次”“失败回到原因所在的环节”。
 
 ## 做什么
 
