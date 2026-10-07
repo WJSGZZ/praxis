@@ -6,7 +6,7 @@
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Agent Skills](https://img.shields.io/badge/Agent_Skills-portable-334155?style=flat-square)](https://agentskills.io/specification)
+[![Agent Plugin](https://img.shields.io/badge/Agent_Plugin-skills_%2B_MCP-334155?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
 [![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
 
