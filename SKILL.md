@@ -29,6 +29,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
 - 国赛、美赛、研究生赛这类限时开放题，读题分类与常见丢分点见 [references/contest-playbook.md](references/contest-playbook.md)。
+- 陌生领域的机制、标准方程、量级与检查，查 [references/domain-models.md](references/domain-models.md)。
 - 引入外部方法按 methods.md 的统一规则，出处与许可见 THIRD_PARTY_NOTICES.md。
 
 ## 专项技能

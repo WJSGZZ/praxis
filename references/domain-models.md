@@ -1,0 +1,46 @@
+# 领域机制速查：从现实机制到方程、量级与检查
+
+陌生领域的题，先弄清机制，再选数学结构（[structure-discovery.md](structure-discovery.md)）。这份速查给出常见机制的标准方程、量级和必做检查，用来快速起步，不替代教材。数值只是量级，进入结论前要回到出处核对；没有出处的参数写成假设或情景。
+
+## 热与流体
+
+**热传递**：牛顿冷却 C dT/dt = hA(T∞−T)；傅里叶导热 q = −k∇T；集总热容近似要求毕奥数 Bi = hL꜀/k < 0.1。水平热面上方自然对流 Nu = 0.54 Ra^(1/4)（10⁴<Ra<10⁷）、0.15 Ra^(1/3)（10⁷<Ra<10¹¹），特征长度取面积／周长；辐射线性化 hᵣ ≈ 4εσT̄³。h 的量级（W/m²K）：空气自然对流 2–25，强制对流 10–250，水的自然对流 50–1000。核对：量纲、热平衡闭合、极限情形（无限大 h 应使表面温度等于环境）。来源：Incropera 等，*Fundamentals of Heat and Mass Transfer*。
+
+**流体**：雷诺数 Re = ρvD/μ；圆管层流 Re<2300，Hagen–Poiseuille 流量 Q = πr⁴ΔP/(8μL)；伯努利方程沿流线守恒（无粘、定常）；阻力 F = ½ρC_dAv²，球体 C_d 约 0.47（10³<Re<2×10⁵）；小 Re 的斯托克斯阻力 6πμrv。核对：先算 Re 判断适用区。
+
+**质点与结构力学**：牛顿第二定律、能量守恒、含阻力的抛体、弹簧质点 ω = √(k/m)；悬臂梁端载荷挠度 δ = FL³/(3EI)。核对：单位制，极限情形，守恒量。
+
+## 生命与健康
+
+**种群**：逻辑斯谛 dN/dt = rN(1−N/K)，最大可持续收获 rK/4（在 N=K/2）；Lotka–Volterra 捕食系统有一个中心型平衡点（线性化不能判定稳定性，见 `equilibria`）；年龄结构用 Leslie 矩阵，长期增长率是其主特征值。来源：Murray，*Mathematical Biology*。
+
+**传染病**：SIR，基本再生数 R₀ = β/γ，终态规模 z = 1 − e^(−R₀z)，群体免疫阈值 1 − 1/R₀；有潜伏期用 SEIR。只有感染数据时 β、γ 的可辨识性要检查（`sir_fit`）。来源：Keeling 与 Rohani，*Modeling Infectious Diseases*；Anderson 与 May。
+
+**药代动力学**：单室一阶消除 C(t) = C₀e^(−kt)，半衰期 ln2/k；多次给药稳态平均浓度 C_ss = F·D/(CL·τ)（F 生物利用度，D 剂量，CL 清除率，τ 间隔）；累积因子 1/(1−e^(−kτ))。核对：量纲，剂量与浓度的单位换算。
+
+## 运筹与经济
+
+**排队与库存**：Little 公式 L = λW；M/M/c 要求利用率 ρ<1（`queue_mmc`）；EOQ √(2DS/H)；报童问题临界分位 (p−c)/(p−s)（`eoq`、`newsvendor`）。
+
+**金融**：现值、复利；马科维茨组合方差 wᵀΣw；VaR 与 CVaR（`cvar_portfolio`）；欧式看涨期权 C = S·N(d₁) − K e^(−rT) N(d₂)，d₁ = [ln(S/K) + (r+σ²/2)T]/(σ√T)，d₂ = d₁ − σ√T，用买卖权平价 C − P = S − K e^(−rT) 自检。来源：Hull，*Options, Futures, and Other Derivatives*。
+
+**经济**：需求弹性 ε = (dQ/Q)/(dP/P)；柯布–道格拉斯 Y = A K^α L^(1−α)；列昂惕夫投入产出 x = (I−A)⁻¹d，A 的谱半径小于 1 才有非负解。
+
+## 网络与交通
+
+**交通流**：基本关系 q = kv；Greenshields v = v_f(1−k/k_j)，最大流量 q_max = v_f k_j/4 出现在 k = k_j/2；路阻函数 BPR t = t₀[1 + 0.15 (x/c)⁴]；Wardrop 用户均衡：被使用的路线时间相等且不大于未被使用的路线。来源：Sheffi，*Urban Transportation Networks*。
+
+**网络科学**：PageRank 阻尼系数惯例取 0.85，对应主特征向量；度分布、中心性、渗流阈值；图算法见 `shortest_path`、`max_flow`、`minimum_spanning_tree`。来源：Newman，*Networks*。
+
+## 环境与信号
+
+**环境**：箱式模型 V dC/dt = Q_in C_in − Q_out C − kVC，停留时间 V/Q；高斯烟羽地面中心线浓度 C = Q/(πuσ_yσ_z)·exp(−H²/(2σ_z²))（σ 随下风距离与稳定度变化，要查经验曲线）；河流溶解氧 Streeter–Phelps D(t) = k_d L₀/(k_a−k_d)·(e^(−k_d t) − e^(−k_a t)) + D₀e^(−k_a t)。核对：质量守恒，稳态极限。
+
+**信号与图像**：采样率须大于最高频率的两倍（奈奎斯特）；卷积与傅里叶变换互换；噪声下的差分放大高频噪声，先平滑再求导。
+
+## 怎样用这份速查
+
+1. 找到题目对应的机制，记下方程、量纲和适用条件；
+2. 把量级与题目数据对照，差一个数量级以上就先怀疑单位或机制；
+3. 参数的出处写进记录，查不到的写成情景范围（见 [path-search.md](path-search.md) 的假设后备）；
+4. 选定的结构和方法按 [model-library.md](model-library.md) 做必做检查。
