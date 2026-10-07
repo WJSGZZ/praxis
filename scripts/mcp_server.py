@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modeling import decision, epidemic, experiment, forecast, graph, optimize, queueing, routes, sensitivity, structure, weights  # noqa: E402
+from modeling import decision, epidemic, experiment, forecast, graph, lessons, optimize, queueing, routes, sensitivity, structure, weights  # noqa: E402
 from scripts import audit_data, check_references, literature  # noqa: E402
 
 VERSION = '0.1.0'
@@ -220,6 +220,12 @@ TOOLS = dict([
     _tool('find_relation', 'Integer relation (PSLQ) between a value and constants, e.g. value "zeta(2)", constants {"pi2": "pi**2"}. A hint to prove, not a proof.',
           {'value': {'type': 'string'}, 'constants': {'type': 'object'}, 'dps': {'type': 'integer'}, 'max_coeff': {'type': 'integer'}}, ['value', 'constants'],
           lambda a: experiment.find_relation(a['value'], a['constants'], dps=a.get('dps', 50), max_coeff=a.get('max_coeff', 1000))),
+    _tool('lesson_add', 'Append a lesson to the project memory (JSON lines): problem, structure, how it was recognised, routes tried, what failed, what worked, how verified, and a transferable principle.',
+          {'path': {'type': 'string', 'description': 'e.g. planning/lessons.jsonl inside the project'}, 'lesson': {'type': 'object'}}, ['path', 'lesson'],
+          lambda a: lessons.add_lesson(Path(a['path']), a['lesson'])),
+    _tool('lesson_search', 'Search the project memory for lessons by keywords and tags before starting a new problem; also returns recurring structures.',
+          {'path': {'type': 'string'}, 'query': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}, 'limit': {'type': 'integer'}}, ['path'],
+          lambda a: dict(lessons=lessons.search_lessons(Path(a['path']), a.get('query', ''), tags=a.get('tags'), limit=a.get('limit', 5)), patterns=lessons.patterns(Path(a['path'])))),
 ])
 
 
