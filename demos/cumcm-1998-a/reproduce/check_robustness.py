@@ -1,0 +1,38 @@
+"""Execution error, safety margin price and independent parameter errors around each recommended knee portfolio."""
+import csv,importlib.util,json
+from pathlib import Path
+import numpy as np
+base=Path(__file__).resolve().parent;ref=base/'reference'
+spec=importlib.util.spec_from_file_location('model',base/'code/model.py');model=importlib.util.module_from_spec(spec);spec.loader.exec_module(model)
+rec=json.loads((ref/'recommendation.json').read_text())
+rng=np.random.default_rng(20261007);M=1e6;N=200
+def load(name):
+    return np.array([[float(d[k]) for k in ['return_pct','risk_pct','fee_pct','threshold_yuan']] for d in csv.DictReader((base/'data'/name).open())])
+def net(data,x):
+    r,q,p,u=data.T.copy();r/=100;p/=100
+    fees=np.where(x>1e-7,p*np.maximum(x,u),0);return float((.05*(M-x.sum()-fees.sum())+r@x-fees.sum())/M)
+def risk(data,x):return float(np.max(data[:,1]/100*x)/M)
+out={'seed':20261007,'draws':N,'groups':{}}
+for key,name in [('four','assets4.csv'),('fifteen','assets15.csv')]:
+    data=load(name);g=rec['groups'][key];cap=g['knee_risk'];x0=np.array(g['investments_yuan']);nom=model.solve(data,M,cap)
+    res={'cap':cap,'nominal_net_return':nom['net_return'],'nominal_risk':risk(data,x0)}
+    ex={}
+    for e in (.05,.10):
+        rs=[];nr=[]
+        for _ in range(N):
+            x=x0*(1+rng.uniform(-e,e,len(x0)));rs.append(risk(data,x)/cap-1);nr.append(net(data,x))
+        rs=np.array(rs);ex[f'{e:.2f}']={'share_within_cap':float((rs<=1e-9).mean()),'median_overshoot':float(np.median(rs)),'p95_overshoot':float(np.quantile(rs,.95)),'median_net_return':float(np.median(nr))}
+    res['execution_error']=ex
+    res['buffer_price']=[{'buffer':b,'cap':cap*(1-b),'net_return':model.solve(data,M,cap*(1-b))['net_return']} for b in (0,.05,.10)]
+    dr=[];same=[];over=[];short=[]
+    sel=set(np.flatnonzero(x0>1e-6))
+    for _ in range(N):
+        d=data*(1+rng.uniform(-.10,.10,data.shape));d[:,3]=data[:,3]
+        s=model.solve(d,M,cap);dr.append(s['net_return'])
+        same.append(set(np.flatnonzero(np.array(s['investments_yuan'])>1e-6))==sel)
+        over.append(risk(d,x0)/cap-1);short.append(s['net_return']-net(d,x0))
+    res['parameter_error_10pct']={'reoptimized_net_return':{'median':float(np.median(dr)),'p05':float(np.quantile(dr,.05)),'p95':float(np.quantile(dr,.95))},
+        'share_same_assets':float(np.mean(same)),'kept_plan_risk_overshoot':{'median':float(np.median(over)),'p95':float(np.quantile(over,.95))},
+        'kept_plan_return_shortfall':{'median':float(np.median(short)),'p95':float(np.quantile(short,.95))}}
+    out['groups'][key]=res
+(base/'reproduced').mkdir(exist_ok=True);(base/'reproduced/robustness.json').write_text(json.dumps(out,indent=2));print(json.dumps(out,indent=1))

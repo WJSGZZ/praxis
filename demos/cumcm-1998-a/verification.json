@@ -46,5 +46,12 @@
     "STSongti-SC-Light",
     "PingFangSC-Medium"
   ],
-  "font_selection": "Regular Songti headings for the reference editorial tone; PingFang Regular for explanations and data"
+  "font_selection": "Regular Songti headings for the reference editorial tone; PingFang Regular for explanations and data",
+  "supplemental_robustness": {
+    "script": "reproduce/check_robustness.py",
+    "archived": "reproduce/reference/robustness.json",
+    "seed": 20261007,
+    "draws": 200,
+    "tests": "execution error ±5%/±10%, risk-cap buffer 5%/10%, independent ±10% parameter errors"
+  }
 }

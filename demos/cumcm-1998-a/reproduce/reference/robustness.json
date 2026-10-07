@@ -1,0 +1,110 @@
+{
+  "seed": 20261007,
+  "draws": 200,
+  "groups": {
+    "four": {
+      "cap": 0.006,
+      "nominal_net_return": 0.20190763977806228,
+      "nominal_risk": 0.006000000000000001,
+      "execution_error": {
+        "0.05": {
+          "share_within_cap": 0.105,
+          "median_overshoot": 0.03068427078366931,
+          "p95_overshoot": 0.04744089714809436,
+          "median_net_return": 0.20185609687797357
+        },
+        "0.10": {
+          "share_within_cap": 0.06,
+          "median_overshoot": 0.06179403293320873,
+          "p95_overshoot": 0.09637211060592239,
+          "median_net_return": 0.20247157184103404
+        }
+      },
+      "buffer_price": [
+        {
+          "buffer": 0,
+          "cap": 0.006,
+          "net_return": 0.20190763977806228
+        },
+        {
+          "buffer": 0.05,
+          "cap": 0.0057,
+          "net_return": 0.19550738111888114
+        },
+        {
+          "buffer": 0.1,
+          "cap": 0.0054,
+          "net_return": 0.18784909790209792
+        }
+      ],
+      "parameter_error_10pct": {
+        "reoptimized_net_return": {
+          "median": 0.2008225731059124,
+          "p05": 0.1892058849991,
+          "p95": 0.21381665489064905
+        },
+        "share_same_assets": 1.0,
+        "kept_plan_risk_overshoot": {
+          "median": 0.06520150673519298,
+          "p95": 0.09660032177109527
+        },
+        "kept_plan_return_shortfall": {
+          "median": -0.00014054450422387732,
+          "p95": 0.0027072781209085245
+        }
+      }
+    },
+    "fifteen": {
+      "cap": 0.08,
+      "nominal_net_return": 0.32289995993378606,
+      "nominal_risk": 0.08,
+      "execution_error": {
+        "0.05": {
+          "share_within_cap": 0.03,
+          "median_overshoot": 0.038637461846276366,
+          "p95_overshoot": 0.049215857097449925,
+          "median_net_return": 0.32341308792251167
+        },
+        "0.10": {
+          "share_within_cap": 0.03,
+          "median_overshoot": 0.07775140477032416,
+          "p95_overshoot": 0.0981693319488929,
+          "median_net_return": 0.32399984757176914
+        }
+      },
+      "buffer_price": [
+        {
+          "buffer": 0,
+          "cap": 0.08,
+          "net_return": 0.32289995993378606
+        },
+        {
+          "buffer": 0.05,
+          "cap": 0.076,
+          "net_return": 0.3203055606045133
+        },
+        {
+          "buffer": 0.1,
+          "cap": 0.07200000000000001,
+          "net_return": 0.31506261821335024
+        }
+      ],
+      "parameter_error_10pct": {
+        "reoptimized_net_return": {
+          "median": 0.3232516553253563,
+          "p05": 0.3085400376388301,
+          "p95": 0.335619995681785
+        },
+        "share_same_assets": 0.995,
+        "kept_plan_risk_overshoot": {
+          "median": 0.07342704688494484,
+          "p95": 0.09849594257670719
+        },
+        "kept_plan_return_shortfall": {
+          "median": 0.0004633040747669126,
+          "p95": 0.0026034229193560585
+        }
+      }
+    }
+  }
+}

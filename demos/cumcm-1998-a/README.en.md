@@ -22,6 +22,7 @@ The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount div
 - **Explain the budget dependence.** A sufficient capital threshold follows from the optimal allocation in the relaxed problem. At the representative risk limits, integer budgets of CNY 339 and CNY 2,602 respectively suffice. Four additional numerical checks verify the exact and rounded-up thresholds. This is a sufficient condition, not a necessary one.
 
 - **Recommend without a stated preference.** Rescaling both axes to [0,1] and taking the point farthest above the chord gives a knee: 0.6% risk (20.19% return) for four assets, and 8% (32.29%, a flatter curve and weaker evidence) for fifteen. Both reach the analytical upper bound; the rule assumes a middle-of-the-road preference.
+- **Following the plan without crossing the cap.** The knee portfolio uses the whole risk cap, so with ±5% error on each amount about 90% or more of random trials exceed it (median overshoot about 3–4%). Returns and chosen assets barely move (with ±10% error on every data field the same assets are chosen in over 99.5% of trials), so the margin to keep is on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
 
 ## Inside the report
 
@@ -44,9 +45,10 @@ uv sync --locked
 uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
 ```
 
-The first script recalculates both groups, runs the model checks, and compares results with the report's reference records. The second runs the four supplementary capital-threshold checks, and the third locates the knee points and certifies them against the analytical bound. Generated results go to `reproduce/reproduced/`, excluded from Git. The first script refuses to overwrite that directory; move existing results before rerunning.
+The first script recalculates both groups, runs the model checks, and compares results with the report's reference records. The second runs the four supplementary capital-threshold checks, and the third locates the knee points and certifies them against the analytical bound. The fourth runs seeded random trials of execution and parameter error around the knee portfolios. Generated results go to `reproduce/reproduced/`, excluded from Git. The first script refuses to overwrite that directory; move existing results before rerunning.
 
 Alternatively, extract the supporting ZIP and follow its instructions to reproduce the mathematics without Praxis or an AI service. The supplementary threshold script belongs to this development case and does not alter the report's support-file list.
 

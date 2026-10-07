@@ -27,6 +27,8 @@
 
 **没有风险偏好时，怎样推荐？** 把收益—风险曲线两轴重标为 0 到 1，取高出两端连线最多的拐点：四资产在风险上限 0.6%（净收益率 20.19%），十五资产在 8%（32.29%，曲线较平缓、依据更弱）。两点均达到解析上界。这是对居中偏好的约定，不是对公司偏好的推断。
 
+**照着做会不会越界？** 拐点方案刚好用满风险上限：每项投资额有 ±5% 的操作误差时，约 90% 以上的随机试验会超出上限（中位数超出约 3%–4%）。收益和所选资产几乎不受影响（数据各项有 ±10% 误差时，资产组合在 99.5% 以上的试验中不变），所以要留的是风险余量：收紧 5%，净收益率只少约 0.3–0.6 个百分点。
+
 ## 翻两页报告
 
 <table>
@@ -51,9 +53,10 @@ uv sync --locked
 uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
 ```
 
-第一条运行命令重新计算两组资产的方案、曲线与模型核验，并与报告对应的记录比对；第二条执行 4 项资金阈值核验，第三条定位拐点并以解析上界核验。结果写入 `reproduce/reproduced/`，该目录不进入 Git。再次运行第一条命令前请移走自己已有的结果目录，程序不会覆盖它。
+第一条运行命令重新计算两组资产的方案、曲线与模型核验，并与报告对应的记录比对；第二条执行 4 项资金阈值核验，第三条定位拐点并以解析上界核验，第四条对拐点方案做执行误差与参数误差的随机试验（种子固定）。结果写入 `reproduce/reproduced/`，该目录不进入 Git。再次运行第一条命令前请移走自己已有的结果目录，程序不会覆盖它。
 
 也可以只下载并解压 [支撑 ZIP](deliverables/supporting_materials.zip)，按其中运行说明准备依赖，独立复现论文计算，无需安装 Praxis 或连接 AI 服务。额外的资金阈值核验脚本位于本开发案例，不改变论文的支撑包清单。
 
