@@ -59,5 +59,5 @@
     "archived": "reproduce/reference/alternatives.json",
     "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
   },
-  "format_review": "Level-1 headings centered, level-2 left; figures labelled in the paper language with the knee marked; references kept on one page; file list in three columns; subscripts in proof text. Pages rendered and inspected."
+  "format_review": "Level-1 headings centered, level-2 left; figures labelled in the paper language with the knee marked; references kept on one page; file list in three columns; subscripts in proof text. Pages rendered and inspected. Headings, title and caption labels in Heiti; body Songti and Times; captions centered (figure below, table above), notes below the figure; tables centered. Official CUMCM rules checked: A4, margins at least 2.5 cm, centered Arabic page numbers, abstract page with title and keywords, no identity information, body at most 30 pages, appendix with file list and full code; font and size are free."
 }
