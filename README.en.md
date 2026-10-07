@@ -181,12 +181,3 @@ Code test records are distinguished from cross-host and real-task behavioral val
 ## Sources and licensing
 
 Original code and documentation use the [MIT License](LICENSE). Workflow design references MathModelHub; Sobol analysis and TOPSIS use SALib and pyMCDM. See [Third-party notices](THIRD_PARTY_NOTICES.md) and [Review records](references/upstream-review.md) for reuse scope, upstream licenses, and selection decisions. Cite methods, data, and tools where they are actually used in your report.
-
-<details>
-<summary><strong>Commercial use and services</strong></summary>
-
-MIT permits commercial use and selling copies, provided copyright and permission notices are retained. Dependencies and third-party materials remain subject to their own licenses; see the [MIT text](https://opensource.org/license/mit). Others may lawfully obtain and reuse this public repository.
-
-Potential paid services include installation, original teaching materials, pre-competition or non-competition exercises, maintenance, and usage support. Define concrete deliverables rather than presenting a public URL as exclusive source-code access. No paid product, pricing, or validated service outcomes currently exist.
-
-</details>
