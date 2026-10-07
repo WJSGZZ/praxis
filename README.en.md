@@ -141,6 +141,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Group | Tools |
 |---|---|
 | Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `shortest_path`, `max_flow` (with the minimum cut), `minimum_spanning_tree` |
+| Regression and comparison | `ols_report` (intervals and diagnostics), `compare_models` (cross-validated comparison against a baseline) |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_diffusion` (finite volumes with an energy account) |
 | Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |

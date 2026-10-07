@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modeling import decision, decision_models, dynamics, epidemic, experiment, forecast, graph, lessons, optimize, pde, queueing, routes, sensitivity, structure, weights  # noqa: E402
+from modeling import decision, decision_models, dynamics, epidemic, experiment, forecast, graph, lessons, optimize, pde, queueing, regression, routes, sensitivity, structure, weights  # noqa: E402
 from scripts import audit_data, check_references, literature  # noqa: E402
 
 def _project_version():
@@ -277,6 +277,12 @@ TOOLS = dict([
     _tool('grid_convergence_index', 'Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity.',
           {'f_fine': _num(), 'f_medium': _num(), 'f_coarse': _num(), 'refinement_ratio': _num(), 'safety_factor': _num()}, ['f_fine', 'f_medium', 'f_coarse', 'refinement_ratio'],
           lambda a: pde.grid_convergence_index(a['f_fine'], a['f_medium'], a['f_coarse'], a['refinement_ratio'], safety_factor=a.get('safety_factor', 1.25))),
+    _tool('ols_report', 'Ordinary least squares with confidence intervals and diagnostics (normality, heteroscedasticity, autocorrelation, VIF, influential rows); `flags` lists every problem found.',
+          {'X': MATRIX, 'y': SERIES, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'add_constant': {'type': 'boolean'}, 'alpha': _num()}, ['X', 'y'],
+          lambda a: regression.ols_report(a['X'], a['y'], names=a.get('names'), add_constant=a.get('add_constant', True), alpha=a.get('alpha', .05))),
+    _tool('compare_models', 'Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting with fold standard errors; a model beats the baseline only by more than one standard error. scheme: kfold or time (rows in time order).',
+          {'X': MATRIX, 'y': SERIES, 'scheme': {'type': 'string', 'enum': ['kfold', 'time']}, 'folds': {'type': 'integer'}}, ['X', 'y'],
+          lambda a: regression.compare_models(a['X'], a['y'], scheme=a.get('scheme', 'kfold'), folds=a.get('folds', 5))),
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
           {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
@@ -316,6 +322,8 @@ EXAMPLES = {
     'find_relation': dict(value='zeta(2)', constants={'pi2': 'pi**2'}),
     'solve_diffusion': dict(length=1, k=1, rho_c=1, initial='sin(3.141592653589793*x)', t_end=0.1, cells=100, steps=100, left=['dirichlet', 0], right=['dirichlet', 0], points=[0.5]),
     'matrix_game': dict(payoff=[[3, 2], [1, 4]]),
+    'ols_report': dict(X=[[1, 2], [2, 1], [3, 5], [4, 3], [5, 8], [6, 4], [7, 9], [8, 6], [9, 11], [10, 7]], y=[3.1, 3.9, 8.2, 8.8, 14.1, 12.9, 19.7, 18.2, 25.1, 22.8], names=['a', 'b']),
+    'compare_models': dict(X=[[i] for i in range(40)], y=[2.0 * i + (i % 3) for i in range(40)], folds=4),
     'equilibria': dict(rhs=['x*(1-x)'], names=['x'], bounds=[[-0.5, 2]]),
     'sir_fit': dict(infected=[10, 14, 20, 28, 40, 57, 80, 112, 156, 215], population=1000000),
     'lesson_search': dict(path='planning/lessons.jsonl', query='recurrence'),

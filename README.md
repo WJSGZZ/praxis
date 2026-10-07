@@ -140,6 +140,7 @@ uv sync --project /path/to/praxis --locked
 | 类别 | 工具 |
 |---|---|
 | 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`shortest_path`、`max_flow`（附最小割）、`minimum_spanning_tree` |
+| 回归与比较 | `ols_report`（置信区间与诊断）、`compare_models`（对基线的交叉验证比较） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_diffusion`（有限体积，附能量收支） |
 | 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
