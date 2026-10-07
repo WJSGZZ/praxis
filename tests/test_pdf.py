@@ -108,3 +108,24 @@ def test_malformed_or_duplicate_evidence_is_rejected(tmp_path,entries):
     from scripts.check_pdf import summarize_checks
     path=tmp_path/'checks.json';path.write_text(json.dumps(entries))
     with pytest.raises(ValueError):summarize_checks(path)
+
+
+def test_margin_report_flags_overflow_and_uneven_pages(tmp_path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    from scripts.check_pdf import margin_report
+    path = tmp_path / 'layout.pdf'
+    with PdfPages(path) as pdf:
+        for left_edge, right_edge in ((0.2, 0.8), (0.2, 0.97), (0.5, 0.5)):
+            fig = plt.figure(figsize=(6, 8))
+            fig.add_artist(plt.Line2D([left_edge, right_edge], [0.5, 0.5], color='black', lw=3, transform=fig.transFigure))
+            pdf.savefig(fig)
+            plt.close(fig)
+    report = margin_report(path)
+    by_page = {p['page']: p for p in report['pages']}
+    assert 'flags' not in by_page[1]
+    assert 'margins differ' in by_page[2]['flags'] and 'ink near the page edge' in by_page[2]['flags']
+    assert abs(by_page[1]['left_pt'] - by_page[1]['right_pt']) < 4
+    assert report['flagged_pages'] == [2]

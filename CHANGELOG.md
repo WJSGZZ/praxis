@@ -21,6 +21,9 @@ On top of 0.1.0, Praxis can now face an unfamiliar problem: find the structure f
 
 ## 未发布 · Unreleased
 
+- `ols_report`、`compare_models`（回归诊断与对基线的交叉验证比较）；`check_pdf --margins`（渲染后检查每页左右空白与溢出，新增依赖 pypdfium2）。
+  `ols_report` and `compare_models` for regression diagnostics and baseline-honest comparison; `check_pdf --margins` renders pages and flags uneven margins and overflow (new dependency pypdfium2).
+
 （发布前把这一节改成新版本号。版本号只增不改：已发布的版本不再修改，修复发下一个小版本。小改动只提交，不发版；新增或改名技能与工具、结果格式变化才升次版本号。）
 
 ## 0.1.0 · 2026-10-07
