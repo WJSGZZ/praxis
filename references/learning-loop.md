@@ -25,6 +25,8 @@
 - 可选：`tags`、`evidence`（observed once / seen repeatedly / derived / checked on a held-out problem）；
 - `principle` 要写成能迁移的规则，不是对本题的描述。
 
+路线记录完成后，`route_to_lesson` 从记录自动起草课程草稿（你只需补写可迁移的原则），再交给 `lesson_add`。
+
 新题开始前用 `lesson_search` 按关键词和标签找相关课程，并看 `patterns` 里反复出现的结构。检索到的课程只是提示，不替代对本题的检验；证据等级低的课程要先验证再用。
 
 ## 回归与盲测：`evals.planted`

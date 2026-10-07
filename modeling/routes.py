@@ -219,3 +219,24 @@ def save(g: dict, path: Path) -> None:
 
 def load(path: Path) -> dict:
     return json.loads(Path(path).read_text())
+
+
+def draft_lesson(g: dict, *, problem: str, principle: str, verified_by: str = '', tags: list[str] | None = None) -> dict:
+    """A lesson (for modeling.lessons.add_lesson) drafted from a finished route record.
+
+    Everything except the principle is read from the record, so the lesson says what actually happened; the principle must be written
+    by a person or the agent as a rule that could transfer."""
+    chosen = [k for k, p in g['paths'].items() if p['status'] == 'chosen']
+    if len(chosen) != 1:
+        raise ValueError('Draft a lesson from a record with exactly one chosen route')
+    best = g['paths'][chosen[0]]
+    killed = [(k, p['reason']) for k, p in g['paths'].items() if p['status'] == 'killed']
+    survived = [a for a in g['attacks'] if a['path'] == chosen[0] and a['outcome'] == 'survived']
+    structures = [f'{k}: {s["text"]}' for k, s in g['structures'].items()]
+    return dict(problem=problem, structure='; '.join(structures) or 'not recorded',
+                recognized=best['structure'] and g['structures'][best['structure']]['text'] or 'not recorded',
+                routes_tried=[f'{k}: {p["title"]}' for k, p in g['paths'].items()],
+                what_failed='; '.join(f'{k}: {r}' for k, r in killed) or 'no route was killed',
+                what_worked=f'{chosen[0]}: {best["title"]}. {best["reason"]}',
+                verified_by=verified_by or '; '.join(f'{a["method"]} ({a["claim"]})' for a in survived) or 'not recorded',
+                principle=principle, tags=tags or [])

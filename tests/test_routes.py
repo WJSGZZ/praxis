@@ -72,3 +72,19 @@ def test_apply_reports_the_failing_operation_and_does_not_mutate_input():
     assert repr(first) == snapshot
     with pytest.raises(ValueError, match='unknown op'):
         routes.apply(first, [dict(op='teleport')])
+
+
+def test_draft_lesson_reads_the_record_and_requires_a_principle():
+    from modeling import lessons
+    g = build()['graph']
+    routes.attack(g, 'P2', '整数性', '松弛', 'killed', '规模太大')
+    routes.attack(g, 'P1', '线性费用', '凸费用小例子对照', 'survived')
+    routes.choose(g, 'P1', '有解析界且可验证')
+    draft = routes.draft_lesson(g, problem='调运', principle='约束矩阵若是网络矩阵，先试线性规划')
+    assert 'P2: 规模太大' in draft['what_failed'] and draft['what_worked'].startswith('P1')
+    assert '凸费用小例子对照' in draft['verified_by'] and len(draft['routes_tried']) == 3
+    import tempfile, pathlib
+    with tempfile.TemporaryDirectory() as d:
+        assert lessons.add_lesson(pathlib.Path(d) / 'l.jsonl', draft)['id'] == 'L0001'
+    with pytest.raises(ValueError, match='exactly one chosen'):
+        routes.draft_lesson(build()['graph'], problem='x', principle='y')
