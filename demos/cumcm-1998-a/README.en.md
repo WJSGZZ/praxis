@@ -1,67 +1,93 @@
-# CUMCM Demo: Investment Returns and Risk
+# CUMCM Demo: Investment Return and Risk
 
-**A classic problem, a complete report, and evidence you can run.**
+**1998 CUMCM Problem A: a portfolio problem with minimum transaction fees, taken from model and proof through robustness checks to a paper others can verify.**
 
-This development case uses CUMCM 1998 Problem A to demonstrate problem framing, mixed-integer optimization, independent validation, and report delivery with Praxis. The full report is in Chinese.
+[中文](README.md) · [Full paper (PDF, Chinese)](deliverables/paper.pdf) · [Supporting archive (ZIP)](deliverables/supporting_materials.zip) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md)
 
-[简体中文](README.md) · [Full report](deliverables/paper.pdf) · [Supporting ZIP](deliverables/supporting_materials.zip) · [Runnable source](reproduce/) · [Back to Praxis](../../README.en.md)
+![Risk–return curves for the two asset sets, with representative portfolios](assets/risk-return.png)
 
-![Risk-return frontiers and representative solutions](assets/risk-return.png)
+## What the problem asks
 
-| Scenario | Risk limit | Optimal net return | Supporting evidence |
+A firm has a sum M and can buy any of n assets or put money in a bank (5% a year, riskless, no fee). Each asset has an average return, a loss rate and a fee rate; a purchase below a threshold is still charged as if it were at the threshold. Overall risk is the largest loss among the assets bought. The statement supplies one set of 4 assets and one of 15, and asks for portfolios with high net return and low risk.
+
+The difficulty is not computation. It is three things: the fee is piecewise, two goals must be traded off, and the problem never says how much risk the firm accepts.
+
+## Results first
+
+| Case | Risk cap | Best net return | Supporting argument |
 |---|---:|---:|---|
-| 4 assets | 1% | **21.90%** | MILP, exhaustive fee-regime enumeration, analytical upper bound |
-| 15 assets | 10% | **33.53%** | MILP and analytical upper bound |
+| 4 assets | 1% | **21.90%** | MILP solve, enumeration of fee regimes, analytic upper bound |
+| 15 assets | 10% | **33.53%** | MILP solve, analytic upper bound |
 
-The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount divided by the budget; returns are net of transaction fees. The two rows use different risk limits and are not a direct comparison or a forecast of real investment returns.
+Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divided by capital; net return is after fees. The two risk caps differ, so the rows do not rank the asset sets, and neither is a forecast of real returns. With no stated risk appetite the paper recommends the knee of the return–risk curve: a 0.6% cap for 4 assets (20.19%) and 8% for 15 assets (32.29%).
 
-## Why this case matters
+## How it is solved
 
-- **Model the fee discontinuity.** No purchase incurs no fee; an active investment incurs a fee based on the larger of its principal and its fee threshold. The threshold is not a minimum purchase amount. Binary activation variables connect fees, bank deposits, and investments in one budget constraint.
-- **Validate beyond the solver.** The four-asset check enumerates 81 fee regimes. A separate proportional-fee relaxation supplies an analytical upper bound for both groups. A feasible solution matching that bound establishes global optimality. The 12 recorded model checks include these comparisons and accounting, boundary, and scenario checks; they are not 12 independent algorithms.
-- **Explain the budget dependence.** A sufficient capital threshold follows from the optimal allocation in the relaxed problem. At the representative risk limits, integer budgets of CNY 339 and CNY 2,602 respectively suffice. Four additional numerical checks verify the exact and rounded-up thresholds. This is a sufficient condition, not a necessary one.
+1. **Read the statement into a model.** Zero fee when nothing is bought, otherwise the larger of the amount and the threshold, times the fee rate; bank balance, principal and fees share one budget.
+2. **Mixed-integer linear program.** A binary variable switches each asset on; maximize net return under a risk cap and sweep the cap to trace the return–risk curve.
+3. **An independent argument.** Dropping the minimum fee gives a proportional-fee relaxation whose analytic bound cannot be below the original optimum; a feasible plan that reaches it is globally optimal. The 4-asset case is also checked by enumerating 81 fee regimes.
+4. **Capital scale.** A sufficient condition: once capital covers every active threshold, the original problem attains the relaxed bound. At the representative caps this is **CNY 339 and CNY 2,602**. It is sufficient, not necessary.
+5. **Recommendation and robustness.** The knee is the recommendation without preferences; then test whether it can be executed as written and whether it survives data error.
 
-- **Recommend without a stated preference.** Rescaling both axes to [0,1] and taking the point farthest above the chord gives a knee: 0.6% risk (20.19% return) for four assets, and 8% (32.29%, a flatter curve and weaker evidence) for fifteen. Both reach the analytical upper bound; the rule assumes a middle-of-the-road preference.
-- **Following the plan without crossing the cap.** The knee portfolio uses the whole risk cap, so with ±5% error on each amount about 90% or more of random trials exceed it (median overshoot about 3–4%). Returns and chosen assets barely move (with ±10% error on every data field the same assets are chosen in over 99.5% of trials), so the margin to keep is on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
-- **Are simple rules enough?** At CNY 1,000,000, greedy by return minus fee rate, buying each asset up to its risk allowance, matches the integer-programming optimum in all six cases tested: the minimum-fee thresholds are inactive, so the integer model earns its keep at small budgets. Ranking by return over risk loses up to 4.3 points, and equal weights reach only 11.8% and 22.0%. Reading risk as a standard deviation with independent returns, the same 0.6% and 8% caps give net returns of only 13.4% and 17.4%, and the stated max-loss knee portfolios carry several times the cap under that reading: confirm the risk definition first.
+## Evidence
 
-## Inside the report
+- **12 model checks** cover constraints, fees, boundaries and parameter scenarios, plus 4 capital-threshold checks and 2 knee checks. They are different kinds of check, not 12 independent algorithms.
+- **The recommended plan uses the whole risk cap, so following it loosely breaks the cap.** With ±5% error on each amount, more than 90% of random trials exceed the cap (median overshoot 3–4%). With ±10% error on every data field the same assets are chosen in over 99.5% of trials. The margin to keep is therefore on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
+- **How far simple rules go.** At CNY 1,000,000, greedy by return minus fee rate, buying each asset up to its risk allowance, matches the integer optimum in all six cases tested: the minimum fee is inactive at this scale, and the integer model matters at small budgets. Ranking by return over risk loses up to 4.3 points; equal weights reach only 11.8% and 22.0%.
+- **Every chosen asset matters.** Removing any one lowers net return noticeably.
+- **The risk definition changes the answer.** Reading risk as a standard deviation with independent returns, the same caps give net returns of only 13.4% and 17.4%, and the stated max-loss knee portfolios carry several times the cap under that reading. The paper answers as stated and flags this as something to confirm with the decision maker.
+
+## Two pages of the paper
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-abstract.png" alt="Report page 1: abstract and numerical results" width="100%"></a></td>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="Report page 7: proof of the analytical bound and optimality certificate" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-abstract.png" alt="Report page 1: abstract and quantitative results" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="Report page 7: proof of the analytic bound and certificates" width="100%"></a></td>
 </tr>
-<tr><td><strong>The answer</strong><br>Definitions, method, and quantitative results.</td><td><strong>The argument</strong><br>An upper bound, exchange proof, and sufficient capital condition.</td></tr>
+<tr>
+<td><strong>Abstract: problem, method, result</strong><br>States the risk definition, fee treatment and representative numbers.</td>
+<td><strong>Argument: from computation to proof</strong><br>The analytic bound, an exchange argument and the capital condition.</td>
+</tr>
 </table>
 
-[Read the complete 17-page report →](deliverables/paper.pdf)
+**[Read the complete 17-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
 
-## Reproduce it
+## Run it yourself
 
-From the repository root:
+From the Praxis repository root:
 
 ```bash
 uv sync --locked
-uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
-uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
-uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
-uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
-uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py
+uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py                 # both asset sets, curves and the 12 checks
+uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py  # capital threshold (4 checks)
+uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py     # knee and analytic bound
+uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py         # execution error, margin, data error (seeded)
+uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py       # simple rules, drop-one, alternative risk reading
 ```
 
-The first script recalculates both groups, runs the model checks, and compares results with the report's reference records. The second runs the four supplementary capital-threshold checks, and the third locates the knee points and certifies them against the analytical bound. The fourth runs seeded random trials of execution and parameter error around the knee portfolios. The fifth compares them with simple rules, asset-by-asset removal and the alternative risk reading. Generated results go to `reproduce/reproduced/`, excluded from Git. The first script refuses to overwrite that directory; move existing results before rerunning.
+The whole set takes a few minutes. Results go to `reproduce/reproduced/`, excluded from Git; the first script will not overwrite an existing results folder. You can also unzip the [supporting archive](deliverables/supporting_materials.zip) and reproduce the paper's computation on its own, with no Praxis and no AI service.
 
-Alternatively, extract the supporting ZIP and follow its instructions to reproduce the mathematics without Praxis or an AI service. The supplementary threshold script belongs to this development case and does not alter the report's support-file list.
+## File map
 
-`deliverables/` contains exactly two electronic submission files: the PDF with its full modeling-code appendix and the ZIP with 25 supporting files, including AI-use details. Previews, this case guide, runnable development sources, and file hashes remain outside that directory. The PDF was rendered and reviewed page by page; the ZIP was independently extracted and rerun, and its file list matches the appendix.
+```text
+deliverables/                 # the two electronic submission files
+  paper.pdf                   # 17 pages, with file list and full source appendix
+  supporting_materials.zip    # 25 files, including the LaTeX sources and AI-use details
+reproduce/                    # entry points, archived numbers and check scripts
+assets/                       # images for the homepage and this page
+manifest.json                 # bytes, MD5 and SHA-256 of the two deliverables
+verification.json             # acceptance record
+```
 
-## Sources and scope
+Only the PDF and ZIP belong to the submission; previews, notes and hashes stay outside. The PDF was rendered and reviewed page by page, the ZIP was extracted and rerun independently, and the appendix list matches its members.
 
-The parameter tables are transcribed from page 11 of the organizer's [official historical problem collection](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf). The original collection is linked, not redistributed. The report layout follows the [2026 national formatting rules](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html), with disclosure based on the [2026 AI-use rules](https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html).
+## Sources, limits and license
 
-The solution, implementation, figures, and report were created for this project. This is a development demonstration, not an official answer, an award-winning entry, or a real competition result. AI involvement and the recorded human-review status remain disclosed in the support package. The case validates this conditional optimization model and delivery workflow, not arbitrary autonomous problem solving or untested hosts.
+- The problem and its two parameter tables come from the organizers' [official collection of past problems](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf), page 11; only the parameters needed to reproduce and their provenance are included.
+- Paper and attachments follow the [2026 format rules](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html); the AI statement follows the [2026 AI-use rules](https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html).
+- The solution, code, figures and paper were made for this project. They are not an official answer, a prize-winning paper or a real contest result; AI involvement and verification are recorded truthfully in the supporting archive.
+- This case validates one conditional optimization model and the delivery chain; it does not claim arbitrary problems finish automatically.
 
-Original project code, documentation, and figures use the repository's MIT license. Problem parameters retain their source attribution; third-party tools retain their own licenses.
+Implementation, documents and figures are under the repository's MIT license; problem parameters keep their stated origin and third-party tools their own licenses. No private contest material is included.
 
-If the complete case helps you, **star Praxis** or open an Issue with a concrete question and reproduction results.
+If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.
