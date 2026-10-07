@@ -78,16 +78,21 @@ def mcm(lang: str, out: Path):
     t = z["t"] / 60
     T = z["T"]
     mean = T @ z["volume"] / z["volume"].sum()
-    vals = {"const": 24.14, "sched": 19.77, "ideal": 16.01, "bound": 15.41}  # recorded in the paper's Table 7; cross-checked below
+    nx, ny, nz = res["grid"]
+    inlet = (ny // 2) * nz + nz - 1
+    zone = np.linalg.norm(z["xyz"] - z["xyz"][inlet], axis=1) > res["parameters"]["inlet_exclusion"]
+    hot = T[:, zone].max(1)  # hottest cell outside the inlet jet zone
+    best = ext["control"]["best"]
+    vals = {"const": res["policy"]["water_l"], "sched": best["water_l"], "ideal": res["analytic"]["mixed_optimum_l"], "bound": res["analytic"]["energy_lower_bound_l"]}
     txt = {
         "zh": dict(title="水温要均匀，策略就不能只看平均值", sub="三维热网络 · 解析基线 · 独立积分与能量核验",
-                   cap="最佳恒定流量下 · 青绿：均值 · 虚线：最冷单元 · 阴影：温度范围", yl="水温 / °C", xl="时间 / min",
-                   m=["最佳恒定流量", "时变方案（12 段）", "理想充分混合", "能量下界"],
+                   cap="最佳恒定流量下 · 青绿：均值 · 虚线：最冷单元 · 阴影：入口射流区以外的温度范围", yl="水温 / °C", xl="时间 / min",
+                   m=["最佳恒定流量", f"时变方案（{best['segments']} 段）", "理想充分混合", "能量下界"],
                    foot="40°C 起始 · 39–41°C 窗口 · 30 分钟 · 系数取自文献推导，非实测",
                    link=f"{pages('mcm-2016-a')} 页完整报告（含 AI 披露） · 17 项检查 · 查看美赛 Demo →"),
         "en": dict(title="A warm average can hide a cold corner", sub="Spatial heat balance, a proved benchmark, and independent numerical checks",
-                   cap="Best constant rate: mean (teal) · coldest cell (dashed) · spatial range (shade)", yl="Temperature / °C", xl="Time / min",
-                   m=["Best constant rate", "Time-varying schedule (12 segments)", "Ideal well-mixed optimum", "Conditional energy lower bound"],
+                   cap="Best constant rate: mean (teal) · coldest cell (dashed) · range outside the inlet jet zone (shade)", yl="Temperature / °C", xl="Time / min",
+                   m=["Best constant rate", f"Time-varying schedule ({best['segments']} segments)", "Ideal well-mixed optimum", "Conditional energy lower bound"],
                    foot="40°C start · 39–41°C window · 30 min · Literature-derived coefficients, not measured data",
                    link=f"Read the {pages('mcm-2016-a')}-page report with AI disclosure · Inspect 17 recorded checks →"),
     }[lang]
@@ -97,8 +102,8 @@ def mcm(lang: str, out: Path):
     a = c.plot_axes(182, 1066, 390, 820)
     a.set_xlim(0, 30)
     a.set_ylim(38.81, 41.10)
-    a.fill_between(t, T.min(1), T.max(1), color=TEAL, alpha=0.14, lw=0)
-    a.plot(t, T.max(1), color=TEAL, alpha=0.22, lw=1.2)
+    a.fill_between(t, T.min(1), hot, color=TEAL, alpha=0.14, lw=0)
+    a.plot(t, hot, color=TEAL, alpha=0.22, lw=1.2)
     a.plot(t, mean, color=TEAL, lw=2.4)
     a.plot(t, T.min(1), color=CLAY, lw=2.0, ls=(0, (4, 2.2)))
     a.axhline(39.0, color=GREY, lw=0.9, ls=":")

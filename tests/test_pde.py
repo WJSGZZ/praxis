@@ -54,3 +54,16 @@ def test_invalid_input_is_rejected():
         pde.solve_diffusion(1, 10, 1, 1, lambda x: x, 1, 10, theta=.3)
     with pytest.raises(ValueError):
         pde.solve_diffusion(1, 10, 1, 1, lambda x: x, 1, 10, left=('weird', 1))
+
+
+def test_grid_convergence_index_recovers_a_planted_order_and_limit():
+    f0, C, p = 3.0, 0.8, 2.0
+    h = [0.1, 0.2, 0.4]
+    fine, med, coarse = (f0 + C * x ** p for x in h)
+    r = pde.grid_convergence_index(fine, med, coarse, 2.0)
+    assert abs(r['observed_order'] - 2) < 1e-9 and abs(r['extrapolated'] - f0) < 1e-9
+    assert abs(r['gci_fine'] - 1.25 * abs((med - fine) / fine) / 3) < 1e-12
+    with pytest.raises(ValueError):
+        pde.grid_convergence_index(1.0, 1.2, 1.1, 2.0)       # oscillatory, not monotone
+    with pytest.raises(ValueError):
+        pde.grid_convergence_index(1.0, 1.3, 1.4, 2.0)       # successive changes grow on refinement: observed order negative

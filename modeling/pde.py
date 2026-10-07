@@ -87,3 +87,21 @@ def convergence_study(solver: Callable[[int], np.ndarray], exact: np.ndarray | C
         errors.append(float(np.max(np.abs(u - (exact(x) if callable(exact) else exact)))))
     orders = [float(np.log(errors[i] / errors[i + 1]) / np.log(cell_counts[i + 1] / cell_counts[i])) for i in range(len(errors) - 1)]
     return dict(cells=list(cell_counts), errors=errors, observed_orders=orders)
+
+
+def grid_convergence_index(f_fine: float, f_medium: float, f_coarse: float, refinement_ratio: float, *, safety_factor: float = 1.25) -> dict:
+    """Observed order, Richardson-extrapolated value and grid convergence index from three systematically refined solutions (Roache).
+
+    Needs monotone convergence: (f_coarse - f_medium) and (f_medium - f_fine) of the same sign. The GCI is an error band on the fine-grid
+    value, not a bound; a safety factor of 1.25 is conventional for three grids."""
+    r = float(refinement_ratio)
+    d21, d32 = f_medium - f_fine, f_coarse - f_medium
+    if r <= 1 or d21 == 0 or d32 == 0 or d21 * d32 < 0:
+        raise ValueError('Need refinement_ratio > 1 and monotone, non-zero differences between the three solutions')
+    p = float(np.log(d32 / d21) / np.log(r))
+    if p <= 0:
+        raise ValueError('The solutions are not converging (observed order <= 0)')
+    extrapolated = f_fine + (f_fine - f_medium) / (r ** p - 1)
+    rel = abs((f_medium - f_fine) / f_fine) if f_fine != 0 else abs(f_medium - f_fine)
+    return dict(observed_order=p, extrapolated=float(extrapolated), gci_fine=float(safety_factor * rel / (r ** p - 1)),
+                note='Error band on the fine-grid value assuming the asymptotic range; check that the three grids are in it.')
