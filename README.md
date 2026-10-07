@@ -38,7 +38,7 @@ Praxis 帮助个人或团队，把问题和数据推进为**可解释的模型�
 
 **1998 国赛 A 题《投资的收益和风险》：从费用门槛与风险约束，走到最优方案、独立核验和完整论文。**
 
-[![国赛完整案例：风险收益曲线、代表结果与最优性论证](demos/cumcm-1998-a/assets/risk-return.png)](demos/cumcm-1998-a/README.md)
+[![国赛完整案例：风险收益曲线、代表结果与最优性论证](demos/cumcm-1998-a/assets/risk-return-zh.png)](demos/cumcm-1998-a/README.md)
 
 <table>
 <tr>
@@ -208,3 +208,5 @@ uv run --locked python -m examples.structural_reasoning_demo
 ## 来源与许可
 
 本地原创代码与文档采用 [MIT](LICENSE)。工作流参考 MathModelHub，Sobol 与 TOPSIS 分别使用 SALib 和 pyMCDM；实际复用范围、上游许可与取舍见 [第三方声明](THIRD_PARTY_NOTICES.md) 和 [审查记录](references/upstream-review.md)。报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
+
+首页与案例图片使用同一套 [Praxis 展示语言](design/README.md)，颜色、字体层级和版式由共享配置维护。

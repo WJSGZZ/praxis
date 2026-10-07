@@ -20,10 +20,13 @@
   "homepage_visuals": [
     "overview-zh.png",
     "overview-en.png",
+    "risk-return-zh.png",
     "risk-return.png",
     "report-abstract.png",
     "report-proof.png"
   ],
-  "homepage_visual_review": "Both new bilingual overview graphics inspected; plot and report previews retained from inspected source",
-  "local_readme_links_checked": 87
+  "homepage_visual_review": "Four new showcase PNGs inspected at full size; Chinese cover and chart also inspected at 900px and 390px. Small-print reading on mobile requires opening the full image.",
+  "local_readme_links_checked": 92,
+  "visual_system_version": 1,
+  "plugin_export_checks_passed": 3
 }

@@ -20,6 +20,7 @@ TREES = {
     'third_party': {'.json'},
     'third_party/licenses': None,
     'packaging': {'.json'},
+    'design': {'.py', '.md', '.json'},
     # Only this explicitly curated public demo; never user cases or generated reruns.
     'demos/cumcm-1998-a': {'.md', '.json'},
     'demos/cumcm-1998-a/assets': {'.png', '.py'},

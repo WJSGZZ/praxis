@@ -23,6 +23,9 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
     assert (demo / 'deliverables/paper.pdf').read_bytes() == (
         BUNDLE / 'demos/cumcm-1998-a/deliverables/paper.pdf').read_bytes()
     assert (demo / 'assets/risk-return.png').is_file()
+    assert (demo / 'assets/risk-return-zh.png').is_file()
+    assert (output / 'skills/praxis/design/tokens.json').is_file()
+    assert (output / 'skills/praxis/design/style.py').is_file()
     assert (demo / 'reproduce/run_demo.py').is_file()
     assert not (demo / 'reproduce/reproduced').exists()
     problem = tmp_path / 'synthetic.md'

@@ -6,7 +6,7 @@
 
 [English](README.en.md) · [完整论文 PDF](deliverables/paper.pdf) · [支撑材料 ZIP](deliverables/supporting_materials.zip) · [复现代码](reproduce/) · [返回首页](../../README.md)
 
-![两组资产的风险收益曲线及代表方案](assets/risk-return.png)
+![两组资产的风险收益曲线及代表方案](assets/risk-return-zh.png)
 
 ## 先看结果，再看依据
 
