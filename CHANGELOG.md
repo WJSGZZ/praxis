@@ -7,6 +7,19 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 （发布前把这一节改成新版本号。版本号只增不改：已发布的版本不再修改，修复发下一个小版本。小改动只提交，不发版；新增或改名技能与工具、结果格式变化才升次版本号。）
 
+## 未发布 · Unreleased
+
+- 新技能 `praxis-explore`：结构发现、路径搜索（`route_graph` 记录路线的产生、攻击、淘汰、重组与选定）、没有标准答案时的实验数学、经验沉淀；对应参考文件 `structure-discovery`、`path-search`、`research-mode`、`learning-loop`。
+  New skill `praxis-explore`: structure discovery, route search recorded by `route_graph`, experimental mathematics when there is no answer key, and lessons that carry over.
+- 新技能 `praxis-dialogue`：向不懂数学的用户讲清模型，结果出来后共同复盘。
+  New skill `praxis-dialogue`: explain models in plain language and review results together.
+- 新工具：`probe_structure`、`dimensional_analysis`、`check_total_unimodularity`、`test_conjecture`、`find_counterexample`、`guess_sequence`、`find_relation`、`lesson_add`、`lesson_search`、`solve_diffusion`、`markov_stationary`、`markov_absorption`、`matrix_game`、`eoq`、`newsvendor`、`cvar_portfolio`、`pareto_front`、`equilibria`、`kalman_filter`。
+  New tools for structure probes, experimental mathematics, lesson memory, finite-volume diffusion, Markov chains, games, inventory, CVaR portfolios, Pareto fronts, equilibria and Kalman filtering.
+- `evals.planted`：已知答案的合成题，用于盲测与回归。
+  `evals.planted`: synthetic problems with known answers for blind checks and regression.
+- 证据分七层并要求写证伪陈述；国赛案例补三张图并修正审计发现的问题。
+  Evidence now has seven layers with a falsification statement; the CUMCM case gains three figures and fixes found in an independent audit.
+
 ## 0.1.0 · 2026-10-07
 
 首个公开版本 · First public release
