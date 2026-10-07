@@ -3,10 +3,10 @@
   "checked_on": "2026-10-07",
   "status": "local-reviewed-case; not a real contest submission",
   "pdf": {
-    "sha256": "f19ac51bbeb618592fef71be777149ad184cc70d8ec2c14adfcb25ddc5b3973e",
-    "bytes": 548853,
-    "pages_total": 19,
-    "solution_pages": 18,
+    "sha256": "4265f09aa8e67b453ff302adcef21981cf3628c6c25c832dbad2f7570630d6f8",
+    "bytes": 628195,
+    "pages_total": 21,
+    "solution_pages": 20,
     "ai_pages": 1,
     "minimum_extracted_font_size_pt": 12.0,
     "text_bounds_checked": true,
@@ -29,20 +29,28 @@
       16,
       17,
       18,
-      19
-    ]
+      19,
+      20,
+      21
+    ],
+    "visual_review_note": "Layout checked on rendered pages at about 60 dpi; text proofread from extraction, not a full-resolution read"
   },
   "model_checks": {
     "total": 17,
     "passed": 17,
-    "independence": "Independent RHS and integrator; same assumed physical model"
+    "independence": "Independent RHS and integrator; same assumed physical model",
+    "extension_checks": {
+      "total": 2,
+      "passed": 2,
+      "what": "independent RK45 replay of the optimized schedule; schedule water above the energy lower bound"
+    }
   },
   "reproduction_checks": {
     "total": 18,
     "passed": 18,
     "extra": "Archived report water amount"
   },
-  "scope": "Uncalibrated physical scenarios; two-grid diagnostic; no claim of award, full transcript or independent human review",
+  "scope": "Literature-anchored scenario coefficients with ranges (order-of-magnitude anchors, not a calibration); two-grid diagnostic; no bath experiment; no claim of award, full transcript or independent human review",
   "submission_files": [
     "7391856.pdf"
   ],
@@ -56,5 +64,12 @@
     "team_control_number": "7391856",
     "example_only": true
   },
-  "publication_scope": "Curated historical case; report, reproduction sources and presentation assets only"
+  "publication_scope": "Curated historical case; report, reproduction sources and presentation assets only",
+  "extended_analysis": {
+    "script": "reproduce/run_extended.py",
+    "archived": "reproduce/reference/extended.json",
+    "schedules": "3-, 6- and 12-segment piecewise-constant, multi-start SLSQP, local optima",
+    "sobol_draws": 64,
+    "draws_with_accepted_policy": 37
+  }
 }

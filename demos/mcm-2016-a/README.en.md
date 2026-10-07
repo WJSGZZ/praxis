@@ -6,21 +6,24 @@
 
 [![Spatial temperatures, a proved benchmark, and a conditional energy bound](assets/overview-en.png)](deliverables/7391856.pdf)
 
-For a perfectly mixed bath, waiting before replenishing is provably optimal. In this spatial scenario, an early, small trickle ranks ahead of the tested delayed starts. The case uses that disagreement to explain why the added model complexity matters.
+For a perfectly mixed bath, waiting before replenishing is provably optimal. In the spatial model the best constant trickle starts at once, and a schedule that withholds hot water at both ends needs about 18% less. Heat-loss and body coefficients come from standard correlations and a published immersion study, with ranges, so the case also shows how much the answer depends on them.
 
 | Evidence under the same 30-minute conditions | Added water | Interpretation |
 |---|---:|---|
-| Selected spatial-network policy | **10.48 L** | Best accepted candidate in the stated search |
-| Ideal well-mixed control | **6.53 L** | Proved optimum of the idealized model |
-| Conservative energy argument | **5.98 L** | Conditional lower bound for feasible spatial policies |
+| Spatial network, best constant rate | **24.14 L** | Best accepted constant-rate candidate in the stated search |
+| Spatial network, 12-segment schedule | **19.77 L** | Local optimum from constrained optimization; no flow in the first 2.5 and last 10 minutes |
+| Ideal well-mixed control | **16.01 L** | Proved optimum of the idealized model |
+| Conservative energy argument | **15.41 L** | Conditional lower bound for feasible spatial policies |
 
-The scenario contains 164.25 L of water, initially at 40°C, with cell-average limits of 39–40.5°C and a spread limit of 1.5°C. Heat loss, mixing and body inputs are declared assumptions. No bathtub experiment was performed, and the example is not a universal bathing or safety prescription.
+The scenario contains 164.25 L of water, initially at 40°C, with cell-average limits of 39–41°C and a spread limit of 1.5°C. Surface loss is derived from natural-convection, radiation and evaporation relations (35.6 W/(m² K) for open water, 25 with the bather covering part of the surface); body exchange is anchored to the core-temperature rise in an [immersion study](https://doi.org/10.1113/EP092761); the mixing coefficient has no anchor and stays a scenario. No bathtub experiment was performed, and the example is not a universal bathing or safety prescription.
+
+**The answer depends strongly on the loss coefficients.** Across 64 Sobol draws over the stated ranges, 37 have an accepted constant-rate policy, needing 12–31 L (5th–95th percentile, median 21 L); the rest have none.
 
 ## What makes the result inspectable
 
-A three-dimensional conservative thermal network includes surface and shell losses, body displacement and exchange, mixing, and an explicit inlet-to-overflow stream. Constraints apply to every cell. The paper distinguishes a control theorem, a feasible spatial candidate, and an energy lower bound instead of calling all three “optimal.”
+A three-dimensional conservative thermal network includes surface and shell losses, body displacement and exchange, mixing, and an explicit inlet-to-overflow stream. Constraints apply to every cell. The paper distinguishes a control theorem, feasible spatial policies, and an energy lower bound instead of calling all of them “optimal”; the schedule narrows the gap to the bound from 8.7 L to 4.4 L, and the rest stays open.
 
-The **17 recorded checks** include independent heat-flow arithmetic and RK45 integration, a constructed analytic cooling limit, geometric input checks, and scenario replays. A derivative envelope supplements sampling for the selected baseline; scenario checks remain sampled checks. A finer grid uses approximately 10.47 L but increases the local spread, so two meshes are presented as a resolution diagnostic rather than a convergence proof. Searches with no accepted candidate are retained without claiming mathematical infeasibility.
+The **17 recorded checks** include independent heat-flow arithmetic and RK45 integration, a constructed analytic cooling limit, geometric input checks, and scenario replays. A derivative envelope supplements sampling for the selected baseline; scenario checks remain sampled checks. The optimized schedule has two further checks. A finer grid changes the constant-rate result by 0.11%, but two meshes remain a resolution diagnostic, not a convergence proof. Six scenarios have no accepted candidate and are kept without claiming mathematical infeasibility. Two choices were revised in the open: a 40.5°C upper limit had no accepted policy on the finer mesh and became 41°C, and the first, lower loss coefficients were replaced after the literature derivation.
 
 ## Read the complete solution
 
@@ -31,9 +34,9 @@ The **17 recorded checks** include independent heat-flow arithmetic and RK45 int
 </tr>
 </table>
 
-[Open the 19-page English report →](deliverables/7391856.pdf)
+[Open the 21-page English report →](deliverables/7391856.pdf)
 
-The PDF has 18 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
+The PDF has 20 solution pages, including scenario definitions, followed by one AI-use page. It contains the required one-page explanation for a non-technical bather. Sources are cited where used; development status notes stay outside the paper.
 
 `deliverables/` contains **one PDF only**, matching the MCM submission structure. `7391856` is an example control number, not an actual team identity. Reproduction sources, this guide and verification records are development resources outside the submission directory; there is no CUMCM-style support ZIP.
 
@@ -46,7 +49,15 @@ uv sync --locked
 uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py
 ```
 
-The script recalculates the baseline, 16 variations and a finer grid. It runs the 17 model checks and adds one comparison with the water amount archived for the report. A run typically takes about a minute, depending on hardware. Results go to `reproduce/reproduced/`; an existing directory is preserved by refusing to overwrite it. The extra reproduction check does not change the report’s model-check count.
+The script recalculates the baseline, 17 variations and a finer grid. It runs the 17 model checks and adds one comparison with the water amount archived for the report. A run typically takes about a minute, depending on hardware. Results go to `reproduce/reproduced/`; an existing directory is preserved by refusing to overwrite it. The extra reproduction check does not change the report’s model-check count.
+
+An optional second entry point runs the schedule optimization and the literature-range analysis (about 4–5 minutes):
+
+```bash
+uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py
+```
+
+It re-optimizes 3-, 6- and 12-segment schedules, replays the best one with an independent RK45 integrator (two checks), and reruns the constant-rate search at 64 Sobol points. Results go to the same `reproduced/` directory.
 
 [Report-building instructions](reproduce/README.md) document the separate PDF tool and font requirements. Mathematical reproduction requires no AI service or report-rendering library.
 

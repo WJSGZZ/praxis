@@ -47,7 +47,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 <tr>
 <td valign="top"><strong>17-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
-<td valign="top"><strong>19-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the spatial candidate adds 10.48 L, versus a 6.53 L ideal optimum and a 5.98 L energy bound. Explore 16 scenario variations; coefficients are assumed, not measured.</td>
+<td valign="top"><strong>21-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a 12-segment schedule 19.77 L (18% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients are literature-derived with ranges, not measured.</td>
 </tr>
 <tr>
 <td valign="top"><strong>Report PDF + supporting ZIP</strong><br>Modeling code and reproduction evidence are available on the case page.</td>
