@@ -6,6 +6,11 @@
       "command": "uv",
       "args": ["run", "--locked", "--project", "${PLUGIN_ROOT}/skills/praxis", "python", "-m", "scripts.mcp_server"],
       "cwd": "${PLUGIN_ROOT}/skills/praxis"
+    },
+    "arxiv": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["arxiv-mcp-server==0.8.1", "--storage-path", "${PLUGIN_DATA}/arxiv-papers"]
     }
   }
 }

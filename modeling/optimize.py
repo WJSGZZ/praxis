@@ -1,6 +1,6 @@
 """Linear and mixed-integer programs with solver status and a checkable certificate."""
 import numpy as np
-from scipy.optimize import linprog, milp, LinearConstraint, Bounds
+from scipy.optimize import linprog, milp, linear_sum_assignment, LinearConstraint, Bounds
 
 
 def _bounds(bounds, n):
@@ -62,3 +62,65 @@ def solve_milp(c, *, A_ub=None, b_ub=None, A_eq=None, b_eq=None, bounds=None, in
                mip_gap=None if getattr(result, 'mip_gap', None) is None else float(result.mip_gap),
                proved_optimal=bool(result.status == 0))
     return out
+
+
+def assignment(cost, *, maximize=False):
+    """Optimal one-to-one assignment (Hungarian algorithm) for a rectangular cost matrix."""
+    c = np.asarray(cost, float)
+    if c.ndim != 2 or not np.isfinite(c).all():
+        raise ValueError('cost must be a finite 2-D matrix')
+    rows, cols = linear_sum_assignment(c, maximize=maximize)
+    return dict(pairs=[[int(r), int(k)] for r, k in zip(rows, cols)], total=float(c[rows, cols].sum()))
+
+
+def _tour_length(d, tour):
+    return float(sum(d[tour[i], tour[(i + 1) % len(tour)]] for i in range(len(tour))))
+
+
+def _two_opt(d, tour):
+    improved = True
+    while improved:
+        improved = False
+        for i in range(1, len(tour) - 1):
+            for j in range(i + 1, len(tour)):
+                a, b, c, e = tour[i - 1], tour[i], tour[j], tour[(j + 1) % len(tour)]
+                if d[a, c] + d[b, e] < d[a, b] + d[c, e] - 1e-12:
+                    tour[i:j + 1] = tour[i:j + 1][::-1]
+                    improved = True
+    return tour
+
+
+def _one_tree_bound(d):
+    """Held-Karp style lower bound without multipliers: MST of the other nodes plus the two cheapest edges at the removed node."""
+    import networkx as nx
+    n = len(d)
+    best = 0.
+    for v in range(n):
+        g = nx.Graph()
+        rest = [u for u in range(n) if u != v]
+        g.add_weighted_edges_from((a, b, d[a, b]) for i, a in enumerate(rest) for b in rest[i + 1:])
+        mst = nx.minimum_spanning_tree(g).size(weight='weight') if len(rest) > 1 else 0.
+        best = max(best, mst + float(np.sort(d[v, rest])[:2].sum()))
+    return best
+
+
+def tsp(distance, *, starts=None):
+    """Round-trip tour by nearest neighbour from several starts plus 2-opt, with a 1-tree lower bound.
+
+    This is a heuristic: the tour is feasible, the bound proves how far from optimal it can be."""
+    d = np.asarray(distance, float)
+    n = len(d)
+    if d.ndim != 2 or d.shape[0] != d.shape[1] or n < 3 or not np.allclose(d, d.T):
+        raise ValueError('Need a symmetric square distance matrix with at least 3 nodes')
+    best = None
+    for s0 in (range(n) if starts is None else starts):
+        tour, left = [s0], set(range(n)) - {s0}
+        while left:
+            nxt = min(left, key=lambda u: d[tour[-1], u]); tour.append(nxt); left.remove(nxt)
+        tour = _two_opt(d, tour)
+        length = _tour_length(d, tour)
+        if best is None or length < best[1] - 1e-12:
+            best = (tour[:], length)
+    bound = _one_tree_bound(d)
+    return dict(tour=[int(x) for x in best[0]], length=best[1], lower_bound=float(bound),
+                gap=float((best[1] - bound) / bound) if bound > 0 else None, heuristic=True)

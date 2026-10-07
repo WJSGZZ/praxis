@@ -98,3 +98,21 @@ def test_gm11_on_a_geometric_series_and_baselines_on_exact_patterns():
     assert rolling_origin(linear, 3)['mae']['linear_trend'] < 1e-9
     seasonal = list(np.tile([1., 5., 2., 8.], 8))
     assert rolling_origin(seasonal, 4, season=4)['mae']['seasonal_naive'] < 1e-9
+
+
+def test_assignment_matches_brute_force_and_tsp_is_bracketed():
+    from modeling.optimize import assignment, tsp
+    rng = np.random.default_rng(3)
+    cost = rng.integers(1, 20, (5, 5)).astype(float)
+    best = min(sum(cost[i, p[i]] for i in range(5)) for p in itertools.permutations(range(5)))
+    assert abs(assignment(cost)['total'] - best) < 1e-9
+    angles = np.linspace(0, 2 * np.pi, 8, endpoint=False)
+    pts = np.c_[np.cos(angles), np.sin(angles)]
+    dist = np.linalg.norm(pts[:, None] - pts[None], axis=2)
+    result = tsp(dist)
+    perimeter = 8 * 2 * math.sin(math.pi / 8)  # convex position: the optimal tour is the polygon
+    assert abs(result['length'] - perimeter) < 1e-9 and result['lower_bound'] <= result['length'] + 1e-9
+    pts = rng.random((7, 2)); dist = np.linalg.norm(pts[:, None] - pts[None], axis=2)
+    optimum = min(sum(dist[t[i], t[(i + 1) % 7]] for i in range(7)) for t in ((0,) + p for p in itertools.permutations(range(1, 7))))
+    r = tsp(dist)
+    assert r['lower_bound'] <= optimum + 1e-9 <= r['length'] + 2e-9

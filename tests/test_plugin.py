@@ -99,6 +99,9 @@ def test_export_declares_a_working_mcp_server(tmp_path):
     assert config['$schema'].endswith('/mcp.schema.json')
     server = config['mcpServers']['praxis-tools']
     assert server['type'] == 'stdio' and server['cwd'] == '${PLUGIN_ROOT}/skills/praxis'
+    # Third-party server: exact version, papers stored in plugin data rather than the home directory.
+    arxiv = config['mcpServers']['arxiv']
+    assert arxiv['args'][0] == 'arxiv-mcp-server==0.8.1' and arxiv['args'][-1].startswith('${PLUGIN_DATA}')
     # Same module the manifest launches, started from the exported copy.
     request = json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/list'}) + '\n'
     result = subprocess.run([sys.executable, '-m', 'scripts.mcp_server'], cwd=output / 'skills/praxis',

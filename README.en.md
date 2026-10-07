@@ -136,11 +136,13 @@ For solo work under time pressure, Praxis defaults to one current user action an
 
 | Group | Tools |
 |---|---|
-| Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `shortest_path`, `max_flow` (with the minimum cut), `minimum_spanning_tree` |
+| Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `shortest_path`, `max_flow` (with the minimum cut), `minimum_spanning_tree` |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc` |
 | Uncertainty | `sobol_sensitivity` |
-| Data and literature | `audit_data`, `check_references` (DOI, title and year against Crossref) |
+| Data and free literature | `audit_data`, `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
+
+The plugin also wires in the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. Most journal papers are paywalled: the tools only find legal free copies, so fetch the rest through a school library.
 
 When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). Python covers the ordinary uses of MATLAB and R.
 
@@ -204,7 +206,7 @@ Your problems, data, and cases stay in your own workspace, never in the plugin. 
 
 ## Reliability
 
-- 60 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
+- 63 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 

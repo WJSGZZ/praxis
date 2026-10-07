@@ -64,7 +64,7 @@ praxis-plugin/
 
 在导出的能力包中显式运行 `uv sync --locked --project /absolute/path/to/praxis-plugin/skills/praxis` 准备 Python 环境，再用该环境执行脚本。插件下载不会替你安装这些依赖。插件目录的发现、安装及宿主可写路径兼容性需要单独验证；当前常规 Skill 安装保持可用。不要同时启用两个同名 Praxis 入口。
 
-结构依据：[Agent Plugins 规范](https://agent-plugins.org/specification)与其 JSON Schema。mcp.json 用 `uv run --locked` 启动 `scripts.mcp_server`（工具清单与调用方式见 README），首次启动由 uv 按锁文件准备环境。导出不是在任何插件目录上架。
+结构依据：[Agent Plugins 规范](https://agent-plugins.org/specification)与其 JSON Schema。mcp.json 用 `uv run --locked` 启动 `scripts.mcp_server`（工具清单与调用方式见 README），首次启动由 uv 按锁文件准备环境；另一个服务 `arxiv` 是第三方开源项目，固定版本，论文存到插件数据目录，来源与核验见 references/upstream-review.md。导出不是在任何插件目录上架。
 
 ## 工作流怎样逐步自动化
 

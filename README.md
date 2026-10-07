@@ -133,11 +133,13 @@ uv sync --project /path/to/praxis --locked
 
 | 类别 | 工具 |
 |---|---|
-| 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`shortest_path`、`max_flow`（附最小割）、`minimum_spanning_tree` |
+| 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`shortest_path`、`max_flow`（附最小割）、`minimum_spanning_tree` |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc` |
 | 不确定性 | `sobol_sensitivity` |
-| 数据与文献 | `audit_data`、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
+| 数据与文献（均免费） | `audit_data`、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
+
+插件还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。期刊论文多数付费：工具只会找合法的免费版本，其余请通过学校图书馆或知网获取。
 
 每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。常规的 MATLAB 与 R 用法，Python 基本都能覆盖。
 
@@ -201,7 +203,7 @@ praxis-plugin/
 
 ## 可靠性
 
-- 60 项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
+- 63 项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
 - 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
 - 每个结论标明依据与适用条件；失败的运行保留，不改写。
 

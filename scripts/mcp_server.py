@@ -15,7 +15,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from modeling import decision, epidemic, forecast, graph, optimize, queueing, sensitivity, weights  # noqa: E402
-from scripts import audit_data, check_references  # noqa: E402
+from scripts import audit_data, check_references, literature  # noqa: E402
 
 VERSION = '0.1.0'
 FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
@@ -79,6 +79,16 @@ TOOLS = dict([
           {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'integrality': SERIES,
            'maximize': {'type': 'boolean'}, 'time_limit': _num('seconds')}, ['c'],
           lambda a: optimize.solve_milp(a['c'], **{k: v for k, v in a.items() if k != 'c'})),
+    _tool('search_literature', 'Search OpenAlex (free, no key) for papers: title, year, DOI, citations and a free full-text link when one exists. Needs internet.',
+          {'query': {'type': 'string'}, 'limit': {'type': 'integer'}, 'mailto': {'type': 'string'}}, ['query'],
+          lambda a: literature.search_works(a['query'], a.get('limit', 5), a.get('mailto', 'unknown@example.org'))),
+    _tool('find_open_access', 'Find the legal open-access copy of a DOI via Unpaywall; needs a real contact email in mailto. Paywalled papers are reported as such.',
+          {'doi': {'type': 'string'}, 'mailto': {'type': 'string'}}, ['doi', 'mailto'],
+          lambda a: literature.open_access_for(a['doi'], a['mailto'])),
+    _tool('solve_assignment', 'Optimal one-to-one assignment (Hungarian algorithm) from a cost matrix.',
+          {'cost': MATRIX, 'maximize': {'type': 'boolean'}}, ['cost'], lambda a: optimize.assignment(a['cost'], maximize=a.get('maximize', False))),
+    _tool('solve_tsp', 'Round-trip tour heuristic (nearest neighbour + 2-opt) from a symmetric distance matrix, with a 1-tree lower bound and gap.',
+          {'distance': MATRIX}, ['distance'], lambda a: optimize.tsp(a['distance'])),
     _tool('ahp_weights', 'AHP weights and consistency ratio from a reciprocal pairwise-comparison matrix (order 1-10).',
           {'matrix': MATRIX}, ['matrix'], lambda a: weights.ahp(a['matrix'])),
     _tool('entropy_weights', 'Entropy weights from a decision matrix (rows alternatives, columns criteria); a dispersion measure, not importance.',

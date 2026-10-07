@@ -6,6 +6,8 @@
 |---|---|---|
 | [Math Modeling Contest Workflow](https://github.com/user0928/math-modeling-contest-workflow/tree/40155106a7051fccff9c0b2ab60cdff2588524b4) | README、定义审查、独立核验与跨问整合说明；审查树未见 LICENSE，GitHub 许可字段为空，复用授权未明确 | 仅对照一般思想，不复制代码、文字、Skill 或测试集。Praxis 自行编写定义反例与结论边界指导，不采用其固定审查轮次或强制用户重新开启流程 |
 | [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science/tree/17c991b0b03668f6e36503a4416202900196f501) | LICENSE 与工作意见说明；MIT | 借鉴数据到结果的依赖追溯、轻量实验记录。已有原始数据保护与环境锁定保留，补上任务到证据的索引；不安装模板生成器，不换环境，不接外部云服务 |
+| [arxiv-mcp-server](https://github.com/blazickjp/arxiv-mcp-server)（PyPI 固定 0.8.1） | GitHub 与 MCP 官方注册表核对：Apache-2.0，活跃维护；以 `uvx` 临时环境实测握手并列出 19 个工具（检索、全文、原始 LaTeX 分节阅读、BibTeX 导出、引用图），未调用 arXiv 内容接口；免费，无需密钥 | 在插件 mcp.json 中作为第三方服务引用，不复制其代码；论文存放在插件数据目录。仅覆盖 arXiv 预印本，期刊论文仍须用户经图书馆获取 |
+| OpenAlex、Unpaywall、Crossref | 公共免费接口；OpenAlex 与 Crossref 无需密钥，Unpaywall 需真实邮箱；返回的是元数据与合法开放链接，不提供付费全文 | 由 `search_literature`、`find_open_access`、`check_references` 小型封装调用，用模拟响应做测试，OpenAlex 与 Crossref 做过实际调用；Unpaywall 未做实际调用（需要使用者自己的邮箱） |
 
 ## Praxis 的具体改进
 
