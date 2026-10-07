@@ -49,3 +49,12 @@ Praxis 的目的、任务记录和推进逻辑先确定；上游经验按职责�
 | [google/or-tools](https://github.com/google/or-tools/tree/100f66e6242ab8bf8d32feb8f3bf086db66ae2b5) | 14,156 | 离散任务按整数／组合结构选工具 | Candidate for discrete scheduling/routing beyond existing tools; not installed or executed |
 
 没有从这些仓库复制算法代码、教程文字或数据。已安装的 SymPy／SciPy 支持自行编写的小例子，其余仅吸收有来源的一般方法与条件指导，不声明已验证这些库本身。主线与任务记录保持不变，具体条件见 mathematical-reasoning.md。
+
+
+## 能力分工与专业参考（2026-10-07）
+
+capabilities.md 将统一主线按实际缺口分到七种能力；计算、图表、来源和写作增加条件参考，模型与验证沿用既有主线和数学指导。每种能力接收同一任务的来源、版本、单位、证据与结论边界；发现缺口回到对应能力。
+
+新增参考为 Matplotlib（23,331 星）、Seaborn（14,060 星）、scikit-learn（67,485 星）和 Manubot（475 星），星数是核查快照，不作为正确性依据。Manubot 虽非高星，引用追溯职责具体，故作为专业参考；论文结构另参考 Mensh/Kording 的原始论文。固定提交、实际许可正文和复用范围见 third_party/capability-review.json。
+
+只吸收与职责对应的一般方法，指导由 Praxis 自行组织；不复制整套 Skill、教程、图表或实现，不安装额外依赖，不替换用户当前文稿。能力分工是按需调用的指导，不是已实现的自动多代理调度；本次结构检查不能证明写作或图形质量。

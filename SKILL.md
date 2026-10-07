@@ -13,6 +13,8 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 读 [references/methods.md](references/methods.md)：这是唯一的推理主线，定义各环节的输入、产出、推进条件、方法选择与失败返回位置。按当前请求进入和结束，不默认每次全流程，不要求逐步审批。
 
+用 [references/capabilities.md](references/capabilities.md) 按实际缺口选择分析、文献、模型、计算、验证、图表或写作能力；它定义职责与交接，不是另一套流程。只读需要的专业参考，同一任务 ID、版本、单位和结论边界贯穿各能力。
+
 - 分析记录使用 [references/tasks-template.md](references/tasks-template.md)，写入案例 planning/tasks.md；所有环节更新同一份任务记录。
 - 参数能否被观测区分、尺度、优化保证、概率区间或干预结论需要判断时，读 [references/mathematical-reasoning.md](references/mathematical-reasoning.md) 的对应条件分支；不增加全题必经阶段。
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。

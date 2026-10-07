@@ -25,3 +25,10 @@ Mathematical reasoning review:
 - Existing installed [SymPy](https://github.com/sympy/sympy) and [SciPy](https://github.com/scipy/scipy) are used in locally authored synthetic structural checks; installed license texts retained as third_party/licenses/sympy-LICENSE and scipy-LICENSE. No library implementation is vendored.
 - [CVXPY](https://github.com/cvxpy/cvxpy), [PyMC](https://github.com/pymc-devs/pymc), [DoWhy](https://github.com/py-why/dowhy), and [OR-Tools](https://github.com/google/or-tools) were reviewed as concept/tool references. No implementation, tutorial text, figures or datasets are copied, and these libraries are not installed or tested by this review. Their licenses do not become MIT through this repository's LICENSE.
 - Verified repository license texts, fixed review commits, star-count snapshots and adoption scope are recorded in third_party/mathematical-review.json. Installed release versions remain distinct from repository review commits. Original guidance and examples are in references/mathematical-reasoning.md and examples/structural_reasoning_demo.py.
+
+
+Capability references:
+
+Matplotlib, Seaborn, scikit-learn, and Manubot are cited as concept/tool references for data processing, graphics and citation traceability. No source code, tutorial text or figures are included through this review; no new dependency is installed. Fixed review commits, inspected license texts and scope are recorded in third_party/capability-review.json. Matplotlib and scikit-learn remain existing dependencies with their own distribution licenses.
+
+Writing guidance briefly adapts general reader-oriented principles from Brett Mensh and Konrad Kording, “Ten simple rules for structuring papers” (2017), DOI 10.1371/journal.pcbi.1005619, with attribution and a link in references/writing.md. The publisher states Creative Commons Attribution; no full article text or figures are reproduced. Praxis's original task handoffs and guidance are locally authored.
