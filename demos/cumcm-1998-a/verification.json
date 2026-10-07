@@ -17,7 +17,7 @@
   "deliverable_hashes_match_submission": true,
   "preview_pages": [
     1,
-    8
+    7
   ],
   "report_pages": 18,
   "preview_visual_review": "All four final localized showcase graphics reviewed; original report page previews unchanged.",
@@ -58,5 +58,6 @@
     "script": "reproduce/check_alternatives.py",
     "archived": "reproduce/reference/alternatives.json",
     "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
-  }
+  },
+  "format_review": "Level-1 headings centered, level-2 left; figures labelled in the paper language with the knee marked; references kept on one page; file list in three columns; subscripts in proof text. Pages rendered and inspected."
 }
