@@ -1,12 +1,12 @@
 {
   "paper.pdf": {
-    "bytes": 247798,
-    "md5": "2e867692efcb05006985fe8c7394bbe1",
-    "sha256": "aa5da902afb52d5ea3201bd998b8e4f80424da26ded4994fd6e43bddf5914d17"
+    "bytes": 260659,
+    "md5": "6811d957f255f8c6ccae73cb243816af",
+    "sha256": "ee65448d13d489e216e3ca3236391393ba0a1100340e7d5f054a742898ca246e"
   },
   "supporting_materials.zip": {
-    "bytes": 240110,
-    "md5": "adfc8265365c32355f6a315999c897bd",
-    "sha256": "04e242bc7f7d0b37948bb1a1187bb333d8f118d470975ad7352e938dc7e80ced"
+    "bytes": 243575,
+    "md5": "6321355ffeef2c13906917b6c96a7049",
+    "sha256": "607b490b57e69fe46fa9675d03b80c57f5d694ae8dc8e1b7733b46e4d22f15e2"
   }
 }
