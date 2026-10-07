@@ -24,7 +24,7 @@
 | 题型 | 先读 | 再用 |
 |---|---|---|
 | 物理、工程过程 | [domain-models.md](domain-models.md) 对应机制；[mathematical-reasoning.md](mathematical-reasoning.md) 的“数值收敛”与“阈值接近渐近值” | 正问题求解器（`solve_layered_diffusion`、`solve_diffusion`）加独立解（`layered_diffusion_laplace`、解析式）；`calibrate_curve`；`grid_convergence_index`；`sobol_convergence` |
-| 规划、调度、路径 | [structure-discovery.md](structure-discovery.md)（全单模、松弛）；[model-library.md](model-library.md) 的规划与网络行 | `solve_lp`、`solve_milp`、`check_total_unimodularity`；先手工可行解、再给界 |
+| 规划、调度、路径；逐日的资源与资金决策 | [structure-discovery.md](structure-discovery.md)（全单模、松弛、分阶段）；[model-library.md](model-library.md) 的规划、网络与序贯决策行；[mathematical-reasoning.md](mathematical-reasoning.md) 的“序贯决策” | `solve_lp`、`solve_milp`、`check_total_unimodularity`；状态可枚举的序贯决策先写精确动态规划、再用时间展开整数规划做独立核对；多人博弈用 `bimatrix_nash`；先手工可行解、再给界 |
 | 数据与预测 | [model-library.md](model-library.md) 的预测与回归行；[scientific-foundations.md](scientific-foundations.md) 第三节 | `ols_report`、`compare_models`、`backtest_baselines` |
 | 评价、决策、政策 | [model-library.md](model-library.md) 的评价与多目标行 | `evaluate_alternatives`、`pareto_front`、`sobol_convergence` |
 | 陌生或没有标准答案 | [path-search.md](path-search.md)、[research-mode.md](research-mode.md) | `route_graph`、`probe_structure`、`guess_sequence` |

@@ -1,6 +1,7 @@
 """Small decision models with closed forms or linear programs: Markov chains, matrix games, EOQ, newsvendor, CVaR portfolios, Pareto fronts."""
 from __future__ import annotations
 
+import itertools
 import math
 
 import numpy as np
@@ -115,3 +116,50 @@ def pareto_front(points, senses) -> dict:
         if not dominated:
             keep.append(i)
     return dict(indices=keep, points=np.asarray(points, float)[keep].tolist(), dominated=[i for i in range(n) if i not in keep])
+
+
+def bimatrix_nash(A, B, *, max_support: int = 6, tol: float = 1e-9) -> dict:
+    """All Nash equilibria of a two-player game (payoff matrices A for the row player, B for the column player) by support enumeration.
+
+    Exact for nondegenerate games up to `max_support` actions per player; a degenerate game can have continua of equilibria, which
+    enumeration reports only through their extreme points on the supports it tries. Many games have several equilibria: say which one
+    the players are expected to play and why, or give a guarantee that holds in all of them."""
+    A, B = np.asarray(A, float), np.asarray(B, float)
+    if A.shape != B.shape:
+        raise ValueError('A and B must have the same shape')
+    m, n = A.shape
+    if max(m, n) > max_support:
+        raise ValueError(f'Game too large for support enumeration (limit {max_support} actions per player)')
+    found = []
+    for k in range(1, min(m, n) + 1):
+        for rows in itertools.combinations(range(m), k):
+            for cols in itertools.combinations(range(n), k):
+                x = _indifference(B[np.ix_(rows, cols)].T, k)           # row mix making the column player indifferent on cols
+                y = _indifference(A[np.ix_(rows, cols)], k)             # column mix making the row player indifferent on rows
+                if x is None or y is None:
+                    continue
+                xf, yf = np.zeros(m), np.zeros(n)
+                xf[list(rows)], yf[list(cols)] = x, y
+                row_payoffs, col_payoffs = A @ yf, xf @ B
+                if row_payoffs.max() - row_payoffs[list(rows)].min() > tol or col_payoffs.max() - col_payoffs[list(cols)].min() > tol:
+                    continue
+                if not any(np.allclose(xf, e['row']) and np.allclose(yf, e['column']) for e in found):
+                    found.append(dict(row=xf, column=yf, row_payoff=float(xf @ A @ yf), column_payoff=float(xf @ B @ yf)))
+    return dict(equilibria=[dict(row=e['row'].tolist(), column=e['column'].tolist(), row_payoff=e['row_payoff'], column_payoff=e['column_payoff'],
+                                 pure=bool((e['row'] > 0).sum() == 1 and (e['column'] > 0).sum() == 1)) for e in found], count=len(found))
+
+
+def _indifference(M: np.ndarray, k: int):
+    """Probability vector z (k entries, all positive) with M z equal in every row; None if there is no such strictly mixed vector."""
+    system = np.zeros((k + 1, k + 1))
+    system[:k, :k] = M
+    system[:k, k] = -1.0
+    system[k, :k] = 1.0
+    rhs = np.zeros(k + 1)
+    rhs[k] = 1.0
+    try:
+        solution = np.linalg.solve(system, rhs)
+    except np.linalg.LinAlgError:
+        return None
+    z = solution[:k]
+    return z if (z > 1e-12).all() else None

@@ -365,6 +365,7 @@ def main():
     run.add_argument('--model', default='code/model.py')
     run.add_argument('--validator', default='code/validate.py')
     run.add_argument('--timeout', type=int, default=120)
+    run.add_argument('--full-output', action='store_true', help='print the whole receipt instead of a summary')
     show = commands.add_parser('status')
     show.add_argument('--case', type=Path, required=True)
     evidence = commands.add_parser('evidence')
@@ -380,6 +381,10 @@ def main():
             result = evidence_index(args.case)
         else:
             result = status(args.case)
+        if args.action == 'run' and not args.full_output:
+            # The full receipt (every dependency hash) is on disk in the run directory; print only what a person needs to see.
+            keys = ('run', 'status', 'started_utc', 'ended_utc', 'checks_passed', 'checks_total')
+            result = {**{k: result[k] for k in keys if k in result}, 'receipt': str(Path(result['run']) / 'receipt.json'), 'steps': [{k: s.get(k) for k in ('stage', 'exit_code')} for s in result.get('steps', [])], 'outputs': sorted(result.get('outputs', {}))}
         print(json.dumps(result,ensure_ascii=False,indent=2))
         if result.get('status') in ['failed', 'evidence-incomplete']:
             raise SystemExit(1)

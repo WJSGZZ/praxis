@@ -73,3 +73,26 @@ def test_pareto_front_dominance():
     assert r['indices'] == [0, 1, 2]
     r = dm.pareto_front([[1, 5], [2, 4], [3, 3], [4, 4]], [-1, -1])  # minimise both
     assert r['indices'] == [0, 1, 2]
+
+
+def test_bimatrix_nash_on_classic_games():
+    pd = dm.bimatrix_nash([[3, 0], [5, 1]], [[3, 5], [0, 1]])              # prisoner's dilemma: (defect, defect) only
+    assert pd['count'] == 1 and pd['equilibria'][0]['pure'] and pd['equilibria'][0]['row'] == [0.0, 1.0]
+    bos = dm.bimatrix_nash([[2, 0], [0, 1]], [[1, 0], [0, 2]])             # battle of the sexes: two pure and one mixed
+    assert bos['count'] == 3 and sum(e['pure'] for e in bos['equilibria']) == 2
+    mixed = next(e for e in bos['equilibria'] if not e['pure'])
+    assert np.allclose(mixed['row'], [2 / 3, 1 / 3]) and np.allclose(mixed['column'], [1 / 3, 2 / 3]) and abs(mixed['row_payoff'] - 2 / 3) < 1e-9
+    mp = dm.bimatrix_nash([[1, -1], [-1, 1]], [[-1, 1], [1, -1]])          # matching pennies: unique mixed equilibrium
+    assert mp['count'] == 1 and np.allclose(mp['equilibria'][0]['row'], [.5, .5])
+    with pytest.raises(ValueError):
+        dm.bimatrix_nash(np.zeros((8, 8)), np.zeros((8, 8)))
+
+
+def test_sparse_constraints_are_accepted_by_lp_and_milp():
+    import scipy.sparse as sps
+    from modeling import optimize
+    dense = optimize.solve_lp([2, 3], A_ge=[[1, 1]], b_ge=[4], A_ub=[[1, 0]], b_ub=[3])
+    sparse = optimize.solve_lp([2, 3], A_ge=sps.csr_matrix([[1, 1]]), b_ge=[4], A_ub=sps.csr_matrix([[1, 0]]), b_ub=[3])
+    assert abs(dense['objective'] - sparse['objective']) < 1e-12
+    m = optimize.solve_milp([-1, -1], A_ub=sps.csr_matrix([[2, 2]]), b_ub=[5], integrality=[1, 1], bounds=[(0, 10), (0, 10)])
+    assert abs(m['objective'] + 2) < 1e-9

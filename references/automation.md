@@ -6,6 +6,14 @@
 
 案例脚本（`init`、`run`、`status`、`evidence`）适合要保留追溯索引的任务。一道题、一个人、自己写一串互相读取结果的阶段脚本时可以不走它，但至少做到：每个出现在论文里的数字都能追到某个脚本和输出文件（一个 `run_all.sh` 或 README 逐条列出）；检查记录成带名字、结果和证据的 `checks.json`，用 `check_pdf.py --checks` 核对论文声称的检查数；最终材料的哈希写进清单。
 
+## 接收 Word 和 Excel 附件
+
+`init` 直接接收 PDF、文本、Markdown 与 Excel。题面或附件是 .docx 时：先用 python-docx 读文字与表格；如果文中公式、地图、示意图是对象（MathType、VML 绘图组、嵌入图片），文本抽取会缺内容，要把 .docx 转成 PDF（LibreOffice 的 `soffice --headless --convert-to pdf`）后渲染查看，必要时解压 .docx 读 `word/document.xml` 与 `word/media/`。公式对象数量与抽取到的公式数不符时，逐个核对，不要凭印象补。从图中提取的结构（地图相邻关系、表格）要写明是怎样提取的，并至少抽样人工核对。
+
+## 并行计算的预算
+
+同时开多个进程前先估计核数与内存：并行任务的总数不超过核数的一半，长任务先在小样本上计时。机器过载会使每项慢数倍，得不偿失。
+
 ## 建立案例
 
 ```bash

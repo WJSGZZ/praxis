@@ -338,6 +338,8 @@ TOOLS = dict([
           {'expression': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}},
           ['expression', 'names', 'bounds'],
           lambda a: sensitivity.sobol_convergence(_compile(a['expression'], a['names']), a['names'], a['bounds'], n=a.get('n', 512), seed=a.get('seed', 2027))),
+    _tool('bimatrix_nash', 'All Nash equilibria (pure and mixed) of a two-player non-zero-sum game by support enumeration; payoff matrices A (row player) and B (column player), up to 6 actions each.',
+          {'A': MATRIX, 'B': MATRIX}, ['A', 'B'], lambda a: decision_models.bimatrix_nash(a['A'], a['B'])),
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
           {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
@@ -377,6 +379,7 @@ EXAMPLES = {
     'find_relation': dict(value='zeta(2)', constants={'pi2': 'pi**2'}),
     'solve_diffusion': dict(length=1, k=1, rho_c=1, initial='sin(3.141592653589793*x)', t_end=0.1, cells=100, steps=100, left=['dirichlet', 0], right=['dirichlet', 0], points=[0.5]),
     'matrix_game': dict(payoff=[[3, 2], [1, 4]]),
+    'bimatrix_nash': dict(A=[[2, 0], [0, 1]], B=[[1, 0], [0, 2]]),
     'calibrate_curve': dict(expression='a*exp(-k*x) + c', parameters=['a', 'k', 'c'], x=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], y=[5.0, 3.2, 2.2, 1.7, 1.37, 1.2, 1.1, 1.06, 1.03, 1.01], theta0=[4, 0.5, 1], holdout=2),
     'sobol_convergence': dict(expression='a + 2*b + 0.1*c', names=['a', 'b', 'c'], bounds=[[0, 1], [0, 1], [0, 1]], n=128),
     'solve_layered_diffusion': dict(layers=[dict(thickness=0.01, k=0.5, rho_c=1.5e6), dict(thickness=0.02, k=0.1, rho_c=3e5)], t_end=600, t_initial=37, left=['robin', 100, 75], right=['robin', 8, 37], times=[60, 600], cells_per_layer=10),
@@ -458,11 +461,14 @@ def serve():
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--list', action='store_true', help='list tools with their fields (* = required)')
+    parser.add_argument('--filter', metavar='WORD', help='with --list: only tools whose name or description contains WORD (e.g. game, queue, diffusion)')
     parser.add_argument('--describe', metavar='TOOL', help='print one tool\'s full input schema')
     parser.add_argument('--call', nargs=2, metavar=('TOOL', 'JSON'))
     args = parser.parse_args()
     if args.list:
         for name, tool in TOOLS.items():
+            if args.filter and args.filter.lower() not in (name + ' ' + tool['description']).lower():
+                continue
             required = tool['schema'].get('required', [])
             fields = ', '.join(f'{k}*' if k in required else k for k in tool['schema']['properties'])
             print(f'{name}({fields}): {tool["description"]}')

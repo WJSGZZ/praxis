@@ -1,6 +1,7 @@
 """Linear and mixed-integer programs with solver status and a checkable certificate."""
 import numpy as np
 from scipy.optimize import linprog, milp, linear_sum_assignment, LinearConstraint, Bounds
+from scipy.sparse import issparse, vstack as sp_vstack
 
 
 def _bounds(bounds, n):
@@ -14,10 +15,12 @@ def _with_ge(A_ub, b_ub, A_ge, b_ge):
     n_ub = 0 if b_ub is None else len(b_ub)
     if A_ge is None:
         return A_ub, b_ub, n_ub
-    A = -np.asarray(A_ge, float)
+    sparse = issparse(A_ge) or (A_ub is not None and issparse(A_ub))
+    A = -(A_ge if issparse(A_ge) else np.asarray(A_ge, float))
     b = -np.asarray(b_ge, float)
     if A_ub is not None:
-        A, b = np.vstack([np.asarray(A_ub, float), A]), np.r_[np.asarray(b_ub, float), b]
+        A = sp_vstack([A_ub, A], format='csr') if sparse else np.vstack([np.asarray(A_ub, float), A])
+        b = np.r_[np.asarray(b_ub, float), b]
     return A, b, n_ub
 
 
@@ -63,9 +66,9 @@ def solve_milp(c, *, A_ub=None, b_ub=None, A_ge=None, b_ge=None, A_eq=None, b_eq
     sign = -1. if maximize else 1.
     constraints = []
     if A_ub is not None:
-        constraints.append(LinearConstraint(np.asarray(A_ub, float), -np.inf, np.asarray(b_ub, float)))
+        constraints.append(LinearConstraint(A_ub if issparse(A_ub) else np.asarray(A_ub, float), -np.inf, np.asarray(b_ub, float)))
     if A_eq is not None:
-        constraints.append(LinearConstraint(np.asarray(A_eq, float), np.asarray(b_eq, float), np.asarray(b_eq, float)))
+        constraints.append(LinearConstraint(A_eq if issparse(A_eq) else np.asarray(A_eq, float), np.asarray(b_eq, float), np.asarray(b_eq, float)))
     b = _bounds(bounds, n)
     lo = [-np.inf if x[0] is None else x[0] for x in b]
     hi = [np.inf if x[1] is None else x[1] for x in b]

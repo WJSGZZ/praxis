@@ -44,6 +44,7 @@
 | `layered_diffusion_laplace` | layers*, times*, t_initial*, left*, right*, dps | Independent semi-analytic solution of the same layered conduction problem by transfer matrices in the Laplace domain (no mesh, no time step); the result a finite-volume solution must match |
 | `calibrate_curve` | expression*, parameters*, x*, y*, theta0*, bounds, holdout | Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation and an optional hold-out of the last points |
 | `sobol_convergence` | expression*, names*, bounds*, n, seed | Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged |
+| `bimatrix_nash` | A*, B* | All Nash equilibria (pure and mixed) of a two-player non-zero-sum game by support enumeration; payoff matrices A (row player) and B (column player), up to 6 actions each |
 | `markov_stationary` | matrix* | Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility |
 | `markov_absorption` | matrix*, absorbing* | Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states |
 | `matrix_game` | payoff* | Value and optimal mixed strategies of a zero-sum matrix game (row player maximises), by linear programming |
