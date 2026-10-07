@@ -46,7 +46,7 @@ The competition cases make the full workflow inspectable; they do not define the
 <td valign="top"><strong>Can a warm average hide cold water?</strong><br>Compare a proved well-mixed benchmark with a three-dimensional thermal network, testing replenishment and temperature uniformity.</td>
 </tr>
 <tr>
-<td valign="top"><strong>16-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
+<td valign="top"><strong>17-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
 <td valign="top"><strong>19-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the spatial candidate adds 10.48 L, versus a 6.53 L ideal optimum and a 5.98 L energy bound. Explore 16 scenario variations; coefficients are assumed, not measured.</td>
 </tr>
 <tr>

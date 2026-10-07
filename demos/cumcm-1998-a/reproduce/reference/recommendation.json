@@ -1,0 +1,79 @@
+{
+  "rule": "knee = point of the saturating frontier farthest above the chord from zero risk to the smallest risk that reaches the maximum return; both axes rescaled to [0,1]",
+  "groups": {
+    "four": {
+      "grid_step": 0.0005,
+      "saturation_risk": 0.025,
+      "max_net_return": 0.26732673267326734,
+      "knee_risk": 0.006,
+      "knee_net_return": 0.20190763977806228,
+      "share_of_gain": 0.698982761621152,
+      "share_of_saturation_risk": 0.24,
+      "slope_before": 23.01156160740662,
+      "slope_after": 4.69978659837816,
+      "analytic_upper_bound": 0.2019076397780623,
+      "investments_yuan": [
+        240000.0,
+        400000.0,
+        109090.9090909091,
+        221220.65727699525
+      ],
+      "fees_yuan": [
+        2400.0,
+        8000.0,
+        4909.090909090909,
+        14379.342723004691
+      ],
+      "bank_yuan": 9.458744898438454e-11,
+      "net_profit_yuan": 201907.6397780623
+    },
+    "fifteen": {
+      "grid_step": 0.01,
+      "saturation_risk": 0.5700000000000001,
+      "max_net_return": 0.4094339622641509,
+      "knee_risk": 0.08,
+      "knee_net_return": 0.32289995993378606,
+      "share_of_gain": 0.7592492323617146,
+      "share_of_saturation_risk": 0.14035087719298245,
+      "slope_before": 1.0458812916017417,
+      "slope_after": 0.629362981228582,
+      "analytic_upper_bound": 0.3228999599337862,
+      "investments_yuan": [
+        0.0,
+        0.0,
+        133333.3333333333,
+        0.0,
+        0.0,
+        0.0,
+        117647.05882352941,
+        189986.7462981873,
+        150093.80863039402,
+        199999.99999999994,
+        0.0,
+        0.0,
+        173913.04347826086,
+        0.0,
+        0.0
+      ],
+      "fees_yuan": [
+        0.0,
+        0.0,
+        7999.999999999998,
+        0.0,
+        0.0,
+        0.0,
+        6588.235294117647,
+        5889.589135243806,
+        4052.532833020639,
+        5799.999999999998,
+        0.0,
+        0.0,
+        4695.652173913044,
+        0.0,
+        0.0
+      ],
+      "bank_yuan": 1.1641532182693481e-10,
+      "net_profit_yuan": 322899.9599337861
+    }
+  }
+}

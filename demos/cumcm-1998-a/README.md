@@ -25,6 +25,8 @@
 
 **资金规模不是可以忽略的参数。** 从比例费用松弛的最优份额推导出充分条件：资金足够覆盖所有启用资产的计费门槛时，原问题达到松弛上界。代表风险上限下，四资产和十五资产分别在资金至少 **339 元、2602 元** 时满足这个充分条件；另有 4 项阈值数值核验。它不是必要条件，不能反推较小资金一定失效。
 
+**没有风险偏好时，怎样推荐？** 把收益—风险曲线两轴重标为 0 到 1，取高出两端连线最多的拐点：四资产在风险上限 0.6%（净收益率 20.19%），十五资产在 8%（32.29%，曲线较平缓、依据更弱）。两点均达到解析上界。这是对居中偏好的约定，不是对公司偏好的推断。
+
 ## 翻两页报告
 
 <table>
@@ -38,7 +40,7 @@
 </tr>
 </table>
 
-[阅读全文：16 页 PDF →](deliverables/paper.pdf)
+[阅读全文：17 页 PDF →](deliverables/paper.pdf)
 
 ## 自己跑一次
 
@@ -48,9 +50,10 @@
 uv sync --locked
 uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
 ```
 
-第一条运行命令重新计算两组资产的方案、曲线与模型核验，并与报告对应的记录比对；第二条执行 4 项资金阈值核验。结果写入 `reproduce/reproduced/`，该目录不进入 Git。再次运行第一条命令前请移走自己已有的结果目录，程序不会覆盖它。
+第一条运行命令重新计算两组资产的方案、曲线与模型核验，并与报告对应的记录比对；第二条执行 4 项资金阈值核验，第三条定位拐点并以解析上界核验。结果写入 `reproduce/reproduced/`，该目录不进入 Git。再次运行第一条命令前请移走自己已有的结果目录，程序不会覆盖它。
 
 也可以只下载并解压 [支撑 ZIP](deliverables/supporting_materials.zip)，按其中运行说明准备依赖，独立复现论文计算，无需安装 Praxis 或连接 AI 服务。额外的资金阈值核验脚本位于本开发案例，不改变论文的支撑包清单。
 
@@ -58,8 +61,8 @@ uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
 
 ```text
 deliverables/                 # 两份电子提交文件
-  paper.pdf                   # 16 页；含支撑清单与完整建模源程序
-  supporting_materials.zip    # 20 文件；含 AI工具使用详情.pdf
+  paper.pdf                   # 17 页；含支撑清单与完整建模源程序
+  supporting_materials.zip    # 22 文件；含 AI工具使用详情.pdf
 reproduce/                    # 开发版直接复现入口与计算证据
 assets/                       # 报告页预览及结果图生成脚本
 manifest.json                 # 两份交付文件的字节数、MD5、SHA-256

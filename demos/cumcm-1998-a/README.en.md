@@ -21,6 +21,8 @@ The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount div
 - **Validate beyond the solver.** The four-asset check enumerates 81 fee regimes. A separate proportional-fee relaxation supplies an analytical upper bound for both groups. A feasible solution matching that bound establishes global optimality. The 12 recorded model checks include these comparisons and accounting, boundary, and scenario checks; they are not 12 independent algorithms.
 - **Explain the budget dependence.** A sufficient capital threshold follows from the optimal allocation in the relaxed problem. At the representative risk limits, integer budgets of CNY 339 and CNY 2,602 respectively suffice. Four additional numerical checks verify the exact and rounded-up thresholds. This is a sufficient condition, not a necessary one.
 
+- **Recommend without a stated preference.** Rescaling both axes to [0,1] and taking the point farthest above the chord gives a knee: 0.6% risk (20.19% return) for four assets, and 8% (32.29%, a flatter curve and weaker evidence) for fifteen. Both reach the analytical upper bound; the rule assumes a middle-of-the-road preference.
+
 ## Inside the report
 
 <table>
@@ -31,7 +33,7 @@ The budget is CNY 1,000,000. Risk means the maximum single-asset loss amount div
 <tr><td><strong>The answer</strong><br>Definitions, method, and quantitative results.</td><td><strong>The argument</strong><br>An upper bound, exchange proof, and sufficient capital condition.</td></tr>
 </table>
 
-[Read the complete 16-page report →](deliverables/paper.pdf)
+[Read the complete 17-page report →](deliverables/paper.pdf)
 
 ## Reproduce it
 
@@ -41,9 +43,10 @@ From the repository root:
 uv sync --locked
 uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
 ```
 
-The first script recalculates both groups, runs the model checks, and compares results with the report's reference records. The second runs the four supplementary capital-threshold checks. Generated results go to `reproduce/reproduced/`, excluded from Git. The first script refuses to overwrite that directory; move existing results before rerunning.
+The first script recalculates both groups, runs the model checks, and compares results with the report's reference records. The second runs the four supplementary capital-threshold checks, and the third locates the knee points and certifies them against the analytical bound. Generated results go to `reproduce/reproduced/`, excluded from Git. The first script refuses to overwrite that directory; move existing results before rerunning.
 
 Alternatively, extract the supporting ZIP and follow its instructions to reproduce the mathematics without Praxis or an AI service. The supplementary threshold script belongs to this development case and does not alter the report's support-file list.
 

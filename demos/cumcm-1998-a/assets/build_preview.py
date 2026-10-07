@@ -52,8 +52,8 @@ with showcase_style() as s:
         if home:
             s.text(canvas, .065, .12, '资金 100 万元 · 虚线为 5% 银行收益率 · 两组风险上限不同，非实际投资预测' if lang == 'zh' else
                    'Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits, not an investment forecast', lang=lang, role='note', color='muted', size=15)
-            s.text(canvas, .065, .075, '16 页完整报告 · 12 项检查 · 查看国赛 Demo →' if lang == 'zh' else
-                   'Read the 16-page report · Inspect 12 recorded checks →', lang=lang, role='body', size=17, color='accent')
+            s.text(canvas, .065, .075, '17 页完整报告 · 12 项检查 · 查看国赛 Demo →' if lang == 'zh' else
+                   'Read the 17-page report · Inspect 12 recorded checks →', lang=lang, role='body', size=17, color='accent')
             name = 'overview-zh.png' if lang == 'zh' else 'overview-en.png'
         else:
             s.text(canvas, .065, .12, '资金 100 万元 · 虚线为 5% 银行收益率 · 两组采用不同风险上限' if lang == 'zh' else
