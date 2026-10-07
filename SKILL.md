@@ -5,7 +5,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 # Praxis
 
-按用户目标，把原始问题推进为有相称证据的回答。单人限时且以完成为首要目标时，优先可交付的完整成果，复杂度服从剩余时间。以任务为工作单元，问题、模型、验证和交付使用相同任务 ID；不按外部项目来源拼流程，也不按算法库现有功能选题。
+按用户目标，把原始问题推进为有相称证据的回答。按实际场景、团队能力和交付时间安排工作；以完成为首要目标时，优先可交付的完整成果，复杂度服从剩余时间。以任务为工作单元，问题、模型、验证和交付使用相同任务 ID；不按外部项目来源拼流程，也不按算法库现有功能选题。
 
 ## 接续与统一入口
 
@@ -15,7 +15,8 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 用 [references/capabilities.md](references/capabilities.md) 按实际缺口选择分析、文献、模型、计算、验证、图表或写作能力；它定义职责与交接，不是另一套流程。只读需要的专业参考，同一任务 ID、版本、单位和结论边界贯穿各能力。
 
-- 用户单人工作、时间紧或强调先完成时，读 [references/solo-delivery.md](references/solo-delivery.md)。助手承担优先级、依赖与下一步协调，给用户一个当前事项；滚动形成完整稿，预算不足采用简化路线。
+- 涉及比赛、团队分工或限时完整交付时，先读 [references/context-and-team.md](references/context-and-team.md)，接续赛事／届次、实际人数、成员能力与可用时间；通用建模不默认套赛事规则，不默认用户单人。
+- 已确认单人且限时或强调先完成时，读 [references/solo-delivery.md](references/solo-delivery.md)。助手承担优先级、依赖与下一步协调，给用户一个当前事项；滚动形成完整稿，预算不足采用简化路线。
 - 分析记录使用 [references/tasks-template.md](references/tasks-template.md)，写入案例 planning/tasks.md；所有环节更新同一份任务记录。
 - 参数能否被观测区分、尺度、优化保证、概率区间或干预结论需要判断时，读 [references/mathematical-reasoning.md](references/mathematical-reasoning.md) 的对应条件分支；不增加全题必经阶段。
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。

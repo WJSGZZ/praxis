@@ -45,6 +45,10 @@ uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 
 能力按实际需求分为问题分析、文献来源、模型设计、数据计算、独立验证、图表表达、论文写作。各领域有对应专业参考，统一交接任务 ID、有效结果与结论边界；见 [能力分工](references/capabilities.md)。当前是技能内部的按需指导，并非自动多代理系统。
 
+## 场景与团队适配
+
+Praxis 面向数学建模本身，比赛是应用场景之一。先了解实际赛事／届次、人数、成员能力和可用时间，再安排任务主责、复核与交接；一、二、三人均有起始策略，通用项目不套赛事规则。全国规则与学校要求分别核验，交付语言、格式、附件、AI 披露和截止也按实际规范配置。见 [context-and-team.md](references/context-and-team.md)。当前是协调指导，尚未经过真实多人完整赛程验证。
+
 ## 单人限时完成
 
 当你独自推进、时间紧且首先要求完成时，Praxis 负责协调优先级、依赖和下一步，默认只给一个当前用户事项。先做必需任务的基线，边产生结果边写报告，尽早形成完整版本；复杂扩展按剩余预算决定，末段留给核对与交付。具体策略见 [solo-delivery.md](references/solo-delivery.md)。这是按需执行的指导，尚未经过完整三天演练验证，也不是后台倒计时或自动排程。
@@ -73,3 +77,9 @@ uv run --locked python -m examples.structural_reasoning_demo
 ## 许可
 
 本地编写的代码与文档采用 MIT；上游及依赖保留自己的许可，见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。研究报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
+
+## 商业使用与服务
+
+本地原创部分的 MIT 许可允许商业使用与销售副本，分发时保留版权和许可；依赖及第三方材料继续遵守各自许可。依据见 [MIT 原文](https://opensource.org/license/mit) 和 THIRD_PARTY_NOTICES.md。
+
+公开仓库可供他人获取和合法复用。可收费的服务可以是安装配置、原创教学材料、赛前或非竞赛完整演练、持续维护与使用支持；应明确具体交付，不把公开地址本身描述成独占源码权益。当前没有收费产品、定价或经验证的服务效果。
