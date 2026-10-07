@@ -1,0 +1,62 @@
+[
+  {
+    "name": "four feasibility and accounting",
+    "passed": true,
+    "evidence": "73 portfolios; budget residual=1.16e-16, accounting error=0, violation=1.53e-16"
+  },
+  {
+    "name": "four frontier and bank boundary",
+    "passed": true,
+    "evidence": "zero risk gives 0.050000000; 61 caps checked for nondecreasing optimal return"
+  },
+  {
+    "name": "four unrestricted analytical answer",
+    "passed": true,
+    "evidence": "best single-asset proportional return=0.267326732673; fees above thresholds, computed=0.267326732673"
+  },
+  {
+    "name": "four analytical optimality certificate",
+    "passed": true,
+    "evidence": "Ignoring minimum fees gives a valid upper bound; selected-point gaps=[np.float64(5.551115123125783e-17), np.float64(2.7755575615628914e-17), np.float64(0.0)]"
+  },
+  {
+    "name": "four exhaustive fee-regime optimum",
+    "passed": true,
+    "evidence": "3^4=81 fee regimes per portfolio; 69 cases; max return gap=5.55e-17; no optimization solver used"
+  },
+  {
+    "name": "four risk stress direction",
+    "passed": true,
+    "evidence": "risk multiplier 0.9/1.0/1.1 returns=[0.22265795206971678, 0.21901960784313723, 0.21590836595621282]"
+  },
+  {
+    "name": "fifteen feasibility and accounting",
+    "passed": true,
+    "evidence": "73 portfolios; budget residual=1.16e-16, accounting error=0, violation=1.46e-16"
+  },
+  {
+    "name": "fifteen frontier and bank boundary",
+    "passed": true,
+    "evidence": "zero risk gives 0.050000000; 61 caps checked for nondecreasing optimal return"
+  },
+  {
+    "name": "fifteen unrestricted analytical answer",
+    "passed": true,
+    "evidence": "best single-asset proportional return=0.409433962264; fees above thresholds, computed=0.409433962264"
+  },
+  {
+    "name": "fifteen analytical optimality certificate",
+    "passed": true,
+    "evidence": "Ignoring minimum fees gives a valid upper bound; selected-point gaps=[np.float64(5.551115123125783e-17), np.float64(5.551115123125783e-17), np.float64(-5.551115123125783e-17)]"
+  },
+  {
+    "name": "fifteen risk stress direction",
+    "passed": true,
+    "evidence": "risk multiplier 0.9/1.0/1.1 returns=[0.33917064447010387, 0.33534121390819566, 0.32976573791082525]"
+  },
+  {
+    "name": "fee discontinuity and threshold semantics",
+    "passed": true,
+    "evidence": "S2: investment=0 has fee=0; investment=0.001 has fee=3.96; investment=198 has fee=3.96. u is not a minimum purchase quantity."
+  }
+]

@@ -1,0 +1,5 @@
+asset,return_pct,risk_pct,fee_pct,threshold_yuan
+S1,28,2.5,1,103
+S2,21,1.5,2,198
+S3,23,5.5,4.5,52
+S4,25,2.6,6.5,40

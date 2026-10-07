@@ -12,23 +12,19 @@ From problem framing to model validation and report delivery — one reusable to
 
 [简体中文](README.md) · **English**
 
-[Quick start](#quick-start) · [Capabilities](#capabilities) · [Agent compatibility](#agent-compatibility) · [Validation and limitations](#validation-and-limitations)
+[Explore the demo](demos/cumcm-1998-a/README.en.md) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Agent compatibility](#agent-compatibility) · [Validation and limitations](#validation-and-limitations)
 
 </div>
+
+[![Praxis: from problem framing to a verified model and complete report; open the demo](demos/cumcm-1998-a/assets/overview-en.png)](demos/cumcm-1998-a/README.en.md)
+
+**[Explore the complete CUMCM demo →](demos/cumcm-1998-a/README.en.md)** · [Read the report (Chinese)](demos/cumcm-1998-a/deliverables/paper.pdf)
 
 ---
 
 Praxis helps individuals and teams turn problems and data into **interpretable models, independent checks, and traceable reports**. Use it for research, coursework, practical applications, or mathematical modeling competitions. Start with your problem; you do not need to choose an algorithm first.
 
 A shared task record connects the entire workflow. Methods are selected as needed, validation is designed alongside the model, and verified results feed into the report. You can also use a single capability, such as reviewing assumptions or improving an argument.
-
-```mermaid
-flowchart LR
-    A[Frame the problem] --> B[Choose an approach]
-    B --> C[Produce results]
-    C --> D[Assess evidence]
-    D --> E[Deliver an answer]
-```
 
 <table>
 <tr>
@@ -37,6 +33,39 @@ flowchart LR
 <td width="33%"><strong>Adapt to the team</strong><br>Assign ownership and handoffs around actual skills, team size, and availability.</td>
 </tr>
 </table>
+
+## See a complete case
+
+**CUMCM 1998 A: from fee thresholds and risk constraints to an optimal portfolio, independent checks, and a complete report.**
+
+[![CUMCM case: risk-return frontiers and verifiable results](demos/cumcm-1998-a/assets/risk-return.png)](demos/cumcm-1998-a/README.en.md)
+
+<table>
+<tr>
+<td width="33%"><strong>16-page report</strong><br>Model, results, proofs, figures, and full modeling-code appendix.</td>
+<td width="33%"><strong>12 model checks</strong><br>Fee-regime enumeration, analytical bounds, and boundary checks.</td>
+<td width="33%"><strong>Runnable evidence</strong><br>Two deliverables, source code, and reproduction records.</td>
+</tr>
+</table>
+
+At a CNY 1,000,000 budget, the four-asset solution returns **21.90%** net at a 1% risk limit; the fifteen-asset solution returns **33.53%** net at a 10% limit. These are conditional model results, not investment forecasts. The case explains the assumptions, validation, and sufficient capital thresholds.
+
+**[Explore the case and report previews →](demos/cumcm-1998-a/README.en.md)** · [Read the report (Chinese)](demos/cumcm-1998-a/deliverables/paper.pdf) · [Download supporting files](demos/cumcm-1998-a/deliverables/supporting_materials.zip)
+
+<details>
+<summary><strong>Look inside the report: the answer and the proof</strong></summary>
+
+<table>
+<tr>
+<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-abstract.png" alt="Abstract: definitions, method, results" width="100%"></a></td>
+<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-proof.png" alt="Proof: upper bound and capital condition" width="100%"></a></td>
+</tr>
+<tr><td>Abstract: definitions, method, results</td><td>Proof: upper bound and capital condition</td></tr>
+</table>
+
+</details>
+
+If this is the kind of complete, verifiable modeling work you want to build, **star Praxis** or try the quick start below.
 
 ## Quick start
 
@@ -156,7 +185,7 @@ See [Architecture](ARCHITECTURE.md) for the layout and conditions for future ext
 
 | Status | Current evidence |
 |---|---|
-| **Validated** | 39 local tool tests have previously passed, covering analytical answers, input protection, failed and stale evidence, PDF helpers, and self-contained plugin export; synthetic modeling exercises are also recorded |
+| **Validated** | 45 local tool tests have previously passed, covering analytical answers, input protection, failed and stale evidence, PDF helpers, and self-contained plugin export; synthetic exercises and a complete historical CUMCM case are recorded |
 | **Implemented guidance; field testing pending** | Context and team adaptation, solo deadline coordination, capability handoffs, and writing guidance |
 | **Not yet completed** | Full cases in other agent hosts, real team competition runs, a complete three-day exercise, and host plugin installation tests |
 

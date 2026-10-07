@@ -18,6 +18,13 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
         assert hashlib.sha256((output / name).read_bytes()).hexdigest() == digest
     assert not any(part in {'.git', '.venv', '.session', 'cases', 'outputs', '__pycache__'}
                    for path in output.rglob('*') for part in path.relative_to(output).parts)
+    # README showcase links must also work in an exported, self-contained bundle.
+    demo = output / 'skills/praxis/demos/cumcm-1998-a'
+    assert (demo / 'deliverables/paper.pdf').read_bytes() == (
+        BUNDLE / 'demos/cumcm-1998-a/deliverables/paper.pdf').read_bytes()
+    assert (demo / 'assets/risk-return.png').is_file()
+    assert (demo / 'reproduce/run_demo.py').is_file()
+    assert not (demo / 'reproduce/reproduced').exists()
     problem = tmp_path / 'synthetic.md'
     problem.write_text('Synthetic packaging check only.')
     workspace = tmp_path / 'workspace'

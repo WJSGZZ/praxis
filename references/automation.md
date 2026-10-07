@@ -51,7 +51,16 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
 
 ## 写作连接
 
-按实际任务组织报告，将有效运行编号、指标与来源记到工作项目记录。数据或代码变化就重跑并同步文稿。论文沿用用户当前源文件，按实际期刊、课程或比赛的规定检查格式；不硬编码某比赛的页数与字体规则。scripts/check_pdf.py 只检查可提取文字、元数据、页数与显式配置限制，不检查字体或渲染布局；逐页视觉检查仍需 PDF 查看工具。scripts/freeze_pdf.py 创建字节一致的新副本与哈希回执，不是正式提交回执。
+按实际任务组织报告，将有效运行编号、指标与来源记到工作项目记录。数据或代码变化就重跑并同步文稿。论文沿用用户当前源文件，按实际期刊、课程或比赛的规定检查格式；不硬编码某比赛的页数与字体规则。scripts/check_pdf.py 检查可提取文字、元数据、页数、实际提取文本对应的字体名称与嵌入结构，并按显式配置检查；`--forbidden-font` 使用不含子集前缀的PDF 中提取的 PostScript 字面名或带引号的通配模式（如 `'Example-Black*'`，兼容编排器追加编号），不能仅凭字体文件名或把 Black 当 Regular。`--require-embedded-fonts` 为按场景启用的检查，不默认将未嵌入字体判为违规。轮廓公式、图片文字、文本提取未识别的字形与实际版面仍须逐页渲染查看；有字体程序不证明程序有效或视觉正确。
+
+写论文或交付摘要时，传 `--checks /实际运行/checks.json` 获取真实 total/passed/failed；已有稿件声称的项数可用 `--claimed-check-count` 比对，存在失败或数量不一致时返回非零。报告正文和状态的数量从这份证据派生，不手工凭记忆填写；检查通过不等于检查独立或覆盖充分。
+
+```bash
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/check_pdf.py" /绝对路径/paper.pdf \
+  --checks /实际运行/checks.json --claimed-check-count 12
+```
+
+字体禁用与是否要求嵌入由本稿规格配置，不内置赛事的某一种字体名单。逐页视觉检查仍需 PDF 查看工具。scripts/freeze_pdf.py 创建字节一致的新副本与哈希回执，不是正式提交回执。
 
 
 ## 数值任务的证据索引

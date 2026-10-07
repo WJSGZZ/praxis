@@ -39,3 +39,72 @@ def test_pdf_intake_requires_visual_review(tmp_path):
     record=json.loads((case/'case.json').read_text())
     assert record['problem_visual_review_required']
     assert not record['problem_text_extracted']
+
+
+def make_font_pdf(path):
+    """Synthetic text uses two faces; a declared third face is deliberately unused."""
+    from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject
+    writer=PdfWriter();page=writer.add_blank_page(width=300,height=400)
+    fonts=DictionaryObject()
+    for key,face in [('F1','ABCDEF+Example-Regular'),('F2','ABCDEF+Example-Black-0'),('F3','Unused-Black')]:
+        font=DictionaryObject({NameObject('/Type'):NameObject('/Font'),
+                              NameObject('/Subtype'):NameObject('/Type1'),
+                              NameObject('/BaseFont'):NameObject('/'+face),
+                              NameObject('/Encoding'):NameObject('/WinAnsiEncoding')})
+        fonts[NameObject('/'+key)]=writer._add_object(font)
+    page[NameObject('/Resources')]=DictionaryObject({NameObject('/Font'):fonts})
+    content=DecodedStreamObject()
+    content.set_data(b'BT /F1 12 Tf 20 300 Td (regular) Tj /F2 12 Tf 0 -20 Td (black) Tj ET')
+    page[NameObject('/Contents')]=writer._add_object(content)
+    with path.open('wb') as f:writer.write(f)
+
+
+def test_actual_text_faces_and_optional_embedding_requirement(tmp_path):
+    path=tmp_path/'faces.pdf';make_font_pdf(path);before=path.read_bytes()
+    report=inspect_pdf(path,forbidden_fonts=['Example-Black*'])
+    assert {f['face'] for f in report['fonts']}=={'Example-Regular','Example-Black-0'}
+    assert len(report['errors'])==1
+    assert 'Example-Black' in report['errors'][0]
+    # A face declared in resources but unused in text is not reported as a body font.
+    assert not inspect_pdf(path,forbidden_fonts=['Unused-Black'])['errors']
+    assert len(inspect_pdf(path,require_embedded_fonts=True)['errors'])==2
+    assert path.read_bytes()==before
+
+
+def test_descendant_font_embedding_structure():
+    from scripts.check_pdf import font_record
+    from pypdf.generic import DictionaryObject, NameObject, ArrayObject, DecodedStreamObject
+    descriptor=DictionaryObject({NameObject('/FontFile2'):DecodedStreamObject()})
+    descendant=DictionaryObject({NameObject('/FontDescriptor'):descriptor})
+    font=DictionaryObject({NameObject('/BaseFont'):NameObject('/ABCDEF+Example-Regular'),
+                           NameObject('/Subtype'):NameObject('/Type0'),
+                           NameObject('/DescendantFonts'):ArrayObject([descendant])})
+    assert font_record(font)['embedding_present']
+    del descriptor['/FontFile2']
+    assert not font_record(font)['embedding_present']
+
+
+def test_report_count_and_failed_evidence_cannot_be_upgraded(tmp_path):
+    import json
+    path=tmp_path/'input.pdf';make_pdf(path)
+    checks=tmp_path/'checks.json'
+    entries=[{'name':f'check {i}','passed':True,'evidence':f'independent synthetic value {i}'} for i in range(12)]
+    checks.write_text(json.dumps(entries))
+    report=inspect_pdf(path,checks_path=checks,claimed_check_count=13)
+    assert report['check_summary']['total']==12 and report['check_summary']['passed']==12
+    assert len(report['errors'])==1
+    assert not inspect_pdf(path,checks_path=checks,claimed_check_count=12)['errors']
+    entries[-1]['passed']=False;checks.write_text(json.dumps(entries))
+    report=inspect_pdf(path,checks_path=checks,claimed_check_count=12)
+    assert report['check_summary']['failed']==1
+    assert report['errors']
+    assert report['check_summary']['independence_not_assessed']
+
+
+@pytest.mark.parametrize('entries', [[],[{'name':'x','passed':1,'evidence':'value'}],
+    [{'name':'x','passed':True,'evidence':'value'}]*2])
+def test_malformed_or_duplicate_evidence_is_rejected(tmp_path,entries):
+    import json
+    from scripts.check_pdf import summarize_checks
+    path=tmp_path/'checks.json';path.write_text(json.dumps(entries))
+    with pytest.raises(ValueError):summarize_checks(path)

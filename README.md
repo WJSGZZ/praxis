@@ -12,23 +12,19 @@
 
 **简体中文** · [English](README.en.md)
 
-[快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
+[查看 Demo](demos/cumcm-1998-a/README.md) · [快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
 
 </div>
+
+[![Praxis：从问题分析、模型求解到验证与完整报告；点击进入国赛 Demo](demos/cumcm-1998-a/assets/overview-zh.png)](demos/cumcm-1998-a/README.md)
+
+**[查看完整国赛 Demo →](demos/cumcm-1998-a/README.md)** · [直接阅读论文](demos/cumcm-1998-a/deliverables/paper.pdf)
 
 ---
 
 Praxis 帮助个人或团队，把问题和数据推进为**可解释的模型、独立验证和可追溯的报告**。适用于研究、课程、实际应用与数学建模比赛；你无需先指定算法，也可以只使用分析、验证或写作中的一个环节。
 
 它围绕同一份任务记录工作：方法按需要选择，模型与验证一起设计，计算结果逐项进入报告。
-
-```mermaid
-flowchart LR
-    A[明确问题] --> B[形成路线]
-    B --> C[取得结果]
-    C --> D[判断证据]
-    D --> E[完成回答]
-```
 
 <table>
 <tr>
@@ -37,6 +33,39 @@ flowchart LR
 <td width="33%"><strong>按团队适配</strong><br>根据实际人数、能力和可用时间安排责任与交接。</td>
 </tr>
 </table>
+
+## 一个完整案例，先看 Praxis 做出了什么
+
+**1998 国赛 A 题《投资的收益和风险》：从费用门槛与风险约束，走到最优方案、独立核验和完整论文。**
+
+[![国赛完整案例：风险收益曲线、代表结果与最优性论证](demos/cumcm-1998-a/assets/risk-return.png)](demos/cumcm-1998-a/README.md)
+
+<table>
+<tr>
+<td width="33%"><strong>16 页完整报告</strong><br>模型、结果、证明、图表与完整代码附录。</td>
+<td width="33%"><strong>12 项模型检查</strong><br>费用分区穷举、解析上界及边界检查。</td>
+<td width="33%"><strong>下载后可以复现</strong><br>两份交付文件，计算入口与证据一起开放。</td>
+</tr>
+</table>
+
+资金 100 万元时，四资产在风险上限 1% 下得到净收益率 **21.90%**，十五资产在风险上限 10% 下得到 **33.53%**。这些是题目参数与所述风险定义下的模型结果；案例页解释条件、核验和资金规模论证。
+
+**[看完整案例与报告预览 →](demos/cumcm-1998-a/README.md)** · [阅读论文](demos/cumcm-1998-a/deliverables/paper.pdf) · [下载支撑材料](demos/cumcm-1998-a/deliverables/supporting_materials.zip)
+
+<details>
+<summary><strong>展开看看报告：摘要与最优性证明</strong></summary>
+
+<table>
+<tr>
+<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-abstract.png" alt="摘要：定义、方法与量化结果" width="100%"></a></td>
+<td width="50%"><a href="demos/cumcm-1998-a/deliverables/paper.pdf"><img src="demos/cumcm-1998-a/assets/report-proof.png" alt="证明：解析上界与资金规模条件" width="100%"></a></td>
+</tr>
+<tr><td>摘要：定义、方法与量化结果</td><td>证明：解析上界与资金规模条件</td></tr>
+</table>
+
+</details>
+
+如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 
 ## 快速开始
 
@@ -154,7 +183,7 @@ uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 
 | 状态 | 当前证据 |
 |---|---|
-| **已验证** | 本地工具累计 39 项测试通过，涵盖解析答案、输入保护、失败与过期证据、PDF 辅助及自包含插件导出；有合成建模演练记录 |
+| **已验证** | 本地工具累计 45 项测试通过，涵盖解析答案、输入保护、失败与过期证据、PDF 辅助及自包含插件导出；有合成演练与完整国赛历史题目案例 |
 | **已实现，待实战验证** | 场景与团队适配、单人限时协调、专业能力交接与写作指导 |
 | **尚未完成** | 其他 Agent 完整案例实测、真实多人赛程、完整三天限时演练及宿主插件安装验证 |
 

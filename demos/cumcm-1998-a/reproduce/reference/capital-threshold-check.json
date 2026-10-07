@@ -1,0 +1,30 @@
+[
+  {
+    "group": "four",
+    "sufficient_threshold_yuan": 338.8590604026845,
+    "budget_yuan": 338.8590604026845,
+    "net_return_gap": 2.7755575615628914e-17,
+    "passed": true
+  },
+  {
+    "group": "four",
+    "sufficient_threshold_yuan": 338.8590604026845,
+    "budget_yuan": 339.0,
+    "net_return_gap": 2.7755575615628914e-17,
+    "passed": true
+  },
+  {
+    "group": "fifteen",
+    "sufficient_threshold_yuan": 2601.3400645313063,
+    "budget_yuan": 2601.3400645313063,
+    "net_return_gap": 1.1102230246251565e-16,
+    "passed": true
+  },
+  {
+    "group": "fifteen",
+    "sufficient_threshold_yuan": 2601.3400645313063,
+    "budget_yuan": 2602.0,
+    "net_return_gap": 5.551115123125783e-17,
+    "passed": true
+  }
+]

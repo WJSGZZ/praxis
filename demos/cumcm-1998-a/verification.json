@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-07",
+  "model_checks": {
+    "total": 12,
+    "passed": 12
+  },
+  "supplemental_threshold_checks": {
+    "total": 4,
+    "passed": 4
+  },
+  "tool_tests_passed": 45,
+  "readme_links": "All local targets in both homepages and both case guides checked",
+  "deliverable_hashes_match_submission": true,
+  "preview_pages": [
+    1,
+    7
+  ],
+  "preview_visual_review": "All three PNG previews inspected",
+  "reproduction_environment": "Existing locked project environment; no fresh-install or Windows claim",
+  "homepage_visuals": [
+    "overview-zh.png",
+    "overview-en.png",
+    "risk-return.png",
+    "report-abstract.png",
+    "report-proof.png"
+  ],
+  "homepage_visual_review": "Both new bilingual overview graphics inspected; plot and report previews retained from inspected source",
+  "local_readme_links_checked": 87
+}

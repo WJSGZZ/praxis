@@ -9,7 +9,7 @@ Praxis assembles an agent workflow and locally authored adapters; it does not cl
 
 Other installed scientific dependencies (NumPy, pandas, SciPy, matplotlib, scikit-learn, NetworkX, SymPy, statsmodels, openpyxl and their transitive dependencies) are not vendored; inspect each installed distribution's own license when redistributing dependencies. uv.lock records versions and archive hashes. third_party/dependencies.json distinguishes repository review commits from installed releases.
 
-No guarantee of legal clearance or exclusive rights to the project name is made. This repository is not a fork of MathModelHub, is not endorsed by upstream authors, and does not include users' case files or conversations.
+No guarantee of legal clearance or exclusive rights to the project name is made. This repository is not a fork of MathModelHub, is not endorsed by upstream authors, and does not include private user workspaces or conversation exports. The explicitly curated historical demonstration in demos/cumcm-1998-a is included for public development use.
 
 
 Workflow review additions:
@@ -32,3 +32,10 @@ Capability references:
 Matplotlib, Seaborn, scikit-learn, and Manubot are cited as concept/tool references for data processing, graphics and citation traceability. No source code, tutorial text or figures are included through this review; no new dependency is installed. Fixed review commits, inspected license texts and scope are recorded in third_party/capability-review.json. Matplotlib and scikit-learn remain existing dependencies with their own distribution licenses.
 
 Writing guidance briefly adapts general reader-oriented principles from Brett Mensh and Konrad Kording, “Ten simple rules for structuring papers” (2017), DOI 10.1371/journal.pcbi.1005619, with attribution and a link in references/writing.md. The publisher states Creative Commons Attribution; no full article text or figures are reproduced. Praxis's original task handoffs and guidance are locally authored.
+
+
+Public demonstration:
+
+- CUMCM 1998 A parameter tables are transcribed from page 11 of the organizer's [official historical problem collection](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf). Numerical problem parameters retain this attribution; the official PDF and others' solutions are not redistributed.
+- The demo's solution, code, report text, figures, and page previews are project-created materials. No official showcase paper text or images are copied. PDF font programs embedded for displaying the report are not standalone font distributions and are not relicensed by the repository MIT license.
+- Original modeling code calls NumPy, SciPy/HiGHS, and Matplotlib; these dependencies are not vendored. The support archive includes original code and generated artifacts, not third-party library implementations.
