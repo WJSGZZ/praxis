@@ -46,8 +46,8 @@
 <td valign="top"><strong>平均水温够高，远处的水也够暖吗？</strong><br>从可证明的完混基线进入三维热网络，比较补水策略、空间温差与能量下界。</td>
 </tr>
 <tr>
-<td valign="top"><strong>17 页中文报告 · 12 项模型检查</strong><br>资金 100 万元时，四资产风险上限 1% 下的净收益率为 21.90%；十五资产风险上限 10% 下为 33.53%。结果基于题目参数及所述风险定义。</td>
-<td valign="top"><strong>25 页英文报告 · 17 项模型检查</strong><br>30 分钟基准情景中，最佳恒定流量补水 24.14 L，分段方案 19.77 L（少 18%），理想完混 16.01 L，能量下界 15.41 L。系数取自文献推导并给出范围，结果不冒充实测。</td>
+<td valign="top"><strong>17 页中文报告 · 12 项模型检查</strong><br>资金 100 万元时，四资产风险上限 1% 下的净收益率为 21.90%；十五资产风险上限 10% 下为 33.53%。</td>
+<td valign="top"><strong>25 页英文报告 · 17 项模型检查</strong><br>30 分钟基准情景中，最佳恒定流量补水 24.14 L，分段方案 19.77 L（少 18%），理想完混 16.01 L，能量下界 15.41 L。系数取自文献推导，并给出取值范围。</td>
 </tr>
 <tr>
 <td valign="top"><strong>论文 PDF + 支撑材料 ZIP</strong><br>完整代码与复现证据在案例页开放。</td>
@@ -139,7 +139,7 @@ uv sync --project /path/to/praxis --locked
 | 不确定性 | `sobol_sensitivity` |
 | 数据与文献（均免费） | `audit_data`、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
-插件还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。期刊论文多数付费：工具只会找合法的免费版本，其余请通过学校图书馆或知网获取。
+插件还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
 
 每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。常规的 MATLAB 与 R 用法，Python 基本都能覆盖。
 
@@ -177,7 +177,7 @@ WORKSPACE="/absolute/path/to/your/project"
   --data "$WORKSPACE/data.csv"
 ```
 
-助手写并审核案例中的 `model.py` 和 `validate.py` 后，才执行 `run`。脚本不自行理解任意题目或生成模型。数据、案例与输出默认不进入 Git，项目规则由工作区提供。
+助手在案例中写好并审核 `model.py` 和 `validate.py`，再执行 `run`。数据、案例与输出默认不进入 Git，项目规则由工作区提供。
 
 完整接口见 [执行契约](references/automation.md)。
 
@@ -206,8 +206,6 @@ praxis-plugin/
 - 63 项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
 - 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
 - 每个结论标明依据与适用条件；失败的运行保留，不改写。
-
-模型是否贴合现实、论文的版面与公式，最终仍由你过目。Praxis 不保证获奖，也不替你提交。
 
 <details>
 <summary><strong>开发与演练命令</strong></summary>

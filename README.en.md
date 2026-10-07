@@ -47,7 +47,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 <tr>
 <td valign="top"><strong>17-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
-<td valign="top"><strong>25-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a 12-segment schedule 19.77 L (18% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients are literature-derived with ranges, not measured.</td>
+<td valign="top"><strong>25-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a 12-segment schedule 19.77 L (18% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients are literature-derived, with stated ranges.</td>
 </tr>
 <tr>
 <td valign="top"><strong>Report PDF + supporting ZIP</strong><br>Modeling code and reproduction evidence are available on the case page.</td>
@@ -107,8 +107,6 @@ Or start with a focused request:
 
 **The skill directory stores reusable capabilities. Your workspace stores problems, data, cases, and reports.** Scripts handle execution and traceability; the agent handles interpretation, method selection, and scientific judgment.
 
-This is the English project overview. The skill instructions and most detailed references are currently in Chinese; an English README does not imply a fully translated instruction set.
-
 ## Skills
 
 The entry skill takes a problem end to end; each focused skill handles one kind of request. If you only need one thing, call that skill instead of running the whole workflow.
@@ -142,7 +140,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Uncertainty | `sobol_sensitivity` |
 | Data and free literature | `audit_data`, `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
-The plugin also wires in the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. Most journal papers are paywalled: the tools only find legal free copies, so fetch the rest through a school library.
+The plugin also wires in the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. For paywalled journal papers the tools find legal free copies; the rest can come from a school library.
 
 When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). Python covers the ordinary uses of MATLAB and R.
 
@@ -180,7 +178,7 @@ WORKSPACE="/absolute/path/to/your/project"
   --data "$WORKSPACE/data.csv"
 ```
 
-The agent writes and reviews the case's `model.py` and `validate.py` before executing `run`. The CLI does not interpret arbitrary problems or generate models by itself. Data, cases, and outputs are excluded from Git by default; project rules come from your workspace.
+The agent writes and reviews the case's `model.py` and `validate.py`, then executes `run`. Data, cases, and outputs are excluded from Git by default; project rules come from your workspace.
 
 See the [Execution contract](references/automation.md) for the complete interface.
 
@@ -209,8 +207,6 @@ Your problems, data, and cases stay in your own workspace, never in the plugin. 
 - 63 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
-
-Whether a model fits reality, and how the paper's layout and formulas look, are still yours to review. Praxis does not promise awards and does not submit for you.
 
 <details>
 <summary><strong>Development and exercise commands</strong></summary>
