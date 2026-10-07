@@ -1,83 +1,167 @@
+<div align="center">
+
 # Praxis
 
-**一个面向支持 Agent Skills 的 AI Agent 的数学建模能力包：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
+### 从问题出发，让模型、证据与报告连起来。
 
-Praxis 围绕同一任务组织五个环节：明确问题、形成路线、取得结果、判断证据、完成回答。模型与验证一起选择，失败按原因返回对应环节；方法按任务条件调用，多个模型只有输入输出关系明确且确有用途时才组合。工具负责原始输入、审计、运行与证据追溯，助手负责含义、选择与科学判断。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)，新增工作流对照与改进见 [审查记录](references/upstream-review.md)。
+面向 AI Agent 的数学建模能力包 · 中文工作流 · 通用建模与赛事协作
 
-## 安装与使用
+[![Agent Skills](https://img.shields.io/badge/Agent_Skills-portable-334155?style=flat-square)](https://agentskills.io/specification)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
+[![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
 
-Praxis 使用开放的 `SKILL.md` 格式，建模主线、参考和 Python 工具不依赖某一家模型。脚本执行需要 Python 3.12、[uv](https://docs.astral.sh/uv/) 以及宿主的本地文件／终端能力；仅使用分析方法不必先准备 Python 环境。
+[快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
 
-按宿主选择安装位置（`praxis` 是技能目录）：
+</div>
 
-| 宿主 | 项目内目录 | 本地个人目录 | 当前证据 |
-|---|---|---|---|
-| Codex | `.agents/skills/praxis` | `~/.agents/skills/praxis` | 当前 Codex 会话已使用；新发现路径依据官方文档，未重新安装验证 |
-| Claude Code | `.claude/skills/praxis` | `~/.claude/skills/praxis` | 官方格式／路径已核对，宿主实测待完成 |
-| Gemini CLI | `.agents/skills/praxis` 或 `.gemini/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.gemini/skills/praxis` | 官方格式／路径已核对，宿主实测待完成 |
-| GitHub Copilot | `.github/skills/praxis` 或 `.agents/skills/praxis` | CLI 可用 `~/.copilot/skills/praxis` 或 `~/.agents/skills/praxis` | 官方格式／路径已核对，不同运行表面仍需实测 |
-| Cursor | `.agents/skills/praxis` 或 `.cursor/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.cursor/skills/praxis` | 官方格式／路径已核对，宿主实测待完成 |
+---
 
-例如安装到共享个人目录（目标目录必须尚不存在）：
+Praxis 帮助个人或团队，把问题和数据推进为**可解释的模型、独立验证和可追溯的报告**。适用于研究、课程、实际应用与数学建模比赛；你无需先指定算法，也可以只使用分析、验证或写作中的一个环节。
+
+它围绕同一份任务记录工作：方法按需要选择，模型与验证一起设计，计算结果逐项进入报告。
+
+```mermaid
+flowchart LR
+    A[明确问题] --> B[形成路线]
+    B --> C[取得结果]
+    C --> D[判断证据]
+    D --> E[完成回答]
+```
+
+<table>
+<tr>
+<td width="33%"><strong>完成优先</strong><br>先形成基线和完整稿，再按剩余预算改善。</td>
+<td width="33%"><strong>证据贯穿</strong><br>任务、结果、独立检查和论文位置相互对应。</td>
+<td width="33%"><strong>按团队适配</strong><br>根据实际人数、能力和可用时间安排责任与交接。</td>
+</tr>
+</table>
+
+## 快速开始
+
+### 1. 安装技能
+
+以下示例适用于支持共享个人技能目录的本地 Agent，目标目录须尚不存在：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
+```
+
+Claude Code 使用 `~/.claude/skills/praxis`。其他位置见 [Agent 兼容](#agent-兼容)；同一宿主只启用一个同名版本，已有安装不自动迁移。
+
+### 2. 准备计算环境
+
+执行脚本需要 **Python 3.12**、[uv](https://docs.astral.sh/uv/) 和宿主的本地文件／终端能力：
+
+```bash
 uv sync --project ~/.agents/skills/praxis --locked
 ```
 
-Claude Code 使用表中的 `.claude` 路径。同一宿主只启用一个同名版本；已有 Codex 旧安装不自动迁移。重载技能或重新开始会话后，在工作项目中说：
+仅使用分析方法，无需先准备 Python 环境。若安装位置不同，替换命令中的技能路径。
+
+### 3. 在你的项目中使用
+
+重载技能或重新开始会话，确认宿主加载了 Praxis，然后提出任务：
 
 > 使用 Praxis 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
 
-也可以只要求读题、比较路线或审查已有模型。自然语言请求不保证宿主必定加载技能，应核对实际加载；专用调用入口随宿主而异。技能目录保存工具，案例保存到当前工作项目。官方来源、能力条件、调用差异和验证边界见 [跨 Agent 兼容说明](references/agent-compatibility.md)。
+也可以从一个明确的小任务开始：
 
-命令行建立案例的例子：
+> 审查我的模型：哪些假设没有依据，哪些结论还缺验证？
+
+> 我们有三个人，请根据成员能力和可用时间安排任务，先完成一份完整报告。
+
+**技能目录保存可复用能力，你的工作区保存题目、数据、案例和论文。** 程序负责执行与追溯，助手负责题意、选择和科学判断。
+
+## 能力概览
+
+| 能力 | 你能得到什么 | 入口 |
+|---|---|---|
+| 问题分析 | 原始要求、变量、约束、成功条件与任务依赖 | [统一方法](references/methods.md) |
+| 模型与数学思想 | 基线、必要扩展、量纲、不变性、可辨识性与优化结构等条件指导 | [数学推理](references/mathematical-reasoning.md) |
+| 数据与计算 | CSV／Excel 审计、原件保全、可复现运行；Sobol 与 TOPSIS 工具 | [数据计算](references/data-computing.md) |
+| 独立验证 | 相称的对照与检查、失败记录、过期检测和数值任务证据索引 | [执行契约](references/automation.md) |
+| 图表与写作 | 从有效结果形成图表、论证和报告，保持数字、单位与来源一致 | [图表](references/visualization.md) · [写作](references/writing.md) |
+| 协调与交付 | 一／二／三人分工起点、责任与交接、限时简化路线和交付余量 | [团队适配](references/context-and-team.md) · [单人策略](references/solo-delivery.md) |
+
+这些能力沿同一条主线调用，不要求每次走完全部环节。专业分工与共享交接内容见 [能力分工](references/capabilities.md)。
+
+### 比赛是一个使用场景
+
+国赛、美赛、课程和研究共用建模能力。参赛时，再分别核验该届赛事与学校／赛区要求，配置人数、交付语言、格式、附件、AI 披露和截止时间。
+
+单人限时任务默认只给用户一个当前事项，边取得结果边写报告；多人任务按能力和依赖安排主责与复核。通用项目不套用赛事规则。
+
+## Agent 兼容
+
+同一份 `SKILL.md`、参考与 Python 工具，按宿主选择发现目录：
+
+| Agent | 项目内目录 | 本地个人目录 |
+|---|---|---|
+| Codex | `.agents/skills/praxis` | `~/.agents/skills/praxis` |
+| Claude Code | `.claude/skills/praxis` | `~/.claude/skills/praxis` |
+| Gemini CLI | `.agents/skills/praxis` 或 `.gemini/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.gemini/skills/praxis` |
+| GitHub Copilot | `.github/skills/praxis` 或 `.agents/skills/praxis` | CLI：`~/.copilot/skills/praxis` 或 `~/.agents/skills/praxis` |
+| Cursor | `.agents/skills/praxis` 或 `.cursor/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.cursor/skills/praxis` |
+
+**兼容证据：** 当前已有 Codex 协作与本地 Python 验证记录；五家官方格式与路径已核对，其他四家宿主、新发现路径、Windows 和远程环境仍待实际验证。自然语言调用是否加载技能，取决于宿主。
+
+官方依据、专用调用方式和能力条件见 [跨 Agent 兼容说明](references/agent-compatibility.md)。
+
+## 工具与插件
+
+<details>
+<summary><strong>命令行：在独立工作区建立案例</strong></summary>
+
+以下命令以 POSIX shell 为例，路径需替换为实际位置：
 
 ```bash
 BUNDLE="$HOME/.agents/skills/praxis"
 WORKSPACE="/absolute/path/to/your/project"
-"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" init   --name example --problem "$WORKSPACE/problem.pdf" --data "$WORKSPACE/data.csv"
+
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" \
+  --workspace "$WORKSPACE" init \
+  --name example \
+  --problem "$WORKSPACE/problem.pdf" \
+  --data "$WORKSPACE/data.csv"
 ```
 
-助手按 [执行契约](references/automation.md) 写并审核案例内的 model.py 与 validate.py 后，才运行 `run`；命令行脚本本身不会自动理解问题或生成模型。数据、案例与输出默认不进入 Git。项目规则与比赛规则由工作项目提供。
+助手写并审核案例中的 `model.py` 和 `validate.py` 后，才执行 `run`。脚本不自行理解任意题目或生成模型。数据、案例与输出默认不进入 Git，项目规则由工作区提供。
 
-## 工作区与插件
+完整接口见 [执行契约](references/automation.md)。
 
-同一份维护源既支持通用 Skill 安装，也能导出含 Skill、脚本、锁定依赖和许可的 portable 插件包：
+</details>
+
+<details>
+<summary><strong>插件：从同一维护源导出能力包</strong></summary>
+
+在仓库根目录运行，输出目录须尚不存在：
 
 ```bash
 uv run --locked python -m scripts.build_plugin --output outputs/praxis-plugin
 ```
 
-导出目录必须尚不存在。题目、数据、案例与论文继续保存在用户工作区；环境需要显式准备。通用 Skill 是跨宿主入口，当前插件导出按 OpenAI 插件格式组织，各宿主插件安装不能直接等同。当前已支持目录导出，尚未验证宿主插件安装／发现，也未在官方插件目录上架。架构、职责和后续扩展条件见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+导出包含 Skill、脚本、参考、锁定依赖和来源许可。环境需要显式准备，用户材料继续保存在工作区。
 
-## 方法与工具的分工
+通用 Skill 是跨宿主入口；当前插件导出按 OpenAI 插件格式组织，不能等同于所有宿主的插件安装方式。目录导出已实现，宿主插件安装／发现尚未验证，也未在官方插件目录上架。
 
-统一推理主线在 [methods.md](references/methods.md)，各环节更新同一份任务记录。定义歧义的例子按需读取；算法封装按输入条件调用；运行与证据脚本服务于主线，不决定题意或结论。用户只要求分析就完成分析，完整建模才推进至实际结果与报告。
+结构与扩展条件见 [架构说明](ARCHITECTURE.md)。
 
-能力按实际需求分为问题分析、文献来源、模型设计、数据计算、独立验证、图表表达、论文写作。各领域有对应专业参考，统一交接任务 ID、有效结果与结论边界；见 [能力分工](references/capabilities.md)。当前是技能内部的按需指导，并非自动多代理系统。
+</details>
 
-## 场景与团队适配
+## 验证与边界
 
-Praxis 面向数学建模本身，比赛是应用场景之一。先了解实际赛事／届次、人数、成员能力和可用时间，再安排任务主责、复核与交接；一、二、三人均有起始策略，通用项目不套赛事规则。全国规则与学校要求分别核验，交付语言、格式、附件、AI 披露和截止也按实际规范配置。见 [context-and-team.md](references/context-and-team.md)。当前是协调指导，尚未经过真实多人完整赛程验证。
+| 状态 | 当前证据 |
+|---|---|
+| **已验证** | 本地工具累计 39 项测试通过，涵盖解析答案、输入保护、失败与过期证据、PDF 辅助及自包含插件导出；有合成建模演练记录 |
+| **已实现，待实战验证** | 场景与团队适配、单人限时协调、专业能力交接与写作指导 |
+| **尚未完成** | 其他 Agent 完整案例实测、真实多人赛程、完整三天限时演练及宿主插件安装验证 |
 
-## 单人限时完成
+自动检查通过不证明模型适用于现实；权重情景份额不是客观概率；日志不是完整 AI 对话。任务清单的完整性须对照原题审查，PDF 的公式、图表与版面仍需视觉核验。大文件或不支持格式会明确延后审计。
 
-当你独自推进、时间紧且首先要求完成时，Praxis 负责协调优先级、依赖和下一步，默认只给一个当前用户事项。先做必需任务的基线，边产生结果边写报告，尽早形成完整版本；复杂扩展按剩余预算决定，末段留给核对与交付。具体策略见 [solo-delivery.md](references/solo-delivery.md)。这是按需执行的指导，尚未经过完整三天演练验证，也不是后台倒计时或自动排程。
+Praxis 不承诺任意题目都能自动完成、获奖或无人审核提交。
 
-## 已实现与限制
-
-- 任务拆解、机制与基线选择指导，见 [方法参考](references/methods.md)。
-- CSV 与 Excel 全工作表审计；PDF 文本提取，大文件或不支持格式明确延后审计。
-- 每次运行保存源码、参数、输入和输出哈希、环境版本、日志及独立检查。过期证据会被标记。
-- 数学结构与思想的条件指导：量纲／不变性、参数可辨识性、优化结构与证书、概率生成检查、因果识别。部分已用现有库演练，专门库仅留作备选，见 [数学思想](references/mathematical-reasoning.md)。
-- 定义审查与跨任务一致性指导；`pipeline evidence` 将已记录的数值任务链接到结果字段与独立检查，拒绝过期运行，暴露遗漏。清单的完整性仍须对照原题审核。
-- 两个数学工具：独立均匀输入的 Sobol 敏感性，以及具有明确权重和成本／收益方向的 TOPSIS 方案评价。
-- 通用 PDF 基础检查与字节一致的冻结副本。PDF 字体、图表、公式与布局仍须视觉审核。
-
-自动检查通过不证明模型适用于现实；稳定性情景份额不等于客观概率；程序日志不等于完整 AI 对话。本项目是初版工具，已用合成案例与解析答案测试，尚未证明任意真实任务都能自动完成，也不承诺获奖或无人审核提交。
-
-## 开发验证
+<details>
+<summary><strong>开发与演练命令</strong></summary>
 
 ```bash
 uv sync --locked --group dev
@@ -86,12 +170,19 @@ uv run --locked python -m examples.decision_sensitivity_demo
 uv run --locked python -m examples.structural_reasoning_demo
 ```
 
-## 许可
+测试通过记录与跨宿主／真实任务的行为验证分别表述。
 
-本地编写的代码与文档采用 MIT；上游及依赖保留自己的许可，见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。研究报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
+</details>
 
-## 商业使用与服务
+## 来源与许可
 
-本地原创部分的 MIT 许可允许商业使用与销售副本，分发时保留版权和许可；依赖及第三方材料继续遵守各自许可。依据见 [MIT 原文](https://opensource.org/license/mit) 和 THIRD_PARTY_NOTICES.md。
+本地原创代码与文档采用 [MIT](LICENSE)。工作流参考 MathModelHub，Sobol 与 TOPSIS 分别使用 SALib 和 pyMCDM；实际复用范围、上游许可与取舍见 [第三方声明](THIRD_PARTY_NOTICES.md) 和 [审查记录](references/upstream-review.md)。报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
 
-公开仓库可供他人获取和合法复用。可收费的服务可以是安装配置、原创教学材料、赛前或非竞赛完整演练、持续维护与使用支持；应明确具体交付，不把公开地址本身描述成独占源码权益。当前没有收费产品、定价或经验证的服务效果。
+<details>
+<summary><strong>商业使用与服务</strong></summary>
+
+MIT 允许商业使用与销售副本，分发时保留版权和许可；依赖与第三方材料继续遵守各自许可，见 [MIT 原文](https://opensource.org/license/mit)。公开仓库可被他人合法获取与复用。
+
+可收费的服务包括安装配置、原创教学材料、赛前或非竞赛完整演练、持续维护与使用支持。应明确具体交付，不把公开地址描述为独占源码权益。目前没有收费产品、定价或经验证的服务效果。
+
+</details>
