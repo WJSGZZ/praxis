@@ -1,0 +1,54 @@
+# 自动执行与证据契约
+
+解析技能真实位置为 BUNDLE，当前用户工作项目为 WORKSPACE。先执行 `uv sync --project "$BUNDLE" --locked`；需要开发测试时增加 `--group dev`。用 `"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE"` 调用工具，不要依赖技能安装目录作为当前工作目录。下列命令的 BUNDLE 与 WORKSPACE 均应替换为实际绝对路径。
+
+## 建立案例
+
+```bash
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" init \
+  --name training-example --problem /绝对路径/problem.pdf \
+  --data /绝对路径/data.csv --phase preparation
+```
+
+题目原文可先保存为本项目文件再传入；CLI 支持 PDF、TXT、Markdown。多个数据文件重复 `--data`。默认建在 `cases/<name>/`；名称自行根据任务取，不必为取名问用户。已有目录拒绝覆盖，接续时读取 `case.json` 与 `planning/tasks.md`。`--phase contest` 只记录比赛阶段，不能据此判断比赛时限或取得提交授权。
+
+案例保存：`raw/` 原件只读副本、`planning/` 题意与任务记录、`audits/` 数据质量报告、`code/` 可复现处理与模型、`runs/` 每次独立运行结果。副本保留来源路径、哈希和字节数。CSV 使用显式编码（默认 UTF-8；可 `--encoding gb18030`），Excel 逐表检查；其他格式或大于 50 MB 的数据明确标记延后审计，选择流式或针对性处理。延后审计不等于已核验可用。PDF 即使提取到文字仍须查看原页。
+
+## 内容理解不是脚本替代的
+
+从原文识别子任务、变量、单位与交付物，写入 `planning/tasks.md`。对每个主要假设说明依据、失效现象及影响。脚本不自动读懂任意赛题，也不会替 Codex 写出真实模型；技能负责引导 Codex 选择、实现并设计独立检查。
+
+读题后有合理基线就自主推进。保留选择理由和备选，不等待用户逐项确认。实际偏好或关键事实缺失才问，同时做可独立推进的工作。
+
+## 模型与验证器
+
+Codex 写并检查案例 `code/model.py` 与 `code/validate.py`；两者使用 argparse 接收以下接口：
+
+```text
+model.py --output <本次运行的输出目录>
+validate.py --results <输出目录/results.json> --output <本次运行/checks.json>
+```
+
+- 模型在 `--output` 下生成非空对象 `results.json`，另可生成 CSV、图片和参数记录。结果需包含真实指标与适用范围；数据来自案例原始副本，处理参数保存于案例代码／配置中。
+- 验证器对结果做独立计算或检查，生成非空 JSON 列表。每条为 `{"name":"检查名称", "passed":true/false, "evidence":"具体计算或对照结果"}`。不能用“运行成功”或 `assert True` 代替独立检查。失败也如实写入证据并退出非零。
+- 预测：和朴素基线比较，选择正确的数据分割；多步预测还要核对目标集合，开发／调参目标不得跨入最终留出集，仅检查训练前缀并不充分；优化：检查约束、整数性与基准；连续模型：解析解、守恒、边界或步长；评价与敏感性：使用适合实际问题的检查。随机种子固定，避免只报告最佳一次运行。
+- 可以导入技能包 `modeling/` 与 `scripts/`。运行器把技能包路径加入 PYTHONPATH。不要把模型生成的其他文件放进原始数据区，或用脚本联网调用不相关外部服务。
+
+## 运行与接续
+
+```bash
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" run \
+  --case "$WORKSPACE/cases/training-example" --timeout 120
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" status \
+  --case "$WORKSPACE/cases/training-example"
+```
+
+每次生成新的运行目录，包含两个阶段的 stdout/stderr、命令、时间、代码与输入哈希、源码／参数快照、依赖源码快照、实际 Python／包版本、检查报告、输出哈希和状态。命令用固定 Python argv，不通过 shell 执行题目或数据里的命令。超时或失败记录保留，先查看根因再调整；不覆盖已跑出的结果。
+
+`automatic-checks-passed` 只表示已记录的自动检查通过。`status` 可发现原始输入、代码、依赖或结果变化，标记过期证据；只用 `usable_automatic_evidence: true` 的结果准备论文，并继续评估现实机制与稳健性。检查本身是否有意义仍需 Codex 审核，不把脚本状态当成科学结论或用户已核验。`paper_ready` 默认 false，不自动授予论文完成状态。
+
+自动化的边界：程序日志不是完整 AI 对话；哈希不是官方提交回执；本地只读不是不可篡改存证；输入副本不是备份策略。原始大数据与生成输出默认不纳入 Git，实际比赛须安排本地备份。
+
+## 写作连接
+
+按实际任务组织报告，将有效运行编号、指标与来源记到工作项目记录。数据或代码变化就重跑并同步文稿。论文沿用用户当前源文件，按实际期刊、课程或比赛的规定检查格式；不硬编码某比赛的页数与字体规则。scripts/check_pdf.py 只检查可提取文字、元数据、页数与显式配置限制，不检查字体或渲染布局；逐页视觉检查仍需 PDF 查看工具。scripts/freeze_pdf.py 创建字节一致的新副本与哈希回执，不是正式提交回执。

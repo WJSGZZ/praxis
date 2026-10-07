@@ -1,0 +1,52 @@
+# ModelCraft · 建模工坊
+
+**一个用于 Codex 的数学建模 Skill：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
+
+全流程建模并不是新发明。ModelCraft 的工作是把方法选择指导与实际可执行的工具结合：保留原始输入、审计数据、由助手实现模型与独立验证器、记录运行证据、检查结果是否因文件变化而过期。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)。
+
+## 安装与使用
+
+需要 Python 3.12、[uv](https://docs.astral.sh/uv/) 与支持本地 skills 的 Codex。将仓库克隆到技能目录（该目录必须尚不存在）：
+
+```bash
+git clone https://github.com/WJSGZZ/modelcraft.git ~/.codex/skills/modelcraft
+uv sync --project ~/.codex/skills/modelcraft --locked
+```
+
+让 Codex 重新发现技能后，在你的工作项目中说：
+
+> 用 $modelcraft 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
+
+也可以只要求读题、比较路线或审查已有模型，不必每次运行全套。技能目录保存工具，案例保存到当前工作项目；不会把新题目写入技能安装目录。
+
+命令行建立案例的例子：
+
+```bash
+BUNDLE="$HOME/.codex/skills/modelcraft"
+WORKSPACE="/absolute/path/to/your/project"
+"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" init   --name example --problem "$WORKSPACE/problem.pdf" --data "$WORKSPACE/data.csv"
+```
+
+助手按 [执行契约](references/automation.md) 写并审核案例内的 model.py 与 validate.py 后，才运行 `run`；命令行脚本本身不会自动理解问题或生成模型。数据、案例与输出默认不进入 Git。项目规则与比赛规则由工作项目提供。
+
+## 已实现与限制
+
+- 任务拆解、机制与基线选择指导，见 [方法参考](references/methods.md)。
+- CSV 与 Excel 全工作表审计；PDF 文本提取，大文件或不支持格式明确延后审计。
+- 每次运行保存源码、参数、输入和输出哈希、环境版本、日志及独立检查。过期证据会被标记。
+- 两个数学工具：独立均匀输入的 Sobol 敏感性，以及具有明确权重和成本／收益方向的 TOPSIS 方案评价。
+- 通用 PDF 基础检查与字节一致的冻结副本。PDF 字体、图表、公式与布局仍须视觉审核。
+
+自动检查通过不证明模型适用于现实；稳定性情景份额不等于客观概率；程序日志不等于完整 AI 对话。本项目是初版工具，已用合成案例与解析答案测试，尚未证明任意真实任务都能自动完成，也不承诺获奖或无人审核提交。
+
+## 开发验证
+
+```bash
+uv sync --locked --group dev
+uv run --locked pytest -q
+uv run --locked python -m examples.decision_sensitivity_demo
+```
+
+## 许可
+
+本地编写的代码与文档采用 MIT；上游及依赖保留自己的许可，见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。研究报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。

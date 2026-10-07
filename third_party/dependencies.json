@@ -1,0 +1,43 @@
+[
+  {
+    "package": "SALib",
+    "installed_version": "1.6.0",
+    "license_files": [
+      {
+        "file": "third_party/licenses/SALib-LICENSE.md",
+        "sha256": "954fea77d90439a34c285a0989b31350c6f9c3e32bd44ad373fbe235995e56d1"
+      }
+    ],
+    "reuse": "locked dependency plus locally authored wrappers; no upstream algorithm edits",
+    "repository": "https://github.com/SALib/SALib",
+    "reviewed_repository_commit": "c8b2be52a136d861caf4b1e53a4dae2e036ee390",
+    "commit_note": "Review snapshot only; installed PyPI release is identified by version and uv.lock archive hashes, not by this commit."
+  },
+  {
+    "package": "pymcdm",
+    "installed_version": "1.4.0",
+    "license_files": [
+      {
+        "file": "third_party/licenses/pymcdm-LICENSE",
+        "sha256": "15496f01533cb6fd5fafa715e24fe9491f165eb35ff358183c9a51dc0fe4852d"
+      }
+    ],
+    "reuse": "locked dependency plus locally authored wrappers; no upstream algorithm edits",
+    "repository": "https://github.com/kotbaton/pymcdm",
+    "reviewed_repository_commit": "346a44f5afdac249c534912cc8d483e82586c52d",
+    "commit_note": "Review snapshot only; installed PyPI release is identified by version and uv.lock archive hashes, not by this commit."
+  },
+  {
+    "package": "pypdf",
+    "installed_version": "6.19.0",
+    "license": "BSD-3-Clause",
+    "repository": "https://github.com/py-pdf/pypdf",
+    "reuse": "installed dependency; no implementation vendored",
+    "license_files": [
+      {
+        "file": "third_party/licenses/pypdf-LICENSE",
+        "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+      }
+    ]
+  }
+]
