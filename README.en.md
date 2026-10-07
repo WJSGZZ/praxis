@@ -16,9 +16,9 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 </div>
 
-The difficult part of modeling is deciding what to model, which assumptions to trust, and whether the results answer the question. Praxis gives your agent a workflow for those decisions, connecting **model development, independent validation, and reporting**. It works for individual and team projects in research, coursework, practical applications, and competitions.
+**Praxis equips AI agents for mathematical modeling**, combining a portable skill, computing scripts, evidence workflows, and plugin export. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
 
-Bring a problem and data, or ask for a focused review of a model, a result, or a draft. Start with an interpretable baseline and add complexity when the task calls for it. A shared record links the requirements to the calculations, checks, and claims in the report.
+Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
 <table>
 <tr>
@@ -30,7 +30,7 @@ Bring a problem and data, or ask for a focused review of a model, a result, or a
 
 ## Two complete cases to explore
 
-Follow either problem from its assumptions to a finished report and runnable evidence. The investment case examines discrete fee thresholds; the bath case asks when a spatial model changes the decision. Both are developed to the standard of a complete submission package.
+The competition cases make the full workflow inspectable; they do not define the limits of Praxis. Follow an investment decision through discrete fee thresholds, or examine how spatial heat transport changes a water-saving strategy. Each case comes with a finished report and runnable evidence, organized as a complete submission package.
 
 <table>
 <tr>
@@ -114,7 +114,7 @@ Capabilities follow the same reasoning workflow; you do not have to activate eve
 
 ### Competitions are one application
 
-CUMCM, MCM/ICM, coursework, and research share the modeling core. For a competition, verify the applicable edition and institutional rules, then configure team eligibility, report language, formats, attachments, AI disclosure, and deadlines.
+Real-world and social questions, research, coursework, and competitions use the same modeling core. For a competition, verify the applicable edition and institutional rules, then configure team eligibility, report language, formats, attachments, AI disclosure, and deadlines.
 
 For solo work under time pressure, Praxis defaults to one current user action and develops the report as results become available. Team tasks are assigned around skills and dependencies. Competition requirements are not applied to unrelated projects.
 
@@ -179,7 +179,7 @@ See [Architecture](ARCHITECTURE.md) for the layout and conditions for future ext
 
 | Status | Current evidence |
 |---|---|
-| **Validated** | 45 local tool tests have previously passed, covering analytical answers, input protection, failed and stale evidence, PDF helpers, and self-contained plugin export; synthetic exercises and a complete historical CUMCM case are recorded |
+| **Validated** | 45 local tool tests have previously passed, covering analytical answers, input protection, failed and stale evidence, PDF helpers, and self-contained plugin export; synthetic exercises and complete historical CUMCM and MCM cases are recorded |
 | **Implemented guidance; field testing pending** | Context and team adaptation, solo deadline coordination, capability handoffs, and writing guidance |
 | **Not yet completed** | Full cases in other agent hosts, real team competition runs, a complete three-day exercise, and host plugin installation tests |
 
