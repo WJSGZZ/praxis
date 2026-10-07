@@ -1,6 +1,6 @@
 # Sources and third-party notices
 
-ModelCraft assembles an agent workflow and locally authored adapters; it does not claim to invent mathematical modeling or the upstream algorithms. LICENSE applies to the locally authored code and documentation. Dependencies retain their own licenses; no third-party library implementation, paper, dataset or binary is bundled here.
+Praxis assembles an agent workflow and locally authored adapters; it does not claim to invent mathematical modeling or the upstream algorithms. LICENSE applies to the locally authored code and documentation. Dependencies retain their own licenses; no third-party library implementation, paper, dataset or binary is bundled here.
 
 - [MathModelHub](https://github.com/Jaxon1216/MathModelHub), © 2026 MathModelHub, MIT. Workflow inspiration from [modeling lifecycle](https://github.com/Jaxon1216/MathModelHub/blob/8460b39b62480352de50d354bb86b11997b1cc6d/docs/guides/modeling-lifecycle.md) and [evidence and reproducibility](https://github.com/Jaxon1216/MathModelHub/blob/8460b39b62480352de50d354bb86b11997b1cc6d/docs/guides/evidence-and-reproducibility.md). Its full skill is not included or installed. Copyright and permission retained in third_party/licenses/MathModelHub-LICENSE.
 - [SALib](https://github.com/SALib/SALib), MIT. Installed dependency for Sobol sampling and analysis; local wrapper adds input contracts and evaluation budgets. License retained in third_party/licenses/SALib-LICENSE.md. Follow upstream citation guidance when using the method in research.

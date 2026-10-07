@@ -1,6 +1,6 @@
 interface:
-  display_name: "ModelCraft · 建模工坊"
+  display_name: "Praxis"
   short_description: "从问题拆解、路线选择到模型实现、独立验证和可追溯报告的建模助手"
-  default_prompt: "使用 $modelcraft 分析当前问题与数据，选择合适模型并推进实现、独立验证与报告。"
+  default_prompt: "使用 $praxis 分析当前问题与数据，选择合适模型并推进实现、独立验证与报告。"
 policy:
   allow_implicit_invocation: true

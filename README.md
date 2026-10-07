@@ -1,28 +1,28 @@
-# ModelCraft · 建模工坊
+# Praxis
 
 **一个用于 Codex 的数学建模 Skill：把问题和数据推进到可解释的模型、独立验证和可追溯报告。** 支持通用建模、课程项目与比赛准备，不限定某个赛事。
 
-全流程建模并不是新发明。ModelCraft 的工作是把方法选择指导与实际可执行的工具结合：保留原始输入、审计数据、由助手实现模型与独立验证器、记录运行证据、检查结果是否因文件变化而过期。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)。
+全流程建模并不是新发明。Praxis 的工作是把方法选择指导与实际可执行的工具结合：保留原始输入、审计数据、由助手实现模型与独立验证器、记录运行证据、检查结果是否因文件变化而过期。工作流参考 MathModelHub，Sobol 和 TOPSIS 分别使用 SALib 与 pyMCDM；复用范围见 [来源与许可](THIRD_PARTY_NOTICES.md)。
 
 ## 安装与使用
 
 需要 Python 3.12、[uv](https://docs.astral.sh/uv/) 与支持本地 skills 的 Codex。将仓库克隆到技能目录（该目录必须尚不存在）：
 
 ```bash
-git clone https://github.com/WJSGZZ/modelcraft.git ~/.codex/skills/modelcraft
-uv sync --project ~/.codex/skills/modelcraft --locked
+git clone https://github.com/WJSGZZ/praxis.git ~/.codex/skills/praxis
+uv sync --project ~/.codex/skills/praxis --locked
 ```
 
 让 Codex 重新发现技能后，在你的工作项目中说：
 
-> 用 $modelcraft 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
+> 用 $praxis 分析这道题和这些数据，选择合适的路线，推进模型实现、独立验证与报告。
 
 也可以只要求读题、比较路线或审查已有模型，不必每次运行全套。技能目录保存工具，案例保存到当前工作项目；不会把新题目写入技能安装目录。
 
 命令行建立案例的例子：
 
 ```bash
-BUNDLE="$HOME/.codex/skills/modelcraft"
+BUNDLE="$HOME/.codex/skills/praxis"
 WORKSPACE="/absolute/path/to/your/project"
 "$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE" init   --name example --problem "$WORKSPACE/problem.pdf" --data "$WORKSPACE/data.csv"
 ```
