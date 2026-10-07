@@ -19,7 +19,7 @@ def margins(p,net,Y,buffer=0.):
     V=model.view(net,Y)
     return np.r_[Y.min(1)-(p['floor']+RESERVE+buffer),p['ceiling']-buffer-V.max(1),p['span']-buffer-np.ptp(V,axis=1)]
 
-def optimize(p,net,segments,starts=None,dt=15.,bound=3.,buffer=0.):
+def optimize(p,net,segments,starts=None,dt=5.,bound=3.,buffer=0.):
     """Multi-start SLSQP over piecewise-constant flow. Local optimum of a non-convex problem: no global claim."""
     K=segments;seg=p['horizon']/K
     starts=starts or [np.full(K,.7),np.linspace(1.4,.1,K),np.linspace(.1,1.4,K),np.r_[np.zeros(K//3),np.full(K-2*(K//3),1.2),np.zeros(K//3)]]

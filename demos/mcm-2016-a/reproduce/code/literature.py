@@ -12,15 +12,16 @@ def surface_coefficients(Ts=40.,Ta=22.,rh=.5,L=1.5,W=.65,emissivity=.96,exposed=
 
     Upper surface of a hot horizontal plate, characteristic length A/P, natural-convection correlations
     Nu=.54Ra^(1/4) (1e4-1e7) and .15Ra^(1/3) (1e7-1e11); Lewis analogy for mass transfer;
-    still-air properties near 305 K. The evaporation term is the dominant uncertainty."""
-    Tf=(Ts+Ta)/2+273.15;nu,alpha,k=1.6e-5,2.25e-5,.0265;rho_a,cp_a=1.16,1007.;Le=.85;hfg=2.43e6
+    still-air properties near 305 K. The evaporation term is the dominant uncertainty: published evaporation correlations differ by tens of percent, so the
+    result is a scenario value, not a measurement; the tested range for the surface coefficient is wider than the spread between correlations."""
+    Tf=(Ts+Ta)/2+273.15;nu,alpha,k=1.6e-5,2.25e-5,.0265;rho_a,cp_a=1.16,1007.;Le=.85;hfg=2.406e6   # latent heat of water near 40 C
     Lc=L*W/(2*(L+W));dT=Ts-Ta
     Ra=G*dT*Lc**3/(Tf*nu*alpha)
     Nu=.54*Ra**.25 if Ra<1e7 else .15*Ra**(1/3)
     hc=Nu*k/Lc
     hr=emissivity*SIGMA*((Ts+273.15)**2+(Ta+273.15)**2)*(Ts+Ta+546.3)
     hm=hc/(rho_a*cp_a*Le**(2/3))
-    drho=(psat(Ts)-rh*psat(Ta))/(RV*(Ts+273.15)) if False else psat(Ts)/(RV*(Ts+273.15))-rh*psat(Ta)/(RV*(Ta+273.15))
+    drho=psat(Ts)/(RV*(Ts+273.15))-rh*psat(Ta)/(RV*(Ta+273.15))
     he=hfg*hm*drho/dT
     parts=dict(convection=hc,radiation=hr,evaporation=he)
     return dict(parts=parts,total=exposed*sum(parts.values()),Ra=Ra,rayleigh_regime='turbulent' if Ra>=1e7 else 'laminar',char_length_m=Lc,evaporation_kg_m2_h=hm*drho*3600)

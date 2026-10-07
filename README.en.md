@@ -222,6 +222,7 @@ uv sync --locked --group dev
 uv run --locked python -m pytest -q
 uv run --locked python -m examples.decision_sensitivity_demo
 uv run --locked python -m examples.structural_reasoning_demo
+uv run --locked python -m examples.exploration_demo
 ```
 
 
