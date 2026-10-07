@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "checked_on": "2026-10-07",
+  "checked_on": "2026-10-08",
   "status": "local-reviewed-case; not a real contest submission",
   "pdf": {
-    "sha256": "6a84deeedc4fac29cbf6944db90a0e0bd641fee1b4a744e7ac8b3cc864e7b080",
-    "bytes": 147614,
-    "pages_total": 23,
-    "solution_pages": 21,
+    "sha256": "92a4e3f132d369084841b328df749c64bba4ad1dbf8f89912271205a560ac1ad",
+    "bytes": 153968,
+    "pages_total": 24,
+    "solution_pages": 23,
     "ai_pages": 1,
     "text_bounds_checked": true,
     "pages_rendered_and_visually_reviewed": [
@@ -32,7 +32,8 @@
       20,
       21,
       22,
-      23
+      23,
+      24
     ],
     "visual_review_note": "Every page rendered and checked; ink margins measured per page so figures, tables and code boxes stay inside the text block and centred",
     "typesetting": "XeLaTeX (TeX Live 2026): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
@@ -52,7 +53,7 @@
     "passed": 18,
     "extra": "Archived report water amount"
   },
-  "scope": "Literature-anchored scenario coefficients with ranges (order-of-magnitude anchors, not a calibration); two-grid diagnostic; no bath experiment; no claim of award, full transcript or independent human review",
+  "scope": "Textbook-correlation scenario coefficients with ranges (order-of-magnitude anchors, not a calibration); constrained temperatures checked on three meshes; no bath experiment; no claim of award, full transcript or independent human review",
   "submission_files": [
     "7391856.pdf"
   ],
@@ -70,9 +71,16 @@
   "extended_analysis": {
     "script": "reproduce/run_extended.py",
     "archived": "reproduce/reference/extended.json",
-    "schedules": "3-, 6- and 12-segment piecewise-constant, multi-start SLSQP, local optima",
+    "schedules": "3-, 6- and 12-segment piecewise-constant, multi-start SLSQP with constraints checked every 5 s, local optima",
     "sobol_draws": 64,
-    "draws_with_accepted_policy": 37,
-    "execution_tolerance": "uniform scaling, 200 random 10%/20% segment errors, one-segment +/-20%, buffer price at 0, 0.1, 0.2, 0.3 C on 6 segments"
+    "draws_with_accepted_policy": 41,
+    "execution_tolerance": "uniform scaling, 200 random 10%/20% segment errors, one-segment +/-20%, buffer price at 0, 0.1, 0.2, 0.3 C on 6 segments",
+    "mesh_check": "reproduce/run_mesh_check.py: 12-segment schedule replayed on three meshes and the 6-segment schedule re-optimized on 12 x 6 x 4",
+    "jet_zone": "ceiling and spread apply outside a 0.15 m radius around the inlet cell; the floor applies to every cell"
+  },
+  "independent_audit": {
+    "date": "2026-10-08",
+    "finding": "the first version's ceiling and spread were not mesh-converged (inlet-cell point source); limits redefined outside a jet zone and all results recomputed",
+    "other_changes": "coefficient wording, deeper-bath and convective-layer scenarios, tolerance reported as distances"
   }
 }

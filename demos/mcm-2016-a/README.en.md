@@ -17,29 +17,29 @@ The difficulty is that no temperature data are given. Heat-loss coefficients, bo
 | Same 30-minute scenario | Added water | What it supports |
 |---|---:|---|
 | 3-D thermal network, best constant rate | **24.14 L** | The least water among accepted candidates; not a global optimum over all controls |
-| 3-D thermal network, 12-segment schedule | **19.77 L** | A constrained local optimum; no added water in the first 2.5 and last 10 minutes |
+| 3-D thermal network, 12-segment schedule | **19.35 L** | A constrained local optimum; no added water in the first 7.5 and last 10 minutes; re-optimizing on a finer mesh keeps the shape |
 | Perfectly mixed model | **16.01 L** | A proved optimum ("coast, then hold") for that ideal model |
 | Energy-conservation bound | **15.41 L** | A conditional lower bound for any feasible strategy under the stated heat-loss assumptions |
 
-Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C. Surface loss comes from natural-convection, radiation and evaporation correlations (about 35.6 W/(m² K) for open water, 25 after the bather's cover); body exchange is anchored in the core-temperature rise of an [immersion study](https://doi.org/10.1113/EP092761); mixing has no anchor and stays a scenario. No tub experiment exists, so the numbers demonstrate a method and are not a use or safety standard.
+Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (the ceiling and spread apply outside a 0.15 m jet zone around the inlet; the floor holds in every cell). Surface loss comes from textbook natural-convection, radiation and evaporation correlations (about 35.4 W/(m² K) for open water, 25 after the bather's cover); body exchange is anchored in the core-temperature rise of an [immersion study](https://doi.org/10.1113/EP092761); mixing has no anchor and stays a scenario. No tub experiment exists, so the numbers demonstrate a method and are not a use or safety standard.
 
-**The answer depends strongly on the loss coefficients.** Across 64 Sobol draws over literature ranges, 37 had an accepted constant-rate policy, needing 12–31 L (5th–95th percentile, median 21 L); the rest had none.
+**The water needed depends strongly on the loss coefficients; whether any policy exists depends mainly on mixing.** Across 64 Sobol draws over the scenario ranges, 41 had an accepted constant-rate policy, needing 12–31 L (5th–95th percentile, median 22 L); the rest had none, mostly because of weak mixing.
 
 ## How it is solved
 
 1. **State the decision first.** "Warm" and "uniform" become per-cell temperature limits; least water is the objective, with no arbitrary weights between unlike units.
 2. **A model that can be proved.** For a well-mixed tub, coasting down to the lower limit and then holding it is proved optimal, and energy conservation bounds any strategy from below.
 3. **A 3-D thermal network.** A finite-volume network handles surface and wall loss, body displacement and exchange, internal mixing, inlet and overflow, with limits on every cell. Time stepping uses matrix exponentials; piecewise-constant flow is optimized by multi-start sequential quadratic programming.
-4. **Ranges and scenarios.** Coefficients vary over literature ranges in a Sobol analysis; geometry, body, motion, bubble layer and comfort window are changed to see whether the strategy moves.
+4. **Ranges and scenarios.** Coefficients vary over the scenario ranges of the textbook correlations in a Sobol analysis; geometry, body, motion, bubble layer and comfort window are changed to see whether the strategy moves.
 5. **Can anyone follow it?** Measure how sensitive the least-water schedule is to tap error, then price a margin: how much slack, at what cost in water.
 
 ## Evidence
 
-- **Spatial differences change the strategy.** The ideal model says wait; with transport a constant trickle should start immediately, and a time-varying schedule saves about 18% more. A mean can hide a cold corner.
-- **Claims carry their own evidence level.** The ideal model has a proof; the spatial model has feasible constant and scheduled policies; energy conservation gives a conditional bound. The constant rate sits 8.7 L above the bound and the schedule narrows that to 4.4 L; the rest stays open.
+- **Spatial differences change the strategy.** The ideal model says wait; with transport a constant trickle should start immediately, and a time-varying schedule saves about 20% more. A mean can hide a cold corner.
+- **Claims carry their own evidence level.** The ideal model has a proof; the spatial model has feasible constant and scheduled policies; energy conservation gives a conditional bound. The constant rate sits 8.7 L above the bound and the schedule narrows that to 3.9 L; the rest stays open.
 - **Verification is more than rerunning.** An independent heat-flow right-hand side integrated with RK45 is compared with the matrix-exponential result; energy accounting, analytic limits, geometry arithmetic and scenario replays are checked too. Seventeen checks are not seventeen algorithms; the schedule adds two more. A derivative envelope covers the times between samples for the baseline.
-- **The least-water schedule has no tolerance.** It sits right on the spread limit, so a tap that runs 10% hot or cold crosses it by about 0.08–0.13°C; with independent 10% errors on each segment, none of 200 draws stays within the limits; one segment opened 20% too far does far more harm than one opened 20% too little. A 0.1°C margin costs 12.5% more water (19.84 → 22.32 L), and then 53% of random draws stay within limits; a 0.2°C margin leaves no feasible schedule under the 1.5°C spread limit.
-- **Failures and corrections stay visible.** Six scenarios, including weak mixing and a tight window, have no accepted candidate; the first 40.5°C upper limit had no solution on the finer mesh and was raised to 41°C; the first, too-low loss coefficients were re-derived from the literature; the fine-grid result (24.12 L, 0.11% apart) is a diagnostic, not a convergence proof.
+- **The least-water schedule has no tolerance.** It sits right on the spread limit, so a tap that runs 10% hot or cold crosses it by about 0.08–0.13°C; with independent 10% errors on each segment the median draw misses by 0.07°C (5th percentile 0.22°C); the most sensitive segment, the 2.8 L/min burst, breaks the limits by 0.25°C when opened 20% too far and by only 0.05°C when 20% too little. A 0.1°C margin costs about 10% more water (19.50 → 21.48 L), and then 74% of random draws stay within the limits; margins of 0.2°C and 0.3°C cost about 22% and 38%.
+- **Corrected after an independent audit.** Three scenarios (weak mixing, high loss, a wide shallow tub) have no accepted candidate: with a constant flow, the flow needed to hold the floor already pushes the spread over its limit. The audit found that the first version's ceiling and spread, applied to the inlet point-source cell, did not converge with the mesh; the limits now apply outside a jet zone and every result was recomputed (constrained temperatures differ by under 0.02°C across three meshes). The first, too-low loss coefficients were re-derived from textbook correlations; the fine-grid water result (24.12 L, 0.11% apart) is a diagnostic, not a convergence-order study.
 
 ## Two pages of the paper
 
@@ -54,7 +54,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C. 
 </tr>
 </table>
 
-**[Read the complete 23-page paper →](deliverables/7391856.pdf)** Typeset with XeLaTeX: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-one pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: at least 12-point type, anonymous running header with page numbers, and a one-page Summary Sheet.
+**[Read the complete 24-page paper →](deliverables/7391856.pdf)** Typeset with XeLaTeX: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-three pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: at least 12-point type, anonymous running header with page numbers, and a one-page Summary Sheet.
 
 ## Run it yourself
 
@@ -63,7 +63,8 @@ From the Praxis repository root:
 ```bash
 uv sync --locked
 uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # baseline, 18 scenarios, fine grid, 17 checks; about a minute
-uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # schedules, literature ranges, execution tolerance; about 4–5 minutes
+uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # schedules, range analysis, execution tolerance; about 20 minutes
+uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # mesh check of the schedule; about 15 minutes
 ```
 
 Output goes to `reproduce/reproduced/`; existing output is never overwritten, and the archived evidence and final PDF are untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF needs XeLaTeX or tectonic; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.
@@ -71,7 +72,7 @@ Output goes to `reproduce/reproduced/`; existing output is never overwritten, an
 ## File map
 
 ```text
-deliverables/7391856.pdf      # the only submission file (English, 23 pages)
+deliverables/7391856.pdf      # the only submission file (English, 24 pages)
 reproduce/                    # entry points, archived numbers, paper builder
 assets/                       # images for the homepage and this page
 sources.json                  # provenance record
