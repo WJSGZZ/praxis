@@ -67,3 +67,16 @@ def test_topsis_ties_share_first_place_and_weight_choice_changes_winner():
 def test_topsis_rejects_unsupported_rankings(matrix,weights,directions):
     with pytest.raises(ValueError):
         evaluate_alternatives(matrix,weights,directions,trials=10)
+
+
+def test_sobol_convergence_check_on_the_ishigami_function():
+    import math
+    from modeling.sensitivity import sobol_convergence
+
+    def ishigami(X):
+        return np.sin(X[:, 0]) + 7 * np.sin(X[:, 1]) ** 2 + 0.1 * X[:, 2] ** 4 * np.sin(X[:, 0])
+
+    out = sobol_convergence(ishigami, ['a', 'b', 'c'], [[-math.pi, math.pi]] * 3, n=1024)
+    first = out['fine']['parameters']
+    assert abs(first[0]['S1'] - 0.3139) < 0.05 and abs(first[2]['S1']) < 0.05 and abs(first[2]['ST'] - 0.2437) < 0.06
+    assert out['converged'] and out['n'] == 1024

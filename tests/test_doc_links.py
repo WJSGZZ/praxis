@@ -21,3 +21,10 @@ def test_the_route_example_in_the_guide_is_valid():
     block = re.search(r'```json\n(.*?)\n```', text, re.S).group(1)
     result = routes.apply(None, json.loads(block), question='example')
     assert result['issues'] == [] and result['graph']['paths']['lp']['status'] == 'chosen'
+
+
+def test_tool_index_is_current():
+    import subprocess
+    import sys
+    result = subprocess.run([sys.executable, '-m', 'scripts.gen_tool_index', '--check'], cwd=ROOT)
+    assert result.returncode == 0, 'run: uv run --locked python -m scripts.gen_tool_index'

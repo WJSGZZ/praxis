@@ -95,11 +95,11 @@ def inspect_pdf(path, max_pages=None, max_bytes=None, forbidden=(), forbidden_fo
                 'check_summary':summary,'sha256' :hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'total_pages':len(doc.pages),'metadata':metadata,'pages':pages,'errors':errors,'warnings':warnings,'visual_review_required':True}
 
 
-def margin_report(path, *, scale=0.9, ink_level=200, tolerance_pt=6.0, edge_pt=28.0):
+def margin_report(path, *, scale=0.9, ink_level=200, tolerance_pt=6.0, edge_pt=28.0, gap_fraction=0.3):
     """Render every page and measure the blank space left and right of the ink (text, figures, rules).
 
     Reports each page's margins in points and flags pages whose two margins differ by more than `tolerance_pt` (a figure, table or code box
-    wider than the text block, or a page that is not centred) or whose ink comes within `edge_pt` of a page edge. Pages that are uneven by
+    wider than the text block, or a page that is not centred) or whose ink comes within `edge_pt` of a page edge, that have a vertical white gap above `gap_fraction` of the page height, or that are more than 40% empty below the last line (the last page excepted). Pages that are uneven by
     design (a numbered code listing, a hanging reference list) are flagged too: this finds candidates, a person decides."""
     import numpy as np
     import pypdfium2 as pdfium
@@ -116,7 +116,18 @@ def margin_report(path, *, scale=0.9, ink_level=200, tolerance_pt=6.0, edge_pt=2
         pixel = width_pt / image.shape[1]
         left, right = float(cols.min() * pixel), float((image.shape[1] - 1 - cols.max()) * pixel)
         record = {'page': number + 1, 'left_pt': round(left, 1), 'right_pt': round(right, 1)}
+        rows = np.flatnonzero((image < ink_level).any(axis=1))
+        height = image.shape[0]
+        gaps = np.diff(rows)
+        biggest_gap = float(gaps.max() / height) if len(gaps) else 0.0
+        bottom_blank = float((height - 1 - rows.max()) / height)
+        record['bottom_blank_fraction'] = round(bottom_blank, 2)
+        record['largest_vertical_gap_fraction'] = round(biggest_gap, 2)
         reasons = []
+        if biggest_gap > gap_fraction:
+            reasons.append('large vertical gap (float or figure left white space)')
+        if bottom_blank > 0.4 and number < len(document) - 1:
+            reasons.append('page is mostly empty below the last line')
         if abs(left - right) > tolerance_pt:
             reasons.append('margins differ')
         if min(left, right) < edge_pt:

@@ -29,6 +29,16 @@ PREAMBLE = r"""\usepackage{pgfplots}
 DASH = {"solid": "", "dashed": "dashed", "dotted": "dotted", "dashdot": "dash pattern=on 4pt off 2pt on 1pt off 2pt"}
 
 
+def tex_text(s: str) -> str:
+    """Escape the characters that break LaTeX in plain labels (%, &, #, _). Text that already contains a backslash or a $ is left alone,
+    because its author is writing LaTeX."""
+    if "\\" in s or "$" in s:
+        return s
+    for ch in "%&#_":
+        s = s.replace(ch, "\\" + ch)
+    return s
+
+
 def _fmt(v: float) -> str:
     if v is None or (isinstance(v, float) and (math.isnan(v) or math.isinf(v))):
         raise ValueError("non-finite value in plotted data")
@@ -123,12 +133,12 @@ class Axis:
         return self
 
     def note(self, x, y, text, anchor="south west"):
-        self.body.append(r"\node[anchor=%s,font=\footnotesize] at (axis cs:%s,%s) {%s};" % (anchor, _fmt(x), _fmt(y), text))
+        self.body.append(r"\node[anchor=%s,font=\footnotesize] at (axis cs:%s,%s) {%s};" % (anchor, _fmt(x), _fmt(y), tex_text(text)))
         return self
 
     def label(self, x, y, text, color="black", anchor="west", dx="3pt", dy="0pt"):
         """Direct label next to a curve (preferred to a legend when there are few series)."""
-        self.body.append(r"\node[anchor=%s,font=\footnotesize,text=%s,xshift=%s,yshift=%s] at (axis cs:%s,%s) {%s};" % (anchor, color, dx, dy, _fmt(x), _fmt(y), text))
+        self.body.append(r"\node[anchor=%s,font=\footnotesize,text=%s,xshift=%s,yshift=%s] at (axis cs:%s,%s) {%s};" % (anchor, color, dx, dy, _fmt(x), _fmt(y), tex_text(text)))
         return self
 
     def tex(self) -> str:
@@ -142,20 +152,29 @@ def figure_env(axes_tex: str, caption: str, *, placement: str = "htbp", label: s
 
 
 def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[str], xlabel: str, *, width=r"0.66\linewidth",
-               height="5.4cm", xmax: float | None = None, unit: str = "L") -> str:
-    """Horizontal bar chart with value labels; labels are listed top to bottom."""
+               height="5.4cm", xmax: float | None = None, xmin: float | None = None, unit: str = "L", decimals: int = 2) -> str:
+    """Horizontal bar chart with value labels; labels are listed top to bottom. Negative values are drawn to the left of zero (tornado style)."""
     n = len(labels)
-    xm = xmax if xmax is not None else max(values) * 1.3
-    step = 5 if xm > 12 else 1
-    ticks = ",".join(str(v) for v in range(0, int(xm) + 1, step))
-    opts = [f"width={width}", f"height={height}", "scale only axis", "xbar", "bar width=11pt", "xmin=0", f"xmax={_fmt(xm)}", "y dir=reverse",
-            "ytick={%s}" % ",".join(str(i) for i in range(n)), "yticklabels={%s}" % ",".join("{%s}" % l for l in labels),
+    top = xmax if xmax is not None else max(max(values), 0) * 1.3
+    bottom = xmin if xmin is not None else min(min(values), 0) * 1.3
+    span = top - bottom
+    step = 5 if span > 12 else 1 if span > 4 else (0.5 if span > 1.5 else 0.1)
+    first = math.ceil(bottom / step) * step
+    ticks = ",".join(_fmt(first + i * step) for i in range(int((top - first) / step) + 1))
+    opts = [f"width={width}", f"height={height}", "scale only axis", "xbar", "bar width=11pt", f"xmin={_fmt(bottom)}", f"xmax={_fmt(top)}", "y dir=reverse",
+            "ytick={%s}" % ",".join(str(i) for i in range(n)), "yticklabels={%s}" % ",".join("{%s}" % tex_text(l) for l in labels),
             "xtick={%s}" % ticks, f"xlabel={{{xlabel}}}", "xmajorgrids=true", "ymajorgrids=false", "grid style={gray!22}",
             "tick label style={font=\\footnotesize}", "label style={font=\\small}", "enlarge y limits=0.12", "ytick style={draw=none}"]
+    if bottom < 0:
+        opts.append("axis y line*=left")
+        opts.append("y axis line style={draw=none}")
     body = []
     for i, (v, c) in enumerate(zip(values, colors)):
-        body.append(r"\addplot[xbar,bar shift=0pt,fill=%s,draw=none,nodes near coords,every node near coord/.append style={font=\footnotesize,anchor=west},"
-                    r"point meta=explicit symbolic] coordinates {(%s,%d) [%.2f\,%s]};" % (c, _fmt(v), i, v, unit))
+        side = "west" if v >= 0 else "east"
+        body.append(r"\addplot[xbar,bar shift=0pt,fill=%s,draw=none,nodes near coords,every node near coord/.append style={font=\footnotesize,anchor=%s},"
+                    r"point meta=explicit symbolic] coordinates {(%s,%d) [%.*f\,%s]};" % (c, side, _fmt(v), i, decimals, v, unit))
+    if bottom < 0:
+        body.append(r"\draw[gray!70] ({axis cs:0,0}|-{rel axis cs:0,0}) -- ({axis cs:0,0}|-{rel axis cs:0,1});")
     return "\\begin{axis}[%s]\n%s\n\\end{axis}" % (",\n ".join(opts), "\n".join(body))
 
 

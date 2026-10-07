@@ -44,3 +44,16 @@ def sobol_sensitivity(model, names, bounds, *, n=2048, seed=2027, max_evaluation
                             "S1_conf": float(indices["S1_conf"][i]), "ST_conf": float(indices["ST_conf"][i])}
                            for i, name in enumerate(names)],
             "interpretation": "Do not clip negative estimates or infer causality. Confirm convergence at larger n."}
+
+
+def sobol_convergence(model, names, bounds, *, n=1024, seed=2027, max_evaluations=400_000):
+    """Sobol indices at base sample sizes n and 2n, and the largest change in S1 and ST between them.
+
+    Indices that move by more than their bootstrap half-width when n doubles have not converged; report them as such, or enlarge n."""
+    a = sobol_sensitivity(model, names, bounds, n=n, seed=seed, max_evaluations=max_evaluations)
+    b = sobol_sensitivity(model, names, bounds, n=2 * n, seed=seed, max_evaluations=max_evaluations)
+    shifts = [dict(name=p['name'], S1_change=abs(p['S1'] - q['S1']), ST_change=abs(p['ST'] - q['ST']), S1_conf=q['S1_conf'], ST_conf=q['ST_conf'])
+              for p, q in zip(a['parameters'], b['parameters'])]
+    converged = all(s['S1_change'] <= max(s['S1_conf'], 0.02) and s['ST_change'] <= max(s['ST_conf'], 0.02) for s in shifts)
+    return dict(n=n, coarse=a, fine=b, changes=shifts, converged=bool(converged),
+                note='Converged means no index moved by more than its confidence half-width (or 0.02) when n doubled; it does not make the input ranges right.')

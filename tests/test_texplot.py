@@ -47,3 +47,13 @@ def test_figure_compiles(tmp_path):
     res = subprocess.run(engine + ["t.tex"], cwd=tmp_path, capture_output=True, text=True)
     assert res.returncode == 0, res.stdout[-800:] + res.stderr[-800:]
     assert (tmp_path / "t.pdf").exists()
+
+
+def test_signed_bars_and_text_escaping():
+    from scripts import texplot
+    tex = texplot.hbar_chart(['a_b', '50% rule'], [-0.4, 0.9], ['accent', 'main'], 'effect', xmax=1.2, decimals=1, unit='')
+    assert 'xmin=-0.52' in tex and 'anchor=east' in tex and 'anchor=west' in tex
+    assert 'a\\_b' in tex and '50\\% rule' in tex
+    assert texplot.tex_text('x_1 and 5%') == 'x\\_1 and 5\\%' and texplot.tex_text('$x_1$ \\alpha 5%') == '$x_1$ \\alpha 5%'
+    positive = texplot.hbar_chart(['p', 'q'], [24.14, 16.01], ['main', 'muted'], 'L', xmax=31.38)
+    assert 'xmin=0' in positive and 'anchor=east' not in positive

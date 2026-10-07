@@ -2,6 +2,10 @@
 
 先按 agent-compatibility.md 核对宿主能读取本地文件并执行终端；能力缺失时仅做相应分析，不能编造运行。解析技能真实位置为 BUNDLE，当前用户工作项目为 WORKSPACE。先执行 `uv sync --project "$BUNDLE" --locked`；需要开发测试时增加 `--group dev`。用 `"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE"` 调用工具，不要依赖技能安装目录作为当前工作目录。下列命令的 BUNDLE 与 WORKSPACE 均应替换为实际绝对路径。
 
+## 先判断要不要走案例系统
+
+案例脚本（`init`、`run`、`status`、`evidence`）适合要保留追溯索引的任务。一道题、一个人、自己写一串互相读取结果的阶段脚本时可以不走它，但至少做到：每个出现在论文里的数字都能追到某个脚本和输出文件（一个 `run_all.sh` 或 README 逐条列出）；检查记录成带名字、结果和证据的 `checks.json`，用 `check_pdf.py --checks` 核对论文声称的检查数；最终材料的哈希写进清单。
+
 ## 建立案例
 
 ```bash

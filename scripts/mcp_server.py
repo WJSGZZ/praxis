@@ -14,8 +14,24 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modeling import decision, decision_models, dynamics, epidemic, experiment, forecast, graph, lessons, optimize, pde, queueing, regression, routes, sensitivity, structure, weights  # noqa: E402
-from scripts import audit_data, check_references, literature  # noqa: E402
+from modeling import calibrate, decision_models, dynamics, epidemic, experiment, forecast, graph, layered, lessons, optimize, pde, queueing, routes, structure, weights  # noqa: E402
+
+
+class _Lazy:
+    """A module imported on first use, so listing the tools or calling a light one does not pay for statsmodels, scikit-learn or SALib."""
+
+    def __init__(self, name):
+        self._name, self._module = name, None
+
+    def __getattr__(self, attribute):
+        if self._module is None:
+            import importlib
+            self._module = importlib.import_module(self._name)
+        return getattr(self._module, attribute)
+
+
+decision, regression, sensitivity = _Lazy('modeling.decision'), _Lazy('modeling.regression'), _Lazy('modeling.sensitivity')
+audit_data, check_references, literature = _Lazy('scripts.audit_data'), _Lazy('scripts.check_references'), _Lazy('scripts.literature')
 
 def _project_version():
     """The single source of the version number is pyproject.toml."""
@@ -99,6 +115,30 @@ def _probe(a):
     if kind == 'power_law':
         return structure.check_power_law(f, bounds)
     raise ValueError('property must be convexity, monotone, symmetry, power_law or invariant')
+
+
+def _calibrate(a):
+    params = a['parameters']
+    model = _compile(a['expression'], ['x'] + params)
+
+    def fn(theta, x):
+        x = np.asarray(x, float)
+        columns = np.column_stack([x] + [np.full(len(x), t) for t in theta])
+        return model(columns)
+    return calibrate.calibrate(fn, a['x'], a['y'], a['theta0'], bounds=a.get('bounds'), names=params, holdout=a.get('holdout', 0))
+
+
+def _route_graph(a):
+    """route_graph with optional persistence: graph_file is read if it exists and rewritten after the operations."""
+    graph = a.get('graph')
+    path = Path(a['graph_file']) if a.get('graph_file') else None
+    if graph is None and path is not None and path.exists():
+        graph = routes.load(path)
+    result = routes.apply(graph, a['operations'], question=a.get('question'), mode=a.get('mode', 'exploratory'))
+    if path is not None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        routes.save(result['graph'], path)
+    return result
 
 
 def _conjecture(a):
@@ -238,8 +278,8 @@ TOOLS = dict([
     _tool('check_total_unimodularity', 'Is a constraint matrix totally unimodular (integral LP vertices)? Exact for incidence-type matrices and small matrices.',
           {'matrix': MATRIX}, ['matrix'], lambda a: structure.is_network_matrix(a['matrix'])),
     _tool('route_graph', 'Keep the record of routes tried on a problem. Pass the current graph (or a question to start) and a list of operations: add_structure, add_assumption, add_path, attack, kill, keep_result, merge, choose. Returns the graph, record problems and a readable trace.',
-          {'graph': {'type': 'object'}, 'question': {'type': 'string'}, 'mode': {'type': 'string', 'enum': ['exploratory', 'standard']}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
-          lambda a: routes.apply(a.get('graph'), a['operations'], question=a.get('question'), mode=a.get('mode', 'exploratory'))),
+          {'graph': {'type': 'object'}, 'graph_file': {'type': 'string', 'description': 'JSON file that keeps the record between calls: read if present, rewritten afterwards'}, 'question': {'type': 'string'}, 'mode': {'type': 'string', 'enum': ['exploratory', 'standard']}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
+          _route_graph),
     _tool('route_to_lesson', 'Draft a lesson from a finished route record (one chosen route); you supply the transferable principle. Pass the result to lesson_add.',
           {'graph': {'type': 'object'}, 'problem': {'type': 'string'}, 'principle': {'type': 'string'}, 'verified_by': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}},
           ['graph', 'problem', 'principle'], lambda a: routes.draft_lesson(a['graph'], problem=a['problem'], principle=a['principle'], verified_by=a.get('verified_by', ''), tags=a.get('tags'))),
@@ -283,6 +323,21 @@ TOOLS = dict([
     _tool('compare_models', 'Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting with fold standard errors; a model beats the baseline only by more than one standard error. scheme: kfold or time (rows in time order).',
           {'X': MATRIX, 'y': SERIES, 'scheme': {'type': 'string', 'enum': ['kfold', 'time']}, 'folds': {'type': 'integer'}}, ['X', 'y'],
           lambda a: regression.compare_models(a['X'], a['y'], scheme=a.get('scheme', 'kfold'), folds=a.get('folds', 5))),
+    _tool('solve_layered_diffusion', 'Heat conduction through layers in series (1-D): finite volumes with a stiff integrator. layers: [{thickness, k, rho_c}] from the left surface; left/right: ["robin", h, T_env] or ["dirichlet", T]; uniform initial temperature. Returns surface and interface temperatures over time.',
+          {'layers': {'type': 'array', 'items': {'type': 'object'}}, 't_end': _num(), 't_initial': _num(), 'left': {'type': 'array'}, 'right': {'type': 'array'}, 'times': SERIES, 'cells_per_layer': {'type': 'integer'}},
+          ['layers', 't_end', 't_initial', 'left', 'right'],
+          lambda a: layered.solve_layered(a['layers'], t_end=a['t_end'], t_initial=a['t_initial'], left=a['left'], right=a['right'], times=a.get('times'), cells_per_layer=a.get('cells_per_layer', 20))),
+    _tool('layered_diffusion_laplace', 'Independent semi-analytic solution of the same layered conduction problem by transfer matrices in the Laplace domain (no mesh, no time step); the result a finite-volume solution must match.',
+          {'layers': {'type': 'array', 'items': {'type': 'object'}}, 'times': SERIES, 't_initial': _num(), 'left': {'type': 'array'}, 'right': {'type': 'array'}, 'dps': {'type': 'integer'}},
+          ['layers', 'times', 't_initial', 'left', 'right'],
+          lambda a: layered.laplace_layered(a['layers'], times=a['times'], t_initial=a['t_initial'], left=a['left'], right=a['right'], dps=a.get('dps', 25))),
+    _tool('calibrate_curve', 'Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation and an optional hold-out of the last points.',
+          {'expression': {'type': 'string'}, 'parameters': {'type': 'array', 'items': {'type': 'string'}}, 'x': SERIES, 'y': SERIES, 'theta0': SERIES, 'bounds': MATRIX, 'holdout': {'type': 'integer'}},
+          ['expression', 'parameters', 'x', 'y', 'theta0'], _calibrate),
+    _tool('sobol_convergence', 'Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged.',
+          {'expression': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}},
+          ['expression', 'names', 'bounds'],
+          lambda a: sensitivity.sobol_convergence(_compile(a['expression'], a['names']), a['names'], a['bounds'], n=a.get('n', 512), seed=a.get('seed', 2027))),
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
           {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
@@ -322,6 +377,10 @@ EXAMPLES = {
     'find_relation': dict(value='zeta(2)', constants={'pi2': 'pi**2'}),
     'solve_diffusion': dict(length=1, k=1, rho_c=1, initial='sin(3.141592653589793*x)', t_end=0.1, cells=100, steps=100, left=['dirichlet', 0], right=['dirichlet', 0], points=[0.5]),
     'matrix_game': dict(payoff=[[3, 2], [1, 4]]),
+    'calibrate_curve': dict(expression='a*exp(-k*x) + c', parameters=['a', 'k', 'c'], x=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], y=[5.0, 3.2, 2.2, 1.7, 1.37, 1.2, 1.1, 1.06, 1.03, 1.01], theta0=[4, 0.5, 1], holdout=2),
+    'sobol_convergence': dict(expression='a + 2*b + 0.1*c', names=['a', 'b', 'c'], bounds=[[0, 1], [0, 1], [0, 1]], n=128),
+    'solve_layered_diffusion': dict(layers=[dict(thickness=0.01, k=0.5, rho_c=1.5e6), dict(thickness=0.02, k=0.1, rho_c=3e5)], t_end=600, t_initial=37, left=['robin', 100, 75], right=['robin', 8, 37], times=[60, 600], cells_per_layer=10),
+    'layered_diffusion_laplace': dict(layers=[dict(thickness=0.01, k=0.5, rho_c=1.5e6), dict(thickness=0.02, k=0.1, rho_c=3e5)], times=[60, 600], t_initial=37, left=['robin', 100, 75], right=['robin', 8, 37]),
     'ols_report': dict(X=[[1, 2], [2, 1], [3, 5], [4, 3], [5, 8], [6, 4], [7, 9], [8, 6], [9, 11], [10, 7]], y=[3.1, 3.9, 8.2, 8.8, 14.1, 12.9, 19.7, 18.2, 25.1, 22.8], names=['a', 'b']),
     'compare_models': dict(X=[[i] for i in range(40)], y=[2.0 * i + (i % 3) for i in range(40)], folds=4),
     'equilibria': dict(rhs=['x*(1-x)'], names=['x'], bounds=[[-0.5, 2]]),

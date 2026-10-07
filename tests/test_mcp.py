@@ -141,3 +141,13 @@ def test_every_tool_example_runs(tmp_path):
         result = server.call(name, arguments)
         assert result is not None, name
     assert 'examples' in server.TOOLS['solve_lp']['schema']
+
+
+def test_route_graph_file_persistence_and_calibration_tool(tmp_path):
+    from scripts import mcp_server as server
+    path = str(tmp_path / 'planning' / 'routes.json')
+    first = server.call('route_graph', dict(question='q', graph_file=path, operations=[dict(op='add_path', key='a', title='A')]))
+    second = server.call('route_graph', dict(graph_file=path, operations=[dict(op='add_path', key='b', title='B')]))
+    assert sorted(second['graph']['paths']) == ['a', 'b'] and first['graph']['question'] == second['graph']['question']
+    fit = server.call('calibrate_curve', dict(expression='a*x + b', parameters=['a', 'b'], x=[0, 1, 2, 3, 4, 5], y=[1.0, 3.1, 4.9, 7.2, 8.9, 11.1], theta0=[1, 0]))
+    assert abs(fit['parameters'][0]['estimate'] - 2.02) < 0.1 and fit['converged']

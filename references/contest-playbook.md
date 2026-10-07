@@ -17,6 +17,18 @@
 
 分类后，用 [structure-discovery.md](structure-discovery.md) 找结构，用 [path-search.md](path-search.md) 比较至少三条路线。标准题可以只写一行“为什么选它”。
 
+## 按题型的最短阅读路径
+
+不必读完全部参考。先读 [SKILL.md](../SKILL.md) 的“小任务直通”判断规模，再按题型走：
+
+| 题型 | 先读 | 再用 |
+|---|---|---|
+| 物理、工程过程 | [domain-models.md](domain-models.md) 对应机制；[mathematical-reasoning.md](mathematical-reasoning.md) 的“数值收敛”与“阈值接近渐近值” | 正问题求解器（`solve_layered_diffusion`、`solve_diffusion`）加独立解（`layered_diffusion_laplace`、解析式）；`calibrate_curve`；`grid_convergence_index`；`sobol_convergence` |
+| 规划、调度、路径 | [structure-discovery.md](structure-discovery.md)（全单模、松弛）；[model-library.md](model-library.md) 的规划与网络行 | `solve_lp`、`solve_milp`、`check_total_unimodularity`；先手工可行解、再给界 |
+| 数据与预测 | [model-library.md](model-library.md) 的预测与回归行；[scientific-foundations.md](scientific-foundations.md) 第三节 | `ols_report`、`compare_models`、`backtest_baselines` |
+| 评价、决策、政策 | [model-library.md](model-library.md) 的评价与多目标行 | `evaluate_alternatives`、`pareto_front`、`sobol_convergence` |
+| 陌生或没有标准答案 | [path-search.md](path-search.md)、[research-mode.md](research-mode.md) | `route_graph`、`probe_structure`、`guess_sequence` |
+
 ## 题目要求逐项回答
 
 - 把原文拆成编号任务 Q1、Q2……每个任务对应论文里的一个位置（需求对照表），交稿前逐项核对没有遗漏，也没有多答而漏答。

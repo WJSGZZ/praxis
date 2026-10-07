@@ -120,7 +120,8 @@ def test_margin_report_flags_overflow_and_uneven_pages(tmp_path):
     with PdfPages(path) as pdf:
         for left_edge, right_edge in ((0.2, 0.8), (0.2, 0.97), (0.5, 0.5)):
             fig = plt.figure(figsize=(6, 8))
-            fig.add_artist(plt.Line2D([left_edge, right_edge], [0.5, 0.5], color='black', lw=3, transform=fig.transFigure))
+            for y in (0.9, 0.7, 0.5, 0.3, 0.1):
+                fig.add_artist(plt.Line2D([left_edge, right_edge], [y, y], color='black', lw=3, transform=fig.transFigure))
             pdf.savefig(fig)
             plt.close(fig)
     report = margin_report(path)
@@ -129,3 +130,24 @@ def test_margin_report_flags_overflow_and_uneven_pages(tmp_path):
     assert 'margins differ' in by_page[2]['flags'] and 'ink near the page edge' in by_page[2]['flags']
     assert abs(by_page[1]['left_pt'] - by_page[1]['right_pt']) < 4
     assert report['flagged_pages'] == [2]
+
+
+def test_margin_report_flags_white_gaps_and_mostly_empty_pages(tmp_path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    from scripts.check_pdf import margin_report
+    path = tmp_path / 'gaps.pdf'
+    with PdfPages(path) as pdf:
+        for ys in ((0.95, 0.9, 0.85, 0.2, 0.15), (0.95, 0.5), (0.9, 0.7, 0.5, 0.3, 0.1), (0.5,)):
+            fig = plt.figure(figsize=(6, 8))
+            for y in ys:
+                fig.add_artist(plt.Line2D([0.2, 0.8], [y, y], color='black', lw=3, transform=fig.transFigure))
+            pdf.savefig(fig)
+            plt.close(fig)
+    by_page = {p['page']: p for p in margin_report(path)['pages']}
+    assert any('vertical gap' in f for f in by_page[1]['flags'])
+    assert any('mostly empty' in f for f in by_page[2]['flags'])
+    assert 'flags' not in by_page[3]
+    assert 'flags' not in by_page[4] or not any('mostly empty' in f for f in by_page[4]['flags'])      # the last page may be short
