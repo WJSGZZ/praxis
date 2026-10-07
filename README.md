@@ -12,7 +12,7 @@
 
 **简体中文** · [English](README.en.md)
 
-[国赛 Demo](demos/cumcm-1998-a/README.md) · [美赛 Demo](demos/mcm-2016-a/README.md) · [快速开始](#快速开始) · [能力概览](#能力概览) · [Agent 兼容](#agent-兼容) · [验证与边界](#验证与边界)
+[数学建模案例](#两个完整案例两种建模问题) · [快速开始](#快速开始) · [能力](#能力概览) · [兼容](#agent-兼容) · [验证](#验证与边界)
 
 </div>
 
@@ -38,7 +38,7 @@
 <td width="50%" valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A</td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="demos/cumcm-1998-a/README.md"><img src="demos/cumcm-1998-a/assets/overview-zh.png" alt="国赛案例：投资组合、独立核验与完整报告" width="100%"></a></td>
+<td width="50%" valign="top"><a href="demos/cumcm-1998-a/README.md"><img src="demos/cumcm-1998-a/assets/overview-zh.png" alt="国赛案例：两组资产的风险上限与最优净收益率" width="100%"></a></td>
 <td width="50%" valign="top"><a href="demos/mcm-2016-a/README.md"><img src="demos/mcm-2016-a/assets/overview-zh.png" alt="美赛案例：空间水温、补水策略与能量证据" width="100%"></a></td>
 </tr>
 <tr>

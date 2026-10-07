@@ -12,9 +12,9 @@ from design.style import showcase_style, TOKENS
 results = json.loads((root/'reproduce/reference/results.json').read_text())
 
 with showcase_style() as s:
-    for lang in ['zh', 'en']:
+    for lang, home in [(l, h) for h in (False, True) for l in ('zh', 'en')]:
         fig, canvas = s.canvas()
-        s.header(canvas, 'CASE 01  /  RESULTS')
+        s.header(canvas, 'CASE 01  /  CUMCM 1998 A' if home else 'CASE 01  /  RESULTS')
         s.text(canvas, .065, .825, '风险的边界，收益的选择。' if lang == 'zh' else
                'Portfolio returns under risk constraints.', lang=lang, role='display', size=30)
         s.text(canvas, .065, .745, '两组资产的最优方案与风险收益曲线，计算结果经过独立核验。' if lang == 'zh' else
@@ -49,9 +49,17 @@ with showcase_style() as s:
                 tick.set_fontproperties(s.font(lang)); tick.set_fontsize(11)
             ax.grid(axis='y', color=s.c['ink'], alpha=TOKENS['chart']['grid_alpha'])
         canvas.plot([.065,.935], [.145,.145], color=s.c['rule'], lw=.8)
-        s.text(canvas, .065, .12, '资金 100 万元 · 虚线为 5% 银行收益率 · 两组采用不同风险上限' if lang == 'zh' else
-               'Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits across groups', lang=lang, role='note')
-        s.text(canvas, .065, .075, '风险口径：最大单项风险损失额 ÷ 总资金。模型结果不代表实际投资收益预测。' if lang == 'zh' else
-               'Risk = maximum single-asset loss / budget. Conditional model results, not investment forecasts.',
-               lang=lang, role='note', color='muted')
-        s.save(fig, root/'assets'/('risk-return-zh.png' if lang == 'zh' else 'risk-return.png'))
+        if home:
+            s.text(canvas, .065, .12, '资金 100 万元 · 虚线为 5% 银行收益率 · 两组风险上限不同，非实际投资预测' if lang == 'zh' else
+                   'Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits, not an investment forecast', lang=lang, role='note', color='muted', size=15)
+            s.text(canvas, .065, .075, '16 页完整报告 · 12 项检查 · 查看国赛 Demo →' if lang == 'zh' else
+                   'Read the 16-page report · Inspect 12 recorded checks →', lang=lang, role='body', size=17, color='accent')
+            name = 'overview-zh.png' if lang == 'zh' else 'overview-en.png'
+        else:
+            s.text(canvas, .065, .12, '资金 100 万元 · 虚线为 5% 银行收益率 · 两组采用不同风险上限' if lang == 'zh' else
+                   'Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits across groups', lang=lang, role='note')
+            s.text(canvas, .065, .075, '风险口径：最大单项风险损失额 ÷ 总资金。模型结果不代表实际投资收益预测。' if lang == 'zh' else
+                   'Risk = maximum single-asset loss / budget. Conditional model results, not investment forecasts.',
+                   lang=lang, role='note', color='muted')
+            name = 'risk-return-zh.png' if lang == 'zh' else 'risk-return.png'
+        s.save(fig, root/'assets'/name)

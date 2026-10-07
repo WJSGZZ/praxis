@@ -12,7 +12,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 [简体中文](README.md) · **English**
 
-[CUMCM case](demos/cumcm-1998-a/README.en.md) · [MCM case](demos/mcm-2016-a/README.en.md) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Agent compatibility](#agent-compatibility) · [Validation and limitations](#validation-and-limitations)
+[Modeling cases](#two-complete-cases-to-explore) · [Quick start](#quick-start) · [Capabilities](#capabilities) · [Compatibility](#agent-compatibility) · [Validation](#validation-and-limitations)
 
 </div>
 
@@ -38,7 +38,7 @@ The competition cases make the full workflow inspectable; they do not define the
 <td width="50%" valign="top"><strong>MCM · A Hot Bath</strong><br>2016 MCM A</td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="demos/cumcm-1998-a/README.en.md"><img src="demos/cumcm-1998-a/assets/overview-en.png" alt="Investment case: allocation, validation, and a complete report" width="100%"></a></td>
+<td width="50%" valign="top"><a href="demos/cumcm-1998-a/README.en.md"><img src="demos/cumcm-1998-a/assets/overview-en.png" alt="Investment case: optimal net return across risk limits for two asset sets" width="100%"></a></td>
 <td width="50%" valign="top"><a href="demos/mcm-2016-a/README.en.md"><img src="demos/mcm-2016-a/assets/overview-en.png" alt="Bath case: spatial temperatures, control, and energy bounds" width="100%"></a></td>
 </tr>
 <tr>
