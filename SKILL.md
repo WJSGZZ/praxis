@@ -30,6 +30,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
 - 国赛、美赛、研究生赛这类限时开放题，读题分类与常见丢分点见 [references/contest-playbook.md](references/contest-playbook.md)。
 - 工具总表（名称、字段、用途，自动生成）见 [references/tool-index.md](references/tool-index.md)。
+- 判断结构后查哪里有现成路线、没有时怎么办：[references/coverage-map.md](references/coverage-map.md)。交稿前的独立评审与反方检查：[references/review-protocol.md](references/review-protocol.md)。
 - 陌生领域的机制、标准方程、量级与检查，查 [references/domain-models.md](references/domain-models.md)。
 - 引入外部方法按 methods.md 的统一规则，出处与许可见 THIRD_PARTY_NOTICES.md。
 

@@ -18,6 +18,7 @@ BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.
 - 证据按七层逐层加深（代码、计算、数学性质、假设、数据与机制、稳健性、独立方法），层次见 [methods.md](../../references/methods.md)；对每个主要结论写一条证伪陈述并做那项检查，没有任何结果能推翻的结论不算结论。
 - 审查现成材料时按同一标准逐条给出：结论、它依赖的证据、证据是否独立、应降低到什么强度，而不是给泛泛评语。
 
+- 交稿前用互相独立的评审角色（数学、建模、数据来源、评分、反方）各读一遍，做法见 [review-protocol.md](../../references/review-protocol.md)。
 - 用户在场时，把审查结果讲成白话，请用户指出不合直觉之处，一起复盘并判断是否换方法，做法见 [praxis-dialogue](../praxis-dialogue/SKILL.md)。
 
 ## 产出

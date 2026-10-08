@@ -42,3 +42,5 @@ On top of 0.1.0, Praxis can now face an unfamiliar problem: find the structure f
   A model library covering optimization, differential equations, queueing, sensitivity, forecasting and learning methods, each with conditions and required checks; figure guidelines and LaTeX paper templates.
 - 持续集成：每次推送自动运行测试。
   Continuous integration runs the tests on every push.
+- 新增 12 个工具（共 62 个）：`minimize_nlp`、`knapsack`、`min_cost_flow`、`robust_lp`、`solve_mdp`、`hypothesis_test`、`bootstrap_ci`、`monte_carlo`、`solve_ode`、`arima_forecast`、`pca_report`、`cluster_report`，均有已知答案或暴力枚举的测试；新增能力覆盖地图（哪类结构有现成路线、没有时怎么办）、论文评审协议（独立评审角色与反方）、赛前规则清单。
+  Twelve new tools (62 in all) with known-answer or brute-force tests; a capability coverage map, a paper review protocol with independent reviewer roles, and a pre-contest rule checklist.
