@@ -23,3 +23,25 @@ def test_percent_and_spread(tmp_path):
         ag.percent({'coverage': 5, **{k: 2 for k in ag.WEIGHTS if k != 'coverage'}})
     with pytest.raises(ValueError):
         ag.percent({'coverage': 2})
+
+
+def test_checklist_scores_and_adjust_rules(tmp_path):
+    import json
+    from evals import aggregate as ag
+    dims = list(ag.WEIGHTS)
+    def full(met_share):
+        return {d: {f'{d}{i}': {'met': i < met_share, 'evidence': 'p1'} for i in range(4)} for d in dims}
+    item = {'paper': 'A', 'checklist': full(3)}
+    assert set(ag.dimension_scores(item).values()) == {3.0}
+    item['adjust'] = {'model': {'value': 1, 'reason': 'insight beyond the routine route'}}
+    assert ag.dimension_scores(item)['model'] == 4.0
+    item['adjust'] = {'model': {'value': 1, 'reason': ''}}
+    import pytest
+    with pytest.raises(ValueError):
+        ag.dimension_scores(item)
+    item['adjust'] = {'model': {'value': 2, 'reason': 'too much'}}
+    with pytest.raises(ValueError):
+        ag.dimension_scores(item)
+    (tmp_path / 'j.json').write_text(json.dumps([{'paper': 'A', 'checklist': full(4)}, {'paper': 'B', 'scores': {d: 2 for d in dims}}]))
+    out = ag.aggregate([tmp_path / 'j.json'])
+    assert out['A']['percent_mean'] == 100.0 and out['B']['percent_mean'] == 50.0
