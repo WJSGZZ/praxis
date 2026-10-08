@@ -22,6 +22,8 @@
 
 研究、课程、比赛，以及资源分配、环境分析、公共服务和工程决策等现实问题，都可以使用这套工作方式。先明确目标、约束与数据，再建立可解释的基线，按需要增加复杂度；遇到陌生问题，先找出它背后的数学结构，比较几条不同的路线并留下记录；没有标准答案时，用猜想、反例和高精度检验产出带把握等级的结论；让需求、计算、验证和报告中的结论彼此对应，减少整理、重复计算与协作交接的负担，把精力留给关键判断。
 
+不需要先会写全部代码：你可以用日常语言质疑模型，Praxis 将疑问转成可检查的情景，并记录实际采纳与修改。写作按中文、英文各自的表达习惯处理；赛事评估先讲奖项档次、依据与改进价值，诊断分用于内部定位。目标是更有竞争力的作品，先形成完整交付，再深入值得改进的关键问题。
+
 <table>
 <tr>
 <td width="33%"><strong>完成优先</strong><br>先形成基线和完整稿，再按剩余预算改善。</td>
@@ -67,35 +69,37 @@
 
 ## 快速开始
 
-### 1. 获取并接入
+### 1. 选择你的 Agent
 
-**作为插件使用（技能加数学工具）。** 克隆仓库后导出插件包，交给支持 Agent Plugins 格式的宿主安装：
+**安装完整插件：七个技能 + 数学工具 + 证据工作流。** 从公开仓库获取源码，按宿主生成安装包：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
 cd praxis
-uv run --locked python -m scripts.build_plugin --output ../praxis-plugin
+uv run --locked python -m scripts.build_plugin --host codex --output ../praxis-dist/codex/praxis
 ```
 
-插件包含七个技能和 `praxis-tools` 工具服务（`mcp.json`；首次启动时 uv 按锁文件准备环境）。输出目录须尚不存在。
+将 `codex` 换为下表中的目标，输出到新的目录，再按对应指南安装：
 
-**只用技能。** 把仓库放进宿主的技能目录即可（目标目录须尚不存在），不含 MCP 工具，需要时用命令行调用同样的工具：
+| Agent | 导出目标 | 安装入口 |
+|---|---|---|
+| Codex | `codex` | [本地 marketplace → 安装插件](references/installation.md#codex) |
+| Claude Code | `claude` | [插件 marketplace](references/installation.md#claude-code) |
+| Gemini CLI | `gemini` | [原生扩展](references/installation.md#gemini-cli) |
+| GitHub Copilot CLI | `copilot` | [本地插件安装](references/installation.md#github-copilot-cli) |
+| Cursor | `cursor` | [本地插件目录](references/installation.md#cursor) |
 
-```bash
-git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
-```
-
-Claude Code 使用 `~/.claude/skills/praxis`，其他位置见 [Agent 兼容](#agent-兼容)。同一宿主只启用一个同名版本。这样得到入口技能，专项技能由它按路径读取。
+**[查看完整安装指南 →](references/installation.md)**　只需要方法指导？也可以[仅安装技能](references/installation.md#仅安装技能)。
 
 ### 2. 准备计算环境
 
 脚本和工具需要 **Python 3.12**、[uv](https://docs.astral.sh/uv/) 和宿主的本地文件／终端能力：
 
 ```bash
-uv sync --project /path/to/praxis --locked
+uv sync --project /path/to/plugin/skills/praxis --locked
 ```
 
-仅使用分析方法时无需准备环境。
+路径替换为实际安装包中的 `skills/praxis`；只安装技能时使用仓库目录。仅使用分析方法无需准备环境。
 
 ### 3. 在你的项目中使用
 
@@ -122,8 +126,8 @@ uv sync --project /path/to/praxis --locked
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | “跑一下，保存可复现的结果” | CSV／Excel 审计、原件保全、模型与验证器执行、过期检测、证据索引 |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | “结果可信吗？结论说过头了吗？” | 独立检查、界与最优性、敏感性、证据与结论强度审查 |
 | [`praxis-explore`](skills/praxis-explore/SKILL.md) | “这题属于什么类型”“还有没有别的路”“没有标准答案怎么办” | 结构发现、路径搜索与淘汰、实验数学、经验沉淀；`route_graph` 与结构探测工具 |
-| [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | “给我讲讲这个模型”“我觉得哪里不对” | 用日常语言讲模型，结果出来后复盘，用逆向、事前验尸、证伪等方法共同检验 |
-| [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 论文结构、命题与证明、图表、参考文献核对、AI 披露、PDF 检查与冻结 |
+| [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | “给我讲讲这个模型”“我觉得哪里不对” | 解释模型，把直觉转成检查，复盘结果并保留真实参与记录 |
+| [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 中英文语言优化、论文与图表、引用及 AI 披露、PDF 检查与交付 |
 
 七个技能共用 [统一方法](references/methods.md) 和同一份任务记录；能力之间的交接见 [能力分工](references/capabilities.md)。
 
@@ -151,25 +155,17 @@ uv sync --project /path/to/praxis --locked
 | 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
 | 数据与文献（均免费） | `audit_data`、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
-插件还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
+通用、Codex、Claude 和 Copilot 安装包还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
 
 每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。常规的 MATLAB 与 R 用法，Python 基本都能覆盖。
 
 ## Agent 兼容
 
-只用技能时，同一份 `SKILL.md`、参考与 Python 工具按宿主选择发现目录：
+同一套建模方法，按宿主生成对应插件或扩展。七个技能与核心计算代码共用，安装清单和路径变量由导出器适配；不必为不同 Agent 维护不同的建模流程。
 
-| Agent | 项目内目录 | 本地个人目录 |
-|---|---|---|
-| Codex | `.agents/skills/praxis` | `~/.agents/skills/praxis` |
-| Claude Code | `.claude/skills/praxis` | `~/.claude/skills/praxis` |
-| Gemini CLI | `.agents/skills/praxis` 或 `.gemini/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.gemini/skills/praxis` |
-| GitHub Copilot | `.github/skills/praxis` 或 `.agents/skills/praxis` | CLI：`~/.copilot/skills/praxis` 或 `~/.agents/skills/praxis` |
-| Cursor | `.agents/skills/praxis` 或 `.cursor/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.cursor/skills/praxis` |
+推荐从[完整插件安装](references/installation.md)开始；仅支持技能的环境仍可使用 [Agent Skills 入口](references/installation.md#仅安装技能)。桌面与 CLI 的本地安装不会自动配置网页会话、云端 Agent 或远程机器。
 
-**已在 Codex 中使用**；其余宿主按各自官方格式与路径提供。自然语言调用是否加载技能，取决于宿主。
-
-官方依据、专用调用方式和能力条件见 [跨 Agent 兼容说明](references/agent-compatibility.md)。
+宿主能力、技能目录、官方依据与实际验证范围见 [兼容说明](references/agent-compatibility.md)。
 
 ## 命令行与插件结构
 
@@ -203,7 +199,9 @@ WORKSPACE="/absolute/path/to/your/project"
 ```text
 praxis-plugin/
   plugin.json
-  mcp.json                  # praxis-tools 工具服务
+  mcp.json                  # 核心工具与适用的外部服务
+  .codex-plugin/            # Codex 兼容入口
+  # 其他宿主由 --host 生成对应清单
   skills/
     praxis/                 # 入口技能，带全部参考、脚本与工具代码
     praxis-model/  praxis-compute/  praxis-verify/  praxis-explore/  praxis-dialogue/  praxis-report/
@@ -223,7 +221,7 @@ praxis-plugin/
 
 ## 可靠性
 
-- 240 余项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
+- 280 余项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
 - 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
 - 每个结论标明依据与适用条件；失败的运行保留，不改写。
 

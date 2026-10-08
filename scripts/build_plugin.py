@@ -8,7 +8,10 @@ import os
 from pathlib import Path
 import re
 import shutil
+import tomllib
 from urllib.parse import unquote, urlsplit
+
+from scripts.plugin_hosts import HOSTS, host_files
 
 BUNDLE = Path(__file__).resolve().parents[1]
 FILES = ('SKILL.md', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
@@ -103,7 +106,9 @@ def public_files(source: Path) -> list[Path]:
     return sorted(selected)
 
 
-def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
+def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') -> dict:
+    if host not in HOSTS:
+        raise ValueError(f'Unknown plugin host: {host}')
     source = source.resolve()
     # Resolve parent aliases, while mkdir(exist_ok=False) protects the target.
     output = output.parent.resolve() / output.name
@@ -111,6 +116,9 @@ def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
         raise FileExistsError(f'Refusing to replace {output}')
     files = public_files(source)
     manifest = json.loads((source / 'packaging/plugin.json').read_text())
+    version = tomllib.loads((source / 'pyproject.toml').read_text())['project']['version']
+    if manifest['version'] != version:
+        raise ValueError('Manifest version must match pyproject.toml')
     if manifest['name'] != 'praxis':
         raise ValueError('Expected the Praxis manifest')
     if any(output.is_relative_to(source / tree) for tree in TREES):
@@ -130,7 +138,24 @@ def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
     (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n')
     mcp = json.loads((source / 'packaging/mcp.json').read_text())
     (output / 'mcp.json').write_text(json.dumps(mcp, indent=2) + '\n')
-    hashes['mcp.json'] = hashlib.sha256((output / 'mcp.json').read_bytes()).hexdigest()
+    # Derive native Codex metadata from the portable manifest: one identity,
+    # two host entry points, no independently maintained compatibility copy.
+    native = {k: manifest[k] for k in ('name', 'version', 'description', 'author', 'repository', 'license')}
+    native.update(manifest.get('extensions', {}).get('com.openai', {}))
+    native.update(skills='./skills/', mcpServers='./.mcp.json')
+    (output / '.codex-plugin').mkdir()
+    (output / '.codex-plugin/plugin.json').write_text(json.dumps(native, indent=2, ensure_ascii=False) + '\n')
+    legacy_mcp = {'mcpServers': {name: {k: v for k, v in server.items() if k != 'type'}
+                              for name, server in mcp['mcpServers'].items()}}
+    (output / '.mcp.json').write_text(json.dumps(legacy_mcp, indent=2) + '\n')
+    for name, data in host_files(host, manifest, mcp).items():
+        target = output / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
+        hashes[name] = hashlib.sha256(target.read_bytes()).hexdigest()
+    # A host adapter can replace an entry point; receipt always hashes final bytes.
+    for name in ('plugin.json', 'mcp.json', '.codex-plugin/plugin.json', '.mcp.json'):
+        hashes[name] = hashlib.sha256((output / name).read_bytes()).hexdigest()
     (output / 'LICENSE').write_bytes((source / 'LICENSE').read_bytes())
     (output / 'README.md').write_text('''# Praxis plugin
 
@@ -150,21 +175,23 @@ uv sync --locked --project /absolute/path/to/praxis-plugin/skills/praxis
 Run helpers with that environment and pass --workspace to the user project.
 Installation does not install Python dependencies. Keep cases, data, reports
 and run outputs in the user project. See skills/praxis/README.md for usage
-and third-party licensing. Desktop installation and discovery must be tested
-separately; this export is not a plugin-directory publication.
+and third-party licensing. Install this host-specific export using the instructions in
+skills/praxis/references/installation.md. Installation and discovery checks
+are distinct from plugin-directory publication.
 ''')
     receipt = {'format': 'praxis-plugin-export-v1', 'name': manifest['name'],
-               'version': manifest['version'], 'files_sha256': hashes}
+               'version': manifest['version'], 'host': host, 'files_sha256': hashes}
     (output / 'build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
-    return {'plugin': str(output), 'skill': str(skill), 'public_files': len(files)}
+    return {'plugin': str(output), 'skill': str(skill), 'host': host, 'public_files': len(files)}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True,
                         help='New output directory; never replaces an existing directory')
+    parser.add_argument('--host', choices=HOSTS, default='portable', help='Target host adapter; core skills and code are unchanged')
     args = parser.parse_args()
-    print(json.dumps(build_plugin(args.output), indent=2))
+    print(json.dumps(build_plugin(args.output, host=args.host), indent=2))
 
 
 if __name__ == '__main__':

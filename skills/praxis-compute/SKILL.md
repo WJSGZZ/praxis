@@ -8,6 +8,10 @@ license: MIT
 
 BUNDLE 指 `praxis` 技能目录；脚本在 `BUNDLE/scripts/`。需要 Python 3.12 和 uv；环境准备、跨工作区调用与命令统一见 [automation.md](../../references/automation.md)。没有终端时只做设计，不声称已运行。
 
+## 调用契约
+
+输入：已明确模型、原始输入、参数与运行环境。产出：可复现代码、实际运行和失败证据。依赖与边界：需要本地运行能力；不凭程序成功断言模型正确。
+
 ## 做什么
 
 - 数据：先读 [data-computing.md](../../references/data-computing.md)。接收文件后保留原件，用 `scripts/audit_data.py` 做只读的 CSV／Excel 审计（不推断单位、不静默修复），再决定怎样处理；变换只使用允许的信息，时间序列的开发目标与最终留出目标分开。

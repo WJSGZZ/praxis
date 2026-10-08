@@ -22,6 +22,8 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. On an unfamiliar problem it looks for the mathematical structure first and compares several different routes on record; with no answer key it produces conclusions labelled by how sure they are, through conjectures, counterexample searches and high-precision checks. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
+You can contribute without writing every line of code. Question an assumption in everyday language; Praxis turns it into a check and keeps a trace of what changed. Chinese and English drafts are edited for their own readers. Contest feedback leads with award-level estimates, evidence and useful next steps, while numerical diagnostics stay behind the scenes. A complete draft provides the foundation for deeper work on the questions that matter.
+
 <table>
 <tr>
 <td width="33%"><strong>Get to a complete draft</strong><br>Establish a baseline, finish the report, then improve as time allows.</td>
@@ -67,35 +69,37 @@ Explore either case or bring your own problem. **Star Praxis** if you would like
 
 ## Quick start
 
-### 1. Get it and connect it
+### 1. Install for your agent
 
-**As a plugin (skills plus math tools).** Clone the repository, export the plugin, and hand it to a host that reads the Agent Plugins format:
+Get all seven skills, mathematical tools and the evidence workflow as one plugin. Clone the public source and choose a target:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
 cd praxis
-uv run --locked python -m scripts.build_plugin --output ../praxis-plugin
+uv run --locked python -m scripts.build_plugin --host codex --output ../praxis-dist/codex/praxis
 ```
 
-The plugin carries the seven skills and a `praxis-tools` server (`mcp.json`; on first launch uv prepares the environment from the lock file). The output directory must not exist yet.
+Build into a new directory. Use the matching target and follow its installation steps:
 
-**Skills only.** Drop the repository into your host's skills directory (the destination must not exist). It has no MCP tools, but the same tools run from the command line:
+| Agent | Target | Installation |
+|---|---|---|
+| Codex | `codex` | [Local marketplace](references/installation.en.md#codex) |
+| Claude Code | `claude` | [Plugin marketplace](references/installation.en.md#claude-code) |
+| Gemini CLI | `gemini` | [Native extension](references/installation.en.md#gemini-cli) |
+| GitHub Copilot CLI | `copilot` | [Local plugin](references/installation.en.md#github-copilot-cli) |
+| Cursor | `cursor` | [Local plugin directory](references/installation.en.md#cursor) |
 
-```bash
-git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
-```
-
-Claude Code uses `~/.claude/skills/praxis`; other locations are under [Agent compatibility](#agent-compatibility). Enable one copy per host. This gives you the entry skill, which reads the focused skills by path.
+**[Open the installation guide →](references/installation.en.md)** Prefer guidance without MCP? Choose the [skills-only option](references/installation.en.md#skills-only-option).
 
 ### 2. Prepare the computing environment
 
 Scripts and tools need **Python 3.12**, [uv](https://docs.astral.sh/uv/), and a host with local file and terminal access:
 
 ```bash
-uv sync --project /path/to/praxis --locked
+uv sync --project /path/to/plugin/skills/praxis --locked
 ```
 
-The methodology works without Python.
+Point this command at `skills/praxis` inside your installed bundle, or at the repository for a skills-only installation. Guidance alone needs no Python environment.
 
 ### 3. Use Praxis in your project
 
@@ -122,8 +126,8 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | "Run it and keep it reproducible" | CSV/Excel audit, preserved inputs, model and validator runs, stale-result detection, evidence links |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | "Can I trust this? Did I claim too much?" | Independent checks, bounds and optimality, sensitivity, strength of each claim |
 | [`praxis-explore`](skills/praxis-explore/SKILL.md) | "What kind of problem is this?", "Is there another way?", "There is no answer key" | Structure discovery, route search and elimination, experimental mathematics, lessons that carry over; `route_graph` and structure probes |
-| [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | "Explain this model", "something feels off" | Plain-language explanation, review after results, and joint checking with inversion, pre-mortems and falsification |
-| [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Paper structure, propositions and proofs, figures, reference checking against Crossref, AI disclosure, PDF checks and freezing |
+| [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | "Explain this model", "something feels off" | Explain the model, turn objections into checks, and trace meaningful user contributions |
+| [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Natural Chinese and English, paper and figure editing, references, AI disclosure, and PDF delivery |
 
 All seven share the [methodology](references/methods.md) and one task record; see [capability handoffs](references/capabilities.md) for how work passes between them.
 
@@ -152,25 +156,17 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
 | Data and free literature | `audit_data`, `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
-The plugin also wires in the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. For paywalled journal papers the tools find legal free copies; the rest can come from a school library.
+Portable, Codex, Claude and Copilot exports also include the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. For paywalled journal papers the tools find legal free copies; the rest can come from a school library.
 
 When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). Python covers the ordinary uses of MATLAB and R.
 
 ## Agent compatibility
 
-Use the same `SKILL.md`, references, and Python tools, with the discovery directory your host expects:
+Praxis keeps its modeling logic shared across agents. Host-specific exports supply the manifests and path variables each agent expects, while all seven skills and the core engine come from the same source.
 
-| Agent | Project directory | Local personal directory |
-|---|---|---|
-| Codex | `.agents/skills/praxis` | `~/.agents/skills/praxis` |
-| Claude Code | `.claude/skills/praxis` | `~/.claude/skills/praxis` |
-| Gemini CLI | `.agents/skills/praxis` or `.gemini/skills/praxis` | `~/.agents/skills/praxis` or `~/.gemini/skills/praxis` |
-| GitHub Copilot | `.github/skills/praxis` or `.agents/skills/praxis` | CLI: `~/.copilot/skills/praxis` or `~/.agents/skills/praxis` |
-| Cursor | `.agents/skills/praxis` or `.cursor/skills/praxis` | `~/.agents/skills/praxis` or `~/.cursor/skills/praxis` |
+Start with the [plugin installation guide](references/installation.en.md), or use the [standalone skill](references/installation.en.md#skills-only-option) where appropriate. Installing on a desktop or CLI does not provision browser-only sessions, cloud agents or remote machines.
 
-**Used in Codex today**; the other hosts are supported through their own documented formats and paths. Whether natural-language requests load the skill depends on the host.
-
-Official sources, invocation differences, and required capabilities are documented in [Host compatibility](references/agent-compatibility.md).
+See [host compatibility](references/agent-compatibility.md) for capability requirements, skill discovery paths, official references and the scope of validation.
 
 ## Command line and plugin layout
 
@@ -204,7 +200,9 @@ The export follows [Agent Plugins 1.0](https://agent-plugins.org/specification) 
 ```text
 praxis-plugin/
   plugin.json
-  mcp.json                  # the praxis-tools server
+  mcp.json                  # core tools and applicable external services
+  .codex-plugin/            # Codex compatibility entry
+  # Other manifests are generated by --host
   skills/
     praxis/                 # entry skill, with all references, scripts and tool code
     praxis-model/  praxis-compute/  praxis-verify/  praxis-explore/  praxis-dialogue/  praxis-report/
@@ -224,7 +222,7 @@ The agent coordinates the work using deterministic scripts and your project's ru
 
 ## Reliability
 
-- 240+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
+- 280+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 

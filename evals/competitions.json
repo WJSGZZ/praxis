@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "contest": "cumcm",
+      "event": "undergraduate",
+      "edition": "2026",
+      "title": "全国大学生数学建模竞赛",
+      "status": {
+        "rules": "partial",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": "Chinese",
+      "participation": null,
+      "deliverables": null,
+      "ai": "2026 rules refer to the separate AI-use policy; detailed policy must be checked",
+      "award_system": null,
+      "sources": [
+        {
+          "url": "https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html",
+          "checked": "2026-10-08",
+          "scope": "2026 participation rules only; not full paper-format and AI policy"
+        }
+      ],
+      "checker": "scripts/contest_rules.py --contest cumcm",
+      "limits": "Mechanical checker covers a subset; historical demo does not validate this edition end to end."
+    },
+    {
+      "contest": "mcm",
+      "event": "MCM",
+      "edition": "2027",
+      "title": "COMAP MCM",
+      "status": {
+        "rules": "partial",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": "English",
+      "participation": "1–3 students at the same institution",
+      "deliverables": [
+        "one PDF; AI report appended where applicable"
+      ],
+      "ai": "Disclose actual uses and verify generated content; see edition policy",
+      "award_system": [
+        "Successful Participant",
+        "Honorable Mention",
+        "Meritorious",
+        "Finalist",
+        "Outstanding Winner"
+      ],
+      "sources": [
+        {
+          "url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php",
+          "checked": "2026-10-08",
+          "scope": "Official instructions including format, participation and AI sections; VII award designations (not an award calibration)"
+        }
+      ],
+      "checker": "scripts/contest_rules.py --contest mcm",
+      "limits": "Mechanical checker covers a subset; historical demo does not validate this edition end to end."
+    },
+    {
+      "contest": "mcm",
+      "event": "ICM",
+      "edition": "2027",
+      "title": "COMAP ICM",
+      "status": {
+        "rules": "partial",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": "English",
+      "participation": "1–3 students at the same institution",
+      "deliverables": [
+        "one PDF; AI report appended where applicable"
+      ],
+      "ai": "Disclose actual uses and verify generated content; see edition policy",
+      "award_system": [
+        "Successful Participant",
+        "Honorable Mention",
+        "Meritorious",
+        "Finalist",
+        "Outstanding Winner"
+      ],
+      "sources": [
+        {
+          "url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php",
+          "checked": "2026-10-08",
+          "scope": "Official instructions including format, participation and AI sections; VII award designations (not an award calibration)"
+        }
+      ],
+      "checker": "scripts/contest_rules.py --contest mcm",
+      "limits": "Mechanical checker covers a subset; historical demo does not validate this edition end to end."
+    },
+    {
+      "contest": "graduate",
+      "event": null,
+      "edition": null,
+      "title": "研究生数学建模竞赛",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": null,
+      "participation": null,
+      "deliverables": null,
+      "ai": null,
+      "award_system": null,
+      "sources": [],
+      "checker": null,
+      "limits": "Candidate requested by users; event, edition and official sources must be resolved before use."
+    },
+    {
+      "contest": "mathorcup",
+      "event": null,
+      "edition": null,
+      "title": "MathorCup及相关赛项",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": null,
+      "participation": null,
+      "deliverables": null,
+      "ai": null,
+      "award_system": null,
+      "sources": [],
+      "checker": null,
+      "limits": "Candidate requested by users; event, edition and official sources must be resolved before use."
+    },
+    {
+      "contest": "shuwei",
+      "event": null,
+      "edition": null,
+      "title": "数维杯",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": null,
+      "participation": null,
+      "deliverables": null,
+      "ai": null,
+      "award_system": null,
+      "sources": [],
+      "checker": null,
+      "limits": "Candidate requested by users; event, edition and official sources must be resolved before use."
+    },
+    {
+      "contest": "huashu",
+      "event": null,
+      "edition": null,
+      "title": "华数杯",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": null,
+      "participation": null,
+      "deliverables": null,
+      "ai": null,
+      "award_system": null,
+      "sources": [],
+      "checker": null,
+      "limits": "Candidate requested by users; event, edition and official sources must be resolved before use."
+    },
+    {
+      "contest": "huazhong",
+      "event": null,
+      "edition": null,
+      "title": "华中杯",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "language": null,
+      "participation": null,
+      "deliverables": null,
+      "ai": null,
+      "award_system": null,
+      "sources": [],
+      "checker": null,
+      "limits": "Candidate requested by users; event, edition and official sources must be resolved before use."
+    }
+  ]
+}

@@ -5,6 +5,31 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 发布检查在独立临时副本运行两个提交包，允许重复检查且保留已有复现结果；失败时输出诊断。
+  Release checks run the submission packages in temporary copies, preserve existing reproduction output, and show failure diagnostics.
+
+- 参考固定版本openai/math的工件组织与辅助结果说明，在原证据主线补上证明陈述、前提和覆盖范围检查；辅助引理不能冒充主结论，不新增Lean依赖或强制形式化步骤。
+  Proof review now checks statement alignment, assumptions and coverage, informed by a pinned openai/math snapshot. Supporting results cannot stand in for a main claim; no Lean dependency or mandatory formalization stage is added.
+
+- 语言修改锁定事实、条件与结论强度，中英文分别写作；对话技能将日常质疑交给模型检查，持续协作可追加来源可追溯的本地贡献事件，贡献日志与数值快照分离。
+  Language edits preserve facts and claim strength while addressing each language on its own terms. Dialogue connects objections to checks; local contribution events retain provenance without invalidating numerical runs merely because a note was appended.
+- 赛事评审默认使用奖项导向视图，缺少届次／版本／检查范围时暂不判断；保留内部诊断与旧评审。新增按赛事—赛项—届次查询的覆盖档案，规则、完整流程及奖项校准分别标记，不从旧届次继承合规结论。
+  Contest reviews now lead with scoped award estimates and actionable gaps, or abstain when evidence is insufficient. Internal diagnostics remain available. An edition-specific registry separates rule coverage, workflow validation and award calibration without treating candidate contests as supported.
+
+- 明确公开源码与插件交付边界，保留测试/CI等维护文件，忽略本地笔记与构建产物，增加导出排除回归及贡献说明。
+  Contribution guidance separates maintained source, local work and installable packages. Export checks keep private and development-only files out of distributions.
+
+- 增加 Codex、Claude Code、Gemini CLI、Copilot CLI 与 Cursor 的宿主导出目标，适配各自清单和 MCP 路径；首页按插件安装组织，提供中英文完整指南。各包共用七技能与核心工具，部分宿主的可选 arXiv 存储需另配。
+  Host-targeted exports now cover Codex, Claude Code, Gemini CLI, Copilot CLI and Cursor. Bilingual setup guides explain native installation while keeping the skills and mathematical engine shared.
+
+- 插件导出增加由统一元数据生成的 Codex 原生入口与 MCP 兼容配置，所有入口纳入哈希收据；保留可移植包与七个技能。
+  The portable bundle now also exports native Codex entry points from the same metadata, with manifest hashes recorded in the build receipt.
+- 合成题评分升级为 planted-v2：排队答案独立计算，LP 核验向量且接受多重最优解，结构标签使用有限族解析条件，SIR 最终规模考虑初始感染；拒绝非法数值与字段类型，订货量改用绝对误差。明确工具回归与真实 Agent 对照的区别。
+  Synthetic regression scoring now verifies LP certificates, uses independent queue and analytic structure references, and accounts for finite initial infections. Typed finite answers and absolute inventory tolerances tighten acceptance; oracle contracts distinguish tool checks from Agent comparisons.
+
+- 补强模型比较与计算契约：按推广对象划分数据、跨折汇总选型并重训完整处理链，区分递推预测、平滑、聚类编号与概率；增加指标和逆变换的独立反例演示，以及插值、信号和隐状态方法的条件说明。没有增加工具、依赖或固定步骤。
+  Model guidance now follows the intended use of a prediction through data splitting, cross-validation, refitting and output interpretation. A runnable set of counterexamples exposes misleading metrics, unavailable future information and transformation errors; task-specific notes cover interpolation, signals and hidden states without adding tools or mandatory stages.
+
 - 修复插件导出后的双向技能与参考链接；整包链接检查覆盖核心、专项与案例，导出 MCP 实测握手、独立答案与失败恢复。规则按职责归并，完整研究、多人评审与网格检查按实际缺口启用。
   Plugin exports now relocate links across the entire package. Checks cover core and focused skills, references, an MCP handshake, a known-answer computation and recovery after a failed call. Shared guidance is consolidated by responsibility and applied to the task's actual scope.
 - 评审 schema v2 区分不适用、尚未核验和反例，关键主张与诊断分并列；保留旧记录兼容，不改赛事权重或设奖项分数线。

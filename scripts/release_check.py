@@ -5,8 +5,10 @@
 
 A demo run must exit cleanly and leave the tracked records unchanged: the check fails if git shows a change under demos/."""
 import argparse
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,7 +19,25 @@ LONG = ['demos/mcm-2016-a/reproduce/run_extended.py', 'demos/mcm-2016-a/reproduc
 
 
 def run(command):
-    return subprocess.run(command, cwd=ROOT, capture_output=True, text=True).returncode == 0
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+    if result.returncode:
+        print(result.stdout, end='')
+        print(result.stderr, end='', file=sys.stderr)
+    return result.returncode == 0
+
+
+def run_demo(script):
+    source = ROOT / script
+    if source.name != 'run_demo.py':
+        return run(['uv', 'run', '--locked', 'python', script])
+    # The submitted reproduction scripts deliberately refuse to overwrite output.
+    # Exercise the unchanged package in isolation so repeat checks preserve both
+    # the archived reference records and any user's previous reproduction.
+    with tempfile.TemporaryDirectory(prefix='praxis-release-') as temporary:
+        work = Path(temporary) / 'reproduce'
+        shutil.copytree(source.parent, work,
+                        ignore=shutil.ignore_patterns('reproduced', '__pycache__'))
+        return run(['uv', 'run', '--locked', 'python', str(work / source.name)])
 
 
 def changed_demo_files():
@@ -31,7 +51,7 @@ def main():
     args = parser.parse_args()
     failures = []
     for script in QUICK + (LONG if args.long else []):
-        ok = run(['uv', 'run', '--locked', 'python', script])
+        ok = run_demo(script)
         print(('PASS ' if ok else 'FAIL ') + script, flush=True)
         if not ok:
             failures.append(script)

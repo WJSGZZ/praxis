@@ -172,9 +172,63 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
     return out
 
 
+def user_view(report: dict, contest: str | None = None) -> dict:
+    """Award-first view of existing reviews; never convert a diagnostic to an award."""
+    out = {}
+    for paper, result in report.items():
+        assessments = []
+        for award in result.get('award_estimates', []):
+            required = {'contest', 'event', 'edition', 'problem', 'version', 'scope', 'target', 'basis',
+                        'gaps', 'actions', 'most_likely', 'range', 'calibrated'}
+            if not isinstance(award, dict) or not required <= set(award):
+                continue  # Preserve legacy awards internally, without inventing their scope.
+            for field in ('contest', 'event', 'edition', 'problem', 'version', 'scope', 'target', 'basis'):
+                _text(award[field], f'award {field}')
+            if contest and contest != 'general' and award['contest'] != contest:
+                raise ValueError('Award contest does not match the selected profile')
+            if award['contest'] == 'mcm' and award['event'] not in ('MCM', 'ICM'):
+                raise ValueError('Specify MCM or ICM as the event')
+            if award['most_likely'] is not None:
+                _text(award['most_likely'], 'award most_likely')
+            for field in ('range', 'gaps', 'actions'):
+                if not isinstance(award[field], list):
+                    raise ValueError(f'award {field} needs a list')
+                for value in award[field]:
+                    _text(value, f'award {field} item')
+            from evals.competitions import lookup
+            levels = lookup(award['contest'], award['event'], award['edition']).get('award_system')
+            labels = award['range'] + ([award['most_likely']] if award['most_likely'] is not None else [])
+            if levels and any(label not in levels for label in labels):
+                raise ValueError('Award label does not belong to the exact contest edition record')
+            if type(award['calibrated']) is not bool:
+                raise ValueError('award calibrated must be boolean')
+            if award['calibrated']:
+                _text(award.get('calibration_evidence'), 'award calibration_evidence')
+            assessments.append({key: award[key] for key in (
+                'target', 'most_likely', 'range', 'basis', 'gaps', 'actions',
+                'contest', 'event', 'edition', 'problem', 'version', 'scope', 'calibrated')})
+            if award['calibrated']:
+                assessments[-1]['calibration_evidence'] = award['calibration_evidence']
+        out[paper] = {'contest': contest or 'general', 'assessments': assessments,
+                      'status': 'reviewer_estimates' if assessments else 'insufficient_scoped_award_evidence',
+                      'validity': [r['validity_status'] for r in result['reviews']],
+                      'note': '各评委估计分别保留；未建立诊断分与奖项的固定换算。' if assessments
+                              else '暂不判断奖项：缺少具体届次、题目、版本、范围或评审依据。'}
+    return out
+
+
 if __name__ == '__main__':
     args = sys.argv[1:]
+    view = None
+    if '--view=user' in args:
+        args.remove('--view=user')
+        view = 'user'
+    if '--view=internal' in args:
+        args.remove('--view=internal')
+        view = 'internal'
     contest = None
     if args and args[0].startswith('--contest='):
         contest, args = args[0].split('=', 1)[1], args[1:]
-    print(json.dumps(aggregate([Path(a) for a in args], contest), ensure_ascii=False, indent=1))
+    view = view or ('user' if contest and contest != 'general' else 'internal')
+    result = aggregate([Path(a) for a in args], contest)
+    print(json.dumps(user_view(result, contest) if view == 'user' else result, ensure_ascii=False, indent=1))

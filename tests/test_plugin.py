@@ -173,3 +173,93 @@ def test_exported_plugin_carries_the_seed_lessons(tmp_path):
     out = tmp_path / 'plugin'
     build_plugin(out)
     assert (out / 'skills/praxis/templates/lessons-seed.jsonl').is_file()
+
+
+def test_codex_entry_points_are_derived_and_hashed(tmp_path):
+    out = tmp_path / 'plugin'
+    build_plugin(out)
+    portable = json.loads((out / 'plugin.json').read_text())
+    native = json.loads((out / '.codex-plugin/plugin.json').read_text())
+    assert native['name'] == portable['name']
+    assert native['version'] == portable['version']
+    assert native['interface'] == portable['extensions']['com.openai']['interface']
+    assert (out / native['skills']).is_dir()
+    config = json.loads((out / native['mcpServers']).read_text())
+    assert set(config['mcpServers']) == {'praxis-tools', 'arxiv'}
+    receipt = json.loads((out / 'build-receipt.json').read_text())
+    assert {'plugin.json', 'mcp.json', '.codex-plugin/plugin.json', '.mcp.json'} <= receipt['files_sha256'].keys()
+
+
+@pytest.mark.parametrize('host,variable', [('codex', '${PLUGIN_ROOT}'), ('claude', '${CLAUDE_PLUGIN_ROOT}'),
+                                         ('copilot', '${PLUGIN_ROOT}'), ('gemini', '${extensionPath}'),
+                                         ('cursor', '${CURSOR_PLUGIN_ROOT}')])
+def test_host_exports_launch_from_an_unrelated_directory(tmp_path, host, variable):
+    output = tmp_path / host / 'praxis'
+    build_plugin(output, host=host)
+    receipt = json.loads((output / 'build-receipt.json').read_text())
+    assert receipt['host'] == host
+    for name, digest in receipt['files_sha256'].items():
+        assert hashlib.sha256((output / name).read_bytes()).hexdigest() == digest
+    assert len(list((output / 'skills').glob('*/SKILL.md'))) == 7
+    if host == 'claude':
+        config = json.loads((output / '.mcp.json').read_text())
+        native = json.loads((output / '.claude-plugin/plugin.json').read_text())
+        assert native['name'] == 'praxis'
+        assert 'cwd' not in config['mcpServers']['praxis-tools']
+        assert '${CLAUDE_PLUGIN_DATA}' in json.dumps(config['mcpServers']['arxiv'])
+    elif host == 'gemini':
+        config = json.loads((output / 'gemini-extension.json').read_text())
+        assert config['name'] == 'praxis'
+        assert set(config['mcpServers']) == {'praxis-tools'}
+    else:
+        config = json.loads((output / 'mcp.json').read_text())
+    if host == 'cursor':
+        assert '${PLUGIN_ROOT}' not in json.dumps(config) and '${PLUGIN_DATA}' not in json.dumps(config)
+    server = config['mcpServers']['praxis-tools']
+    assert variable in json.dumps(server)
+    # Simulate only the documented host substitution, then execute the actual
+    # exported launcher: no source-tree cwd/PYTHONPATH may rescue a bad path.
+    args = [v.replace(variable, str(output)) for v in server['args']]
+    cwd = server.get('cwd', str(tmp_path)).replace(variable, str(output))
+    request = {'jsonrpc': '2.0', 'id': 1, 'method': 'tools/call',
+               'params': {'name': 'solve_lp', 'arguments': {'c': [3, 2], 'A_ub': [[1, 1], [1, 0], [0, 1]],
+                          'b_ub': [4, 2, 3], 'maximize': True}}}
+    result = subprocess.run([server['command'], *args], cwd=cwd, input=json.dumps(request)+'\n',
+                            text=True, capture_output=True, timeout=60)
+    assert result.returncode == 0, result.stderr
+    reply = json.loads(result.stdout)
+    assert not reply['result']['isError']
+    answer = json.loads(reply['result']['content'][0]['text'])
+    assert answer['objective'] == pytest.approx(10) and answer['x'] == pytest.approx([2, 2])
+
+
+def test_unknown_host_does_not_create_an_output(tmp_path):
+    out = tmp_path / 'plugin'
+    with pytest.raises(ValueError, match='Unknown plugin host'):
+        build_plugin(out, host='invented')
+    assert not out.exists()
+
+
+def test_export_excludes_private_and_development_only_files(tmp_path):
+    """Ignore files and export rules are separate: never package the whole checkout."""
+    from scripts.build_plugin import public_files
+    source = tmp_path / 'source'
+    for path in public_files(BUNDLE):
+        target = source / path.relative_to(BUNDLE)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+    excluded = ['.local/notes.md', 'outputs/internal.json', 'cases/private/raw.csv',
+                'dist/old-package/plugin.json', 'build/cache.txt', 'tests/maintainer_only.py',
+                '.github/workflows/test.yml', 'CONTRIBUTING.md']
+    for name in excluded:
+        target = source / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('PRIVATE_OR_MAINTENANCE_ONLY_SENTINEL')
+    # Even an external link in an excluded local directory must not be traversed.
+    (source / '.local/external').symlink_to(tmp_path / 'unrelated')
+    output = tmp_path / 'export'
+    build_plugin(output, source)
+    assert (output / 'skills/praxis/modeling/optimize.py').is_file()
+    for name in excluded:
+        assert not (output / name).exists()
+        assert not (output / 'skills/praxis' / name).exists()

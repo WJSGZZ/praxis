@@ -2,7 +2,7 @@
 
     uv run --locked python -m scripts.contest_rules paper.pdf --contest mcm|cumcm [--forbidden "University of ..."]
 
-The rules are those published for MCM/ICM 2026 (COMAP instructions) and in the CUMCM paper-format specification (2019, 2021, 2023 revisions).
+The mechanical MCM rules were rechecked against COMAP 2027 instructions on 2026-10-08 and in the CUMCM paper-format specification (2019, 2021, 2023 revisions).
 They change: compare with the current official documents before relying on a pass. A pass means the PDF meets these mechanical rules;
 it says nothing about the content."""
 import argparse

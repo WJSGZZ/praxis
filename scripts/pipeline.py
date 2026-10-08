@@ -430,6 +430,11 @@ def main():
     show.add_argument('--case', type=Path, required=True)
     evidence = commands.add_parser('evidence')
     evidence.add_argument('--case', type=Path, required=True)
+    contribution = commands.add_parser('contribution-add')
+    contribution.add_argument('--case', type=Path, required=True)
+    contribution.add_argument('--event', type=Path, required=True, help='Local JSON event; never a fabricated transcript')
+    contribution_summary = commands.add_parser('contribution-summary')
+    contribution_summary.add_argument('--case', type=Path, required=True)
     args = parser.parse_args()
     PROJECT = args.workspace.resolve()
     try:
@@ -439,6 +444,12 @@ def main():
             result = run_case(args.case,args.model,args.validator,args.timeout)
         elif args.action == 'evidence':
             result = evidence_index(args.case)
+        elif args.action == 'contribution-add':
+            from scripts.contributions import append_event
+            result = append_event(under_project(args.case), read_json(args.event))
+        elif args.action == 'contribution-summary':
+            from scripts.contributions import summarize
+            result = summarize(under_project(args.case))
         else:
             result = status(args.case)
         if args.action == 'run' and not args.full_output:

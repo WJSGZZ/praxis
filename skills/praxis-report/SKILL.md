@@ -1,12 +1,16 @@
 ---
 name: praxis-report
-description: 把有效结果写成读者能核查的论文或报告：摘要、章节顺序、命题与证明、模型验证写法、图表选择与图注、数字与引用一致、AI 使用披露、PDF 逐页检查与冻结。用于“写论文、改摘要、审我的稿子、检查 PDF”。不替代建模与验证，缺证据时返回上游。
+description: 把有效结果写成读者能核查的论文或报告：摘要、章节顺序、命题与证明、模型验证写法、图表选择与图注、数字与引用一致、AI 使用披露、PDF 逐页检查与冻结。用于“写论文、改摘要、中文润色、英文科研表达、审我的稿子、检查 PDF”。不替代建模与验证，缺证据时返回上游。
 license: MIT
 ---
 
 # Praxis · 论文与交付
 
-BUNDLE 指 `praxis` 技能目录。先读 [writing.md](../../references/writing.md)（含“论文骨架、验证与图表”）与 [visualization.md](../../references/visualization.md)。
+BUNDLE 指 `praxis` 技能目录。按当前请求读 [writing.md](../../references/writing.md) 的对应小节；纯语言修改只读“语言专项”，涉及图表才读 [visualization.md](../../references/visualization.md)。
+
+## 调用契约
+
+输入：指定原稿或有效结果、事实表与交付要求。产出：自然清楚且事实一致的修订或完整报告。依赖与边界：语言仅用写作参考，图表与PDF按需；不新增科学主张。
 
 ## 做什么
 

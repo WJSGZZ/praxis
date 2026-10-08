@@ -37,3 +37,8 @@ Public demonstration:
 - CUMCM 1998 A parameter tables are transcribed from page 11 of the organizer's [official historical problem collection](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf). Numerical problem parameters retain this attribution; the official PDF and others' solutions are not redistributed.
 - The demo's solution, code, report text, figures, and page previews are project-created materials. No official showcase paper text or images are copied. PDF font programs embedded for displaying the report are not standalone font distributions and are not relicensed by the repository MIT license.
 - Original modeling code calls NumPy, SciPy/HiGHS, and Matplotlib; these dependencies are not vendored. The support archive includes original code and generated artifacts, not third-party library implementations.
+
+
+Proof-artifact organization reference:
+
+- [openai/math](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb), Apache-2.0, reviewed at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. The repository README, Lean README and Comparator challenge instructions informed the original scope-checking guidance in references/methods.md: link a claim to its exact statement, assumptions, proof artifact and verification scope, and distinguish supporting results from main theorems. No manuscripts, reasoning summaries, Lean code, data or proof tools are copied or installed. The repository license does not make unverified mathematical claims correct; Praxis did not compile these proofs.

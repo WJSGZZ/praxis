@@ -11,3 +11,11 @@ cases/
 # Public demo inputs and reference records are curated; runtime results stay local.
 demos/**/reproduced/
 demos/**/paper/
+
+# Local-only notes and generated distributions; public maintenance code stays tracked.
+/.local/
+/dist/
+/build/
+
+# Real interaction-derived contribution events belong to the user workspace.
+/planning/contributions.jsonl

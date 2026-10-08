@@ -8,6 +8,10 @@ license: MIT
 
 BUNDLE 指 `praxis` 技能目录。标准题不必展开：写一行“为什么选它、放弃了什么”即可。本技能寻找与比较路线；已有模型的证据是否充分，交给 [praxis-verify](../praxis-verify/SKILL.md)。结构未知、当前路线受反例挑战或确需寻找替代方法时，才展开下面的探索。
 
+## 调用契约
+
+输入：结构性缺口、已有路线与探索预算。产出：可检验猜想、候选路线、淘汰理由与证据。依赖与边界：按问题调用数学工具；不把搜索未找到当作证明。
+
 ## 做什么
 
 1. **发现结构**：按 [structure-discovery.md](../../references/structure-discovery.md) 的问题清单提问，用 `probe_structure`、`dimensional_analysis`、`check_total_unimodularity` 低成本探测；把发现的结构、依据等级和推论写下来。现实机制到数学结构的对应表也在那里。

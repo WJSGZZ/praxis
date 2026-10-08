@@ -14,15 +14,31 @@ scripts/pipeline.py 使用标准 Python 与文件接口，不调用某家 Agent 
 
 ## 发现与调用
 
-安装目录见 README 表格；目标文件夹名应为 praxis。确认宿主实际加载了这份 SKILL.md，再执行。Codex 可用 `$praxis`，Claude Code 的直接技能可用 `/praxis`；自然语言“使用 Praxis …”可作跨宿主请求，但自动选择与交互入口仍取决于宿主。
+安装目录见 README 表格；目标文件夹名应为 praxis。确认宿主实际加载了这份 SKILL.md，再执行。直接技能可用 Codex 的 `$praxis`、Claude Code 的 `/praxis`；插件模式由宿主加命名空间，以实际列出的名称为准；自然语言“使用 Praxis …”可作跨宿主请求，但自动选择与交互入口仍取决于宿主。
 
 agents/openai.yaml 仅提供 Codex 的展示与调用元数据。通用规则放在 SKILL.md 与 references，不依赖该文件被其他宿主理解，不加入专有动态插值或固定工具授权。packaging/plugin.json 与 packaging/mcp.json 是 Agent Plugins 1.0 导出的来源；各宿主自己的插件目录与清单格式可能不同，宿主不读取该格式时，用技能目录加命令行工具（`python -m scripts.mcp_server --call`）。
 
 共享个人目录适用于本地宿主，不能据此声称云端会话或远程机器自动拥有本地文件。远程环境需在那里安装技能并准备执行依赖；仍以实际文件／终端能力判断可执行范围。
 
+## 插件安装与轻量入口
+
+优先使用[中文安装指南](installation.md)或 [English setup](installation.en.md)。导出器的 `--host` 支持 codex、claude、gemini、copilot、cursor；默认 portable 保留通用 Agent Plugins 与 Codex 兼容入口。各宿主的路径变量按官方规范生成，不手改安装缓存，不复制建模规则。输出目录不可覆盖。
+
+只用技能时可按宿主放置仓库：
+
+| Agent | 项目内入口 | 个人入口 |
+|---|---|---|
+| Codex | `.agents/skills/praxis` | `~/.agents/skills/praxis` |
+| Claude Code | `.claude/skills/praxis` | `~/.claude/skills/praxis` |
+| Gemini CLI | `.agents/skills/praxis` 或 `.gemini/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.gemini/skills/praxis` |
+| GitHub Copilot | `.github/skills/praxis` 或 `.agents/skills/praxis` | CLI：`~/.copilot/skills/praxis` 或 `~/.agents/skills/praxis` |
+| Cursor | `.agents/skills/praxis` 或 `.cursor/skills/praxis` | `~/.agents/skills/praxis` 或 `~/.cursor/skills/praxis` |
+
+同名技能与插件不要重复启用；迁移先核对来源，验证插件后将旧入口可撤回地移走，不删除用户数据。安装通常产生副本或缓存，源码更新不等于安装更新。
+
 ## 依据与验证状态
 
-2026-10-07 已核对以下第一手文档；路径与功能可能随宿主版本变化：
+2026-10-08 核对插件安装与路径变量，并保留以下技能发现依据；路径与功能可能随宿主版本变化：
 
 - [Agent Skills 规范](https://agentskills.io/specification)：SKILL.md、名称与描述、相对资源和脚本结构。
 - [Codex 技能文档](https://developers.openai.com/codex/skills)：.agents/skills 的项目和用户入口；现有环境的旧入口不强制迁移。
@@ -31,4 +47,4 @@ agents/openai.yaml 仅提供 Codex 的展示与调用元数据。通用规则放
 - [GitHub Copilot 技能文档](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)：项目 .github/.claude/.agents 技能目录及个人入口；支持范围以具体表面为准。
 - [Cursor 技能文档](https://cursor.com/docs/skills)：.cursor/skills 与 .agents/skills；本地个人技能不会自动复制到所有远程环境。
 
-已存在 Codex 协作与本地 Python 验证记录；其他宿主目前为文档与格式支持待实测，不能称五种 Agent 都已跑通。后续实测记录宿主版本、真实加载路径、技能是否触发、独立案例运行与交付结果；发现差异修宿主适配，不复制整套核心方法。
+Codex 已有插件安装/启用、七技能来源和核心 MCP 发现记录，安装副本计算与失败恢复通过。其他适配包按官方格式生成，导出、路径与底层启动测试不等于真实宿主端到端通过；当前实测范围以维护记录为准，不能称五种 Agent 都已跑通。后续实测记录宿主版本、真实加载路径、技能是否触发、独立案例运行与交付结果；发现差异修宿主适配，不复制整套核心方法。

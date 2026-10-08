@@ -3,7 +3,30 @@
   "name": "praxis",
   "version": "0.3.0",
   "description": "A mathematical modeling Agent plugin combining seven skills, MCP computation tools and a reproducible evidence workflow, from problem analysis to independent checks and reports.",
-  "author": {"name": "WJSGZZ"},
+  "author": {
+    "name": "WJSGZZ"
+  },
   "repository": "https://github.com/WJSGZZ/praxis",
-  "license": "MIT"
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Praxis",
+        "shortDescription": "数学建模，从问题到证据",
+        "longDescription": "Build mathematical models, run reproducible computations, independently check results, and write evidence-backed reports with seven coordinated skills and local MCP tools.",
+        "developerName": "WJSGZZ",
+        "category": "Productivity",
+        "capabilities": [
+          "Interactive",
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Use Praxis to analyze my problem, compare modeling routes, and develop a reproducible solution with independent checks."
+        ]
+      },
+      "skills": "./skills/",
+      "mcpServers": "./.mcp.json"
+    }
+  }
 }

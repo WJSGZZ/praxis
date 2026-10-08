@@ -1,19 +1,19 @@
-"""Planted-truth problems: synthetic tasks whose correct answer is known by construction, for blind self-checks and regression tests.
+"""Public synthetic tool-regression tasks with known or independently computed answers.
 
-    python -m evals.planted list
-    python -m evals.planted new queue 7            # prints the task (data and question) without the answer
+    python -m evals.planted new queue 7
     python -m evals.planted check queue 7 '{"mean_wait": 0.42}'
 
-A problem is generated from (kind, seed). The statement never contains the truth; `check` recomputes it from the seed and scores the
-submitted answer against a tolerance. Use it to test a method or an agent on cases it cannot have seen, and to catch regressions
-after changing tools or guidance. Passing planted problems shows the pipeline recovers known structure; it is not evidence of
-performance on real problems."""
+Generators and seeds are public: this is not an isolated or blind Agent benchmark.
+solve_with_tools tests computation, not Agent behavior or plugin effectiveness.
+See ORACLES.md for oracle independence, mathematical scope and tolerances.
+"""
 from __future__ import annotations
 
 import argparse
 import itertools
 import json
 import math
+from fractions import Fraction
 from dataclasses import dataclass
 from typing import Callable
 
@@ -54,8 +54,34 @@ def gen_lp(seed):
     c = A.T @ y + np.where(x > 0, 0, r.integers(1, 4, n))  # reduced costs >= 0, zero where x > 0
     value = float(c @ x)
     task = Task('lp', seed, 'Minimise c.x subject to A x >= b, x >= 0. Report the optimal value and an optimal x.',
-                dict(c=c.tolist(), A=A.tolist(), b=b.tolist()), ['value'])
+                dict(c=c.tolist(), A=A.tolist(), b=b.tolist()), ['value', 'x'])
     return task, dict(value=value)
+
+
+def _queue_wait_oracle(lam, mu, c):
+    """Birth-death stationary weights and geometric tail, in exact rational arithmetic."""
+    arrival, service = Fraction(str(lam)), Fraction(str(mu))
+    rho = arrival / (c * service)
+    if not (0 < rho < 1):
+        raise ValueError('The stationary oracle requires 0 < lam < c*mu')
+    weights = [Fraction(1)]
+    for n in range(1, c + 1):
+        weights.append(weights[-1] * arrival / (n * service))
+    normalizer = sum(weights[:-1]) + weights[-1] / (1 - rho)
+    queue_length = weights[-1] * rho / (1 - rho)**2 / normalizer
+    return float(queue_length / arrival)
+
+
+def _sir_attack_oracle(r0, susceptible=0.99999):
+    """Finite initial infection: solve log(s/s0)+R0*(1-s)=0 by bisection."""
+    lo, hi = 1e-300, min(susceptible, 1 / r0)
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        if math.log(mid / susceptible) + r0 * (1 - mid) > 0:
+            hi = mid
+        else:
+            lo = mid
+    return 1 - (lo + hi) / 2
 
 
 def gen_queue(seed):
@@ -63,18 +89,18 @@ def gen_queue(seed):
     c = int(r.integers(1, 5))
     mu = float(r.integers(2, 6))
     lam = float(round(c * mu * r.uniform(.4, .85), 2))
-    q = queueing.mmc(lam, mu, c)
+    wait = _queue_wait_oracle(lam, mu, c)
     task = Task('queue', seed, 'Customers arrive at rate lam (Poisson); each of c servers serves at rate mu (exponential). Report the steady-state mean waiting time before service.',
                 dict(lam=lam, mu=mu, c=c), ['mean_wait'])
-    return task, dict(mean_wait=q['mean_wait'])
+    return task, dict(mean_wait=wait)
 
 
 def gen_sir(seed):
     r = _rng('sir', seed)
     beta, gamma = float(round(r.uniform(.3, .7), 3)), float(round(r.uniform(.1, .25), 3))
     out = epidemic.simulate_sir(beta, gamma, 1_000_000., 10., 120)
-    final = epidemic.final_size(beta / gamma)
-    task = Task('sir', seed, 'An SIR epidemic in a population of 1,000,000 starts with 10 infected. Daily infected counts are given. Estimate the basic reproduction number R0 and the final attack rate.',
+    final = _sir_attack_oracle(beta / gamma)
+    task = Task('sir', seed, 'A closed SIR epidemic has S(0)=999990, I(0)=10, R(0)=0, population 1000000. Daily infected counts are given. Estimate R0 and the final fraction ever infected (including initial infections). Time is in days.',
                 dict(infected=[float(v) for v in np.round(out['I'], 3)], population=1_000_000., dates='days 0..120'), ['r0', 'final_size'])
     return task, dict(r0=beta / gamma, final_size=final)
 
@@ -93,37 +119,33 @@ FAMILIES = ('{a}*x**2 + {b}*y**2', '{a}*(x + y) + {b}*x*y', '{a}*x**{b}/y**{a}',
             'x*y', 'exp({a}*x) + exp({b}*y)', '{a}*x**2 + {b}*x*y + {a}*y**2', 'log(x) + {a}*y')
 
 
-def _true_properties(expr: str) -> list[str]:
-    """Ground truth by symbolic algebra and dense grids, independent of the sampled probes the solver uses."""
-    import sympy as sp
-    x, y = sp.symbols('x y', positive=True)
-    f = sp.sympify(expr, locals=dict(x=x, y=y))
-    out = []
-    grid = np.linspace(1, 3, 81)
-    X, Y = np.meshgrid(grid, grid)
-    h = [sp.lambdify((x, y), sp.diff(f, *v), 'numpy') for v in ((x, x), (x, y), (y, y))]
-    h00, h01, h11 = (np.broadcast_to(g(X, Y), X.shape) for g in h)
-    if (h00 >= -1e-9).all() and (h11 >= -1e-9).all() and (h00 * h11 - h01 ** 2 >= -1e-9).all():
-        out.append('convex')
-    if sp.simplify(f - f.subs({x: y, y: x}, simultaneous=True)) == 0:
-        out.append('symmetric')
-    ex, ey = sp.simplify(x * sp.diff(f, x) / f), sp.simplify(y * sp.diff(f, y) / f)
-    if not ex.free_symbols and not ey.free_symbols:
-        out.append('power_law')
-    fx = np.broadcast_to(sp.lambdify((x, y), sp.diff(f, x), 'numpy')(X, Y), X.shape)
-    if (fx >= -1e-12).all():
-        out.append('increasing_in_x')
-    return sorted(out)
+def _family_properties(family: int, a: int, b: int) -> list[str]:
+    """Exact labels for these nine families only, on [1,3]^2; proofs in ORACLES.md."""
+    if a not in (1, 2, 3) or b not in (1, 2, 3) or family not in range(9):
+        raise ValueError('Outside the proved finite family')
+    labels = (
+        (True, a == b, False, True),
+        (False, True, False, True),
+        (b >= a + 1, False, True, True),
+        (False, False, False, False),
+        (False, a == b, False, True),
+        (False, True, True, True),
+        (True, a == b, False, True),
+        (b <= 2 * a, True, False, True),
+        (False, False, False, True),
+    )[family]
+    return sorted(key for key, applies in zip(PROPERTIES, labels) if applies)
 
 
 def gen_structure(seed):
     """A function on 1<=x,y<=3 built from a random family; say which of four properties hold (all that apply)."""
     r = _rng('structure', seed)
     a, b = int(r.integers(1, 4)), int(r.integers(1, 4))
-    expr = FAMILIES[int(r.integers(len(FAMILIES)))].format(a=a, b=b)
+    family = int(r.integers(len(FAMILIES)))
+    expr = FAMILIES[family].format(a=a, b=b)
     task = Task('structure', seed, f'For f on the box 1<=x,y<=3, list every property that holds, from {list(PROPERTIES)}. Report properties as a list.',
                 dict(expression=expr), ['properties'])
-    return task, dict(properties=_true_properties(expr))
+    return task, dict(properties=_family_properties(family, a, b))
 
 
 def gen_pde(seed):
@@ -177,7 +199,7 @@ def gen_game(seed):
 
 
 def gen_inventory(seed):
-    """Newsvendor: the best order quantity is found here by brute force on the expected profit, not by the critical-fractile formula."""
+    """Newsvendor: the best order quantity is found here by numerical quadrature and scalar optimization of expected profit, not by the critical-fractile formula."""
     r = _rng('inventory', seed)
     price = float(r.integers(8, 15))
     cost = float(r.integers(3, int(price) - 2))
@@ -190,7 +212,7 @@ def gen_inventory(seed):
         return -np.trapezoid((np.where(xs < q, price * xs + salvage * (q - xs), price * q) - cost * q) * pdf, xs)
 
     best = minimize_scalar(expected_loss, bounds=(mean - 4 * sd, mean + 4 * sd), method='bounded', options={'xatol': 1e-6})
-    task = Task('inventory', seed, 'Demand is normal with the given mean and standard deviation. Each unit costs `cost`, sells at `price`, and unsold units return `salvage`. Report the order quantity that maximises expected profit.',
+    task = Task('inventory', seed, 'Demand is an untruncated normal mathematical approximation with the given mean and standard deviation (negative demand is not clipped). Each unit costs `cost`, sells at `price`, and unsold units return `salvage`. Report the order quantity that maximises expected profit.',
                 dict(price=price, cost=cost, salvage=salvage, mean=mean, sd=sd), ['order_quantity'])
     return task, dict(order_quantity=float(best.x))
 
@@ -203,23 +225,56 @@ GENERATORS: dict[str, Callable] = dict(lp=gen_lp, queue=gen_queue, sir=gen_sir, 
 TOLERANCE = dict(value=1e-6, mean_wait=1e-6, total=1e-9, r0=0.1, final_size=0.03, temperature=2e-3, state0=1e-6, order_quantity=0.2)
 
 
+SCORE_VERSION = 'planted-v2'
+
+
+def _finite_number(value):
+    if type(value) not in (int, float):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:
+        return False
+
+
 def score(kind: str, seed: int, answer: dict) -> dict:
-    _, truth = GENERATORS[kind](seed)
+    if kind not in GENERATORS or type(seed) is not int or seed < 0:
+        raise ValueError('Expected a known task kind and a nonnegative integer seed')
+    task, truth = GENERATORS[kind](seed)
     if not isinstance(answer, dict):
-        raise ValueError(f'The answer must be a JSON object with the keys {sorted(truth)}, e.g. {json.dumps(_template(truth))}')
+        raise ValueError(f'The answer must be a JSON object with the keys {task.answer_keys}, e.g. {json.dumps(_template(truth))}')
     detail = {}
     for key, want in truth.items():
         got = answer.get(key)
-        if got is None:
+        if key not in answer:
             detail[key] = dict(ok=False, reason='missing')
         elif isinstance(want, list):
-            detail[key] = dict(ok=sorted(got) == want)
-        elif isinstance(want, str):
-            detail[key] = dict(ok=str(got) == want)
+            valid = (isinstance(got, list) and all(type(v) is str and v in PROPERTIES for v in got)
+                     and len(set(got)) == len(got))
+            detail[key] = dict(ok=valid and sorted(got) == want,
+                               reason='match' if valid and sorted(got) == want else 'invalid or incorrect property list')
+        elif not _finite_number(got):
+            detail[key] = dict(ok=False, reason='expected a finite JSON number (not bool or string)')
         else:
-            tol = TOLERANCE[key]
-            detail[key] = dict(ok=abs(float(got) - want) <= tol * max(1.0, abs(want)) if key in ('value', 'mean_wait', 'total', 'temperature', 'state0', 'order_quantity') else abs(float(got) - want) <= tol)
-    return dict(kind=kind, seed=seed, correct=all(d['ok'] for d in detail.values()), detail=detail)
+            tol = TOLERANCE[key] * (1 if key in ('r0', 'final_size', 'order_quantity') else max(1., abs(want)))
+            detail[key] = dict(ok=abs(got - want) <= tol, absolute_tolerance=tol)
+    if kind == 'lp':
+        x = answer.get('x')
+        d = task.data
+        valid = isinstance(x, list) and len(x) == len(d['c']) and all(_finite_number(v) for v in x)
+        if not valid:
+            detail['x'] = dict(ok=False, reason='expected a finite vector of length ' + str(len(d['c'])))
+        else:
+            x, A, b, c = map(np.asarray, (x, d['A'], d['b'], d['c']))
+            feasible = bool(np.all(x >= -1e-8) and np.all(A @ x >= b - 1e-6 * np.maximum(1., abs(b))))
+            objective = float(c @ x)
+            tol = TOLERANCE['value'] * max(1., abs(truth['value']))
+            consistent = _finite_number(answer.get('value')) and abs(objective - answer['value']) <= tol
+            optimal = abs(objective - truth['value']) <= tol
+            detail['x'] = dict(ok=feasible and consistent and optimal, feasible=feasible,
+                               objective_consistent=consistent, optimal=optimal)
+    return dict(score_version=SCORE_VERSION, kind=kind, seed=seed,
+                correct=all(d['ok'] for d in detail.values()), detail=detail)
 
 
 # ----------------------------------------------------------------------------------------------- reference solvers (what the tools can recover)
@@ -230,7 +285,7 @@ def solve_with_tools(task: Task) -> dict:
     if task.kind == 'lp':
         A = np.array(d['A'])
         r = optimize.solve_lp(d['c'], A_ub=(-A).tolist(), b_ub=(-np.array(d['b'])).tolist())
-        return dict(value=r['objective'])
+        return dict(value=r['objective'], x=r['x'])
     if task.kind == 'queue':
         return dict(mean_wait=queueing.mmc(d['lam'], d['mu'], d['c'])['mean_wait'])
     if task.kind == 'sir':
@@ -285,8 +340,11 @@ def main():
     if a.cmd == 'list':
         print('\n'.join(GENERATORS))
     elif a.cmd == 'new':
-        t = GENERATORS[a.kind](a.seed)[0]
-        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=_template(GENERATORS[a.kind](a.seed)[1])), ensure_ascii=False))
+        t, truth = GENERATORS[a.kind](a.seed)
+        template = _template(truth)
+        if a.kind == 'lp':
+            template['x'] = [0.0] * len(t.data['c'])
+        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=template, score_version=SCORE_VERSION), ensure_ascii=False))
     else:
         print(json.dumps(score(a.kind, a.seed, json.loads(a.answer))))
 
