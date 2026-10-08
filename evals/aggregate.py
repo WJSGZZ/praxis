@@ -49,11 +49,14 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
         raise ValueError(f'No profile for {contest!r}; known: {sorted(PROFILES)}. Add one to evals/profiles.json, or omit --contest for the general weights.')
     weights = PROFILES[contest]['weights'] if contest else WEIGHTS
     per_paper: dict[str, list[float]] = {}
+    awards: dict[str, list[dict]] = {}
     dims: dict[str, dict[str, list[float]]] = {}
     basis: dict[str, dict[str, set]] = {}
     for path in files:
         for item in json.loads(Path(path).read_text()):
             scores = dimension_scores(item)
+            if 'award_estimate' in item:
+                awards.setdefault(item['paper'], []).append(item['award_estimate'])
             for k, b in item.get('basis', {}).items():
                 basis.setdefault(item['paper'], {}).setdefault(b, set()).add(k)
             per_paper.setdefault(item['paper'], []).append(percent(scores, weights))
@@ -64,7 +67,8 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
         spread = {k: max(v) - min(v) for k, v in dims[paper].items()}
         out[paper] = dict(judges=len(values), percent_each=[round(v, 1) for v in values], percent_mean=round(sum(values) / len(values), 1),
                           percent_range=round(max(values) - min(values), 1), unstable_dimensions=sorted(k for k, d in spread.items() if d > 1),
-                          basis={b: sorted(v) for b, v in basis.get(paper, {}).items()})
+                          basis={b: sorted(v) for b, v in basis.get(paper, {}).items()},
+                          award_estimates=awards.get(paper, []))
     return out
 
 

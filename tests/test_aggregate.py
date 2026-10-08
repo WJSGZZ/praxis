@@ -65,3 +65,11 @@ def test_every_profile_is_complete_and_unknown_contests_are_refused():
     assert ag.PROFILES['general']['weights'] == ag.WEIGHTS
     with pytest.raises(ValueError, match='No profile'):
         ag.aggregate([], 'imc')
+
+
+def test_award_estimates_are_passed_through(tmp_path):
+    import json
+    from evals import aggregate as ag
+    est = {'most_likely': '省一', 'range': ['省二', '国二'], 'basis': 'x', 'calibrated': False}
+    (tmp_path / 'j.json').write_text(json.dumps([{'paper': 'A', 'scores': {d: 3 for d in ag.WEIGHTS}, 'award_estimate': est}]))
+    assert ag.aggregate([tmp_path / 'j.json'])['A']['award_estimates'] == [est]

@@ -36,6 +36,12 @@
  "errors_found": ["具体的错误，附位置"], "overall_note": "一两句"}
 ```
 
+另有一项 `award_estimate`：按该赛事的奖项档次给出范围、依据和不确定度（国赛：国一、国二、省一、省二、省三、未获奖；美赛：Outstanding、Finalist、Meritorious、Honorable Mention、Successful Participant）。这是评委的估计，不是校准过的预测：我们没有带获奖等级标注的数据，只有评分表分数和与真实获奖论文的盲对比两个锚点，所以只给范围，不给精确概率，并写明“未校准”。
+
+```json
+"award_estimate": {"most_likely": "省一", "range": ["省二", "国二"], "basis": "复算全部一致；摘要缺推荐方案与金额", "calibrated": false}
+```
+
 维度键：`coverage`、`assumptions`、`model`、`correctness`、`robustness`、`writing`、`verifiability`。也可以直接给 `scores`（0–4）；`evals/aggregate.py` 两种都接受，有 `checklist` 时按上面的规则自动换算。
 
 ## 阅读评委（另一种模式）
