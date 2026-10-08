@@ -30,11 +30,15 @@ def test_tool_index_is_current():
     assert result.returncode == 0, 'run: uv run --locked python -m scripts.gen_tool_index'
 
 
-def test_every_tool_is_in_both_readmes():
-    """The README tool tables must not drift behind the tool table."""
+def test_every_tool_is_in_both_readme_tool_tables():
+    """The README tool tables list every tool and nothing that no longer exists."""
+    import re
     from scripts import mcp_server
     root = Path(__file__).resolve().parents[1]
-    for name in ('README.md', 'README.en.md'):
+    for name, header in (('README.md', '| 类别 |'), ('README.en.md', '| Group |')):
         text = (root / name).read_text()
-        missing = [t for t in mcp_server.TOOLS if f'`{t}`' not in text]
-        assert not missing, (name, missing)
+        start = text.index(header)
+        table = text[start:text.index('\n\n', start)]
+        listed = set(re.findall(r'`([a-z_0-9]+)`', table))
+        assert not [t for t in mcp_server.TOOLS if t not in listed], (name, 'missing')
+        assert not [t for t in listed if t not in mcp_server.TOOLS], (name, 'unknown')

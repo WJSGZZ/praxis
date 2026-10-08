@@ -226,6 +226,7 @@ Your problems, data, and cases stay in your own workspace, never in the plugin.
 ```bash
 uv sync --locked --group dev
 uv run --locked python -m pytest -q
+uv run --locked python -m scripts.release_check   # before a release: rerun the demos, confirm records are unchanged, run the tests
 uv run --locked python -m examples.decision_sensitivity_demo
 uv run --locked python -m examples.structural_reasoning_demo
 uv run --locked python -m examples.exploration_demo

@@ -225,6 +225,7 @@ praxis-plugin/
 ```bash
 uv sync --locked --group dev
 uv run --locked python -m pytest -q
+uv run --locked python -m scripts.release_check   # 发布前：重跑示例、核对记录未漂移、跑测试
 uv run --locked python -m examples.decision_sensitivity_demo
 uv run --locked python -m examples.structural_reasoning_demo
 uv run --locked python -m examples.exploration_demo
