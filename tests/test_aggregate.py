@@ -45,3 +45,12 @@ def test_checklist_scores_and_adjust_rules(tmp_path):
     (tmp_path / 'j.json').write_text(json.dumps([{'paper': 'A', 'checklist': full(4)}, {'paper': 'B', 'scores': {d: 2 for d in dims}}]))
     out = ag.aggregate([tmp_path / 'j.json'])
     assert out['A']['percent_mean'] == 100.0 and out['B']['percent_mean'] == 50.0
+
+
+def test_contest_weights_sum_to_100_and_change_the_score():
+    from evals import aggregate as ag
+    for w in ag.CONTEST_WEIGHTS.values():
+        assert sum(w.values()) == 100 and set(w) == set(ag.WEIGHTS)
+    scores = {d: 2 for d in ag.WEIGHTS}
+    scores['writing'] = 4
+    assert ag.percent(scores, ag.CONTEST_WEIGHTS['mcm']) > ag.percent(scores, ag.CONTEST_WEIGHTS['cumcm'])
