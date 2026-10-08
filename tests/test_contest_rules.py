@@ -117,3 +117,14 @@ def test_a_short_body_line_with_punctuation_is_not_an_appendix_heading():
     pages = cumcm_pages(body=10, appendix=2)
     pages[4] = page('正文\n附录 B。\n6')
     assert contest_rules.evaluate(pages, 'cumcm')['facts']['body_pages'] == 10
+
+
+def test_figures_and_tables_that_the_text_never_mentions_are_flagged():
+    pages = cumcm_pages(body=4, appendix=1)
+    pages[1] = page('正文，见图 1 的结果。\n图 1 风险收益曲线\n表 2 参数\n图 3 孤立的图\n2')
+    r = contest_rules.evaluate(pages, 'cumcm')
+    warning = next(w for w in r['warnings'] if 'never referred' in w)
+    assert '表 2' in warning and '图 3' in warning and '图 1' not in warning
+    en = [page('Summary\nTeam # 1234567 Page 1 of 3'), page('Team # 1234567 Page 2 of 3\nSee Figure 1.\nFigure 1. Curve\nTable 2. Parameters'), page('Team # 1234567 Page 3 of 3\ntext')]
+    w = [x for x in contest_rules.evaluate(en, 'mcm')['warnings'] if 'never referred' in x][0]
+    assert 'table 2' in w.lower() and 'figure 1' not in w.lower()

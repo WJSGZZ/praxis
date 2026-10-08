@@ -35,6 +35,22 @@ def extract(path):
     return records
 
 
+def unreferenced_floats(records):
+    """Figures and tables whose number appears only in their own caption: the text never points the reader to them."""
+    norm = lambda word: word.lower() if word.isascii() else word
+    caption = re.compile(r'^\s*(图|表|Figure|Table)\s*(\d+)\s*[:.：]?', re.I | re.M)
+    mention = re.compile(r'(图|表|Figure|Table)\s*(\d+)', re.I)
+    captions, mentions = set(), {}
+    for r in records:
+        text = r['text']
+        captions |= {(norm(m.group(1)), m.group(2)) for m in caption.finditer(text)}
+        body = caption.sub(' ', text)                                    # captions removed; what is left can refer to them, across line breaks too
+        for m in mention.finditer(re.sub(r'\s+', ' ', body)):
+            key = (norm(m.group(1)), m.group(2))
+            mentions[key] = mentions.get(key, 0) + 1
+    return sorted(f'{k[0]} {k[1]}' for k in captions if not mentions.get(k))
+
+
 def evaluate(records, contest, *, margins=None, forbidden=()):
     """Apply the rules to page records; returns errors (rule broken), warnings (probably broken or not checkable) and facts."""
     errors, warnings, facts = [], [], {}
@@ -108,6 +124,9 @@ def evaluate(records, contest, *, margins=None, forbidden=()):
         facts['body_font_pt'] = collections.Counter(sizes).most_common(1)[0][0] if sizes else None
     else:
         raise ValueError('contest must be mcm or cumcm')
+    loose = unreferenced_floats(records)
+    if loose:
+        warnings.append('figures or tables never referred to in the text: ' + ', '.join(loose))
     return dict(contest=contest, errors=errors, warnings=warnings, facts=facts, passed=not errors,
                 note='Mechanical rules only; compare with the current official documents. Font sizes and the page number line are read from the PDF text and can be misjudged.')
 
