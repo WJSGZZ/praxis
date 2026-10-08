@@ -54,3 +54,14 @@ def test_contest_weights_sum_to_100_and_change_the_score():
     scores = {d: 2 for d in ag.WEIGHTS}
     scores['writing'] = 4
     assert ag.percent(scores, ag.CONTEST_WEIGHTS['mcm']) > ag.percent(scores, ag.CONTEST_WEIGHTS['cumcm'])
+
+
+def test_every_profile_is_complete_and_unknown_contests_are_refused():
+    import pytest
+    from evals import aggregate as ag
+    for name, profile in ag.PROFILES.items():
+        assert sum(profile['weights'].values()) == 100 and set(profile['weights']) == set(ag.WEIGHTS), name
+        assert profile['source'] and profile['checked'], name
+    assert ag.PROFILES['general']['weights'] == ag.WEIGHTS
+    with pytest.raises(ValueError, match='No profile'):
+        ag.aggregate([], 'imc')

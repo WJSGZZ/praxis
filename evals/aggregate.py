@@ -10,12 +10,8 @@ from pathlib import Path
 WEIGHTS = {'coverage': 10, 'assumptions': 15, 'model': 15, 'correctness': 25, 'robustness': 10, 'writing': 10, 'verifiability': 15}
 
 
-# Working weights per contest (ours, not official): CUMCM follows the four stated criteria (assumptions, innovation and model, correctness, writing);
-# for MCM the summary sheet and the sensitivity/strengths-and-weaknesses discussion carry more weight. Their basis is not verified against COMAP's judging documents.
-CONTEST_WEIGHTS = {
-    'cumcm': {'coverage': 10, 'assumptions': 20, 'model': 20, 'correctness': 25, 'robustness': 5, 'writing': 15, 'verifiability': 5},
-    'mcm': {'coverage': 10, 'assumptions': 10, 'model': 15, 'correctness': 20, 'robustness': 15, 'writing': 20, 'verifiability': 10},
-}
+PROFILES = json.loads((Path(__file__).with_name('profiles.json')).read_text())
+CONTEST_WEIGHTS = {k: v['weights'] for k, v in PROFILES.items() if k != 'general'}      # per-contest data lives in profiles.json, with its sources
 
 
 def percent(scores: dict, weights: dict | None = None) -> float:
@@ -49,7 +45,9 @@ def dimension_scores(item: dict) -> dict:
 
 
 def aggregate(files: list[Path], contest: str | None = None) -> dict:
-    weights = CONTEST_WEIGHTS[contest] if contest else WEIGHTS
+    if contest and contest not in PROFILES:
+        raise ValueError(f'No profile for {contest!r}; known: {sorted(PROFILES)}. Add one to evals/profiles.json, or omit --contest for the general weights.')
+    weights = PROFILES[contest]['weights'] if contest else WEIGHTS
     per_paper: dict[str, list[float]] = {}
     dims: dict[str, dict[str, list[float]]] = {}
     basis: dict[str, dict[str, set]] = {}

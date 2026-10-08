@@ -1,0 +1,33 @@
+{
+ "general": {
+  "title": "通用",
+  "weights": {"coverage": 10, "assumptions": 15, "model": 15, "correctness": 25, "robustness": 10, "writing": 10, "verifiability": 15},
+  "criteria": [],
+  "rules": null,
+  "source": "ours",
+  "checked": "2026-10-08",
+  "note": "没有对应赛事档案时使用；分数未按任何赛事校准。"
+ },
+ "cumcm": {
+  "title": "全国大学生数学建模竞赛（CUMCM）",
+  "weights": {"coverage": 10, "assumptions": 20, "model": 20, "correctness": 25, "robustness": 5, "writing": 15, "verifiability": 5},
+  "criteria": ["假设的合理性", "建模的创新性", "结果的正确性", "文字表述的清晰性"],
+  "criteria_source": "全国大学生数学建模竞赛章程（四条评阅标准）",
+  "rules": "scripts/contest_rules.py --contest cumcm",
+  "rules_source": "论文格式规范（2019、2021、2023、2024 年修订稿，本地合集内）",
+  "source": "criteria and rules: official documents; weights: ours",
+  "checked": "2026-10-08",
+  "note": "附录缺少或不能运行的源程序可能被取消评奖资格，因此 V1 不只是加分项。"
+ },
+ "mcm": {
+  "title": "美国大学生数学建模竞赛（MCM/ICM）",
+  "weights": {"coverage": 10, "assumptions": 10, "model": 15, "correctness": 20, "robustness": 15, "writing": 20, "verifiability": 10},
+  "criteria": ["问题重述与理解", "假设及其理由", "模型与结果", "敏感性分析与优缺点讨论", "摘要与写作的清晰性"],
+  "criteria_source": "ours (not checked against COMAP's judging documents)",
+  "rules": "scripts/contest_rules.py --contest mcm",
+  "rules_source": "COMAP 当届说明页（2026 届，2026-10-08 核对）",
+  "source": "rules: official page; criteria and weights: ours, unverified",
+  "checked": "2026-10-08",
+  "note": "摘要页决定第一印象；权重加重摘要与敏感性只是工作假设。"
+ }
+}
