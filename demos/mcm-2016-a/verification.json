@@ -1,10 +1,10 @@
 {
  "schema": 1,
- "checked_on": "2026-10-08",
+ "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "e1b1823c12c3870cbdb9148e1e04afd1224322b96a4964eaee5b3fb07272c661",
-  "bytes": 159408,
+  "sha256": "1db7efba26f3774b7096097bf19a56a221e185566ee6e86b9119fab2213bf0c3",
+  "bytes": 159401,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -36,7 +36,7 @@
    24,
    25
   ],
-  "visual_review_note": "All 25 final pages rendered and contact sheets reviewed; new structural comparison and body-buffer discussion also inspected at full size. One-page Summary, user guide (page 22), and AI report (page 25). Page 21 has bottom whitespace, no overflow. AI layout review.",
+  "visual_review_note": "All 25 final pages rendered and contact sheets reviewed on 9 October; schedule arithmetic (page 12), structural comparison (page 20), one-page user guide (page 22), and one-page AI disclosure (page 25) inspected at full size. No clipping or overflow observed. AI layout review; existing page 21 bottom whitespace retained.",
   "typesetting": "XeLaTeX (TeX Live 2026): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
  },
  "model_checks": {
@@ -137,10 +137,13 @@
   "physical_threshold_relaxation_c": 0
  },
  "incremental_revision": {
-  "date": "2026-10-08",
+  "date": "2026-10-09",
   "optimization_reused": true,
-  "changes": "Finite contact capacity / deep-route fixed-policy replay, strict constant-flow continuous floor check, explicit six-stage rates, full-report consistency/format/visual review",
+  "changes": "Recurring abstract/geometry/flow/structural/tap-error values derived from existing evidence; wrong policy-to-perturbation join rejected. No new model run or claim of physical/award validation.",
   "format_precheck_errors": [],
-  "format_precheck_warnings": []
+  "format_precheck_warnings": [],
+  "targeted_tests": 9,
+  "builtin_compiler": "success",
+  "remaining_manual_scope": "Assumption rationale and fixed search-design descriptions still require semantic review when model or experiment design changes; generated values do not automate scientific interpretation."
  }
 }
