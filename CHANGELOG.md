@@ -5,6 +5,10 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 证据索引新增可选的 `claims`：每条结论声明强度（computed／checked／independent），报告没有结论支撑的问题要求和强度超过证据的结论；路线记录里细化另一条路线时必须写明“简单一层解释不了什么”；教训新增失败做法、发现方式和信号三个字段，附带 5 条种子教训（`templates/lessons-seed.jsonl`），`route_graph` 启动新记录时用 `lessons_path` 返回相关教训。
+  The evidence index accepts optional `claims` with a declared strength and reports uncovered requirements and overclaims; a refining route must say what the simpler route cannot explain; lessons gain failure-pattern, detection and signal fields with five seed lessons, returned by `route_graph` when a new record starts.
+- 修复：环境快照覆盖全部声明的依赖；相对案例路径先按工作区解析；国赛附录标题检测不再被正文行误触发；表达式中失控的乘方被拒绝；工具说明写明 `proved`。
+  Fixes: the environment snapshot covers every declared dependency; relative case paths resolve against the workspace; appendix detection ignores body lines; runaway powers are rejected; `proved` is explained in the tool descriptions.
 - 案例展示图去掉“多少页报告”的链接行，两个案例的页脚统一；三个案例页的结尾邀请语统一；新增中文与英文论文各自的写作习惯和语言评审角色。
   Case overview images lose the page-count link line and share one footer; the three case pages close with the same invitation; Chinese and English writing habits and a language reviewer role are added.
 - 版式：没有官方要求时按数学期刊连续排版，只有摘要页和不计页的 AI 使用报告另起一页；浮动体页顶端对齐。美赛案例据此重排，共 23 页（正文 22 页加 AI 使用报告）。

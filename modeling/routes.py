@@ -56,8 +56,10 @@ def add_assumption(g, key, text, *, evidence='assumed', if_false=''):
     g['assumptions'][key] = dict(text=text, evidence=evidence, if_false=if_false)
 
 
-def add_path(g, key, title, *, structure=None, assumptions=(), needs='', scores=None, parent=None, note=''):
-    """A candidate route. scores: optional 1-5 ratings on CRITERIA, each needing a reason elsewhere (note or attack)."""
+def add_path(g, key, title, *, structure=None, assumptions=(), needs='', scores=None, parent=None, note='', unexplained=''):
+    """A candidate route. scores: optional 1-5 ratings on CRITERIA, each needing a reason elsewhere (note or attack).
+
+    A route that refines another (parent) is a step up in complexity: `unexplained` says what the simpler route cannot explain, and choosing the refinement needs it."""
     _fresh(g, 'paths', key)
     for a in assumptions:
         _need(g, 'assumptions', a)
@@ -68,7 +70,7 @@ def add_path(g, key, title, *, structure=None, assumptions=(), needs='', scores=
         if bad or any(not 1 <= v <= 5 for v in scores.values()):
             raise ValueError(f'scores must use {CRITERIA} with values 1-5')
     g['paths'][key] = dict(title=title, structure=structure, assumptions=list(assumptions), needs=needs, scores=dict(scores or {}),
-                           status='open', reason='', note=note, parent=parent)
+                           status='open', reason='', note=note, parent=parent, unexplained=unexplained)
     if parent:
         _need(g, 'paths', parent)
         g['edges'].append([parent, key, 'refines'])
@@ -145,6 +147,8 @@ def check_choice(g, key):
     for a in p['assumptions']:
         if not g['assumptions'][a]['if_false'].strip():
             issues.append(f'assumption {a} has no fallback if it fails')
+    if p.get('parent') and not p.get('unexplained', '').strip():
+        issues.append(f'this route refines {p["parent"]} but does not say what the simpler route cannot explain')
     return issues
 
 

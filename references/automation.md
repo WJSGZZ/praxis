@@ -95,6 +95,8 @@ scripts/check_references.py 读取每行一条的参考文献文本，用 Crossr
 }
 ```
 
+可选的 `claims` 列表把结论与证据强度对上：每条 `{"id", "requirement", "text", "strength", "result_pointer", "checks"}`，strength 取 computed（结果指针能取到值）、checked（链接的检查至少一项通过）、independent（至少一项通过的检查在 checks.json 里标 `"independent": true`，由作者声明用了不同的方法）。证据索引会报告两类问题：没有任何结论得到证据支持的问题要求，以及声明强度高于所链接证据的结论。
+
 清单应覆盖实际数值任务，每项 id 唯一，unit 必须写明（无量纲可用 dimensionless），result_pointer 使用 JSON Pointer 访问 results.json，例如 /forecast/0/value。检查名必须对应验证器实际生成的独立检查；名称唯一，不要关联到不相干的检查。单位是否正确及验证是否独立仍需助手审核。
 
 ```bash

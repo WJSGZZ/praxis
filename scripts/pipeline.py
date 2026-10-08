@@ -302,6 +302,53 @@ def result_pointer(value, pointer):
     return value
 
 
+CLAIM_STRENGTH = {'computed': 1, 'checked': 2, 'independent': 3}
+
+
+def claim_problems(requirements, claims, lookup, results):
+    """Compare each claim's declared strength with the evidence it links; list uncovered requirements and overclaims.
+
+    computed: its result pointer resolves in results.json. checked: at least one linked check exists and passed.
+    independent: at least one linked check passed and is marked `"independent": true` in checks.json (its author asserts a different method)."""
+    problems = []
+    ids = {r['id'] for r in requirements}
+    covered = set()
+    seen = set()
+    for claim in claims:
+        cid = claim.get('id') if isinstance(claim, dict) else None
+        if not isinstance(cid, str) or not cid.strip() or cid in seen or claim.get('requirement') not in ids or claim.get('strength') not in CLAIM_STRENGTH \
+                or not isinstance(claim.get('text'), str) or not claim['text'].strip():
+            problems.append(f'claim {cid!r}: needs a unique id, text, a requirement id from the list and strength computed|checked|independent')
+            continue
+        seen.add(cid)
+        want = CLAIM_STRENGTH[claim['strength']]
+        have = 0
+        pointer = claim.get('result_pointer')
+        if pointer:
+            try:
+                result_pointer(results, pointer)
+                have = 1
+            except ValueError:
+                problems.append(f'claim {cid}: result_pointer {pointer!r} does not resolve')
+        linked = [lookup[n] for n in claim.get('checks', []) if n in lookup]
+        missing = [n for n in claim.get('checks', []) if n not in lookup]
+        if missing:
+            problems.append(f'claim {cid}: unknown check(s) {missing}')
+        if any(c['passed'] for c in linked):
+            have = max(have, 2)
+        if any(c['passed'] and c.get('independent') is True for c in linked):
+            have = 3
+        if have < want:
+            name = {v: k for k, v in CLAIM_STRENGTH.items()}.get(have, 'no evidence')
+            problems.append(f'claim {cid} is declared {claim["strength"]} but its evidence supports only {name}')
+        else:
+            covered.add(claim['requirement'])
+    for r in requirements:
+        if claims and r['id'] not in covered:
+            problems.append(f'requirement {r["id"]} has no claim whose evidence supports it')
+    return problems
+
+
 def evidence_index(case):
     """Link recorded requirements to the latest run, without certifying completeness."""
     case = under_project(case)
@@ -349,8 +396,10 @@ def evidence_index(case):
         entry['linked'] = not errors
         entry['errors'] = errors
         entries.append(entry)
-    complete = all(entry['linked'] for entry in entries)
-    return {'status': 'evidence-linked' if complete else 'evidence-incomplete',
+    claims = definition.get('claims', [])
+    claim_issues = claim_problems(tasks, claims, lookup, results) if claims else []
+    complete = all(entry['linked'] for entry in entries) and not claim_issues
+    return {'status': 'evidence-linked' if complete else 'evidence-incomplete', 'claim_problems': claim_issues, 'claims_recorded': len(claims),
             'run': str(run), 'requirements_sha256': digest(manifest),
             'run_receipt_sha256': digest(run / 'receipt.json'),
             'covered': sum(entry['linked'] for entry in entries), 'recorded_requirements': len(entries),

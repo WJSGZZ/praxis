@@ -101,3 +101,15 @@ def test_standard_mode_needs_only_one_alternative():
         routes.choose(strict, 'lp', 'x')
     with pytest.raises(ValueError, match='mode'):
         routes.new_graph('q', 'sloppy')
+
+
+def test_refinement_needs_a_stated_reason():
+    from modeling import routes
+    g = routes.new_graph('q', 'standard')
+    routes.add_assumption(g, 'a1', 'smooth', if_false='use a finer model')
+    routes.add_path(g, 'simple', 'simple model', assumptions=['a1'])
+    routes.add_path(g, 'refined', 'refined model', assumptions=['a1'], parent='simple')
+    routes.attack(g, 'refined', 'claim', 'holdout', 'survived')
+    assert any('cannot explain' in m for m in routes.check_choice(g, 'refined'))
+    g['paths']['refined']['unexplained'] = 'the simple model fails the hold-out by 12%'
+    assert not any('cannot explain' in m for m in routes.check_choice(g, 'refined'))

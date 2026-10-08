@@ -77,3 +77,21 @@ def test_json_pointer_arrays_escaped_keys_and_zero_are_valid():
     for pointer in ['/a~2b','/a~1b/01','/a~1b/9','prediction']:
         with pytest.raises(ValueError):
             pipeline.result_pointer({'a/b':[7]},pointer)
+
+
+def test_claims_cannot_outrun_their_evidence():
+    requirements = [dict(id='Q1', question='q', unit='u', result_pointer='/a', checks=['c1']), dict(id='Q2', question='q', unit='u', result_pointer='/b', checks=['c2'])]
+    lookup = {'c1': dict(name='c1', passed=True, evidence='e'), 'c2': dict(name='c2', passed=True, evidence='e', independent=True), 'c3': dict(name='c3', passed=False, evidence='e')}
+    results = {'a': 1, 'b': 2}
+    ok = [dict(id='K1', requirement='Q1', text='t', strength='checked', result_pointer='/a', checks=['c1']),
+          dict(id='K2', requirement='Q2', text='t', strength='independent', result_pointer='/b', checks=['c2'])]
+    assert pipeline.claim_problems(requirements, ok, lookup, results) == []
+    over = [dict(ok[0], strength='independent'), ok[1]]
+    assert any('supports only checked' in p for p in pipeline.claim_problems(requirements, over, lookup, results))
+    failed = [dict(ok[0], checks=['c3']), ok[1]]
+    problems = pipeline.claim_problems(requirements, failed, lookup, results)
+    assert any('supports only computed' in p for p in problems) and any('requirement Q1 has no claim' in p for p in problems)
+    uncovered = pipeline.claim_problems(requirements, [ok[1]], lookup, results)
+    assert uncovered == ['requirement Q1 has no claim whose evidence supports it']
+    assert any('unknown check' in p for p in pipeline.claim_problems(requirements, [dict(ok[0], checks=['nope'])], lookup, results))
+    assert any('needs a unique id' in p for p in pipeline.claim_problems(requirements, [dict(ok[0], strength='proven')], lookup, results))

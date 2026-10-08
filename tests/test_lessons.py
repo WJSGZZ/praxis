@@ -34,3 +34,29 @@ def test_incomplete_or_unknown_evidence_is_rejected(tmp_path):
     with pytest.raises(ValueError, match='evidence'):
         lessons.add_lesson(f, sample(evidence='felt right'))
     assert not f.exists()
+
+
+def test_seed_lessons_are_valid_and_found_by_a_new_problem(tmp_path):
+    from pathlib import Path
+    import shutil
+    from modeling import lessons
+    seed = Path(__file__).resolve().parents[1] / 'templates/lessons-seed.jsonl'
+    target = tmp_path / 'lessons.jsonl'
+    shutil.copy(seed, target)
+    records = lessons.load(target)
+    assert len(records) >= 5
+    for rec in records:
+        assert all(str(rec.get(k, '')).strip() for k in lessons.REQUIRED + lessons.OPTIONAL), rec['id']
+    found = lessons.search_lessons(target, 'heat conduction mesh refinement point source inlet constraint')
+    assert found and found[0]['id'] == 'S0001'
+    lessons.add_lesson(target, dict(records[0], id=None, problem='another'))     # the seed file remains appendable
+
+
+def test_route_graph_returns_related_lessons_for_a_new_record(tmp_path):
+    import shutil
+    from pathlib import Path
+    from scripts import mcp_server
+    seed = Path(__file__).resolve().parents[1] / 'templates/lessons-seed.jsonl'
+    shutil.copy(seed, tmp_path / 'l.jsonl')
+    out = mcp_server.call('route_graph', dict(question='rule multiplier misread in a strategy game', operations=[], lessons_path=str(tmp_path / 'l.jsonl')))
+    assert out['related_lessons'] and out['related_lessons'][0]['id'] == 'S0002'

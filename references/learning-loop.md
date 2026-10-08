@@ -47,3 +47,5 @@ uv run --locked python -m evals.planted check queue 7 '{"mean_wait": 0.42}'
 - 不因为一次成功就把原则写成“规律”；证据等级随复现次数提升。
 - 课程也会过期：工具、规范、数据源变化后，旧课程要重新检验。
 - 不把用户的私人信息、赛题原文或未公开材料写进课程。
+
+教训可以带三个可选字段：`failure_pattern`（失败的做法）、`detected_by`（怎么发现的）、`signal`（下次该留意什么信号）；它们和其余字段一起被检索。启动新问题时由 `route_graph` 的 `lessons_path` 在生成候选路线之前取出，不要等到复盘才看。

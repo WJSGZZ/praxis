@@ -9,6 +9,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+OPTIONAL = ('failure_pattern', 'detected_by', 'signal')      # the faulty way of working, how it was found, and what to watch for next time
 REQUIRED = ('problem', 'structure', 'recognized', 'routes_tried', 'what_failed', 'what_worked', 'verified_by', 'principle')
 LEVEL = ('observed once', 'seen repeatedly', 'derived', 'checked on a held-out problem')
 

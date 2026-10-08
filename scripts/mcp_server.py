@@ -146,7 +146,10 @@ def _route_graph(a):
     path = Path(a['graph_file']) if a.get('graph_file') else None
     if graph is None and path is not None and path.exists():
         graph = routes.load(path)
+    fresh = graph is None
     result = routes.apply(graph, a['operations'], question=a.get('question'), mode=a.get('mode', 'exploratory'))
+    if fresh and a.get('lessons_path'):          # candidate routes are generated with earlier failures in view
+        result['related_lessons'] = lessons.search_lessons(Path(a['lessons_path']), a.get('question') or result['graph'].get('question', ''), limit=5)
     if path is not None:
         path.parent.mkdir(parents=True, exist_ok=True)
         routes.save(result['graph'], path)
@@ -314,7 +317,7 @@ TOOLS = dict([
     _tool('check_total_unimodularity', 'Is a constraint matrix totally unimodular (integral LP vertices)? Exact for incidence-type matrices and small matrices.',
           {'matrix': MATRIX}, ['matrix'], lambda a: structure.is_network_matrix(a['matrix'])),
     _tool('route_graph', 'Keep the record of routes tried on a problem. Pass the current graph (or a question to start) and a list of operations: add_structure, add_assumption, add_path, attack, kill, keep_result, merge, choose. Returns the graph, record problems and a readable trace.',
-          {'graph': {'type': 'object'}, 'graph_file': {'type': 'string', 'description': 'JSON file that keeps the record between calls: read if present, rewritten afterwards'}, 'question': {'type': 'string'}, 'mode': {'type': 'string', 'enum': ['exploratory', 'standard']}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
+          {'graph': {'type': 'object'}, 'lessons_path': {'type': 'string', 'description': 'lessons file (see lesson_add): when a new record is started, related earlier lessons are returned as related_lessons'}, 'graph_file': {'type': 'string', 'description': 'JSON file that keeps the record between calls: read if present, rewritten afterwards'}, 'question': {'type': 'string'}, 'mode': {'type': 'string', 'enum': ['exploratory', 'standard']}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
           _route_graph),
     _tool('route_to_lesson', 'Draft a lesson from a finished route record (one chosen route); you supply the transferable principle. Pass the result to lesson_add.',
           {'graph': {'type': 'object'}, 'problem': {'type': 'string'}, 'principle': {'type': 'string'}, 'verified_by': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}},

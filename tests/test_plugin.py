@@ -114,3 +114,9 @@ def test_plugin_manifest_version_matches_pyproject():
     import tomllib
     root = Path(__file__).resolve().parents[1]
     assert json.loads((root / 'packaging/plugin.json').read_text())['version'] == tomllib.loads((root / 'pyproject.toml').read_text())['project']['version']
+
+
+def test_exported_plugin_carries_the_seed_lessons(tmp_path):
+    out = tmp_path / 'plugin'
+    build_plugin(out)
+    assert (out / 'skills/praxis/templates/lessons-seed.jsonl').is_file()
