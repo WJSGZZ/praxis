@@ -72,7 +72,7 @@ The whole set takes a few minutes. Results go to `reproduce/reproduced/`, exclud
 ```text
 deliverables/                 # the two electronic submission files
   paper.pdf                   # 23 pages, with file list and full source appendix
-  supporting_materials.zip    # 25 files, including the LaTeX sources and AI-use details
+  supporting_materials.zip    # 26 files, including the LaTeX sources and AI-use details
 reproduce/                    # entry points, archived numbers and check scripts
 assets/                       # images for the homepage and this page
 manifest.json                 # bytes, MD5 and SHA-256 of the two deliverables

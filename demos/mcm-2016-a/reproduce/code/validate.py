@@ -152,21 +152,29 @@ def validate(results_path):
     rates = [float(np.max(np.abs(rhs(0.,np.full(n,p['initial']),0.)))),
              float(np.max(np.abs(rhs(delay,coast[-1],q))))]
     lipschitz = max(rates)
-    gap = max(float(np.diff(before).max()) if len(before)>1 else 0.,
-              float(np.diff(after).max()) if len(after)>1 else 0.)
+    # A one-second global derivative envelope undershoots the 39 C floor
+    # despite a sampled minimum of 39.03 C. Refine this replay, not the policy,
+    # rather than accepting the physical constraint with a .002 C relaxation.
+    envelope_before = np.unique(np.r_[np.arange(0, delay, .5), delay])
+    envelope_after = np.unique(np.r_[np.arange(delay, p['horizon'], .5), p['horizon']])
+    envelope_coast = integrate(0., np.full(n, p['initial']), 0., delay, envelope_before)
+    envelope_hold = integrate(q, envelope_coast[-1], delay, p['horizon'], envelope_after)
+    envelope_states = np.vstack([envelope_coast, envelope_hold[1:]])
+    gap = max(float(np.diff(envelope_before).max()) if len(envelope_before)>1 else 0.,
+              float(np.diff(envelope_after).max()) if len(envelope_after)>1 else 0.)
     integration_allowance = 2e-6
-    lower_envelope = minimum-lipschitz*gap/2-integration_allowance
-    upper_envelope = maximum+lipschitz*gap/2+integration_allowance
-    span_envelope = span+lipschitz*gap+2*integration_allowance
+    lower_envelope = float(envelope_states.min())-lipschitz*gap/2-integration_allowance
+    upper_envelope = float(envelope_states[:, zone].max())+lipschitz*gap/2+integration_allowance
+    span_envelope = float(np.ptp(envelope_states[:, zone], axis=1).max())+lipschitz*gap+2*integration_allowance
     check('continuous_time_policy_envelope',premise_ok
-          and lower_envelope >= p['floor']-.002
-          and upper_envelope <= p['ceiling']+.002
-          and span_envelope <= p['span']+.002,
+          and lower_envelope >= p['floor']
+          and upper_envelope <= p['ceiling']
+          and span_envelope <= p['span'],
           derivative_bound_c_per_s=lipschitz,segment_initial_derivative_norms_c_per_s=rates,
           largest_sample_gap_s=gap,lower_temperature_bound_c=lower_envelope,
           upper_temperature_bound_c=upper_envelope,span_upper_bound_c=span_envelope,
           floor_c=p['floor'],ceiling_c=p['ceiling'],span_limit_c=p['span'],
-          feasibility_tolerance_c=.002,integration_allowance_c=integration_allowance,
+          feasibility_tolerance_c=0.,integration_allowance_c=integration_allowance,
           proof='Contractive positive semigroup bounds derivative norm; nearest-sample distance <= gap/2.',
           scope='Conditional continuous-time envelope for the stated thermal network; floating-point integration is not interval arithmetic or empirical validation')
 

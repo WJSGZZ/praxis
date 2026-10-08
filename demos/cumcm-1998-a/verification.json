@@ -66,9 +66,17 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 194,
-  "scope": "Full local pytest suite, including exported-plugin tool startup",
+  "passed": 286,
+  "scope": "Full local pytest; original numerical receipts retained, exact-rational headline calculation repeated independently",
   "date": "2026-10-08"
  },
- "build_archive_review": "Same member list; numerical code, data and archived results unchanged; no .aux/.out/.log files; original AI disclosure PDF bytes preserved."
+ "build_archive_review": "26 original members retained; only build_paper.py and paper/main.tex changed. Numerical code/data/results and AI-use PDF bytes unchanged; no new compiler logs/cache files included.",
+ "incremental_revision": {
+  "date": "2026-10-08",
+  "optimization_reused": true,
+  "changes": "Directional execution-risk statement, conditional multiplicative buffer bound, approximate geometric knee, precise drop-one interpretation, removal of redundant result paragraph; full-report consistency review",
+  "pdf_sha256": "ed5cb578395a29572d6387434bdcbf1e0a85d5a9292f263dbfcc211c5b24f762",
+  "format_precheck_errors": [],
+  "format_precheck_warnings": []
+ }
 }

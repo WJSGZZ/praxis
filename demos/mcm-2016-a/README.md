@@ -42,6 +42,8 @@
 - **数值余量不等于使用可靠性。** 留 0.1°C 余量比无余量六段候选多用约 10% 的水（19.50 → 21.48 L）；在指定的每段独立 10% 随机误差模型下，200 次试验中约 74% 不越界。这不足以支持通用手动操作建议，实际使用还需要标定和温度反馈。
 - **搜索失败保留其范围。** 弱混合、高损失、宽浅缸等情景没有被搜索接受的恒定流量，有限搜索不能推出所有恒定流量均不可行。恒流细网格用水 24.12 L（差 0.11%）是诊断，不是收敛阶或真实物理精度认证。
 
+- **结构对照补的是模型边界。** 原有恒流和六段方案在有限接触热容量、深层流路及组合情景中均通过采样检查；没有重优化，也没有据此声称实际浴缸已标定。恒流另以半秒回放通过零阈值放宽的连续包络。
+
 ## 翻两页报告
 
 <table>
@@ -55,7 +57,7 @@
 </tr>
 </table>
 
-**[阅读完整 24 页英文论文 →](deliverables/7391856.pdf)** 用 XeLaTeX 排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；23 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：字体不小于 12 磅，匿名页眉与页码，Summary 单页。
+**[阅读完整 25 页英文论文 →](deliverables/7391856.pdf)** 用 XeLaTeX 排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；24 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
 
 ## 自己跑一次
 
@@ -66,6 +68,7 @@ uv sync --locked
 uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # 基准、18 个情景、细网格与 17 项检查，约一分钟
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # 分段优化、范围分析、执行容差，约 20 分钟
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选筛选、三网格独立连续时间检查
+uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # 原方案的结构对照，不重优化
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 XeLaTeX 或 tectonic，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。
@@ -73,7 +76,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选�
 ## 文件地图
 
 ```text
-deliverables/7391856.pdf      # 唯一提交文件（英文，24 页）
+deliverables/7391856.pdf      # 唯一提交文件（英文，25 页）
 reproduce/                    # 复现入口、归档数值、论文构建器
 assets/                       # 首页与案例页图片
 sources.json                  # 来源记录

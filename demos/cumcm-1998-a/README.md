@@ -72,7 +72,7 @@ uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py       
 ```text
 deliverables/                 # 两份电子提交文件
   paper.pdf                   # 23 页；含支撑清单与完整建模源程序
-  supporting_materials.zip    # 25 文件；含 LaTeX 源文件与 AI工具使用详情.pdf
+  supporting_materials.zip    # 26 文件；含 LaTeX 源文件与 AI工具使用详情.pdf
 reproduce/                    # 复现入口、归档数值与检查脚本
 assets/                       # 首页与案例页图片
 manifest.json                 # 两份交付文件的字节数、MD5、SHA-256

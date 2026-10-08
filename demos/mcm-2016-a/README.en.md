@@ -42,6 +42,8 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 - **Numerical slack is not operational reliability.** A 0.1°C margin costs about 10% more water than the unbuffered six-stage candidate (19.50 → 21.48 L). Under the stated independent 10% segment-error model, about 74% of 200 draws stay within the limits. That supports a margin comparison, not a general manual faucet prescription; calibration and temperature feedback are still needed.
 - **Failed searches retain their scope.** Weak mixing, high loss and the wide shallow tub yield no accepted constant-flow candidate. Finite search does not prove that all constant flows fail. The fine-grid constant-flow result, 24.12 L (0.11% apart), is a diagnostic rather than a convergence-order or physical-accuracy certificate.
 
+- **Structural replay tests a specific dependency.** The archived policies pass sampled checks with finite contact storage, a deeper flow path, and both changes together. Their optima and physical accuracy remain untested. A separate half-second replay bounds constant-flow temperatures without relaxing the physical limits.
+
 ## Two pages of the paper
 
 <table>
@@ -55,7 +57,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 </tr>
 </table>
 
-**[Read the complete 24-page paper →](deliverables/7391856.pdf)** Typeset with XeLaTeX: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-three pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: at least 12-point type, anonymous running header with page numbers, and a one-page Summary Sheet.
+**[Read the complete 25-page paper →](deliverables/7391856.pdf)** Typeset with XeLaTeX: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-four pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
 
 ## Run it yourself
 
@@ -66,6 +68,7 @@ uv sync --locked
 uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # baseline, 18 scenarios, fine grid, 17 checks; about a minute
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # schedules, range analysis, execution tolerance; about 20 minutes
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # candidate selection and three-grid continuous-time checks
+uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # replay stored policies; no optimization
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF needs XeLaTeX or tectonic; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.
@@ -73,7 +76,7 @@ The baseline entry point refuses an existing `reproduce/reproduced/` directory. 
 ## File map
 
 ```text
-deliverables/7391856.pdf      # the only submission file (English, 24 pages)
+deliverables/7391856.pdf      # the only submission file (English, 25 pages)
 reproduce/                    # entry points, archived numbers, paper builder
 assets/                       # images for the homepage and this page
 sources.json                  # provenance record

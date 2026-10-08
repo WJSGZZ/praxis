@@ -3,10 +3,10 @@
  "checked_on": "2026-10-08",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "1d9217d13763a8bbdbcebb68e4e7299a5b70e25b33d0711356f7839fae5c460a",
-  "bytes": 156792,
-  "pages_total": 24,
-  "solution_pages": 23,
+  "sha256": "e1b1823c12c3870cbdb9148e1e04afd1224322b96a4964eaee5b3fb07272c661",
+  "bytes": 159408,
+  "pages_total": 25,
+  "solution_pages": 24,
   "ai_pages": 1,
   "text_bounds_checked": true,
   "pages_rendered_and_visually_reviewed": [
@@ -33,9 +33,10 @@
    21,
    22,
    23,
-   24
+   24,
+   25
   ],
-  "visual_review_note": "All 24 pages rendered and contact sheets reviewed; summary, policy and user guide inspected at full size. Page 11 is a top-aligned figure/table float page with bottom whitespace, not overflow. AI layout review.",
+  "visual_review_note": "All 25 final pages rendered and contact sheets reviewed; new structural comparison and body-buffer discussion also inspected at full size. One-page Summary, user guide (page 22), and AI report (page 25). Page 21 has bottom whitespace, no overflow. AI layout review.",
   "typesetting": "XeLaTeX (TeX Live 2026): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
  },
  "model_checks": {
@@ -63,6 +64,16 @@
    },
    "receipt": "reproduce/reference/mesh_check.json",
    "source_and_input_hashes_checked": true
+  },
+  "constant_continuous_envelope": {
+   "largest_sample_gap_s": 0.5,
+   "physical_limit_tolerance_c": 0.0,
+   "integration_allowance_c": 2e-06,
+   "lower_c": 39.01443988764259,
+   "upper_c": 40.33404688208719,
+   "span_upper_c": 0.9979550868001735,
+   "receipt": "reproduce/reference/checks.json",
+   "scope": "Independent RHS/RK45 replay of unchanged constant policy, conditional floating-point derivative envelope; not interval or empirical certification"
   }
  },
  "reproduction_checks": {
@@ -104,15 +115,32 @@
   1,
   8
  ],
- "user_guide_page": 21,
+ "user_guide_page": 22,
  "float_callout_review": {
   "date": "2026-10-08",
   "unreferenced": [],
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 241,
-  "scope": "Full local pytest suite including exported MCP behavior, evaluation schema and schedule/stale-evidence regressions",
+  "passed": 286,
+  "scope": "Full local pytest suite; no expensive demo optimization rerun",
   "date": "2026-10-08"
+ },
+ "structural_replay": {
+  "script": "reproduce/check_structure.py",
+  "receipt": "reproduce/reference/structure.json",
+  "policies": 2,
+  "structures": 4,
+  "all_eight_sampled_passed": true,
+  "time_resolution_max_delta_c": 4.8259677519979505e-05,
+  "scope": "Fixed archived-policy replay on one spatial mesh; time-resolution and energy checks only. Sampled acceptance is not continuous or empirical certification; no re-optimization, no claim that the old energy lower bound applies to the finite-body alternatives.",
+  "physical_threshold_relaxation_c": 0
+ },
+ "incremental_revision": {
+  "date": "2026-10-08",
+  "optimization_reused": true,
+  "changes": "Finite contact capacity / deep-route fixed-policy replay, strict constant-flow continuous floor check, explicit six-stage rates, full-report consistency/format/visual review",
+  "format_precheck_errors": [],
+  "format_precheck_warnings": []
  }
 }

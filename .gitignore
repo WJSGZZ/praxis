@@ -11,6 +11,7 @@ cases/
 # Public demo inputs and reference records are curated; runtime results stay local.
 demos/**/reproduced/
 demos/**/paper/
+demos/**/reproduce/submission/
 
 # Local-only notes and generated distributions; public maintenance code stays tracked.
 /.local/

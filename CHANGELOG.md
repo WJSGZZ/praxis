@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 两份案例按全文审阅修订，复用原优化结果：国赛纠正风险误差方向与缓冲条件；美赛补有限储热／替代流路对照、半秒恒流连续包络及具体六段流量，修订后的PDF、预览、双语页数与证据同步。论文修订指导明确局部修复后的全文一致性检查与按影响复用证据。
+  Both case studies now incorporate full-report review while retaining their original optimization runs. Portfolio risk statements are conditional; the bath case adds fixed-policy structural replay, an unrelaxed constant-flow envelope and explicit schedule rates. PDFs, previews and case metadata are synchronized. Revision guidance requires a final consistency pass and reruns only affected calculations.
+
 - 发布检查在独立临时副本运行两个提交包，允许重复检查且保留已有复现结果；失败时输出诊断。
   Release checks run the submission packages in temporary copies, preserve existing reproduction output, and show failure diagnostics.
 

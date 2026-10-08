@@ -2,7 +2,7 @@
 
 数学复现从仓库根目录运行 `uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py`。源码只依赖锁定环境中的 NumPy 与 SciPy；没有原题专属观测数据，也不连接 AI 服务。生成目录存在时拒绝覆盖。
 
-`reference/` 保留报告使用的实际数值、17 项检查、完整基准温度轨迹，以及分段流量优化与范围分析的 `extended.json`（由 `run_extended.py` 生成，约 20 分钟，另有 2 项检查）、候选验收 `mesh_check.json`（由 `run_mesh_check.py` 生成，读取 `extended.json`，保留失败候选并按三套网格独立积分与连续时间包络选择可行方案）。复现另加一个水量对照，所以复现入口共有 18 项；两种数量分别表述。
+`reference/` 保留报告使用的实际数值、17 项检查、完整基准温度轨迹，以及分段流量优化与范围分析的 `extended.json`（由 `run_extended.py` 生成，约 20 分钟，另有 2 项检查）、候选验收 `mesh_check.json`（由 `run_mesh_check.py` 生成，读取 `extended.json`，保留失败候选并按三套网格独立积分与连续时间包络选择可行方案）。复现另加一个水量对照，所以复现入口共有 18 项；两种数量分别表述。`check_structure.py`重放归档恒流与六段方案，比较有限接触热容量和替代流路；`reference/structure.json`包含四结构、两方案、输入及源码哈希、能量平衡与时间步长检查。它只检查一个空间网格上的采样可行性，不重复优化，也不替代原网络三网格连续验收。基准恒流检查已加密至半秒包络，物理阈值容差为零。
 
 报告用 XeLaTeX 排版（Times 系 newtxtext/newtxmath，随 TeX 发行版提供，不依赖某个系统的字体）；线图、柱状图、热图和流程图由 `scripts/texplot.py` 从归档数值直接生成 pgfplots／TikZ 源码，公式、表格和交叉引用都由 LaTeX 处理。
 

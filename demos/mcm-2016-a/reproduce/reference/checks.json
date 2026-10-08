@@ -47,7 +47,7 @@
   {
     "name": "continuous_time_policy_envelope",
     "passed": true,
-    "evidence": "{\"ceiling_c\": 41.0, \"derivative_bound_c_per_s\": 0.06223244698734261, \"feasibility_tolerance_c\": 0.002, \"floor_c\": 39.0, \"integration_allowance_c\": 2e-06, \"largest_sample_gap_s\": 1.0, \"lower_temperature_bound_c\": 38.998881775895754, \"proof\": \"Contractive positive semigroup bounds derivative norm; nearest-sample distance <= gap/2.\", \"scope\": \"Conditional continuous-time envelope for the stated thermal network; floating-point integration is not interval arithmetic or empirical validation\", \"segment_initial_derivative_norms_c_per_s\": [0.003957000671665947, 0.06223244698734261], \"span_limit_c\": 1.5, \"span_upper_bound_c\": 1.0290713102938447, \"upper_temperature_bound_c\": 40.34960495116623}"
+    "evidence": "{\"ceiling_c\": 41.0, \"derivative_bound_c_per_s\": 0.06223244698734261, \"feasibility_tolerance_c\": 0.0, \"floor_c\": 39.0, \"integration_allowance_c\": 2e-06, \"largest_sample_gap_s\": 0.5, \"lower_temperature_bound_c\": 39.01443988764259, \"proof\": \"Contractive positive semigroup bounds derivative norm; nearest-sample distance <= gap/2.\", \"scope\": \"Conditional continuous-time envelope for the stated thermal network; floating-point integration is not interval arithmetic or empirical validation\", \"segment_initial_derivative_norms_c_per_s\": [0.003957000671665947, 0.06223244698734261], \"span_limit_c\": 1.5, \"span_upper_bound_c\": 0.9979550868001735, \"upper_temperature_bound_c\": 40.33404688208719}"
   },
   {
     "name": "uniform_zero_flow_analytic_cooling",
