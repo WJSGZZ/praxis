@@ -57,3 +57,14 @@ def test_signed_bars_and_text_escaping():
     assert texplot.tex_text('x_1 and 5%') == 'x\\_1 and 5\\%' and texplot.tex_text('$x_1$ \\alpha 5%') == '$x_1$ \\alpha 5%'
     positive = texplot.hbar_chart(['p', 'q'], [24.14, 16.01], ['main', 'muted'], 'L', xmax=31.38)
     assert 'xmin=0' in positive and 'anchor=east' not in positive
+
+
+def test_unlabelled_axis_warns():
+    import pytest
+    from scripts.texplot import Axis
+    with pytest.warns(UserWarning, match='label'):
+        Axis()
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        Axis('Time (s)', 'Temperature (°C)')

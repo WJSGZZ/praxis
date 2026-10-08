@@ -7,6 +7,8 @@ combined with the dash styles used here).
 """
 from __future__ import annotations
 
+import warnings
+
 import math
 from typing import Iterable, Sequence
 
@@ -62,6 +64,8 @@ class Axis:
     def __init__(self, xlabel: str = "", ylabel: str = "", *, width: str = r"0.84\linewidth", height: str = "5.4cm",
                  xmin=None, xmax=None, ymin=None, ymax=None, legend: str | None = "above", legend_columns: int | None = None,
                  extra: str = ""):
+        if (not xlabel or not ylabel) and "label" not in extra:
+            warnings.warn("Axis without an x or y label: every axis needs a quantity and its unit, e.g. 'Time (s)'", stacklevel=2)
         self.opts = [f"width={width}", f"height={height}", "scale only axis", f"xlabel={{{xlabel}}}", f"ylabel={{{ylabel}}}",
                      "axis lines=left", "axis line style={gray!70}", "grid=major", "grid style={gray!18}",
                      "tick label style={font=\\footnotesize}", "label style={font=\\small}",
