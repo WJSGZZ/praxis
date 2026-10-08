@@ -45,11 +45,12 @@ FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos'
 
 
 def _check_powers(tree):
-    """Reject powers that can run away: a power inside an exponent (9**9**9) or a constant exponent above 200."""
+    """Reject powers that can run away: any power nested inside another power (9**9**9, (9**200)**200) or a constant exponent above 200."""
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Pow):
-            if any(isinstance(n, ast.BinOp) and isinstance(n.op, ast.Pow) for n in ast.walk(node.right)):
-                raise ValueError('A power inside an exponent is not allowed')
+            for side in (node.left, node.right):
+                if any(isinstance(n, ast.BinOp) and isinstance(n.op, ast.Pow) for n in ast.walk(side)):
+                    raise ValueError('A power inside a power is not allowed')
             if isinstance(node.right, ast.Constant) and abs(node.right.value) > 200:
                 raise ValueError('Constant exponents above 200 are not allowed')
 

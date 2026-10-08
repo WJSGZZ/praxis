@@ -60,3 +60,16 @@ def test_route_graph_returns_related_lessons_for_a_new_record(tmp_path):
     shutil.copy(seed, tmp_path / 'l.jsonl')
     out = mcp_server.call('route_graph', dict(question='rule multiplier misread in a strategy game', operations=[], lessons_path=str(tmp_path / 'l.jsonl')))
     assert out['related_lessons'] and out['related_lessons'][0]['id'] == 'S0002'
+
+
+def test_chinese_queries_find_lessons(tmp_path):
+    import shutil
+    from pathlib import Path
+    from modeling import lessons
+    target = tmp_path / 'l.jsonl'
+    shutil.copy(Path(__file__).resolve().parents[1] / 'templates/lessons-seed.jsonl', target)
+    for query, expected in (('热传导 网格 加密 点源 约束', 'S0001'), ('三维热网络中带入口点源的温度约束', 'S0001'), ('规则倍数 读错', 'S0002'),
+                            ('边界条件被数据否定', 'S0003'), ('整数规划的二元变量容差', 'S0004'), ('全部通过的检验没有变异测试', 'S0005')):
+        found = lessons.search_lessons(target, query)
+        assert found and found[0]['id'] == expected, (query, [r['id'] for r in found])
+    assert all(r['evidence'] != 'checked on a held-out problem' for r in lessons.load(target))      # none was checked on another problem yet

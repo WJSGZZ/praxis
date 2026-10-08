@@ -6,6 +6,7 @@ project unless the user moves it."""
 from __future__ import annotations
 
 import json
+import re
 from datetime import date
 from pathlib import Path
 
@@ -39,14 +40,28 @@ def load(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
 
 
+def _tokens(text: str) -> set[str]:
+    """Latin words (two letters or more) plus Chinese character bigrams, so a query without spaces still finds lessons."""
+    text = text.lower()
+    words = {w for w in re.findall(r'[a-z0-9_]+', text) if len(w) > 1}
+    for run in re.findall(r'[\u4e00-\u9fff]+', text):
+        words |= {run[i:i + 2] for i in range(len(run) - 1)} if len(run) > 1 else {run}
+    return words
+
+
 def search_lessons(path: Path, query: str = '', *, tags: list[str] | None = None, limit: int = 5) -> list[dict]:
-    """Lessons ranked by keyword overlap with the query (any field) and shared tags. Returns the best few, strongest evidence first on ties."""
-    words = {w.lower() for w in query.replace(',', ' ').split() if len(w) > 1}
+    """Lessons ranked by token overlap with the query (any field, English words or Chinese bigrams) and by tags found in the query or given.
+    Returns the best few, strongest evidence first on ties."""
+    words = _tokens(query.replace(',', ' '))
     want = {t.lower() for t in (tags or [])}
+    lowered = query.lower()
     ranked = []
     for rec in load(path):
         text = ' '.join(str(v) for k, v in rec.items() if k not in ('id', 'date')).lower()
-        score = sum(1 for w in words if w in text) + 3 * len(want & {t.lower() for t in rec.get('tags', [])})
+        have = _tokens(text)
+        rec_tags = {t.lower() for t in rec.get('tags', [])}
+        tag_hits = len(want & rec_tags) + sum(1 for t in rec_tags if t in lowered)
+        score = len(words & have) + 3 * tag_hits
         if score:
             ranked.append((score, LEVEL.index(rec['evidence']), rec))
     ranked.sort(key=lambda r: (-r[0], -r[1]))

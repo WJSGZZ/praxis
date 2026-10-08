@@ -178,3 +178,12 @@ def test_relative_case_path_is_read_from_the_workspace(tmp_path, monkeypatch):
     monkeypatch.setattr(pipeline, 'PROJECT', workspace.resolve())
     monkeypatch.chdir(elsewhere)
     assert pipeline.under_project(Path('cases/demo')) == (workspace / 'cases/demo').resolve()
+
+
+def test_relative_path_means_the_workspace_even_when_it_does_not_exist_yet(tmp_path, monkeypatch):
+    from scripts import pipeline
+    workspace = tmp_path / 'ws'
+    workspace.mkdir()
+    monkeypatch.setattr(pipeline, 'PROJECT', workspace.resolve())
+    monkeypatch.chdir(tmp_path)
+    assert pipeline.under_project(Path('cases')) == (workspace / 'cases').resolve()

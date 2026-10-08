@@ -111,3 +111,9 @@ def test_a_body_line_that_starts_with_appendix_is_not_the_appendix_heading():
     pages[4] = page('正文\n附录 B 中的程序按第 3 节的步骤逐项实现，相关说明见表 2，不再重复。\n6')
     r = contest_rules.evaluate(pages, 'cumcm')
     assert r['facts']['body_pages'] == 10
+
+
+def test_a_short_body_line_with_punctuation_is_not_an_appendix_heading():
+    pages = cumcm_pages(body=10, appendix=2)
+    pages[4] = page('正文\n附录 B。\n6')
+    assert contest_rules.evaluate(pages, 'cumcm')['facts']['body_pages'] == 10

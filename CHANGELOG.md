@@ -5,6 +5,8 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修复（外部复核发现）：教训检索支持中文查询（字二元组与中文标签，种子教训补了中文标签，并把尚未在另一道题上验证过的两条降为“观察到一次”）；任何嵌套的乘方都被拒绝；相对路径一律相对工作区；国赛附录标题检测排除带句读的行。
+  Fixes from an external review: lesson search works for Chinese queries (character bigrams and Chinese tags; two seed lessons not yet checked on another problem are downgraded); any nested power is rejected; relative paths always mean the workspace; appendix detection ignores lines with sentence punctuation.
 - 证据索引新增可选的 `claims`：每条结论声明强度（computed／checked／independent），报告没有结论支撑的问题要求和强度超过证据的结论；路线记录里细化另一条路线时必须写明“简单一层解释不了什么”；教训新增失败做法、发现方式和信号三个字段，附带 5 条种子教训（`templates/lessons-seed.jsonl`），`route_graph` 启动新记录时用 `lessons_path` 返回相关教训。
   The evidence index accepts optional `claims` with a declared strength and reports uncovered requirements and overclaims; a refining route must say what the simpler route cannot explain; lessons gain failure-pattern, detection and signal fields with five seed lessons, returned by `route_graph` when a new record starts.
 - 修复：环境快照覆盖全部声明的依赖；相对案例路径先按工作区解析；国赛附录标题检测不再被正文行误触发；表达式中失控的乘方被拒绝；工具说明写明 `proved`。

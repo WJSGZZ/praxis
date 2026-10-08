@@ -51,7 +51,7 @@ def save(path, value):
 
 def under_project(path):
     path = Path(path)
-    if not path.is_absolute() and (PROJECT / path).exists():       # a relative case path is read from the workspace first
+    if not path.is_absolute():                                       # a relative path always means: relative to the workspace
         path = PROJECT / path
     path = path.resolve()
     if not path.is_relative_to(PROJECT):
