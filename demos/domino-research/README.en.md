@@ -73,3 +73,5 @@ assets/                       # images for this page
 - The sequence 1, 1, 3, 11, 41, 153, … is [OEIS A001835](https://oeis.org/A001835) (offset by one); the case did not search the literature further and claims no novelty.
 - The proofs in the note are short enough to check by hand; nothing was formalised in a proof assistant. The case shows a way of working, not an upper bound on research strength.
 - Code, note and figure are under the repository's MIT license.
+
+If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.

@@ -5,6 +5,8 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 案例展示图去掉“多少页报告”的链接行，两个案例的页脚统一；三个案例页的结尾邀请语统一；新增中文与英文论文各自的写作习惯和语言评审角色。
+  Case overview images lose the page-count link line and share one footer; the three case pages close with the same invitation; Chinese and English writing habits and a language reviewer role are added.
 - 版式：没有官方要求时按数学期刊连续排版，只有摘要页和不计页的 AI 使用报告另起一页；浮动体页顶端对齐。美赛案例据此重排，共 23 页（正文 22 页加 AI 使用报告）。
   Layout: continuous journal-style flow unless the contest requires otherwise; only the summary sheet and the uncounted AI report start new pages; float pages align to the top. The MCM case was reflowed to 23 pages.
 - 新增 `scripts/contest_rules.py`：按美赛（COMAP 2026）与国赛（格式规范 2019/2021/2023）的硬性规则检查 PDF；两个论文模板按各自规则收紧并有测试；美赛 AI 使用报告标题与官方一致；国赛案例的代码页与参考文献不再侵入 2.5 厘米页边距。

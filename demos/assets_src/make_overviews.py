@@ -88,13 +88,11 @@ def mcm(lang: str, out: Path):
         "zh": dict(title="水温要均匀，策略就不能只看平均值", sub="三维热网络 · 解析基线 · 独立积分与能量核验",
                    cap="最佳恒定流量下 · 青绿：均值 · 虚线：最冷单元 · 阴影：入口射流区以外的温度范围", yl="水温 / °C", xl="时间 / min",
                    m=["最佳恒定流量", f"时变方案（{best['segments']} 段）", "理想充分混合", "能量下界"],
-                   foot="40°C 起始 · 39–41°C 窗口 · 30 分钟 · 系数由教材关联式推导，非实测",
-                   link=f"{pages('mcm-2016-a')} 页完整报告（含 AI 披露） · 17 项检查 · 查看美赛 Demo →"),
+                   foot="40°C 起始 · 39–41°C 窗口 · 30 分钟 · 系数由教材关联式推导，非实测"),
         "en": dict(title="A warm average can hide a cold corner", sub="Spatial heat balance, a proved benchmark, and independent numerical checks",
                    cap="Best constant rate: mean (teal) · coldest cell (dashed) · range outside the inlet jet zone (shade)", yl="Temperature / °C", xl="Time / min",
                    m=["Best constant rate", f"Time-varying schedule ({best['segments']} segments)", "Ideal well-mixed optimum", "Conditional energy lower bound"],
-                   foot="40°C start · 39–41°C window · 30 min · Textbook-correlation coefficients, not measured data",
-                   link=f"Read the {pages('mcm-2016-a')}-page report with AI disclosure · Inspect 17 recorded checks →"),
+                   foot="40°C start · 39–41°C window · 30 min · Textbook-correlation coefficients, not measured data"),
     }[lang]
     c = Canvas(lang)
     c.frame("CASE 02  /  MCM 2016 A", txt["title"], txt["sub"])
@@ -119,8 +117,7 @@ def mcm(lang: str, out: Path):
         y = 401 + 135 * i
         c.text(1229, y, label, 27 if lang == "en" else 28, GREY)
         c.text(1229, y + 56, f"{vals[key]:.2f} L", 58, col)
-    c.text(125, 962, txt["foot"], 25, GREY)
-    c.text(125, 1012, txt["link"], 29, TEAL)
+    c.text(125, 990, txt["foot"], 25, GREY)
     c.save(out)
     return res, ext  # keep the references alive for callers that want to assert on them
 
@@ -139,12 +136,12 @@ def cumcm(lang: str, variant: str, out: Path):
     L = {
         "zh": dict(title="风险的边界，收益的选择", sub="两组资产的最优方案与风险收益曲线，计算结果经过独立核验", names=["四资产", "十五资产"], risk="风险上限 {:g}%",
                    xl="风险上限", yl="最优净收益率", head="CASE 01  /  CUMCM 1998 A",
-                   foot1="资金 100 万元 · 虚线为 5% 银行收益率 · 两组风险上限不同，非实际投资预测", link=f"{n} 页完整报告 · 12 项检查 · 查看国赛 Demo →",
+                   foot1="资金 100 万元 · 虚线为 5% 银行收益率 · 两组风险上限不同，非实际投资预测",
                    rhead="CASE 01  /  RESULTS", rfoot1="资金 100 万元 · 虚线为 5% 银行收益率 · 两组采用不同风险上限",
                    rfoot2="风险口径：最大单项风险损失额 ÷ 总资金。模型结果不代表实际投资收益预测。"),
         "en": dict(title="Portfolio returns under risk constraints", sub="Two asset sets, with selected solutions verified against analytical upper bounds", names=["4 assets", "15 assets"], risk="Risk limit: {:g}%",
                    xl="Risk limit", yl="Optimal net return", head="CASE 01  /  CUMCM 1998 A",
-                   foot1="Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits, not an investment forecast", link=f"Read the {n}-page report · Inspect 12 recorded checks →",
+                   foot1="Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits, not an investment forecast",
                    rhead="CASE 01  /  RESULTS", rfoot1="Budget: CNY 1,000,000 · Dashed line: 5% bank return · Different risk limits across groups",
                    rfoot2="Risk = maximum single-asset loss / budget. Conditional model results, not investment forecasts."),
     }[lang]
@@ -175,8 +172,7 @@ def cumcm(lang: str, variant: str, out: Path):
         c.text((x0 + x1) / 2, 873, L["xl"], 22, GREY, ha="center")
         c.text(x0 - 80, 618, L["yl"], 22, GREY, ha="center", rotation=90)
     if variant == "overview":
-        c.text(125, 962, L["foot1"], 25, GREY)
-        c.text(125, 1013, L["link"], 29, TEAL)
+        c.text(125, 990, L["foot1"], 25, GREY)
     else:
         c.text(125, 958, L["rfoot1"], 19, INK)
         c.text(125, 1007, L["rfoot2"], 19, GREY)

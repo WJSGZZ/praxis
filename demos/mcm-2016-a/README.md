@@ -87,3 +87,5 @@ AI-use.md                     # AI 使用记录
 - 使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；没有读取或复制同题的获奖论文或他人解答。开发中曾读过一次评委评述，由它引起的改动已全部撤回，所以这不是完全盲做的案例。
 - 不是标准答案或获奖成果；原题只给链接，不重新分发。历史题按 2026-10-07 核查的[当前提交规范](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php)编排；AI 参与范围真实披露，未声称有完整聊天导出或独立人工审核。[来源记录](sources.json) · [验收记录](verification.json) · [AI 记录](AI-use.md)
 - 模型、代码、论文和原创图形按仓库 MIT 许可；外部资料各保留自身权利。本案例检验的是给定条件下的热网络与交付流程，不是实测准确性认证。
+
+如果这个案例对你有帮助，欢迎 **Star Praxis**，也欢迎带着具体问题和复现结果提交 Issue。
