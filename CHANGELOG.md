@@ -3,6 +3,22 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 未发布 · Unreleased
+
+（发布前把这一节改成新版本号。版本号只增不改：已发布的版本不再修改，修复发下一个小版本。小改动只提交，不发版；新增或改名技能与工具、结果格式变化才升次版本号。）
+
+## 0.3.0 · 2026-10-08
+
+由三次封存模拟比赛和两轮盲比较驱动：补齐工具覆盖，加入覆盖地图、评审协议与“先做透再收敛”的工作方式。
+Driven by three sealed simulated contests and two blind comparisons: wider tool coverage, a coverage map, a review protocol, and a deep-work-then-converge way of working.
+
+- `ols_report`、`compare_models`（回归诊断与对基线的交叉验证比较）；`check_pdf --margins`（渲染后检查每页左右空白与溢出，新增依赖 pypdfium2）。
+  `ols_report` and `compare_models` for regression diagnostics and baseline-honest comparison; `check_pdf --margins` renders pages and flags uneven margins and overflow (new dependency pypdfium2).
+- 第一次封存模拟比赛暴露的缺口：分层热传导 `solve_layered_diffusion` 与独立的拉普拉斯解 `layered_diffusion_laplace`、参数标定 `calibrate_curve`（可辨识性与留出点）、`sobol_convergence`、路线记录落盘 `graph_file`、工具索引（自动生成）、图的负值条形与标签转义、`check_pdf --margins` 增加大块空白检测；MCP 服务按需加载重的库，启动更快。
+  Gaps found by the first sealed simulation: layered conduction with an independent Laplace solution, parameter calibration with identifiability and hold-out, Sobol convergence, persistent route records, a generated tool index, signed bars and label escaping in figures, white-gap detection in `check_pdf --margins`, and lazy imports that speed up the tool server.
+- 第二、三次模拟比赛暴露的缺口：`bimatrix_nash`（非零和博弈全部纳什均衡）、LP/MILP 接受稀疏矩阵、`mcp_server --list --filter`、案例运行只打印摘要；序贯决策（信息结构、松弛上界与遍历证书、规则变体表）、Word 附件、并行预算等指南。
+  Gaps from the second and third simulations: Nash equilibria of bimatrix games, sparse LP/MILP input, a tool filter, a compact `run` summary; guidance on sequential decisions, Word attachments and parallel budgets.
+
 ## 0.2.0 · 2026-10-08
 
 在 0.1.0 之上，让 Praxis 能面对陌生问题：先找结构、比较路线、没有答案时也能产出带把握等级的结论。
@@ -18,17 +34,6 @@ On top of 0.1.0, Praxis can now face an unfamiliar problem: find the structure f
   Both cases were corrected after independent audits; the MCM case was recomputed with mesh-converged constraints (schedule 19.35 L, 24-page paper).
 - 修复：`sir_fit` 给出终态规模并说明假设；`mcp_server` 版本号取自 `pyproject.toml`。
   Fixes: `sir_fit` reports the final size and its assumptions; the server reads its version from `pyproject.toml`.
-
-## 未发布 · Unreleased
-
-- `ols_report`、`compare_models`（回归诊断与对基线的交叉验证比较）；`check_pdf --margins`（渲染后检查每页左右空白与溢出，新增依赖 pypdfium2）。
-  `ols_report` and `compare_models` for regression diagnostics and baseline-honest comparison; `check_pdf --margins` renders pages and flags uneven margins and overflow (new dependency pypdfium2).
-- 第一次封存模拟比赛暴露的缺口：分层热传导 `solve_layered_diffusion` 与独立的拉普拉斯解 `layered_diffusion_laplace`、参数标定 `calibrate_curve`（可辨识性与留出点）、`sobol_convergence`、路线记录落盘 `graph_file`、工具索引（自动生成）、图的负值条形与标签转义、`check_pdf --margins` 增加大块空白检测；MCP 服务按需加载重的库，启动更快。
-  Gaps found by the first sealed simulation: layered conduction with an independent Laplace solution, parameter calibration with identifiability and hold-out, Sobol convergence, persistent route records, a generated tool index, signed bars and label escaping in figures, white-gap detection in `check_pdf --margins`, and lazy imports that speed up the tool server.
-- 第二、三次模拟比赛暴露的缺口：`bimatrix_nash`（非零和博弈全部纳什均衡）、LP/MILP 接受稀疏矩阵、`mcp_server --list --filter`、案例运行只打印摘要；序贯决策（信息结构、松弛上界与遍历证书、规则变体表）、Word 附件、并行预算等指南。
-  Gaps from the second and third simulations: Nash equilibria of bimatrix games, sparse LP/MILP input, a tool filter, a compact `run` summary; guidance on sequential decisions, Word attachments and parallel budgets.
-
-（发布前把这一节改成新版本号。版本号只增不改：已发布的版本不再修改，修复发下一个小版本。小改动只提交，不发版；新增或改名技能与工具、结果格式变化才升次版本号。）
 
 ## 0.1.0 · 2026-10-07
 

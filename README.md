@@ -6,7 +6,7 @@
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.2.0-3F6B6B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.3.0-3F6B6B?style=flat-square)](CHANGELOG.md)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-7A5C3E?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
 [![Paper](https://img.shields.io/badge/Paper-XeLaTeX-5B6B7F?style=flat-square)](templates/)
