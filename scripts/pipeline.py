@@ -15,7 +15,7 @@ import subprocess
 import sys
 import uuid
 import platform
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 
 BUNDLE = Path(__file__).resolve().parents[1]
 PROJECT = Path.cwd().resolve()
@@ -50,6 +50,9 @@ def save(path, value):
 
 
 def under_project(path):
+    path = Path(path)
+    if not path.is_absolute() and (PROJECT / path).exists():       # a relative case path is read from the workspace first
+        path = PROJECT / path
     path = path.resolve()
     if not path.is_relative_to(PROJECT):
         raise ValueError('Case paths must remain inside the selected workspace')
@@ -159,9 +162,17 @@ def dependency_snapshot():
 
 
 def environment_snapshot():
-    packages = ['numpy', 'pandas', 'scipy', 'scikit-learn', 'networkx', 'SALib', 'pymcdm', 'pypdf']
+    import tomllib
+    declared = tomllib.loads((BUNDLE / 'pyproject.toml').read_text())['project']['dependencies']       # every declared dependency, so none is forgotten
+    packages = [re.split(r'[<>=!~\[ ]', spec, maxsplit=1)[0] for spec in declared]
+    versions = {}
+    for name in packages:
+        try:
+            versions[name] = version(name)
+        except PackageNotFoundError:
+            versions[name] = 'not installed'
     return {'python': platform.python_version(), 'platform': platform.platform(),
-            'executable': sys.executable, 'packages': {name: version(name) for name in packages}}
+            'executable': sys.executable, 'packages': versions}
 
 
 def run_case(case, model='code/model.py', validator='code/validate.py', timeout=120):

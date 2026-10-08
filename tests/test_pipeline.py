@@ -158,3 +158,23 @@ def test_external_workspace_runs_and_detects_stale_evidence(tmp_path, monkeypatc
     assert 'scripts/pipeline.py' in result['dependencies']
     (case/'code/model.py').write_text('# changed')
     assert not pipeline.status(case)['runs'][0]['usable_automatic_evidence']
+
+
+def test_environment_snapshot_covers_every_declared_dependency():
+    import re
+    import tomllib
+    from scripts import pipeline
+    declared = tomllib.loads((Path(pipeline.BUNDLE) / 'pyproject.toml').read_text())['project']['dependencies']
+    names = {re.split(r'[<>=!~\[ ]', spec, maxsplit=1)[0] for spec in declared}
+    assert names <= set(pipeline.environment_snapshot()['packages'])
+
+
+def test_relative_case_path_is_read_from_the_workspace(tmp_path, monkeypatch):
+    from scripts import pipeline
+    workspace = tmp_path / 'ws'
+    (workspace / 'cases/demo').mkdir(parents=True)
+    elsewhere = tmp_path / 'elsewhere'
+    elsewhere.mkdir()
+    monkeypatch.setattr(pipeline, 'PROJECT', workspace.resolve())
+    monkeypatch.chdir(elsewhere)
+    assert pipeline.under_project(Path('cases/demo')) == (workspace / 'cases/demo').resolve()

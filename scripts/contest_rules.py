@@ -81,7 +81,8 @@ def evaluate(records, contest, *, margins=None, forbidden=()):
         toc = [i + 1 for i, r in enumerate(records[:4]) if re.match(r'\s*目\s*录', r['text'])]
         if toc:
             errors.append(f'a table of contents on page {toc}; the specification says not to include one')
-        appendix = next((i for i, r in enumerate(records) if re.search(r'^\s*附\s*录', r['text'], re.M) and i > 0), None)
+        # an appendix heading is a short line that starts with 附录; a long line that merely begins with the word is body text
+        appendix = next((i for i, r in enumerate(records) if i > 0 and any(re.match(r'\s*附\s*录', line) and len(line) <= 30 for line in r['lines'])), None)
         body = appendix if appendix is not None else n
         facts.update(total_pages=n, body_pages=body, appendix_from_page=None if appendix is None else appendix + 1)
         if body > CUMCM_BODY_PAGES:

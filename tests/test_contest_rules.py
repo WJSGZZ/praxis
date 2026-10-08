@@ -104,3 +104,10 @@ def test_demo_papers_satisfy_their_contest_rules():
     from scripts.check_pdf import margin_report
     assert contest_rules.evaluate(contest_rules.extract(mcm), 'mcm')['passed']
     assert contest_rules.evaluate(contest_rules.extract(cumcm), 'cumcm', margins=margin_report(cumcm))['passed']
+
+
+def test_a_body_line_that_starts_with_appendix_is_not_the_appendix_heading():
+    pages = cumcm_pages(body=10, appendix=2)
+    pages[4] = page('正文\n附录 B 中的程序按第 3 节的步骤逐项实现，相关说明见表 2，不再重复。\n6')
+    r = contest_rules.evaluate(pages, 'cumcm')
+    assert r['facts']['body_pages'] == 10

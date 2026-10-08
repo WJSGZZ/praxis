@@ -44,9 +44,20 @@ FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos'
              'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum}
 
 
+def _check_powers(tree):
+    """Reject powers that can run away: a power inside an exponent (9**9**9) or a constant exponent above 200."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Pow):
+            if any(isinstance(n, ast.BinOp) and isinstance(n.op, ast.Pow) for n in ast.walk(node.right)):
+                raise ValueError('A power inside an exponent is not allowed')
+            if isinstance(node.right, ast.Constant) and abs(node.right.value) > 200:
+                raise ValueError('Constant exponents above 200 are not allowed')
+
+
 def _compile(expression, names):
     """Vectorised evaluation of an arithmetic expression; anything but arithmetic, names and a few functions is rejected."""
     tree = ast.parse(expression, mode='eval')
+    _check_powers(tree)
     for node in ast.walk(tree):
         ok = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Load, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.USub, ast.UAdd)
         if isinstance(node, ok):
@@ -80,6 +91,7 @@ PREDICATE_FUNCTIONS = {'abs': abs, 'min': min, 'max': max, 'gcd': __import__('ma
 def _predicate(expression, names):
     """Boolean function of integer or float arguments: arithmetic, comparisons, and/or/not and a few functions. Nothing else."""
     tree = ast.parse(expression, mode='eval')
+    _check_powers(tree)
     arithmetic = (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod, ast.Pow, ast.USub, ast.UAdd, ast.Not, ast.And, ast.Or,
                   ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE)
     for node in ast.walk(tree):
@@ -291,7 +303,7 @@ TOOLS = dict([
     _tool('backtest_baselines', 'Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines.',
           {'series': SERIES, 'horizon': {'type': 'integer'}, 'min_train': {'type': 'integer'}, 'season': {'type': 'integer'}}, ['series', 'horizon'],
           lambda a: forecast.rolling_origin(a['series'], a['horizon'], min_train=a.get('min_train'), season=a.get('season'))),
-    _tool('probe_structure', 'Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs. A found violation is a proof; otherwise it is evidence on sampled points only.',
+    _tool('probe_structure', 'Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs. A found violation is a proof; otherwise it is evidence on sampled points only. Read `proved` with the claim: proved=true next to holds=false (or convex=false etc.) means the claim is refuted; proved=false means only evidence.',
           {'property': {'type': 'string', 'enum': ['convexity', 'monotone', 'symmetry', 'power_law', 'invariant']}, 'expression': {'type': 'string'},
            'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'variable': {'type': 'string'},
            'permutation': {'type': 'array', 'items': {'type': 'integer'}}, 'rhs': {'type': 'array', 'items': {'type': 'string'}, 'description': 'dx_i/dt expressions, for property=invariant'}},
@@ -307,7 +319,7 @@ TOOLS = dict([
     _tool('route_to_lesson', 'Draft a lesson from a finished route record (one chosen route); you supply the transferable principle. Pass the result to lesson_add.',
           {'graph': {'type': 'object'}, 'problem': {'type': 'string'}, 'principle': {'type': 'string'}, 'verified_by': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}},
           ['graph', 'problem', 'principle'], lambda a: routes.draft_lesson(a['graph'], problem=a['problem'], principle=a['principle'], verified_by=a.get('verified_by', ''), tags=a.get('tags'))),
-    _tool('test_conjecture', 'Test lhs (==, <=, >=) rhs for random points in a box (double precision). A violation refutes the conjecture; passing is evidence only.',
+    _tool('test_conjecture', 'Test lhs (==, <=, >=) rhs for random points in a box (double precision). A violation refutes the conjecture; passing is evidence only. proved=true with holds=false means the conjecture is refuted; proved=false means only evidence.',
           {'lhs': {'type': 'string'}, 'rhs': {'type': 'string'}, 'relation': {'type': 'string', 'enum': ['==', '<=', '>=']},
            'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'points': {'type': 'integer'}, 'tolerance': _num()},
           ['lhs', 'rhs', 'relation', 'names', 'bounds'], _conjecture),
