@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from modeling import calibrate, decision_models, dynamics, epidemic, experiment, forecast, graph, layered, lessons, optimize, pde, queueing, routes, structure, weights  # noqa: E402
+from modeling import calibrate, decision_models, dynamics, epidemic, experiment, forecast, graph, layered, lessons, nonlinear, optimize, pde, queueing, routes, structure, weights  # noqa: E402
 
 
 class _Lazy:
@@ -30,7 +30,7 @@ class _Lazy:
         return getattr(self._module, attribute)
 
 
-decision, regression, sensitivity = _Lazy('modeling.decision'), _Lazy('modeling.regression'), _Lazy('modeling.sensitivity')
+decision, regression, sensitivity, inference = _Lazy('modeling.decision'), _Lazy('modeling.regression'), _Lazy('modeling.sensitivity'), _Lazy('modeling.inference')
 audit_data, check_references, literature = _Lazy('scripts.audit_data'), _Lazy('scripts.check_references'), _Lazy('scripts.literature')
 
 def _project_version():
@@ -202,6 +202,30 @@ EDGES = {'type': 'array', 'items': {'type': 'array', 'minItems': 3, 'maxItems': 
 SERIES = {'type': 'array', 'items': {'type': 'number'}}
 
 
+def _nlp(a):
+    names = a['names']
+    objective = _scalar(a['objective'], names)
+    cons = [dict(type=c.get('type', 'ineq'), fun=_scalar(c['expression'], names)) for c in a.get('constraints', [])]
+    return nonlinear.minimize_nlp(objective, a['bounds'], cons, starts=a.get('starts', 20), seed=a.get('seed', 2027), maximize=a.get('maximize', False))
+
+
+def _monte_carlo(a):
+    names = list(a['distributions'])
+    model = _compile(a['expression'], names)
+    return inference.monte_carlo(lambda s: model(np.column_stack([s[k] for k in names])), a['distributions'], n=a.get('n', 20000), seed=a.get('seed', 2027), threshold=a.get('threshold'))
+
+
+def _ode(a):
+    names = a['names']
+    funcs = [_compile(e, ['t'] + names) for e in a['rhs']]
+
+    def rhs(t, y):
+        point = np.atleast_2d(np.r_[t, y])
+        return [float(f(point)[0]) for f in funcs]
+    return inference.solve_ode(rhs, a['y0'], a['t_span'], a.get('t_eval'), method=a.get('method', 'LSODA'), rtol=a.get('rtol', 1e-8))
+
+
+
 def _tool(name, description, properties, required, function):
     return name, dict(description=description, function=function,
                       schema={'type': 'object', 'properties': properties, 'required': required})
@@ -343,6 +367,38 @@ TOOLS = dict([
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
           {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
+    _tool('minimize_nlp', 'Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0). Reports the best local optimum, every distinct optimum with how many starts reached it, active constraints. Local unless the problem is convex.',
+          {'objective': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'constraints': {'type': 'array', 'items': {'type': 'object'}}, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'maximize': {'type': 'boolean'}},
+          ['objective', 'names', 'bounds'], _nlp),
+    _tool('knapsack', 'Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1).',
+          {'values': SERIES, 'weights': {'type': 'array', 'items': {'type': 'integer'}}, 'capacity': {'type': 'integer'}, 'copies': {'type': 'array', 'items': {'type': 'integer'}}}, ['values', 'weights', 'capacity'],
+          lambda a: nonlinear.knapsack(a['values'], a['weights'], a['capacity'], copies=a.get('copies'))),
+    _tool('min_cost_flow', 'Minimum-cost flow; edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero. Integer data give an integer flow.',
+          {'edges': MATRIX, 'demand': {'type': 'object'}}, ['edges', 'demand'], lambda a: nonlinear.min_cost_flow(a['edges'], a['demand'])),
+    _tool('robust_lp', 'LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box. Compare the objective across gamma to see the price of robustness.',
+          {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'delta': MATRIX, 'gamma': _num(), 'maximize': {'type': 'boolean'}}, ['c', 'A_ub', 'b_ub', 'delta', 'gamma'],
+          lambda a: nonlinear.robust_lp(a['c'], a['A_ub'], a['b_ub'], a['delta'], a['gamma'], maximize=a.get('maximize', False))),
+    _tool('solve_mdp', 'Finite-state decision process: P[action][state][next state], R[state][action]. With horizon: exact backward induction giving the best action per state and stages remaining; without: value iteration for discount < 1 with an error bound.',
+          {'P': {'type': 'array'}, 'R': MATRIX, 'horizon': {'type': 'integer'}, 'discount': _num(), 'terminal': SERIES, 'maximize': {'type': 'boolean'}}, ['P', 'R'],
+          lambda a: nonlinear.solve_mdp(a['P'], a['R'], horizon=a.get('horizon'), discount=a.get('discount', 1.0), terminal=a.get('terminal'), maximize=a.get('maximize', True))),
+    _tool('hypothesis_test', 'Test with effect size and assumption flags. kind: welch_t, paired_t, mann_whitney, ks_2samp, correlation (a, b); anova, kruskal (groups); chi2_independence (table); shapiro (a).',
+          {'kind': {'type': 'string'}, 'a': SERIES, 'b': SERIES, 'groups': MATRIX, 'table': MATRIX, 'alpha': _num()}, ['kind'],
+          lambda a: inference.hypothesis_test(a['kind'], a.get('a'), a.get('b'), table=a.get('table'), alpha=a.get('alpha', .05), groups=a.get('groups'))),
+    _tool('bootstrap_ci', 'Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations.',
+          {'data': SERIES, 'statistic': {'type': 'string'}, 'n_resamples': {'type': 'integer'}, 'confidence': _num(), 'seed': {'type': 'integer'}, 'method': {'type': 'string'}}, ['data'],
+          lambda a: inference.bootstrap_ci(a['data'], a.get('statistic', 'mean'), n_resamples=a.get('n_resamples', 5000), confidence=a.get('confidence', .95), seed=a.get('seed', 2027), method=a.get('method', 'BCa'))),
+    _tool('monte_carlo', 'Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check. distributions: {name: {dist: scipy.stats name, params: {...}}}.',
+          {'expression': {'type': 'string'}, 'distributions': {'type': 'object'}, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'threshold': _num()}, ['expression', 'distributions'], _monte_carlo),
+    _tool('solve_ode', 'Integrate dy/dt = rhs(t, y) for expressions in t and the named states; repeats at 100 times tighter tolerance and reports the difference as a numerical-error indicator.',
+          {'rhs': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'y0': SERIES, 't_span': SERIES, 't_eval': SERIES, 'method': {'type': 'string'}, 'rtol': _num()}, ['rhs', 'names', 'y0', 't_span'], _ode),
+    _tool('arima_forecast', 'ARIMA forecast: differencing by ADF, p and q by AICc, 95% intervals, Ljung-Box residual test. Compare with backtest_baselines first.',
+          {'series': SERIES, 'horizon': {'type': 'integer'}, 'max_p': {'type': 'integer'}, 'max_d': {'type': 'integer'}, 'max_q': {'type': 'integer'}, 'seasonal_period': {'type': 'integer'}}, ['series', 'horizon'],
+          lambda a: inference.arima_forecast(a['series'], a['horizon'], max_p=a.get('max_p', 3), max_d=a.get('max_d', 2), max_q=a.get('max_q', 3), seasonal_period=a.get('seasonal_period'))),
+    _tool('pca_report', 'Principal components: explained variance, loadings, scores (standardised by default).',
+          {'X': MATRIX, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'standardise': {'type': 'boolean'}}, ['X'], lambda a: inference.pca_report(a['X'], a.get('names'), standardise=a.get('standardise', True))),
+    _tool('cluster_report', 'K-means for several k with silhouette, inertia and resampling stability (adjusted Rand index) of the best k.',
+          {'X': MATRIX, 'k_range': {'type': 'array', 'items': {'type': 'integer'}}, 'seed': {'type': 'integer'}, 'standardise': {'type': 'boolean'}}, ['X'],
+          lambda a: inference.cluster_report(a['X'], a.get('k_range', (2, 3, 4, 5, 6)), seed=a.get('seed', 2027), standardise=a.get('standardise', True))),
     _tool('matrix_game', 'Value and optimal mixed strategies of a zero-sum matrix game (row player maximises), by linear programming.', {'payoff': MATRIX}, ['payoff'], lambda a: decision_models.matrix_game(a['payoff'])),
     _tool('eoq', 'Economic order quantity, optionally with planned backorders (stockout_cost per unit per year).',
           {'demand': _num(), 'order_cost': _num(), 'holding_cost': _num(), 'stockout_cost': _num()}, ['demand', 'order_cost', 'holding_cost'],
@@ -391,6 +447,18 @@ EXAMPLES = {
     'lesson_search': dict(path='planning/lessons.jsonl', query='recurrence'),
     'eoq': dict(demand=1200, order_cost=50, holding_cost=2),
     'newsvendor': dict(price=10, cost=6, salvage=2, mean=100, sd=20),
+    'minimize_nlp': dict(objective='(x-1)**2 + (y-2)**2', names=['x', 'y'], bounds=[[-5, 5], [-5, 5]], constraints=[dict(expression='2 - x - y', type='ineq')], starts=6),
+    'knapsack': dict(values=[60, 100, 120], weights=[10, 20, 30], capacity=50),
+    'min_cost_flow': dict(edges=[['a', 'b', 1, 1], ['b', 'd', 1, 1], ['a', 'c', 5, 2], ['c', 'd', 5, 2]], demand={'a': -2, 'b': 0, 'c': 0, 'd': 2}),
+    'robust_lp': dict(c=[3, 2], A_ub=[[1, 1], [2, 1]], b_ub=[10, 15], delta=[[.5, .5], [.4, .2]], gamma=1, maximize=True),
+    'solve_mdp': dict(P=[[[.9, .1], [.2, .8]], [[.5, .5], [.5, .5]]], R=[[1, 0], [0, 2]], horizon=3),
+    'hypothesis_test': dict(kind='welch_t', a=[5.1, 4.9, 5.6, 5.8, 6.0, 5.3], b=[4.2, 4.8, 4.5, 5.0, 4.4, 4.7]),
+    'bootstrap_ci': dict(data=[2.1, 2.5, 1.9, 3.2, 2.8, 2.2, 2.6, 3.0], statistic='median', n_resamples=2000),
+    'monte_carlo': dict(expression='a + 2*b', distributions=dict(a=dict(dist='norm', params=dict(loc=1, scale=1)), b=dict(dist='uniform', params=dict(loc=0, scale=1))), n=5000, threshold=3),
+    'solve_ode': dict(rhs=['-y'], names=['y'], y0=[1.0], t_span=[0, 3], t_eval=[1, 2, 3]),
+    'arima_forecast': dict(series=[10, 12, 11, 13, 14, 13, 15, 16, 15, 17, 18, 17, 19, 20, 19, 21, 22, 21, 23, 24], horizon=3, max_p=1, max_d=1, max_q=1),
+    'pca_report': dict(X=[[1, 2, 3], [2, 4.1, 5], [3, 6.2, 8], [4, 7.9, 9], [5, 10.1, 13]], names=['a', 'b', 'c']),
+    'cluster_report': dict(X=[[0, 0], [0.2, 0.1], [0.1, 0.3], [5, 5], [5.2, 5.1], [4.9, 5.3], [0.3, 0.2], [5.1, 4.8]], k_range=[2, 3]),
 }
 for _name, _example in EXAMPLES.items():
     TOOLS[_name]['schema']['examples'] = [_example]

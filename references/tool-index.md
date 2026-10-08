@@ -47,6 +47,18 @@
 | `bimatrix_nash` | A*, B* | All Nash equilibria (pure and mixed) of a two-player non-zero-sum game by support enumeration; payoff matrices A (row player) and B (column player), up to 6 actions each |
 | `markov_stationary` | matrix* | Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility |
 | `markov_absorption` | matrix*, absorbing* | Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states |
+| `minimize_nlp` | objective*, names*, bounds*, constraints, starts, seed, maximize | Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0) |
+| `knapsack` | values*, weights*, capacity*, copies | Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1) |
+| `min_cost_flow` | edges*, demand* | Minimum-cost flow; edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero |
+| `robust_lp` | c*, A_ub*, b_ub*, delta*, gamma*, maximize | LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box |
+| `solve_mdp` | P*, R*, horizon, discount, terminal, maximize | Finite-state decision process: P[action][state][next state], R[state][action] |
+| `hypothesis_test` | kind*, a, b, groups, table, alpha | Test with effect size and assumption flags |
+| `bootstrap_ci` | data*, statistic, n_resamples, confidence, seed, method | Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations |
+| `monte_carlo` | expression*, distributions*, n, seed, threshold | Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check |
+| `solve_ode` | rhs*, names*, y0*, t_span*, t_eval, method, rtol | Integrate dy/dt = rhs(t, y) for expressions in t and the named states; repeats at 100 times tighter tolerance and reports the difference as a numerical-error indicator |
+| `arima_forecast` | series*, horizon*, max_p, max_d, max_q, seasonal_period | ARIMA forecast: differencing by ADF, p and q by AICc, 95% intervals, Ljung-Box residual test |
+| `pca_report` | X*, names, standardise | Principal components: explained variance, loadings, scores (standardised by default) |
+| `cluster_report` | X*, k_range, seed, standardise | K-means for several k with silhouette, inertia and resampling stability (adjusted Rand index) of the best k |
 | `matrix_game` | payoff* | Value and optimal mixed strategies of a zero-sum matrix game (row player maximises), by linear programming |
 | `eoq` | demand*, order_cost*, holding_cost*, stockout_cost | Economic order quantity, optionally with planned backorders (stockout_cost per unit per year) |
 | `newsvendor` | price*, cost*, salvage*, mean*, sd* | Newsvendor order quantity for normal demand: critical fractile, expected lost sales and expected profit |
