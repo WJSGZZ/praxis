@@ -113,6 +113,7 @@ PREAMBLE=r'''\documentclass[12pt,letterpaper]{article}
 \pagestyle{fancy}\fancyhf{}
 \fancyhead[L]{Team \# 7391856}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.4pt}
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{10pt plus 1fil}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
 \begin{document}
 '''
 def compile_pdf(stem,title):
@@ -365,7 +366,7 @@ para('<b>Weaknesses.</b> The surface stream and the effective D stand in for flo
 para('The limitations are consequential. Three-dimensional geometry is represented, but fluid momentum, buoyancy, jet entrainment, free-surface motion and detailed body anatomy are not solved. No bath experiment was conducted. Temperature limits express a preference assumption. Coarse cell averages cannot establish burn safety near the inlet, and the shape scenarios do not resolve stable vertical layers. The shell\'s own heat capacity (a few percent of the water\'s for a thin plastic or enamelled steel tub, more for cast iron or ceramic) is ignored.')
 para('Before using a numerical rate in practice, identify the real tub’s cooling and mixing behavior. Until then, the defensible transferable advice is to avoid unnecessary replenishment, distinguish cold-region temperature from the mean, improve distribution before increasing flow, and reconsider a strategy when geometry or motion changes. The following page translates these principles without requiring the user to interpret the equations.')
 
-page('13. A warmer bath, with less replacement water',True)
+page('13. A warmer bath, with less replacement water')
 para('A guide for the person in the bathtub','heading')
 para(f'<b>Decide what “warm enough” means.</b> A bath need not stay at exactly its starting temperature to remain acceptable. In our example, allowing a 1°C fall still needs about {b["water_l"]:.0f} L of replacement water, while allowing a 2°C fall needs only {sc["loose comfort"]["policy"]["water_l"]:.1f} L. Your actual comfort and health needs must determine the acceptable range.')
 para('<b>Distribute the warmth before turning up the tap.</b> The water near the faucet can warm while the far end remains cool. Gentle movement can help redistribute heat. More vigorous motion is not automatically better: it may also increase heat loss from the surface.')
@@ -376,7 +377,7 @@ para('<b>Remember where the added water goes.</b> Once the tub is full, extra wa
 para('<b>A bubble layer may help, but the amount is uncertain.</b> An intact insulating surface layer can reduce heat loss. Our calculation explores such a layer; it does not measure the effect of a particular additive. If the layer disappears or the bath behaves differently, reassess rather than relying on the example’s saving.')
 para('<b>The practical rule:</b> use the bath’s stored warmth, keep temperature distributed, and add only as much water as your actual conditions require. The numerical example explains these tradeoffs; it is not a tested bathing or safety standard.')
 
-page('14. References and reproducible algorithm',True)
+page('14. References and reproducible algorithm')
 refs=[
 '[1] COMAP. 2016 MCM Problem A: A Hot Bath. 2016. Official problem PDF: contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf.',
 '[2] U.S. Department of Energy. DOE Fundamentals Handbook: Thermodynamics, Heat Transfer, and Fluid Flow. DOE-HDBK-1012/2-92, June 1992. Convection heat transfer, Eq. (2-9).',
@@ -394,14 +395,15 @@ para('1. Form cell volumes and capacities; reject excessive body occupancy. Asse
 names={'D':'D (m²/s)','Dz_ratio':'vertical/horizontal D ratio','h_surface':'surface coefficient (W/m²K)','foam':'surface multiplier','floor':'lower limit (°C)','L':'length (m)','W':'width (m)','H':'depth (m)','body_volume':'body displacement (m³)','body_area':'body contact area (m²)','body_shape':'body widths s (m)','body_temp':'skin temperature (°C)','h_wall':'wall coefficient (W/m²K)','h_body':'body coefficient (W/m²K)','inlet_temp':'inlet temperature (°C)'}
 items=list(sc.items())
 for part in range(2):
- page('Appendix A. Scenario definitions'+(' (continued)' if part else ''),True)
- para('Each row changes only the listed baseline inputs. All unspecified inputs remain as stated in Section 2; geometry and conductance are then rebuilt. The equal-volume aspect-ratio cases retain the envelope volume of 0.22425 m³. Widths s describe a smooth displacement distribution, not measured anatomical semiaxes.')
+ if part==0:
+  page('Appendix A. Scenario definitions')
+  para('Each row changes only the listed baseline inputs. All unspecified inputs remain as stated in Section 2; geometry and conductance are then rebuilt. The equal-volume aspect-ratio cases retain the envelope volume of 0.22425 m³. Widths s describe a smooth displacement distribution, not measured anatomical semiaxes.')
+  para('Accepted candidates are independently replayed on their scenario network at intervals of no more than five seconds. These scenario checks are sampled checks; the stronger one-second continuous-time envelope is reported for the selected baseline policy only. “None accepted” refers to the documented finite search and is not an infeasibility theorem.')
  rows=[['Scenario','Changed input(s)']]
  for label,item in items[part*10:(part+1)*10]:
   text='; '.join(names.get(k,k)+' = '+(str(v) if isinstance(v,list) else f'{v:.6g}') for k,v in item['changes'].items())
   rows.append([label.title(),text])
  table(rows,[144,324])
- para('Accepted candidates are independently replayed on their scenario network at intervals of no more than five seconds. These scenario checks are sampled checks; the stronger one-second continuous-time envelope is reported for the selected baseline policy only. “None accepted” refers to the documented finite search and is not an infeasibility theorem.')
 
 page('Report on Use of AI',True)
 para('Tool and scope','heading')

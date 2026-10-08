@@ -5,6 +5,8 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 版式：没有官方要求时按数学期刊连续排版，只有摘要页和不计页的 AI 使用报告另起一页；浮动体页顶端对齐。美赛案例据此重排，共 23 页（正文 22 页加 AI 使用报告）。
+  Layout: continuous journal-style flow unless the contest requires otherwise; only the summary sheet and the uncounted AI report start new pages; float pages align to the top. The MCM case was reflowed to 23 pages.
 - 新增 `scripts/contest_rules.py`：按美赛（COMAP 2026）与国赛（格式规范 2019/2021/2023）的硬性规则检查 PDF；两个论文模板按各自规则收紧并有测试；美赛 AI 使用报告标题与官方一致；国赛案例的代码页与参考文献不再侵入 2.5 厘米页边距。
   `scripts/contest_rules.py` checks a PDF against the published hard rules of MCM/ICM and CUMCM; both paper templates follow their rules and are tested; the MCM case's AI report carries the official title and the CUMCM case keeps its code and references out of the 2.5 cm margin.
 

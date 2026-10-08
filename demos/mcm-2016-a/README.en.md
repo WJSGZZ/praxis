@@ -54,7 +54,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 </tr>
 </table>
 
-**[Read the complete 24-page paper →](deliverables/7391856.pdf)** Typeset with XeLaTeX: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-three pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: at least 12-point type, anonymous running header with page numbers, and a one-page Summary Sheet.
+**[Read the complete 23-page paper →](deliverables/7391856.pdf)** Typeset with XeLaTeX: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-three pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: at least 12-point type, anonymous running header with page numbers, and a one-page Summary Sheet.
 
 ## Run it yourself
 
@@ -72,7 +72,7 @@ Output goes to `reproduce/reproduced/`; existing output is never overwritten, an
 ## File map
 
 ```text
-deliverables/7391856.pdf      # the only submission file (English, 24 pages)
+deliverables/7391856.pdf      # the only submission file (English, 23 pages)
 reproduce/                    # entry points, archived numbers, paper builder
 assets/                       # images for the homepage and this page
 sources.json                  # provenance record

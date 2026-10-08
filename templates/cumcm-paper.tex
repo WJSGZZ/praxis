@@ -35,6 +35,8 @@
 \captionsetup{labelformat=hei,labelsep=quad,font=small,justification=centering}
 \captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
 \pagestyle{plain}
+% float pages start at the top instead of centring their content vertically
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{10pt plus 1fil}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
 \begin{document}
 \begin{center}{\bfseries\zihao{3} 论文题目：写出结论，而不是只写主题}\end{center}
 \section*{摘\hspace{1em}要}

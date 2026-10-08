@@ -37,6 +37,8 @@
 \newcommand{\TeamNumber}{0000000}
 \pagestyle{fancy}\fancyhf{}
 \fancyhead[L]{Team \# \TeamNumber}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
+% float pages start at the top instead of centring their content vertically
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{10pt plus 1fil}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
 \begin{document}
 \begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}
 \textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\
