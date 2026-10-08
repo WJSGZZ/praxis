@@ -50,7 +50,7 @@
 </tr>
 </table>
 
-**[阅读完整 19 页论文 →](deliverables/paper.pdf)** 用 XeLaTeX 排版：中文用 ctex，西文与公式用 Times 系，图由 pgfplots 从数据直接绘制；一级标题居中，图题在图下、表题在表上。正文不含目录，附录列出支撑材料文件清单和完整源程序，符合 2026 年国赛格式规范；字体与字号官方不作统一要求。
+**[阅读完整 23 页论文 →](deliverables/paper.pdf)** 用 XeLaTeX 排版：中文用 ctex，西文与公式用 Times 系，图由 pgfplots 从数据直接绘制；一级标题居中，图题在图下、表题在表上。正文不含目录，附录列出支撑材料文件清单和完整源程序，符合 2026 年国赛格式规范；字体与字号官方不作统一要求。
 
 ## 自己跑一次
 
@@ -71,7 +71,7 @@ uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py       
 
 ```text
 deliverables/                 # 两份电子提交文件
-  paper.pdf                   # 19 页；含支撑清单与完整建模源程序
+  paper.pdf                   # 23 页；含支撑清单与完整建模源程序
   supporting_materials.zip    # 25 文件；含 LaTeX 源文件与 AI工具使用详情.pdf
 reproduce/                    # 复现入口、归档数值与检查脚本
 assets/                       # 首页与案例页图片

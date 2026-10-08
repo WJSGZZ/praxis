@@ -50,7 +50,7 @@ Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divide
 </tr>
 </table>
 
-**[Read the complete 19-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
+**[Read the complete 23-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
 
 ## Run it yourself
 
@@ -71,7 +71,7 @@ The whole set takes a few minutes. Results go to `reproduce/reproduced/`, exclud
 
 ```text
 deliverables/                 # the two electronic submission files
-  paper.pdf                   # 19 pages, with file list and full source appendix
+  paper.pdf                   # 23 pages, with file list and full source appendix
   supporting_materials.zip    # 25 files, including the LaTeX sources and AI-use details
 reproduce/                    # entry points, archived numbers and check scripts
 assets/                       # images for the homepage and this page

@@ -1,64 +1,64 @@
 {
-  "date": "2026-10-07",
-  "model_checks": {
-    "total": 12,
-    "passed": 12
-  },
-  "supplemental_recommendation_checks": {
-    "total": 2,
-    "passed": 2
-  },
-  "supplemental_threshold_checks": {
-    "total": 4,
-    "passed": 4
-  },
-  "tool_tests_passed": 45,
-  "readme_links": "All local targets in both homepages and both case guides checked",
-  "deliverable_hashes_match_submission": true,
-  "preview_pages": [
-    1,
-    7
-  ],
-  "report_pages": 19,
-  "preview_visual_review": "All four final localized showcase graphics reviewed; original report page previews unchanged.",
-  "reproduction_environment": "Existing locked project environment; no fresh-install or Windows claim",
-  "homepage_visuals": [
-    "overview-zh.png",
-    "overview-en.png",
-    "risk-return-zh.png",
-    "risk-return.png",
-    "report-abstract.png",
-    "report-proof.png"
-  ],
-  "homepage_visual_review": "Four new showcase PNGs inspected at full size; Chinese cover and chart also inspected at 900px and 390px. Small-print reading on mobile requires opening the full image.",
-  "local_readme_links_checked": 91,
-  "visual_system_version": 2,
-  "plugin_export_checks_passed": 3,
-  "chinese_font_faces": {
-    "display": "STSongti-SC-Regular",
-    "section": "STSongti-SC-Regular",
-    "body": "PingFangSC-Regular",
-    "metric": "PingFangSC-Regular"
-  },
-  "localization": "Independently authored Chinese and English headlines, explanatory copy, and line breaks",
-  "font_selection_review": [
-    "STSongti-SC-Regular",
-    "STSongti-SC-Light",
-    "PingFangSC-Medium"
-  ],
-  "font_selection": "Regular Songti headings for the reference editorial tone; PingFang Regular for explanations and data",
-  "supplemental_robustness": {
-    "script": "reproduce/check_robustness.py",
-    "archived": "reproduce/reference/robustness.json",
-    "seed": 20261007,
-    "draws": 200,
-    "tests": "execution error ±5%/±10%, risk-cap buffer 5%/10%, independent ±10% parameter errors"
-  },
-  "supplemental_alternatives": {
-    "script": "reproduce/check_alternatives.py",
-    "archived": "reproduce/reference/alternatives.json",
-    "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
-  },
-  "format_review": "Level-1 headings centered, level-2 left; captions centered (figure below, table above) with note lines; three-line tables; true subscripts and equations; pgfplots figures labelled in Chinese with the knee marked; references with breakable URLs; code appendix with line numbers. Official CUMCM rules checked: A4, margins at least 2.5 cm, centered Arabic page numbers, abstract page with title and keywords, no identity information, body at most 30 pages, appendix with file list and full code; font and size are free.",
-  "typesetting": "XeLaTeX (TeX Live 2026) (ctex, newtxtext/newtxmath, pgfplots, booktabs); sources in the support archive under paper/; compile log clean of missing glyphs; every page rendered and inspected"
+ "date": "2026-10-07",
+ "model_checks": {
+  "total": 12,
+  "passed": 12
+ },
+ "supplemental_recommendation_checks": {
+  "total": 2,
+  "passed": 2
+ },
+ "supplemental_threshold_checks": {
+  "total": 4,
+  "passed": 4
+ },
+ "tool_tests_passed": 45,
+ "readme_links": "All local targets in both homepages and both case guides checked",
+ "deliverable_hashes_match_submission": true,
+ "preview_pages": [
+  1,
+  7
+ ],
+ "report_pages": 23,
+ "preview_visual_review": "All four final localized showcase graphics reviewed; original report page previews unchanged.",
+ "reproduction_environment": "Existing locked project environment; no fresh-install or Windows claim",
+ "homepage_visuals": [
+  "overview-zh.png",
+  "overview-en.png",
+  "risk-return-zh.png",
+  "risk-return.png",
+  "report-abstract.png",
+  "report-proof.png"
+ ],
+ "homepage_visual_review": "Four new showcase PNGs inspected at full size; Chinese cover and chart also inspected at 900px and 390px. Small-print reading on mobile requires opening the full image.",
+ "local_readme_links_checked": 91,
+ "visual_system_version": 2,
+ "plugin_export_checks_passed": 3,
+ "chinese_font_faces": {
+  "display": "STSongti-SC-Regular",
+  "section": "STSongti-SC-Regular",
+  "body": "PingFangSC-Regular",
+  "metric": "PingFangSC-Regular"
+ },
+ "localization": "Independently authored Chinese and English headlines, explanatory copy, and line breaks",
+ "font_selection_review": [
+  "STSongti-SC-Regular",
+  "STSongti-SC-Light",
+  "PingFangSC-Medium"
+ ],
+ "font_selection": "Regular Songti headings for the reference editorial tone; PingFang Regular for explanations and data",
+ "supplemental_robustness": {
+  "script": "reproduce/check_robustness.py",
+  "archived": "reproduce/reference/robustness.json",
+  "seed": 20261007,
+  "draws": 200,
+  "tests": "execution error ±5%/±10%, risk-cap buffer 5%/10%, independent ±10% parameter errors"
+ },
+ "supplemental_alternatives": {
+  "script": "reproduce/check_alternatives.py",
+  "archived": "reproduce/reference/alternatives.json",
+  "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
+ },
+ "format_review": "Level-1 headings centered, level-2 left; captions centered (figure below, table above) with note lines; three-line tables; true subscripts and equations; pgfplots figures labelled in Chinese with the knee marked; references with breakable URLs; code appendix with line numbers. Official CUMCM rules checked: A4, margins at least 2.5 cm, centered Arabic page numbers, abstract page with title and keywords, no identity information, body at most 30 pages, appendix with file list and full code; font and size are free.",
+ "typesetting": "XeLaTeX (TeX Live 2026) (ctex, newtxtext/newtxmath, pgfplots, booktabs); sources in the support archive under paper/; compile log clean of missing glyphs; every page rendered and inspected"
 }

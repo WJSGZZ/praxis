@@ -58,6 +58,27 @@
         "std_plan_assets": 4,
         "knee_plan_assets": 4
       },
+      "rate_reading_frontier": [
+        {
+          "cap": 0.005,
+          "net_return": 0.05,
+          "held_assets": []
+        },
+        {
+          "cap": 0.015,
+          "net_return": 0.18627450980392155,
+          "held_assets": [
+            2
+          ]
+        },
+        {
+          "cap": 0.025,
+          "net_return": 0.26732673267326734,
+          "held_assets": [
+            1
+          ]
+        }
+      ],
       "nominal": 0.20190763977806228
     },
     "fifteen": {
@@ -126,6 +147,41 @@
         "std_plan_assets": 12,
         "knee_plan_assets": 6
       },
+      "rate_reading_frontier": [
+        {
+          "cap": 0.005,
+          "net_return": 0.05,
+          "held_assets": []
+        },
+        {
+          "cap": 0.23,
+          "net_return": 0.0687732342007435,
+          "held_assets": [
+            15
+          ]
+        },
+        {
+          "cap": 0.33399999999999996,
+          "net_return": 0.2725509214354996,
+          "held_assets": [
+            8
+          ]
+        },
+        {
+          "cap": 0.4,
+          "net_return": 0.3294460641399417,
+          "held_assets": [
+            10
+          ]
+        },
+        {
+          "cap": 0.6,
+          "net_return": 0.4094339622641509,
+          "held_assets": [
+            3
+          ]
+        }
+      ],
       "nominal": 0.32289995993378606
     }
   }

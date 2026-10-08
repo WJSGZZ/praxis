@@ -52,5 +52,12 @@ for key,name in [('four','assets4.csv'),('fifteen','assets15.csv')]:
     z=std_risk(data,cap);res['independent_risk_reading']={'cap':cap,'net_return':net(data,z),
         'knee_plan_std_risk':float(np.sqrt(np.sum((q*x0)**2))/M),'std_plan_max_item_risk':float(np.max(q*z)/M),
         'overlap_assets':len(set(np.flatnonzero(z>1))&set(chosen)),'std_plan_assets':int((z>1).sum()),'knee_plan_assets':len(chosen)}
+    # the other reading of "risk": every held asset must have loss rate q_i <= cap (a cap on a rate, not on an amount), swept on its own scale
+    steps=[];last=None
+    for c in sorted({0.005,*(q/1.0).tolist(),*((q+1e-6).tolist()),0.7}):
+        sol=model.solve(data,M,float(c),interpretation='rate');held=[i+1 for i,v in enumerate(sol['investments_yuan']) if v>1e-6]
+        k=(round(sol['net_return'],5),tuple(held))
+        if k!=last:steps.append({'cap':float(c),'net_return':sol['net_return'],'held_assets':held});last=k
+    res['rate_reading_frontier']=steps
     res['nominal']=nom;out['groups'][key]=res
 (base/'reproduced').mkdir(exist_ok=True);(base/'reproduced/alternatives.json').write_text(json.dumps(out,indent=2));print(json.dumps(out,indent=1))
