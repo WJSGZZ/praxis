@@ -1,0 +1,173 @@
+{
+ "MCM-2017-B-final": {
+  "contest": "mcm",
+  "assessments": [
+   {
+    "most_likely": null,
+    "range": [],
+    "basis": "2017 award-system record is not connected, and this role has no reliable award-boundary comparison; abstain rather than mapping a diagnostic to an award.",
+    "gaps": [
+     "No edition-specific calibrated award evidence",
+     "Independent mathematical replay and PDF compliance outside this role"
+    ],
+    "actions": [
+     "Prioritize separately attributed numerical verification and final PDF checks; establish reliable edition-specific comparison evidence before estimating awards."
+    ],
+    "contest": "mcm",
+    "event": "MCM",
+    "edition": "2017",
+    "problem": "B",
+    "version": "sha256:31ae42188a7d7e4d8190194c8fb3c0871306d5ec6ff8317b1ec5888b6f13ac79",
+    "scope": "Full final TeX source including Summary/body/tables/figure source/captions/conclusion/letter/AI statement; selected numeric cross-checks against run20261008T170717-f13258de results.json; official problem text read. No independent solver/simulator execution, PDF visual review or award-label calibration. Final land-scenario update re-read in full; new cost arithmetic independently checked. Other solver/PDF scope remains unchanged.",
+    "calibrated": false,
+    "target": null,
+    "target_status": "unset",
+    "award_system_status": "unverified",
+    "assessment_status": "abstained_unverified_award_system",
+    "unverified_proposal": {
+     "target": null,
+     "most_likely": null,
+     "range": []
+    },
+    "review_id": "review-1",
+    "source": "research/merge-after-toll/reviews/final-review.json",
+    "reviewer": "Codex eval_contract: author-external agent role, same model family, not human"
+   }
+  ],
+  "status": "award_system_unverified",
+  "reviews": [
+   {
+    "review_id": "review-1",
+    "source": "research/merge-after-toll/reviews/final-review.json",
+    "source_record_index": 0,
+    "reviewer": "Codex eval_contract: author-external agent role, same model family, not human",
+    "scope": "Full final TeX source including Summary/body/tables/figure source/captions/conclusion/letter/AI statement; selected numeric cross-checks against run20261008T170717-f13258de results.json; official problem text read. No independent solver/simulator execution, PDF visual review or award-label calibration. Final land-scenario update re-read in full; new cost arithmetic independently checked. Other solver/PDF scope remains unchanged.",
+    "validity_status": "unverified",
+    "critical_claims": [
+     {
+      "id": "report-consistency",
+      "claim": "Summary, finite tables, recommendation and letter consistently present the recorded capacity, count and waiting results.",
+      "status": "supported",
+      "evidence": "Full source compared to results.json search/expansion/finite_buffers/occupancy_bounds/service_stress; 12.0004→13 and robust eight-booth identity now explicit.",
+      "scope": "Source-to-record semantic and numerical consistency only.",
+      "actions": [
+       "Keep these sections synchronized if the effective results change."
+      ]
+     },
+     {
+      "id": "minimum-expansion",
+      "claim": "Eleven booths are sufficient and necessary across the declared original payment mixtures within the flow model.",
+      "status": "unverified",
+      "evidence": "Source includes lower-count argument and constructed allocation; JSON records counts6/3/2 and capacities5100/4000/4000. This role did not independently solve the flow system.",
+      "scope": "Original12/6/2-second service means; unlimited holding and specified compatibility.",
+      "issue_ids": [
+       "review-scope"
+      ],
+      "actions": [
+       "Use the separately attributed mathematical verification record to assess this claim; no new capacity conclusion follows from this language audit."
+      ]
+     },
+     {
+      "id": "occupancy-reversal",
+      "claim": "At K16 the expanded design has nominal heavy waiting54.3s versus robust eight-booth21.9s; at K64 expanded waiting is8.3s.",
+      "status": "supported",
+      "evidence": "Current finite_buffers gives54.3205329736,21.8884582289,8.32364760514; Summary/body/letter preserve the tested occupancy conditions.",
+      "scope": "Agreement with archived simulations; simulator validity not independently established here.",
+      "actions": [
+       "Preserve the finite-episode and synthetic-scenario qualifiers."
+      ]
+     },
+     {
+      "id": "stressed-count-scope",
+      "claim": "Slower15/10/3-second service defeats the eleven-booth all-mixture guarantee;14booths is a necessary count without a verified layout.",
+      "status": "supported",
+      "evidence": "JSON stressed_minimum_robust_counts=[7,4,3], expanded stressed cash-heavy3085.714<3600 and electronic-heavy3200<3600; Summary and sensitivity text explicitly retain necessity-only scope.",
+      "scope": "Source/JSON comparison under declared service stress, not a constructed14-booth solution.",
+      "actions": [
+       "Do not promote14 to a verified recommendation without constructing and checking a layout."
+      ]
+     },
+     {
+      "id": "entry-metering-equivalence",
+      "claim": "With common constant taper travel time, entry metering reproduces the stated exit recurrence and gives conditional longitudinal spacing.",
+      "status": "unverified",
+      "evidence": "New control paragraph shows e_k=max(r_k,e_{k-1}+h),d_k=e_k+T; queue section now defines a_k=r_k+T and d_k=max(a_k,d_{k-1}+h). Its event-trace audit is assigned to another role.",
+      "scope": "Common longitudinal speed/travel time; excludes braking, cross-group bodies and physical queue arrangement.",
+      "issue_ids": [
+       "review-scope"
+      ],
+      "actions": [
+       "Attach the separately performed event-trace verification; do not infer full collision safety from this scoped language review."
+      ]
+     },
+     {
+      "id": "land-cost-scope",
+      "claim": "The land opportunity-cost scenarios consistently add modeled footprint times0/200/1000USD/m², and expansion uses6686.94m² more footprint than robust eight-booth design.",
+      "status": "supported",
+      "evidence": "Section6 table and paragraph match current results.json land_cost_scenarios; this reviewer independently checked base+area×price and15326.28−8639.34=6686.94.",
+      "scope": "Illustrative modeled footprint only; not empirical local pricing, total site acquisition, discounted investment return or a safety claim.",
+      "actions": [
+       "Retain illustrative-price/footprint exclusions and obtain real land valuation before construction decisions."
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "id": "empirical-input-range",
+      "description": "Scenario parameters and practical safety/storage/cost coverage are not empirically calibrated.",
+      "evidence": "Sections2,5,6,10–12 explicitly identify missing site data, physical slot mapping and collision model; new Section6 land opportunity-cost scenarios cover the requested cost factor but are not local valuations.",
+      "scope": "Real-site construction/safety recommendations, not the conditional network algebra.",
+      "actions": [
+       "Before real-site use, collect payment shares/service distributions, obtain site land valuations, and map occupancy slots to safe physical storage; include vehicle envelopes and all required land/shoulders."
+      ]
+     },
+     {
+      "id": "review-scope",
+      "description": "This reviewer has not independently recomputed the model or visually reviewed the PDF.",
+      "evidence": "Actual work was full TeX reading plus selected current JSON comparisons; independent mathematical audits and page renders belong to other roles.",
+      "scope": "Review confidence and formal-submission checks.",
+      "actions": [
+       "Combine this review with separately attributed numerical and final PDF audits; do not describe this role as an independent numerical replay or human review."
+      ]
+     }
+    ],
+    "award_assessment": {
+     "most_likely": null,
+     "range": [],
+     "basis": "2017 award-system record is not connected, and this role has no reliable award-boundary comparison; abstain rather than mapping a diagnostic to an award.",
+     "gaps": [
+      "No edition-specific calibrated award evidence",
+      "Independent mathematical replay and PDF compliance outside this role"
+     ],
+     "actions": [
+      "Prioritize separately attributed numerical verification and final PDF checks; establish reliable edition-specific comparison evidence before estimating awards."
+     ],
+     "contest": "mcm",
+     "event": "MCM",
+     "edition": "2017",
+     "problem": "B",
+     "version": "sha256:31ae42188a7d7e4d8190194c8fb3c0871306d5ec6ff8317b1ec5888b6f13ac79",
+     "scope": "Full final TeX source including Summary/body/tables/figure source/captions/conclusion/letter/AI statement; selected numeric cross-checks against run20261008T170717-f13258de results.json; official problem text read. No independent solver/simulator execution, PDF visual review or award-label calibration. Final land-scenario update re-read in full; new cost arithmetic independently checked. Other solver/PDF scope remains unchanged.",
+     "calibrated": false,
+     "target": null,
+     "target_status": "unset",
+     "award_system_status": "unverified",
+     "assessment_status": "abstained_unverified_award_system",
+     "unverified_proposal": {
+      "target": null,
+      "most_likely": null,
+      "range": []
+     },
+     "review_id": "review-1",
+     "source": "research/merge-after-toll/reviews/final-review.json",
+     "reviewer": "Codex eval_contract: author-external agent role, same model family, not human"
+    },
+    "overall_note": "No remaining semantic blocker found. The incremental readiness-time notation clarification is applied and re-read. This is a scoped English/consistency review, not a numerical correctness or formal-compliance certification."
+   }
+  ],
+  "validity": [
+   "unverified"
+  ],
+  "note": "部分或全部届次的奖项体系未核实，相关意见暂不判断档次；保留原提议供核查。"
+ }
+}

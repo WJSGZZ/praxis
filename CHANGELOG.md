@@ -5,6 +5,13 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修复 ODE 容差比较的物理时间对齐，以及反例缩减的最终浮点停滞、异常误判和预算耗尽语义；评审视图保留逐评委证据关联，奖项标签按具体赛事届次校验。同秒运行改按收据时间排序，最新失败不被旧成功掩盖。
+  ODE tolerance checks now compare solutions at matching physical times. Counterexample shrinking makes strict floating-point progress and distinguishes evaluation failures from counterexamples. Review evidence stays linked to its reviewer and edition-specific award labels are checked. Timestamp ordering prevents an older success from hiding a later failed run.
+- 自主研究沿原任务与证据链推进，运行中的进度与计算定义分开保存。新增收费站汇合研究归档，包含完整英文原稿／修订稿、兼容流量证书、有限占用反例、失败候选与复现入口；它是一次开发研究，不计作隔离盲测或奖项校准。
+  The autonomous loop builds on the existing task and evidence workflow, keeping operational progress separate from computational definitions. A new toll-plaza research archive includes complete draft and revised English reports, flow certificates, finite-occupancy counterexamples, a rejected candidate and reproducible checks. It is a development study, not a blind evaluation or award calibration.
+- 美赛浴缸案例的摘要、策略和人工操作误差叙述由同一份参考结果生成；误差百分比明确绑定所测试的0.1°C余量方案，不扩展到其他策略。复用既有优化记录，更新论文与预览。
+  Key bath-study prose now derives from the archived results. The manual-error percentage is explicitly tied to the tested 0.1°C-buffer policy; existing optimization records are reused and the PDF and previews are refreshed.
+
 - 两份案例按全文审阅修订，复用原优化结果：国赛纠正风险误差方向与缓冲条件；美赛补有限储热／替代流路对照、半秒恒流连续包络及具体六段流量，修订后的PDF、预览、双语页数与证据同步。论文修订指导明确局部修复后的全文一致性检查与按影响复用证据。
   Both case studies now incorporate full-report review while retaining their original optimization runs. Portfolio risk statements are conditional; the bath case adds fixed-policy structural replay, an unrelaxed constant-flow envelope and explicit schedule rates. PDFs, previews and case metadata are synchronized. Revision guidance requires a final consistency pass and reruns only affected calculations.
 

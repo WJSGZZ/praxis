@@ -1,0 +1,330 @@
+[
+  {
+    "schema_version": 2,
+    "paper": "MCM-2017-B-final",
+    "reviewer": "Codex eval_contract: author-external agent role, same model family, not human",
+    "scope": "Full final TeX source including Summary/body/tables/figure source/captions/conclusion/letter/AI statement; selected numeric cross-checks against run20261008T170717-f13258de results.json; official problem text read. No independent solver/simulator execution, PDF visual review or award-label calibration. Final land-scenario update re-read in full; new cost arithmetic independently checked. Other solver/PDF scope remains unchanged.",
+    "checklist": {
+      "coverage": {
+        "C1": {
+          "met": false,
+          "reviewed": true,
+          "evidence": "Design-question table and Sections5–6,12: shape, payment mix, traffic load, AV scenarios and land opportunity-cost scenarios are answered quantitatively. Accident prevention remains partial: conditional kinematic spacing is not a crash model. Land values are illustrative, not site quotations."
+        },
+        "C2": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Official problem has no measured dataset; its B>L general task and 8-to-3 example are retained in Sections 1–2."
+        },
+        "C3": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Sections 2, 4, 7–10 separate arrival composition, booth mix, transient departures, occupancy slots and AV status; no decisive unresolved reading ambiguity was found in the source review."
+        },
+        "C4": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Section 1 decision/evidence table maps shape, throughput, safety, cost, load and AV questions to report components."
+        }
+      },
+      "assumptions": {
+        "A1": {
+          "met": false,
+          "reviewed": true,
+          "evidence": "Section 2 labels service times, demand and behavior as assumed scenarios, but does not provide a substantive real-world rationale for all numerical choices; this is acceptable scenario exploration, not calibrated design."
+        },
+        "A2": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Sections 9–10 and results.json finite_buffers/service_stress explicitly challenge unlimited holding and original service means; the recommendation changes accordingly."
+        },
+        "A3": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Sections 10–12 and letter condition expansion on service assumptions, holding resources and site validation; 14 stressed booths are necessary only, not claimed constructed."
+        },
+        "A4": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Official statement provides a generic B-to-L task without service observations; source does not mislabel synthetic inputs as problem-given or measured data."
+        },
+        "A5": {
+          "met": false,
+          "reviewed": true,
+          "evidence": "Input table and Section6 clearly state scenario assumptions, including land prices0/200/1000USD/m²; these are not empirical valuations. Service/behavior assumptions still lack empirical parameter sources or general ranges, and the three land values are examples rather than calibrated uncertainty bounds."
+        }
+      },
+      "model": {
+        "M1": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "Source gives conservation constraints, min-cut proof, path derivatives and entry/exit recurrence. I read these relations but did not independently reproduce all dimensions, limiting cases or path bounds.",
+          "reason": "This review prioritizes whole-document semantics and source/JSON consistency, not a mathematical implementation audit."
+        },
+        "M2": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Section 6 compares clustered and unrestricted capacity search; Section 9 discusses the rejected minimax routing alternative and distinguishes utilization from waiting."
+        },
+        "M3": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Finite occupancy is introduced to test whether extra booths can worsen blocking; its additional state directly changes the recommendation."
+        },
+        "M4": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "results.json nominal finite occupancy K=64 equals unlimited-holding waiting for robust/expanded: 21.7519898475 and 8.32364760514 seconds. I compared these recorded values, without executing the simulator."
+        },
+        "M5": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "The report links payment-compatible cuts to geometric occupancy and proves a necessary booth-count obstruction rather than merely listing algorithms."
+        }
+      },
+      "correctness": {
+        "K1": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "Reported selected-layout capacities and waits match results.json; this is source consistency, not independent numerical recomputation.",
+          "reason": "I did not implement or rerun the optimization or queue simulator."
+        },
+        "K2": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Section 11 documents distinct network-flow/LP, conservation, analytic occupancy and geometry checks; I verified that the report states scope and limitations, not their execution correctness."
+        },
+        "K3": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "Eight replications and analytic bounds are described, but I did not independently check estimator accuracy or numerical convergence.",
+          "reason": "No convergence/repeated-sampling audit executed in this role."
+        },
+        "K4": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "Routing and finite-event checks are reported by other roles; I did not replay constraints.",
+          "reason": "I cannot substitute another agent’s computation for this reviewer’s replay."
+        },
+        "K5": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Full final source re-read: Summary 3000→4000, original minimum 11, stressed necessary 14, K16 54.3 vs21.9, K64 8.3 and $60000 are consistent across body, conclusion, letter and current results.json. The 12.0004→13 display ambiguity is corrected. Final land update retains all layout/queue values; added land totals match the current JSON and independent base+area×price arithmetic. Expanded-minus-robust area is6686.94m²; equal-area eight-booth equipment differences stay unchanged."
+        }
+      },
+      "robustness": {
+        "R1": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Sensitivity targets payment proportions, AV headway, finite occupancy and service deterioration, all capable of changing the recommendation."
+        },
+        "R2": {
+          "met": null,
+          "reviewed": true,
+          "evidence": "Section 2 states no empirical calibration; every service/demand input is a declared scenario.",
+          "reason": "There are no fitted parameters to re-estimate."
+        },
+        "R3": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Sections 4, 9–12 distinguish exact conditional network thresholds, necessary occupancy bounds, transient Monte Carlo estimates and field claims. No empirical crash-reduction claim is made."
+        },
+        "R4": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Sections 2, 5, 10–12 delimit independent mixing, constant-speed entry metering, holding abstraction, missing body envelopes and missing field calibration."
+        }
+      },
+      "writing": {
+        "W1": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Summary identifies payment compatibility, network certificate, selected booth counts, geometry, waits and service stress, with units and original-service condition."
+        },
+        "W2": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Summary and Recommendation provide the capacity improvement, robust alternative, minimum expansion, finite-occupancy reversal and AV limitation. Safety/cost coverage is explicitly conditional."
+        },
+        "W3": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Figure source contains physical axes/units and supporting captions for geometry, cost frontier, occupancy output and AV capacity. This checks source information, not final-size visual readability."
+        },
+        "W4": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "Source uses Summary Sheet and letter with explicit sections, but I did not inspect the final PDF or execute contest_rules.",
+          "reason": "Final pagination, actual type size, page-level layout and rule compliance need the main reviewer’s PDF checks."
+        },
+        "W5": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Entire final English source is coherent and natural; six previous clarity recommendations are applied. Incremental re-read confirms the readiness-time notation is now explicitly a_k=r_k+T at the taper end."
+        }
+      },
+      "verifiability": {
+        "V1": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "The research archive has a current results.json; I did not run the reproduction program.",
+          "reason": "V1 requires executing relevant code, which was outside this role."
+        },
+        "V2": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "Problem and general FHWA guidance are cited; scenario parameters are explicitly identified as assumptions rather than attributed to nonexistent observed datasets. This does not verify the cited webpages."
+        },
+        "V3": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "AI report states autonomous agent modeling, same-family reviews, no user mathematical verification and incomplete raw transcripts.",
+          "reason": "Statements are consistent with the delegated review I observed, but I did not audit the full author tool log or all interaction provenance."
+        },
+        "V4": {
+          "met": false,
+          "reviewed": false,
+          "evidence": "Section 11 scopes distinct checks and avoids human/field-verification claims; execution authenticity of every listed check was not examined.",
+          "reason": "I did not independently inspect all claimed run receipts or rerun the checks."
+        },
+        "V5": {
+          "met": true,
+          "reviewed": true,
+          "evidence": "The report clearly states uncalibrated inputs, missing crash model/body envelopes, abstract holding slots, conditional land/road/equipment scenarios excluding shoulders and approach-side land, and the necessity-only stressed booth count."
+        }
+      }
+    },
+    "critical_claims": [
+      {
+        "id": "report-consistency",
+        "claim": "Summary, finite tables, recommendation and letter consistently present the recorded capacity, count and waiting results.",
+        "status": "supported",
+        "evidence": "Full source compared to results.json search/expansion/finite_buffers/occupancy_bounds/service_stress; 12.0004→13 and robust eight-booth identity now explicit.",
+        "scope": "Source-to-record semantic and numerical consistency only.",
+        "actions": [
+          "Keep these sections synchronized if the effective results change."
+        ]
+      },
+      {
+        "id": "minimum-expansion",
+        "claim": "Eleven booths are sufficient and necessary across the declared original payment mixtures within the flow model.",
+        "status": "unverified",
+        "evidence": "Source includes lower-count argument and constructed allocation; JSON records counts6/3/2 and capacities5100/4000/4000. This role did not independently solve the flow system.",
+        "scope": "Original12/6/2-second service means; unlimited holding and specified compatibility.",
+        "issue_ids": [
+          "review-scope"
+        ],
+        "actions": [
+          "Use the separately attributed mathematical verification record to assess this claim; no new capacity conclusion follows from this language audit."
+        ]
+      },
+      {
+        "id": "occupancy-reversal",
+        "claim": "At K16 the expanded design has nominal heavy waiting54.3s versus robust eight-booth21.9s; at K64 expanded waiting is8.3s.",
+        "status": "supported",
+        "evidence": "Current finite_buffers gives54.3205329736,21.8884582289,8.32364760514; Summary/body/letter preserve the tested occupancy conditions.",
+        "scope": "Agreement with archived simulations; simulator validity not independently established here.",
+        "actions": [
+          "Preserve the finite-episode and synthetic-scenario qualifiers."
+        ]
+      },
+      {
+        "id": "stressed-count-scope",
+        "claim": "Slower15/10/3-second service defeats the eleven-booth all-mixture guarantee;14booths is a necessary count without a verified layout.",
+        "status": "supported",
+        "evidence": "JSON stressed_minimum_robust_counts=[7,4,3], expanded stressed cash-heavy3085.714<3600 and electronic-heavy3200<3600; Summary and sensitivity text explicitly retain necessity-only scope.",
+        "scope": "Source/JSON comparison under declared service stress, not a constructed14-booth solution.",
+        "actions": [
+          "Do not promote14 to a verified recommendation without constructing and checking a layout."
+        ]
+      },
+      {
+        "id": "entry-metering-equivalence",
+        "claim": "With common constant taper travel time, entry metering reproduces the stated exit recurrence and gives conditional longitudinal spacing.",
+        "status": "unverified",
+        "evidence": "New control paragraph shows e_k=max(r_k,e_{k-1}+h),d_k=e_k+T; queue section now defines a_k=r_k+T and d_k=max(a_k,d_{k-1}+h). Its event-trace audit is assigned to another role.",
+        "scope": "Common longitudinal speed/travel time; excludes braking, cross-group bodies and physical queue arrangement.",
+        "issue_ids": [
+          "review-scope"
+        ],
+        "actions": [
+          "Attach the separately performed event-trace verification; do not infer full collision safety from this scoped language review."
+        ]
+      },
+      {
+        "id": "land-cost-scope",
+        "claim": "The land opportunity-cost scenarios consistently add modeled footprint times0/200/1000USD/m², and expansion uses6686.94m² more footprint than robust eight-booth design.",
+        "status": "supported",
+        "evidence": "Section6 table and paragraph match current results.json land_cost_scenarios; this reviewer independently checked base+area×price and15326.28−8639.34=6686.94.",
+        "scope": "Illustrative modeled footprint only; not empirical local pricing, total site acquisition, discounted investment return or a safety claim.",
+        "actions": [
+          "Retain illustrative-price/footprint exclusions and obtain real land valuation before construction decisions."
+        ]
+      }
+    ],
+    "issues": [
+      {
+        "id": "empirical-input-range",
+        "description": "Scenario parameters and practical safety/storage/cost coverage are not empirically calibrated.",
+        "evidence": "Sections2,5,6,10–12 explicitly identify missing site data, physical slot mapping and collision model; new Section6 land opportunity-cost scenarios cover the requested cost factor but are not local valuations.",
+        "scope": "Real-site construction/safety recommendations, not the conditional network algebra.",
+        "actions": [
+          "Before real-site use, collect payment shares/service distributions, obtain site land valuations, and map occupancy slots to safe physical storage; include vehicle envelopes and all required land/shoulders."
+        ]
+      },
+      {
+        "id": "review-scope",
+        "description": "This reviewer has not independently recomputed the model or visually reviewed the PDF.",
+        "evidence": "Actual work was full TeX reading plus selected current JSON comparisons; independent mathematical audits and page renders belong to other roles.",
+        "scope": "Review confidence and formal-submission checks.",
+        "actions": [
+          "Combine this review with separately attributed numerical and final PDF audits; do not describe this role as an independent numerical replay or human review."
+        ]
+      }
+    ],
+    "adjust": {},
+    "basis": {
+      "coverage": "judgment",
+      "assumptions": "judgment",
+      "model": "judgment",
+      "correctness": "judgment",
+      "robustness": "judgment",
+      "writing": "judgment",
+      "verifiability": "judgment"
+    },
+    "overall_note": "No remaining semantic blocker found. The incremental readiness-time notation clarification is applied and re-read. This is a scoped English/consistency review, not a numerical correctness or formal-compliance certification.",
+    "award_estimate": {
+      "contest": "mcm",
+      "event": "MCM",
+      "edition": "2017",
+      "problem": "B",
+      "version": "sha256:31ae42188a7d7e4d8190194c8fb3c0871306d5ec6ff8317b1ec5888b6f13ac79",
+      "scope": "Full final TeX source including Summary/body/tables/figure source/captions/conclusion/letter/AI statement; selected numeric cross-checks against run20261008T170717-f13258de results.json; official problem text read. No independent solver/simulator execution, PDF visual review or award-label calibration. Final land-scenario update re-read in full; new cost arithmetic independently checked. Other solver/PDF scope remains unchanged.",
+      "target": null,
+      "most_likely": null,
+      "range": [],
+      "basis": "2017 award-system record is not connected, and this role has no reliable award-boundary comparison; abstain rather than mapping a diagnostic to an award.",
+      "gaps": [
+        "No edition-specific calibrated award evidence",
+        "Independent mathematical replay and PDF compliance outside this role"
+      ],
+      "actions": [
+        "Prioritize separately attributed numerical verification and final PDF checks; establish reliable edition-specific comparison evidence before estimating awards."
+      ],
+      "calibrated": false
+    },
+    "resolved_review_items": [
+      {
+        "id": "metering-notation",
+        "status": "resolved",
+        "evidence": "Final source explicitly distinguishes r_k after-recovery readiness from a_k=r_k+T at the taper end."
+      }
+    ],
+    "review_revision": {
+      "supersedes": "final-review.pre-land-77f42a88.json",
+      "reason": "Land opportunity-cost coverage added; all previously recorded queue/layout values retained.",
+      "results_run": "20261008T170717-f13258de",
+      "results_sha256": "304e7affc3110f6d655903060a3d33c10fe6ea39512a3764dfb33e975578c04c"
+    }
+  }
+]

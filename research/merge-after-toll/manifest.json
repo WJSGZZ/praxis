@@ -1,0 +1,687 @@
+{
+  "schema": 1,
+  "purpose": "research archive",
+  "execution": "AI autonomous development episode",
+  "outcome": "complete conditional English modeling study",
+  "contest": {
+    "event": "MCM",
+    "edition": 2017,
+    "problem": "B"
+  },
+  "source_version": {
+    "plugin_base_commit": "6416097057bef7d2fce903d3f8fa8f8e1fae1b0a",
+    "computational_core_commit": "4dfe936",
+    "effective_state": "Computational core committed after execution; exact at-run source/dependencies bound by hashes; the containing Git commit identifies the published archive",
+    "dependency_sha256": {
+      "pyproject.toml": "68c395914aa325f9f1f5893eb628e902735aa3c69366941eb5e696028f466fb1",
+      "uv.lock": "5e3b4a84c56d42c8e704ed459908f9b735239fbdf8d8c8962fd6da038892e611",
+      "scripts/pipeline.py": "5e8b6718f7dd4b570a8ab47bff16519bd6304ba7664448cf3a9753985e1788a6",
+      "modeling/optimize.py": "ae3efb00afc83de42c6759b7602dd7df9ae33b22fd5d8b13f6647a7856e9b225",
+      "modeling/nonlinear.py": "e6264fb576cf4f350cf34f57c2b84ae0a5392f66b3a65b7e9554ab60309f0cac",
+      "modeling/regression.py": "ad687058e24df8fb45fb30e6bc3aac5800e3de15b68ccf210386cb3fbb68837a",
+      "modeling/layered.py": "39898fed9296cc3d49013c1c44e3847ddb6399a23d580a594116399d036d20bf",
+      "modeling/forecast.py": "d54a852b790a0ac3fd5d340a8b0ac1bd5a519a3636be9d20a3a5339c01ee2413",
+      "modeling/lessons.py": "ed9652478fb4f3dd8b11ebc4691d337f82610dfc7cedc6d672c489ca6ab9ee38",
+      "modeling/queueing.py": "6134c8b31879f7cd33a757a9c423f0bc6edc451492625a3000a680d68585d104",
+      "modeling/graph.py": "d4e498a7eecc6e7e76b83bb9113c9abd82b53bda3a46fdbe2f1382084e08cd0e",
+      "modeling/epidemic.py": "a376f99823bdad04923fa7aba74cc7cabc3dbae85f25b5d4aeb0b709c88281bc",
+      "modeling/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "modeling/decision.py": "f28114c322e8debd85ef770fa4f0279a493b5db61477368659f5165f23f8e5a1",
+      "modeling/sensitivity.py": "2b863a83a27a8fdb208704e477d0e790ec3c69285e5d834441e90cc2c8a49678",
+      "modeling/experiment.py": "125fd993618188590aed0d5f556e15fb01df327be147a88c840a664b03128cab",
+      "modeling/pde.py": "fd1cfb9731e77af771f0cfb4ae4636616bdafd53d16088e060658783bffb4277",
+      "modeling/structure.py": "9eac7c01811cd7968f228b34cc7390eac281ef9dc92e9d79fe6fc8b9ffdb748a",
+      "modeling/inference.py": "661e2175a3020ea929007001d9bf1e6c0db2ca46e464aeb11bd4cd60eba746b4",
+      "modeling/calibrate.py": "b76448a9f9980fb699f636b788a3326b8da2212cb357021471bd5cfb633aa9c8",
+      "modeling/decision_models.py": "d6f4dcacd08fad2677160a9a3cfa3cd044f02e42ab512a366ecd63f9b464fcc1",
+      "modeling/weights.py": "df9c48179afa696fc7d5c8d15d4928b8667796761563b981b4bf35ef78bbb677",
+      "modeling/dynamics.py": "d48bb29df1975028b22594d037dc0730fc6e2edeb073ebbdb7d3077d129de94f",
+      "modeling/routes.py": "7849de677cdcda73753ef8616f23442e53a112044a3251ee2613b4e21207500d",
+      "scripts/build_plugin.py": "ce17e1c0c17e841df62f772d56612f8cab546e7d3afea24dfc392cb2cbb4e325",
+      "scripts/check_references.py": "5014c3dfe1275dff1da8e8aff6926e32f6dfc047ceed4aa92a5cf7ec22b0998f",
+      "scripts/release_check.py": "a4e078d2b1a680c981a62e413ffc79deb8c27417795f9b58aaa3c76dd53e4194",
+      "scripts/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scripts/contest_rules.py": "04739b9c130acbffd3bb2363d48d5a70c31325b12fdac8c15793a32c6c309344",
+      "scripts/check_pdf.py": "71aa0d26def5628e7c2e16e4b5bd6444fd46ac7d60279867e9efadadf8ae0413",
+      "scripts/audit_data.py": "2f4a276928197d0b3e654d49b1ee711fa3fe5d0f0060859c683eb608d4722bb4",
+      "scripts/plugin_hosts.py": "555bb261968faf87d31e742e37d1fddfd83ce24d779da0e35569d2a74e0031ac",
+      "scripts/freeze_pdf.py": "571888d78713a4b1ea1c63cae4be0b7a73105e1b3e40149ea13cdeb7a2e135d1",
+      "scripts/contributions.py": "d8a466f2ba9d3c8f143aa294585394f86d8853572053f8cc9bc3242d78f77b26",
+      "scripts/literature.py": "89a74f6fe35a1af6dd5e8037e46183686a510d73292c31fc9c4a28fcb568d198",
+      "scripts/gen_tool_index.py": "af091de8683439d2a23cc9e12f010dcce574d908cfce5b97281a94f07efa891f",
+      "scripts/texplot.py": "f15c57bd1fff880624551a2223281734e7317df421534496309b8772df275b64",
+      "scripts/mcp_server.py": "86e3381874b07ae21d43015e0883774f71b8ce3aa92e26c77f1fb3c3af8db052"
+    },
+    "case_source_sha256": {
+      "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+      "code/config.json": "4cc288641ecf9c237746fd3ff0cd548c05fc11cfe214e96458f0cd5343002f51",
+      "code/model.py": "bf1d37656479f085f660278db22a8597fc7646af067445d489349a136b4d3949",
+      "code/validate.py": "12e5d033f23dab2574f9eaaf5cbb64b4d15177d8fc151243abfd8bcef29bf3bc",
+      "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+      "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+      "planning/tasks.md": "c51dea10d105fb7692eb70db6fa6b5dc06e5f463813801bcb3d13f1ad3ef38ee",
+      "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+    }
+  },
+  "environment": {
+    "python": "3.12.0",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "packages": {
+      "numpy": "2.5.3",
+      "pandas": "2.3.3",
+      "scipy": "1.18.1",
+      "matplotlib": "3.11.2",
+      "scikit-learn": "1.9.1",
+      "networkx": "3.7",
+      "sympy": "1.14.0",
+      "statsmodels": "0.15.0",
+      "openpyxl": "3.1.5",
+      "pypdf": "6.19.0",
+      "salib": "1.6.0",
+      "pymcdm": "1.4.0",
+      "pypdfium2": "5.14.0"
+    }
+  },
+  "timing": {
+    "research_started_utc": "2026-10-08T16:20:35Z",
+    "archive_frozen_utc": "2026-10-08T17:10:47.368439+00:00",
+    "per_case_tokens": null,
+    "resource_scope": "Actual case run durations are recorded below; shared-account usage is not attributable to this case and is omitted"
+  },
+  "inputs": {
+    "problem_source": "https://www.contest.comap.com/undergraduate/contests/mcm/contests/2017/problems/2017_MCM_Problem_B.pdf",
+    "problem_sha256": "894958230ec9da6df87015ae5462d8107d9ae4b217d57c24949854b2b3e2b003",
+    "problem_redistributed": false,
+    "data": "Synthetic scenarios specified in code/config.json; no site observations",
+    "randomness": "Eight fixed seeds641..648; paired streams, not selected for favorable results"
+  },
+  "sources": [
+    {
+      "url": "https://ops.fhwa.dot.gov/trafficanalysistools/tat_vol3/sect5.htm",
+      "read_scope": "Calibration guidance, chapter5",
+      "rights": "External reference linked, no full text redistributed"
+    },
+    {
+      "url": "https://mutcd.fhwa.dot.gov/rpt/tcstoll/chapter642.htm",
+      "read_scope": "Historical departure recovery and taper recommendations",
+      "rights": "External reference linked, no full text redistributed"
+    },
+    {
+      "url": "https://mutcd.fhwa.dot.gov/rpt/tcstoll/chapter224.htm",
+      "read_scope": "Historical ETC-left and payment-clustering guidance",
+      "rights": "External reference linked, no full text redistributed"
+    }
+  ],
+  "exposure": {
+    "official_problem_read": true,
+    "same_problem_submitted_solutions_read": false,
+    "judges_commentary_read": false,
+    "pretraining": "unknown",
+    "isolated_blind_test": false,
+    "training_holdout_role": "development; not retained as unexposed holdout"
+  },
+  "participation": {
+    "case_human_modeling_or_verification": "none recorded",
+    "development_user_role": "Product requirements and delegation; separate from case mathematical contribution",
+    "review": "Same model-family external roles; author code visible",
+    "full_raw_model_transcripts": "not available; summaries not reconstructed into transcripts"
+  },
+  "verification": {
+    "accepted_run": "20261008T170717-f13258de",
+    "primary_checks": "reference/accepted-checks.json",
+    "independent_checks": "reference/independent-audit.json",
+    "english_review": "reviews/final-review.json",
+    "award_user_view": "reviews/user-assessment.json",
+    "final_pdf_pages": 17,
+    "summary_pages": 1,
+    "letter_pages": 1,
+    "ai_report_pages": 1,
+    "rendered_and_visually_checked_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "desktop_compiler": "success",
+    "xelatex": "success; no overfull boxes or unresolved references in final log",
+    "scope": "Conditional mathematical/queue verification and visual review, not field calibration, safety certification, blind A/B or award calibration"
+  },
+  "important_failures": [
+    "Natural NumPy integer JSON serialization failure retained in original private receipt",
+    "Minimax-load routing rejected as uniform waiting improvement despite valid calculations",
+    "Unlimited holding overstates the expansion preference at limited downstream occupancy"
+  ],
+  "runs": [
+    {
+      "started_utc": "2026-10-08T16:24:09.321178+00:00",
+      "ended_utc": "2026-10-08T16:24:09.697604+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T162409-8829ecf3",
+      "original_receipt_sha256": "d2b9b5e51cb551d4cdb7282c32d5ec840320dd9c46518be127de23a7c1a4bbf5",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
+        "code/model.py": "52d4feb8c6842d2f19ddc060fb5c1a06709075925b233d131a6ad6990710350c",
+        "code/validate.py": "5c10f06ec229a45aea7916733d48711048d98d7dfbab0ad7a4672acc836abd78",
+        "planning/tasks.md": "1a1fffeee6ba112c32f4270309f1365f7cb41a03b90e053aa616a090048f19ae"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:24:09.339413+00:00",
+          "ended_utc": "2026-10-08T16:24:09.548635+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:24:09.548824+00:00",
+          "ended_utc": "2026-10-08T16:24:09.692224+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "d8f1c145894eff65a09b73729b54d339ab8dbfc2a7b05a9c10b3ee06c5fe607c"
+    },
+    {
+      "started_utc": "2026-10-08T16:25:24.273247+00:00",
+      "ended_utc": "2026-10-08T16:25:25.807328+00:00",
+      "status": "failed",
+      "automatic_checks_passed": false,
+      "id": "20261008T162524-a82472be",
+      "original_receipt_sha256": "7c9426399e490ac06ee81d6668acf7e338dc236a5cbd56c8482d4fd7098e0ade",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
+        "code/model.py": "52d4feb8c6842d2f19ddc060fb5c1a06709075925b233d131a6ad6990710350c",
+        "code/validate.py": "5c10f06ec229a45aea7916733d48711048d98d7dfbab0ad7a4672acc836abd78",
+        "planning/tasks.md": "1a1fffeee6ba112c32f4270309f1365f7cb41a03b90e053aa616a090048f19ae"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:25:24.293134+00:00",
+          "ended_utc": "2026-10-08T16:25:25.807292+00:00",
+          "exit_code": 1,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source"
+    },
+    {
+      "started_utc": "2026-10-08T16:26:28.073345+00:00",
+      "ended_utc": "2026-10-08T16:26:29.677056+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T162628-c3665267",
+      "original_receipt_sha256": "c5bf1b458f5ce38d812e040b317e5ba4b3f659f57cab9e608cc0593215dd8f79",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
+        "code/model.py": "2caeb810b4f517f4fdd97de74c91e8c696991f6ec9eb7f337450df4f7e155c46",
+        "code/validate.py": "5c10f06ec229a45aea7916733d48711048d98d7dfbab0ad7a4672acc836abd78",
+        "planning/tasks.md": "1a1fffeee6ba112c32f4270309f1365f7cb41a03b90e053aa616a090048f19ae"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:26:28.091314+00:00",
+          "ended_utc": "2026-10-08T16:26:29.525527+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:26:29.526042+00:00",
+          "ended_utc": "2026-10-08T16:26:29.671586+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "86ed512dd3c5425eb9d035900f1b3a0347570bce1907f40e9d83dea388ad0a9a"
+    },
+    {
+      "started_utc": "2026-10-08T16:27:55.123204+00:00",
+      "ended_utc": "2026-10-08T16:27:56.854382+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T162755-0a9b4432",
+      "original_receipt_sha256": "b908d0d924f366ce758382275bae56c32edd2dcd11b35430a9b71e59f82ca009",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "1bcbe7e9101e626026355002f349b5837d14eff9acda124d98f4b394de495628",
+        "code/model.py": "7db3288d7621d3068aa3084045d9e25ca15865d6eb135df76123225db4a45efd",
+        "code/validate.py": "5c10f06ec229a45aea7916733d48711048d98d7dfbab0ad7a4672acc836abd78",
+        "planning/tasks.md": "1a1fffeee6ba112c32f4270309f1365f7cb41a03b90e053aa616a090048f19ae"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:27:55.143543+00:00",
+          "ended_utc": "2026-10-08T16:27:56.699092+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:27:56.699579+00:00",
+          "ended_utc": "2026-10-08T16:27:56.850128+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "f3530e8bc853e774f091806d41e4fa67a88b0b770f32adc5b8f2e1f6a048942a"
+    },
+    {
+      "started_utc": "2026-10-08T16:37:13.540637+00:00",
+      "ended_utc": "2026-10-08T16:37:16.553890+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T163713-9a6b2113",
+      "original_receipt_sha256": "df8df096124ad014b0fbefcceda1172fed5b6606bc97613290c289e51609318d",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "f68d8545a307679cc717bb1865874dfa8d99613d672f011397a13e0e35832b3a",
+        "code/validate.py": "3a1c6a55b01320d30301c29d41d222cf89cfcd5dfc1bff368d95f8754642cca2",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "planning/tasks.md": "1a1fffeee6ba112c32f4270309f1365f7cb41a03b90e053aa616a090048f19ae"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:37:13.561762+00:00",
+          "ended_utc": "2026-10-08T16:37:16.397385+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:37:16.398229+00:00",
+          "ended_utc": "2026-10-08T16:37:16.549270+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "5d43e50f8df0aefd78f1290533bd74154937d62dcb9325aabaa8ce4f1c337801"
+    },
+    {
+      "started_utc": "2026-10-08T16:42:40.204463+00:00",
+      "ended_utc": "2026-10-08T16:42:43.223783+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T164240-5a9cd08c",
+      "original_receipt_sha256": "bc0eee868fd5edda05e0f1eeb94ce118f296c6c0127c0f0411c99c14b7205c73",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "ddfdc0459a1b074ae1e487ca2c118cf7721d3ef7f68baffe71b649aa2b7a2d81",
+        "code/validate.py": "3a1c6a55b01320d30301c29d41d222cf89cfcd5dfc1bff368d95f8754642cca2",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "planning/tasks.md": "3b4a4db4e3c138d25e828d93f30a520ac4d7d988eaf4c010f9bd9777cd32e770",
+        "planning/requirements.json": "96af882ab93a458cd6060a6dc1aa090b0d90f20b8c8000e87e6144b92043ca00"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:42:40.222944+00:00",
+          "ended_utc": "2026-10-08T16:42:43.068006+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:42:43.069160+00:00",
+          "ended_utc": "2026-10-08T16:42:43.218128+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "5a29483d914be998d35f71119271e6b6a83e53996a30ebdc623e456f903c2896"
+    },
+    {
+      "started_utc": "2026-10-08T16:49:06.988757+00:00",
+      "ended_utc": "2026-10-08T16:49:09.982362+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T164906-86a8a296",
+      "original_receipt_sha256": "5f99ebe77bd2395cae75922c1548dd6251370448458f16a2ba26def4de946ce8",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "26c5c4c467bf08a7f5bdf5a618ea1d63ad0f9d276c321fbb45ac1432d972193c",
+        "code/validate.py": "3a1c6a55b01320d30301c29d41d222cf89cfcd5dfc1bff368d95f8754642cca2",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "3b4a4db4e3c138d25e828d93f30a520ac4d7d988eaf4c010f9bd9777cd32e770",
+        "planning/requirements.json": "96af882ab93a458cd6060a6dc1aa090b0d90f20b8c8000e87e6144b92043ca00"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:49:07.010412+00:00",
+          "ended_utc": "2026-10-08T16:49:09.824606+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:49:09.825608+00:00",
+          "ended_utc": "2026-10-08T16:49:09.976498+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "971a62b688f832ebf8695171f42c0c19df69b47d704116d60a33865cae016800"
+    },
+    {
+      "started_utc": "2026-10-08T16:49:10.203462+00:00",
+      "ended_utc": "2026-10-08T16:49:13.160935+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T164910-dfd093b8",
+      "original_receipt_sha256": "5b881f7f7dbb4ff292a901c8f50986aea0dc5bc9c09948e2ce6d3dd57ecc0be8",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "26c5c4c467bf08a7f5bdf5a618ea1d63ad0f9d276c321fbb45ac1432d972193c",
+        "code/validate.py": "3a1c6a55b01320d30301c29d41d222cf89cfcd5dfc1bff368d95f8754642cca2",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "3b4a4db4e3c138d25e828d93f30a520ac4d7d988eaf4c010f9bd9777cd32e770",
+        "planning/requirements.json": "96af882ab93a458cd6060a6dc1aa090b0d90f20b8c8000e87e6144b92043ca00"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:49:10.223399+00:00",
+          "ended_utc": "2026-10-08T16:49:13.004747+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:49:13.005701+00:00",
+          "ended_utc": "2026-10-08T16:49:13.154967+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "84da11ab2a6d0799111c599fff71c3f68fae041b9a290f593acedd40e1c6c09e"
+    },
+    {
+      "started_utc": "2026-10-08T16:52:29.313014+00:00",
+      "ended_utc": "2026-10-08T16:52:32.312418+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T165229-cafedf36",
+      "original_receipt_sha256": "e1d4bf4973fb1c24b8a2013d1617ec27822144e2bf155f929551039c9fb8a7fb",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "26c5c4c467bf08a7f5bdf5a618ea1d63ad0f9d276c321fbb45ac1432d972193c",
+        "code/validate.py": "1a52ecb26f7fd10d82fa163fb66d0f83f1215546d7c4b864a9d1a4d78456a087",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "3b4a4db4e3c138d25e828d93f30a520ac4d7d988eaf4c010f9bd9777cd32e770",
+        "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:52:29.331400+00:00",
+          "ended_utc": "2026-10-08T16:52:32.153804+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:52:32.155744+00:00",
+          "ended_utc": "2026-10-08T16:52:32.306508+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "b2f185f033cd12017aebfe6e2bf3db63559c03cc37db71c67767a8c186e1db76"
+    },
+    {
+      "started_utc": "2026-10-08T16:52:32.528755+00:00",
+      "ended_utc": "2026-10-08T16:52:35.549978+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T165232-27f59a43",
+      "original_receipt_sha256": "e3c4a7d49cd0a943d25244223f3413c438ef8835bd6ff4f0d95f1ef317afe8ec",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "26c5c4c467bf08a7f5bdf5a618ea1d63ad0f9d276c321fbb45ac1432d972193c",
+        "code/validate.py": "1a52ecb26f7fd10d82fa163fb66d0f83f1215546d7c4b864a9d1a4d78456a087",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "3b4a4db4e3c138d25e828d93f30a520ac4d7d988eaf4c010f9bd9777cd32e770",
+        "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:52:32.549786+00:00",
+          "ended_utc": "2026-10-08T16:52:35.391158+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:52:35.393083+00:00",
+          "ended_utc": "2026-10-08T16:52:35.544144+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "b1a5f934e7eb1ff079d322c76d973b9e76c46ee5b9fe9c00b5f9b1ac96b15af8"
+    },
+    {
+      "started_utc": "2026-10-08T16:56:52.699227+00:00",
+      "ended_utc": "2026-10-08T16:56:55.708997+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T165652-dd8f26d0",
+      "original_receipt_sha256": "472e37589180780b84ef16e2f1314568c2a1759db4561d44f6e61fdf3094a4b6",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "26c5c4c467bf08a7f5bdf5a618ea1d63ad0f9d276c321fbb45ac1432d972193c",
+        "code/validate.py": "1a52ecb26f7fd10d82fa163fb66d0f83f1215546d7c4b864a9d1a4d78456a087",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "d237ed26cfad552481c76e8af13942af71ba50d96a148169f07a94005681f79b",
+        "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:56:52.717790+00:00",
+          "ended_utc": "2026-10-08T16:56:55.550127+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:56:55.552087+00:00",
+          "ended_utc": "2026-10-08T16:56:55.703057+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "ef32e8673a0188dd907bc47af78f444778fa62ad17a42d0d801bfe49722fc79c"
+    },
+    {
+      "started_utc": "2026-10-08T16:56:55.927809+00:00",
+      "ended_utc": "2026-10-08T16:56:58.935069+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T165655-a9adf49e",
+      "original_receipt_sha256": "92916f90127103a4228ce79e6cb223279ec66a993b3c1bf3ecd98020447988cb",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "631ff1025634f46bd81ecae9618abfa764d4cf95810979e5cb291a447f07ab96",
+        "code/model.py": "26c5c4c467bf08a7f5bdf5a618ea1d63ad0f9d276c321fbb45ac1432d972193c",
+        "code/validate.py": "1a52ecb26f7fd10d82fa163fb66d0f83f1215546d7c4b864a9d1a4d78456a087",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "d237ed26cfad552481c76e8af13942af71ba50d96a148169f07a94005681f79b",
+        "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T16:56:55.946661+00:00",
+          "ended_utc": "2026-10-08T16:56:58.779193+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T16:56:58.781224+00:00",
+          "ended_utc": "2026-10-08T16:56:58.929263+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "30f9826967c000fdd717071c799520a358d1c1198a0fff4daf68571e7287e983"
+    },
+    {
+      "started_utc": "2026-10-08T17:07:14.568946+00:00",
+      "ended_utc": "2026-10-08T17:07:17.565636+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T170714-11242e57",
+      "original_receipt_sha256": "1bfd21987985d14e87e0e09abf1f7de2ca92a38a29b3b038bdae99ab3d84caf0",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "4cc288641ecf9c237746fd3ff0cd548c05fc11cfe214e96458f0cd5343002f51",
+        "code/model.py": "bf1d37656479f085f660278db22a8597fc7646af067445d489349a136b4d3949",
+        "code/validate.py": "12e5d033f23dab2574f9eaaf5cbb64b4d15177d8fc151243abfd8bcef29bf3bc",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "c51dea10d105fb7692eb70db6fa6b5dc06e5f463813801bcb3d13f1ad3ef38ee",
+        "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T17:07:14.589783+00:00",
+          "ended_utc": "2026-10-08T17:07:17.407842+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T17:07:17.409741+00:00",
+          "ended_utc": "2026-10-08T17:07:17.560806+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "def6f23f3e6bdd88aff4fb8af0d1eb3c447ddbd5d4bd8421497e76be9b2068b8"
+    },
+    {
+      "started_utc": "2026-10-08T17:07:17.782081+00:00",
+      "ended_utc": "2026-10-08T17:07:20.837699+00:00",
+      "status": "automatic-checks-passed",
+      "automatic_checks_passed": true,
+      "id": "20261008T170717-f13258de",
+      "original_receipt_sha256": "a4e8d95e732118a0a44e6f6e233cbdd865caf24b3ca97ab35d203727be1e9432",
+      "code_sha256": {
+        "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+        "code/config.json": "4cc288641ecf9c237746fd3ff0cd548c05fc11cfe214e96458f0cd5343002f51",
+        "code/model.py": "bf1d37656479f085f660278db22a8597fc7646af067445d489349a136b4d3949",
+        "code/validate.py": "12e5d033f23dab2574f9eaaf5cbb64b4d15177d8fc151243abfd8bcef29bf3bc",
+        "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+        "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+        "planning/tasks.md": "c51dea10d105fb7692eb70db6fa6b5dc06e5f463813801bcb3d13f1ad3ef38ee",
+        "planning/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565"
+      },
+      "steps": [
+        {
+          "stage": "model",
+          "started_utc": "2026-10-08T17:07:17.801002+00:00",
+          "ended_utc": "2026-10-08T17:07:20.678342+00:00",
+          "exit_code": 0,
+          "timeout": null
+        },
+        {
+          "stage": "validation",
+          "started_utc": "2026-10-08T17:07:20.680366+00:00",
+          "ended_utc": "2026-10-08T17:07:20.831550+00:00",
+          "exit_code": 0,
+          "timeout": null
+        }
+      ],
+      "historical_scope": "At-run status; earlier assumptions/dependencies may differ from frozen accepted source",
+      "result_sha256": "304e7affc3110f6d655903060a3d33c10fe6ea39512a3764dfb33e975578c04c"
+    }
+  ],
+  "reproduction": "uv run --locked python research/merge-after-toll/reproduce.py --output .session/merge-replay",
+  "default_plugin_bundle": false,
+  "files_sha256": {
+    "README.en.md": "358b34b992139550aea7c4fd39bac8489e2a86846daddd446becb25de9c56c0c",
+    "README.md": "a1cd9a9b7cd8c14ee3cbb4472bb149880352f0b3d38e1d9118dacf8df4b0d1cb",
+    "audit.py": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
+    "baseline/code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+    "baseline/code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
+    "baseline/code/model.py": "52d4feb8c6842d2f19ddc060fb5c1a06709075925b233d131a6ad6990710350c",
+    "baseline/code/validate.py": "5c10f06ec229a45aea7916733d48711048d98d7dfbab0ad7a4672acc836abd78",
+    "baseline/paper.pdf": "79dc5c1a08a57bd29398df2bd3277ad20119884891bd7e407806d2c85509f680",
+    "baseline/paper.tex": "5580b32b1f851a9873c6e40ab633507daf08f3f4e39054dff6fe44ca979a9b5f",
+    "code/balanced.py": "5baa6b6f2a1a2be5539dc4fd8ec081471ad4145ff96043616f39e4c3003b03fb",
+    "code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
+    "code/config.json": "4cc288641ecf9c237746fd3ff0cd548c05fc11cfe214e96458f0cd5343002f51",
+    "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
+    "code/model.py": "bf1d37656479f085f660278db22a8597fc7646af067445d489349a136b4d3949",
+    "code/validate.py": "12e5d033f23dab2574f9eaaf5cbb64b4d15177d8fc151243abfd8bcef29bf3bc",
+    "paper/build-input.json": "0d801db9d4566e6aa77fae1a68ae18ee5d343f6be24c813a4066fa40a3934ab2",
+    "paper/build_report.py": "32709cde3ccdf05bae3c3d46a51f38ad101ddd058399e1f5cdb512985f181968",
+    "paper/paper.pdf": "31cd94ac2f8203ab1b37d8f5051b7544102f95753e6273e879b3b37e1099c6c1",
+    "paper/paper.tex": "31ae42188a7d7e4d8190194c8fb3c0871306d5ec6ff8317b1ec5888b6f13ac79",
+    "reference/accepted-checks.json": "b8411f618a296fd65ea855e734c55d4492d1ddc4f7fc7455028d7ba5b08e9dbd",
+    "reference/accepted.json": "304e7affc3110f6d655903060a3d33c10fe6ea39512a3764dfb33e975578c04c",
+    "reference/baseline-checks.json": "08f39ca1158aee99f64bd6550556c33c67059fc39ce9d8b50652f433fd058a87",
+    "reference/baseline.json": "d8f1c145894eff65a09b73729b54d339ab8dbfc2a7b05a9c10b3ee06c5fe607c",
+    "reference/independent-audit.json": "199ae06d6bda366aea277caec607fcc7ec646828bcbccc2533dcdf3130e421b3",
+    "reference/rejected-routing-checks.json": "b8411f618a296fd65ea855e734c55d4492d1ddc4f7fc7455028d7ba5b08e9dbd",
+    "reference/rejected-routing.json": "def6f23f3e6bdd88aff4fb8af0d1eb3c447ddbd5d4bd8421497e76be9b2068b8",
+    "reference/requirements.json": "4922bbcca3f7bf2e5c01117807ab16182a3898b2ce9dd7d93254d3d2a3bf1565",
+    "reproduce.py": "ff1306d50fa00c8b7b19f7eec149ec37b5bd67ae48eb13ae8bf8a236fcee9415",
+    "reviews/english-review.md": "fed5be14124084a662a7765e45c735e7d2b22ae857046ceecef46bc7c14e4d8a",
+    "reviews/final-review.json": "464200d4dce5eb24e50444ee908f7e068f6f534656e777c111730f640c9cf7ec",
+    "reviews/metering-equivalence.md": "02b5703b34b59afb91e84c89217d0171f557dee922e14a8a3c37ec9e23755336",
+    "reviews/study.md": "9e8364a295ecf7ab88987fa3e98de1c78f6c85dceb96dccd8a9bcb14916eac14",
+    "reviews/user-assessment.json": "08dcbbf9699f9c6a0166e6b059b18e048ed3b8e1a443a57f4bb818f64dbe08dd"
+  }
+}

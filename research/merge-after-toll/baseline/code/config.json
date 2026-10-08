@@ -1,0 +1,13 @@
+{
+  "booths": 8, "lanes": 3,
+  "mean_service_s": [12.0, 6.0, 2.0], "service_cv": [0.5, 0.3, 0.1],
+  "payment_scenarios": {"nominal": [0.3, 0.3, 0.4], "cash_heavy": [0.45, 0.35, 0.2], "electronic_heavy": [0.1, 0.15, 0.75]},
+  "baseline_counts": [[3, 0, 0], [0, 3, 0], [0, 0, 2]],
+  "human_headway_s": 2.0, "av_pair_headway_s": 0.9,
+  "av_shares": [0.0, 0.25, 0.5, 0.75, 1.0],
+  "lane_width_m": 3.5, "departure_speed_m_s": 10.0,
+  "max_path_slope": 0.1, "lateral_accel_m_s2": 0.5,
+  "road_cost_usd_m2": 200.0, "equipment_cost_usd": [80000.0, 60000.0, 120000.0],
+  "light_vph": 1200.0, "heavy_vph": 3600.0, "horizon_s": 1800.0,
+  "seeds": [641, 642, 643, 644, 645, 646, 647, 648]
+}

@@ -1,0 +1,126 @@
+{
+  "requirements": [
+    {
+      "id": "Q1",
+      "question": "Size and pattern of the preferred nominal layout",
+      "unit": "m",
+      "result_pointer": "/search/nominal/length_m",
+      "checks": [
+        "nominal geometry bounds",
+        "nominal historical departure screen"
+      ]
+    },
+    {
+      "id": "Q2",
+      "question": "Nominal compatible arrival threshold",
+      "unit": "vehicles/hour",
+      "result_pointer": "/search/nominal/capacities_vph/nominal",
+      "checks": [
+        "nominal nominal exact flow threshold"
+      ]
+    },
+    {
+      "id": "Q3",
+      "question": "Nominal heavy waiting comparison",
+      "unit": "s",
+      "result_pointer": "/simulations/5/mean_delay_s",
+      "checks": [
+        "simulation conservation",
+        "common random numbers"
+      ]
+    },
+    {
+      "id": "Q4",
+      "question": "Effect of AV share on nominal threshold",
+      "unit": "vehicles/hour",
+      "result_pointer": "/automation/17/capacity_vph",
+      "checks": [
+        "routing witness nominal av=1.0"
+      ]
+    },
+    {
+      "id": "Q5",
+      "question": "Booth counts needed for all payment mixtures",
+      "unit": "booths",
+      "result_pointer": "/minimum_robust_counts",
+      "checks": [
+        "minimum robust booth count",
+        "eight booth robust ceiling"
+      ]
+    },
+    {
+      "id": "Q6",
+      "question": "Can downstream holding reverse the expansion preference?",
+      "unit": "s",
+      "result_pointer": "/finite_buffers/6/mean_delay_s",
+      "checks": [
+        "finite buffer accounting and occupancy",
+        "occupancy witnesses"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "requirement": "Q2",
+      "text": "4000/h is the conditional nominal fluid arrival threshold, not every time-window output upper bound",
+      "strength": "independent",
+      "result_pointer": "/search/nominal/capacities_vph/nominal",
+      "checks": [
+        "nominal nominal exact flow threshold"
+      ]
+    },
+    {
+      "id": "C2",
+      "requirement": "Q1",
+      "text": "Selected centerline geometry passes stated kinematic and historical departure screens, not complete safety certification",
+      "strength": "checked",
+      "result_pointer": "/search/nominal/length_m",
+      "checks": [
+        "nominal geometry bounds",
+        "nominal historical departure screen"
+      ]
+    },
+    {
+      "id": "C3",
+      "requirement": "Q3",
+      "text": "Finite episode waiting under explicit synthetic demand and service assumptions",
+      "strength": "checked",
+      "result_pointer": "/simulations/5/mean_delay_s",
+      "checks": [
+        "simulation conservation"
+      ]
+    },
+    {
+      "id": "C4",
+      "requirement": "Q4",
+      "text": "Shorter headways alone do not remove a staffed-booth bottleneck",
+      "strength": "checked",
+      "result_pointer": "/automation/17/capacity_vph",
+      "checks": [
+        "routing witness nominal av=1.0"
+      ]
+    },
+    {
+      "id": "C5",
+      "requirement": "Q5",
+      "text": "At least eleven booths necessary under the declared service means and three payment scenarios",
+      "strength": "independent",
+      "result_pointer": "/minimum_robust_counts",
+      "checks": [
+        "minimum robust booth count"
+      ]
+    },
+    {
+      "id": "C6",
+      "requirement": "Q6",
+      "text": "Finite occupancy can worsen expansion waiting; occupancy lower bound is necessary only",
+      "strength": "checked",
+      "result_pointer": "/occupancy_bounds/expanded/nominal/continuous_lower_bound",
+      "checks": [
+        "occupancy witnesses",
+        "finite buffer accounting and occupancy"
+      ]
+    }
+  ]
+}

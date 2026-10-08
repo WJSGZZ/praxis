@@ -1,0 +1,278 @@
+[
+  {
+    "name": "baseline payment bottleneck",
+    "passed": true,
+    "evidence": "Three staffed booths provide 900/h; 30% of arrivals need them, hence lambda<=3000/h.",
+    "independent": true
+  },
+  {
+    "name": "pooled bound is insufficient",
+    "passed": true,
+    "evidence": "Pooled 5400.0/h exceeds payment ceiling 3000.0/h; it is an upper bound, not a feasible recommendation.",
+    "independent": true
+  },
+  {
+    "name": "baseline flow witness",
+    "passed": true,
+    "evidence": "NetworkX max flow independently routes the entire claimed baseline rate.",
+    "independent": true
+  },
+  {
+    "name": "nominal nominal exact flow threshold",
+    "passed": true,
+    "evidence": "At 4000.000000000/h maximum flow=4000.000000000; at lambda+1, max flow=4000.700000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "nominal cash_heavy exact flow threshold",
+    "passed": true,
+    "evidence": "At 2666.666666667/h maximum flow=2666.666666667; at lambda+1, max flow=2667.216666667 < demand.",
+    "independent": true
+  },
+  {
+    "name": "nominal electronic_heavy exact flow threshold",
+    "passed": true,
+    "evidence": "At 2400.000000000/h maximum flow=2400.000000000; at lambda+1, max flow=2400.250000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "nominal geometry bounds",
+    "passed": true,
+    "evidence": "10001 points: maximum slope 0.09986413, lateral acceleration 0.13369642 m/s\u00b2, order preserved. Analytic derivative maxima also stated in paper.",
+    "independent": true
+  },
+  {
+    "name": "nominal historical departure screen",
+    "passed": true,
+    "evidence": "FHWA 2006 conventional departure recovery >=60.96m; adopted 91.44m. Conventional taper screen 154.892172m <=230.0m. Not full/current compliance certification.",
+    "independent": true
+  },
+  {
+    "name": "robust nominal exact flow threshold",
+    "passed": true,
+    "evidence": "At 4000.000000000/h maximum flow=4000.000000000; at lambda+1, max flow=4000.400000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "robust cash_heavy exact flow threshold",
+    "passed": true,
+    "evidence": "At 2666.666666667/h maximum flow=2666.666666667; at lambda+1, max flow=2667.216666667 < demand.",
+    "independent": true
+  },
+  {
+    "name": "robust electronic_heavy exact flow threshold",
+    "passed": true,
+    "evidence": "At 4000.000000000/h maximum flow=4000.000000000; at lambda+1, max flow=4000.100000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "robust geometry bounds",
+    "passed": true,
+    "evidence": "10001 points: maximum slope 0.09986413, lateral acceleration 0.13369642 m/s\u00b2, order preserved. Analytic derivative maxima also stated in paper.",
+    "independent": true
+  },
+  {
+    "name": "robust historical departure screen",
+    "passed": true,
+    "evidence": "FHWA 2006 conventional departure recovery >=60.96m; adopted 91.44m. Conventional taper screen 154.892172m <=230.0m. Not full/current compliance certification.",
+    "independent": true
+  },
+  {
+    "name": "expanded nominal exact flow threshold",
+    "passed": true,
+    "evidence": "At 5100.000000000/h maximum flow=5100.000000000; at lambda+1, max flow=5100.000000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "expanded cash_heavy exact flow threshold",
+    "passed": true,
+    "evidence": "At 4000.000000000/h maximum flow=4000.000000000; at lambda+1, max flow=4000.550000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "expanded electronic_heavy exact flow threshold",
+    "passed": true,
+    "evidence": "At 4000.000000000/h maximum flow=4000.000000000; at lambda+1, max flow=4000.100000000 < demand.",
+    "independent": true
+  },
+  {
+    "name": "expanded geometry bounds",
+    "passed": true,
+    "evidence": "10001 points: maximum slope 0.09895833, lateral acceleration 0.08464240 m/s\u00b2, order preserved. Analytic derivative maxima also stated in paper.",
+    "independent": true
+  },
+  {
+    "name": "expanded historical departure screen",
+    "passed": true,
+    "evidence": "FHWA 2006 conventional departure recovery >=60.96m; adopted 91.44m. Conventional taper screen 236.893911m <=360.0m. Not full/current compliance certification.",
+    "independent": true
+  },
+  {
+    "name": "minimum robust booth count",
+    "passed": true,
+    "evidence": "Exhaustive total-count search first permits 3600/h in all payment scenarios at B=11, counts=[[6, 3, 2]]. Geometry/exit feasibility checked separately.",
+    "independent": true
+  },
+  {
+    "name": "routing witness baseline av=0.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness nominal av=0.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness robust av=0.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness expanded av=0.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness baseline av=0.25",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness nominal av=0.25",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness robust av=0.25",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness expanded av=0.25",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness baseline av=0.5",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness nominal av=0.5",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness robust av=0.5",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness expanded av=0.5",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness baseline av=0.75",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness nominal av=0.75",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness robust av=0.75",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness expanded av=0.75",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness baseline av=1.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness nominal av=1.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness robust av=1.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "routing witness expanded av=1.0",
+    "passed": true,
+    "evidence": "LP witness respects booth capacities, each exit capacity, and all payment-type conservation equations.",
+    "independent": true
+  },
+  {
+    "name": "simulation conservation",
+    "passed": true,
+    "evidence": "Every simulated vehicle is either discharged by horizon or in residual; all vehicles drained, no negative waiting.",
+    "independent": true
+  },
+  {
+    "name": "common random numbers",
+    "passed": true,
+    "evidence": "Same scenario/load uses identical arrivals, type marks and service draws across designs; counts/first arrivals additionally checked here.",
+    "independent": false
+  },
+  {
+    "name": "eight booth robust ceiling",
+    "passed": true,
+    "evidence": "For robust rate >2666.67/h one needs >=5 manual, >=2 exact, >=2 electronic booths, hence >=9; selected 8-booth design reaches 2666.67/h.",
+    "independent": true
+  },
+  {
+    "name": "clustering does not reduce selected capacity optimum",
+    "passed": true,
+    "evidence": "Both clustered and unrestricted enumerations have the same nominal and worst-case optimum thresholds for these inputs; no general equivalence claimed.",
+    "independent": false
+  },
+  {
+    "name": "finite buffer accounting and occupancy",
+    "passed": true,
+    "evidence": "All finite-buffer vehicles accounted for through drainage; no group exceeds its declared occupancy-token limit.",
+    "independent": false
+  },
+  {
+    "name": "occupancy witnesses",
+    "passed": true,
+    "evidence": "Feasible flows obey service, exit and occupancy bounds; absent witnesses independently have infeasible payment flow. Optimality independently audited in the research archive.",
+    "independent": true
+  },
+  {
+    "name": "land opportunity cost scenarios",
+    "passed": true,
+    "evidence": "Recomputed footprint from recovery/taper dimensions and equipment from booth counts; land prices are explicit scenarios, not real quotes or ROI.",
+    "independent": true
+  }
+]

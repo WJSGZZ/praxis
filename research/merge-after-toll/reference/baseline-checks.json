@@ -1,0 +1,20 @@
+[
+  {
+    "name": "baseline payment bottleneck",
+    "passed": true,
+    "evidence": "Three staffed booths provide 900/h; 30% of arrivals need them, hence lambda<=3000/h.",
+    "independent": true
+  },
+  {
+    "name": "pooled bound is insufficient",
+    "passed": true,
+    "evidence": "Pooled 5400.0/h exceeds payment ceiling 3000.0/h; it is an upper bound, not a feasible recommendation.",
+    "independent": true
+  },
+  {
+    "name": "baseline flow witness",
+    "passed": true,
+    "evidence": "NetworkX max flow independently routes the entire claimed baseline rate.",
+    "independent": true
+  }
+]

@@ -63,7 +63,7 @@
 </tr>
 </table>
 
-另有一个小的**研究模式案例**：没有标准答案时怎样猜规律、留出检验、找反例并证明两次，见 [3×2n 多米诺铺法数](demos/domino-research/README.md)。
+研究案例另行归档：[多米诺铺法数](demos/domino-research/README.md)展示猜想与证明；[收费站汇合](https://github.com/WJSGZZ/praxis/tree/main/research/merge-after-toll)用完整英文报告说明，为什么扩建窗口可能反而加重排队，附原稿、反例、检查与复现。
 
 如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 

@@ -63,7 +63,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 </table>
 
-A small **research-mode case** shows what happens when there is no answer key: guess a pattern, hold terms out, hunt for counterexamples and prove it twice, in [domino tilings of a 3×2n board](demos/domino-research/README.en.md).
+Explore two research archives as well: [domino tilings](demos/domino-research/README.en.md) develops and proves a conjecture; [Merge After Toll](https://github.com/WJSGZZ/praxis/tree/main/research/merge-after-toll) follows a complete English study from its first draft to a counterintuitive result—additional booths can worsen waiting when downstream space is limited. Drafts, checks and reproduction code accompany the report.
 
 Explore either case or bring your own problem. **Star Praxis** if you would like to follow its development.
 
