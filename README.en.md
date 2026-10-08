@@ -132,21 +132,24 @@ All seven share the [methodology](references/methods.md) and one task record; se
 
 Real-world and social questions, research, coursework, and competitions use the same modeling core. For a competition, verify the applicable edition and institutional rules, then configure team eligibility, report language, formats, attachments, AI disclosure, and deadlines.
 
+Tell Praxis the target up front: a contest with a deadline, a contest worked through in depth first, research, or teaching. It does the work to research standard, with a stopping rule, then condenses the evidence into a paper a judge can read quickly; see [deep work and contest convergence](references/convergence.md). Before a paper goes out, independent reviewer roles try to break it ([review protocol](references/review-protocol.md)).
+
 For solo work under time pressure, Praxis defaults to one current user action and develops the report as results become available. Team tasks are assigned around skills and dependencies. Competition requirements are not applied to unrelated projects.
 
 ## Math tools
 
-`praxis-tools` turns common methods into callable tools with JSON in and out. Hosts without MCP can run `python -m scripts.mcp_server --call <tool> '<json>'`. Every tool is tested against an answer derived separately: a textbook example, a closed form, or brute-force enumeration.
+`praxis-tools` turns common methods into callable tools with JSON in and out. Hosts without MCP can run `python -m scripts.mcp_server --call <tool> '<json>'`. The [coverage map](references/coverage-map.md) shows which kinds of problem have a ready tool and what to do when none exists. Every tool is tested against an answer derived separately: a textbook example, a closed form, or brute-force enumeration.
 
 | Group | Tools |
 |---|---|
-| Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `shortest_path`, `max_flow` (with the minimum cut), `minimum_spanning_tree` |
-| Regression and comparison | `ols_report` (intervals and diagnostics), `compare_models` (cross-validated comparison against a baseline) |
+| Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `knapsack` (exact), `shortest_path`, `max_flow` (with the minimum cut), `min_cost_flow`, `minimum_spanning_tree` |
+| Nonlinear and robust optimisation | `minimize_nlp` (multi-start, lists every local optimum), `robust_lp` (budgeted robustness with its price), `solve_mdp` (exact backward induction or value iteration) |
+| Regression, tests and statistics | `ols_report` (intervals and diagnostics), `compare_models` (cross-validated against a baseline), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
-| Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_diffusion` (finite volumes with an energy account) |
-| Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |
-| Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `find_relation`, `lesson_add`, `lesson_search` |
-| Uncertainty | `sobol_sensitivity` |
+| Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_ode` (re-run at tighter tolerance), `solve_layered_diffusion` with the independent `layered_diffusion_laplace`, `grid_convergence_index`, `solve_diffusion` (finite volumes with an energy account) |
+| Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `bimatrix_nash`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |
+| Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `check_recurrence` (finite-check proof), `find_relation`, `route_to_lesson`, `lesson_add`, `lesson_search` |
+| Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
 | Data and free literature | `audit_data`, `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
 The plugin also wires in the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. For paywalled journal papers the tools find legal free copies; the rest can come from a school library.

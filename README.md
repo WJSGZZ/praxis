@@ -131,21 +131,24 @@ uv sync --project /path/to/praxis --locked
 
 社会与现实问题、研究、课程和比赛共用建模核心。参赛时，再分别核验该届赛事与学校／赛区要求，配置人数、交付语言、格式、附件、AI 披露和截止时间。
 
+开始时先确认交付目标（竞赛有截止、先做透再收敛、研究、教学）：内部按科研标准做透并设停止规则，再把证据收敛成评委读得懂的论文，做法见[深度工作与竞赛收敛](references/convergence.md)；交稿前有[独立评审协议](references/review-protocol.md)。
+
 单人限时任务默认只给用户一个当前事项，边取得结果边写报告；多人任务按能力和依赖安排主责与复核。通用项目不套用赛事规则。
 
 ## 数学工具
 
-`praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可用 `python -m scripts.mcp_server --call 工具名 '参数'`。每个工具都有独立答案的测试：教科书例题、闭式解或暴力枚举。
+`praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可用 `python -m scripts.mcp_server --call 工具名 '参数'`。哪类问题有现成工具、没有时怎么办，见[能力覆盖地图](references/coverage-map.md)。每个工具都有独立答案的测试：教科书例题、闭式解或暴力枚举。
 
 | 类别 | 工具 |
 |---|---|
-| 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`shortest_path`、`max_flow`（附最小割）、`minimum_spanning_tree` |
-| 回归与比较 | `ols_report`（置信区间与诊断）、`compare_models`（对基线的交叉验证比较） |
+| 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
+| 非线性与稳健优化 | `minimize_nlp`（多起点，列出各局部最优）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（精确逆向递推或值迭代） |
+| 回归、检验与统计 | `ols_report`（置信区间与诊断）、`compare_models`（对基线的交叉验证比较）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
-| 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_diffusion`（有限体积，附能量收支） |
-| 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
-| 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`find_relation`、`lesson_add`、`lesson_search` |
-| 不确定性 | `sobol_sensitivity` |
+| 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |
+| 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
+| 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（有限核对证明）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
+| 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
 | 数据与文献（均免费） | `audit_data`、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
 插件还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
