@@ -10,6 +10,7 @@ BUNDLE 指 `praxis` 技能目录。先读 [writing.md](../../references/writing.
 
 ## 做什么
 
+- 竞赛论文从完整研究“收敛”而来：先按 [convergence.md](../../references/convergence.md) 的账本决定哪些进正文、附录、证据池，摘要先于正文成形，正文不讲工具与流程。
 - 结构：摘要先写问题、方法、关键数字与条件；每个模型按“假设—推导—求解—检验—局限”；证明简短但完整；以真实结果支撑的结论收尾。
 - 图表：每张图回答一个读者的问题，图注写明数据版本、单位与比较依据；不画不支持结论的图。
 - 排版：论文用 LaTeX，不手拼 PDF。起点是 `templates/cumcm-paper.tex`（中文，ctex）与 `templates/mcm-paper.tex`（英文）；线图、柱状图、热图和流程图用 `scripts/texplot.py` 生成 pgfplots／TikZ 源码，字体与正文一致；用 XeLaTeX 或 tectonic 编译两遍，检查日志里没有缺字，再逐页渲染。
