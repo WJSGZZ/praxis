@@ -54,6 +54,56 @@ def test_latest_failure_does_not_fall_back_to_old_success(tmp_path):
         pipeline.evidence_index(case)
 
 
+def test_same_second_uuid_order_cannot_hide_latest_failure(tmp_path):
+    from pathlib import Path
+    case, _, _ = make_case(tmp_path)
+    record(case)
+    first = pipeline.run_case(case)
+    original = Path(first['run'])
+    older = original.with_name('20261009T010203-ffffffff')
+    original.rename(older)
+    receipt = json.loads((older / 'receipt.json').read_text())
+    receipt.update(started_utc='2026-10-09T01:02:03.100000+00:00',
+                   ended_utc='2026-10-09T01:02:03.200000+00:00')
+    pipeline.save(older / 'receipt.json', receipt)
+    newer = older.with_name('20261009T010203-00000000')
+    newer.mkdir()
+    failed = {**receipt, 'status': 'failed', 'automatic_checks_passed': False,
+              'started_utc': '2026-10-09T01:02:03.300000+00:00',
+              'ended_utc': '2026-10-09T01:02:03.400000+00:00',
+              'error': 'Controlled failure receipt', 'outputs': {}}
+    pipeline.save(newer / 'receipt.json', failed)
+    report = pipeline.status(case)
+    assert report['runs'][0]['usable_automatic_evidence']
+    assert report['runs'][-1]['run'] == str(newer)
+    with pytest.raises(ValueError, match='Latest run failed'):
+        pipeline.evidence_index(case)
+
+
+def test_legacy_single_run_missing_timestamps_remains_usable(tmp_path):
+    from pathlib import Path
+    case, _, _ = make_case(tmp_path)
+    record(case)
+    run = Path(pipeline.run_case(case)['run'])
+    receipt = json.loads((run / 'receipt.json').read_text())
+    receipt.pop('started_utc')
+    receipt.pop('ended_utc')
+    pipeline.save(run / 'receipt.json', receipt)
+    assert pipeline.evidence_index(case)['run'] == str(run)
+
+
+def test_invalid_run_timestamp_refuses_evidence_instead_of_skipping(tmp_path):
+    from pathlib import Path
+    case, _, _ = make_case(tmp_path)
+    record(case)
+    run = Path(pipeline.run_case(case)['run'])
+    receipt = json.loads((run / 'receipt.json').read_text())
+    receipt['started_utc'] = 'not a timestamp'
+    pipeline.save(run / 'receipt.json', receipt)
+    with pytest.raises(ValueError, match='Invalid run timestamp'):
+        pipeline.evidence_index(case)
+
+
 def test_duplicate_check_names_cannot_silently_select_one(tmp_path):
     case,_,_=make_case(tmp_path)
     record(case)

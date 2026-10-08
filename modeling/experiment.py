@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import ast
 import itertools
+import math
 from fractions import Fraction
 from typing import Callable, Sequence
 
@@ -13,79 +14,131 @@ import numpy as np
 import sympy as sp
 
 
-def find_counterexample(claim: Callable, domain: Sequence[tuple], *, trials: int = 20000, exhaustive_limit: int = 200000, seed: int = 2027) -> dict:
-    """Search for an input where claim(*x) is False (or raises).
+def find_counterexample(claim: Callable, domain: Sequence[tuple], *, trials: int = 20000, exhaustive_limit: int = 200000, seed: int = 2027,
+                        shrink_budget: int = 1000) -> dict:
+    """Search for a false claim; exceptions/non-finite results are evaluation errors.
 
-    domain: one entry per argument: ('int', lo, hi) inclusive, or ('real', lo, hi). If every argument is an integer range and the
-    product of sizes is at most exhaustive_limit, all cases are checked and 'no counterexample' is a proof for that domain.
-    Otherwise points are sampled, edges first. A found counterexample is shrunk to a simpler one that still fails."""
+    Integer bounds are inclusive. An exhausted small integer domain proves the
+    claim there only when every evaluation succeeded. Shrinking has a finite
+    evaluation budget and does not establish a globally minimal counterexample.
+    The budget limits calls, not the duration of an individual user callable.
+    """
+    if any(not isinstance(v, int) or isinstance(v, bool) or v < 0 for v in (trials, exhaustive_limit, shrink_budget)):
+        raise ValueError('Search and shrink budgets must be nonnegative integers')
     for spec in domain:
-        if spec[0] not in ('int', 'real') or spec[1] > spec[2]:
-            raise ValueError("Each domain entry must be ('int'|'real', lo, hi) with lo <= hi")
+        if len(spec) != 3 or spec[0] not in ('int', 'real') or not all(np.isfinite(v) for v in spec[1:]) or spec[1] > spec[2]:
+            raise ValueError("Each domain entry must be ('int'|'real', finite lo, finite hi) with lo <= hi")
+        if spec[0] == 'int' and any(not isinstance(v, (int, np.integer)) or isinstance(v, bool) for v in spec[1:]):
+            raise ValueError('Integer domain bounds must be integers')
+    errors = []
+    error_count = 0
 
     def fails(x):
+        nonlocal error_count
         try:
-            return not bool(claim(*x))
-        except Exception:
-            return True
+            value = claim(*x)
+            if np.ndim(value) != 0:
+                raise ValueError('Claim must return a scalar truth value')
+            if not isinstance(value, (bool, np.bool_)) and not np.isfinite(value):
+                raise ValueError('Claim returned a non-finite value')
+            return not bool(value)
+        except Exception as exc:
+            error_count += 1
+            if len(errors) < 10:
+                errors.append(dict(at=list(x), error=f'{type(exc).__name__}: {exc}'))
+            return False
+
+    def result(x, tried, exhaustive):
+        info = _shrink(fails, list(x), domain, budget=shrink_budget, return_info=True)
+        return dict(found=True, counterexample=list(x), shrunk=info.pop('point'), shrinking=info,
+                    cases=tried, exhaustive=exhaustive, proved_for_domain=False,
+                    evaluation_errors=error_count, error_examples=errors)
 
     all_int = all(s[0] == 'int' for s in domain)
-    size = int(np.prod([s[2] - s[1] + 1 for s in domain], dtype=float)) if all_int else None
+    size = math.prod(s[2] - s[1] + 1 for s in domain) if all_int else None
+    tried = 0
     if all_int and size <= exhaustive_limit:
         for x in itertools.product(*[range(s[1], s[2] + 1) for s in domain]):
+            tried += 1
             if fails(x):
-                return dict(found=True, counterexample=list(x), shrunk=list(_shrink(fails, list(x), domain)), cases=None, exhaustive=True)
-        return dict(found=False, proved_for_domain=True, cases=size)
+                return result(x, tried, True)
+        return dict(found=False, proved_for_domain=not error_count, cases=tried, exhaustive=True,
+                    evaluation_errors=error_count, error_examples=errors,
+                    note='Proof for the finite domain only when all evaluations succeeded.')
     rng = np.random.default_rng(seed)
     corners = [[s[1], s[2]] for s in domain]
-    candidates = [list(c) for c in itertools.product(*corners)][:256]
-    tried = 0
-    for x in candidates:
+    for x in itertools.islice(itertools.product(*corners), 256):
         tried += 1
         if fails(x):
-            return dict(found=True, counterexample=x, shrunk=list(_shrink(fails, list(x), domain)), cases=tried, exhaustive=False)
+            return result(x, tried, False)
     for _ in range(trials):
-        x = [int(rng.integers(s[1], s[2] + 1)) if s[0] == 'int' else float(rng.uniform(s[1], s[2])) for s in domain]
+        x = [int(rng.integers(s[1], s[2], endpoint=True)) if s[0] == 'int' else float(rng.uniform(s[1], s[2])) for s in domain]
         tried += 1
         if fails(x):
-            return dict(found=True, counterexample=x, shrunk=list(_shrink(fails, x, domain)), cases=tried, exhaustive=False)
-    return dict(found=False, proved_for_domain=False, cases=tried, note='No counterexample among the cases tried; the claim is not proved.')
+            return result(x, tried, False)
+    return dict(found=False, proved_for_domain=False, cases=tried, exhaustive=False,
+                evaluation_errors=error_count, error_examples=errors,
+                note='No counterexample among successful evaluations; errors are not refutations, and the claim is not proved.')
 
 
-def _shrink(fails, x, domain):
-    """Greedy shrinking toward zero (or the nearest bound), keeping the failure."""
+def _shrink(fails, x, domain, *, budget=1000, return_info=False):
+    """Greedy strict progress toward zero/nearest bound, with a call budget.
+
+    `fails` must recognize an actual false claim, not an evaluation exception.
+    Exhausting the candidate moves means local termination, never global minimality.
+    """
+    if not isinstance(budget, int) or isinstance(budget, bool) or budget < 0:
+        raise ValueError('budget must be a nonnegative integer')
     x = list(x)
+    evaluations = 0
     changed = True
-    while changed:
+    exhausted = False
+    while changed and not exhausted:
         changed = False
         for i, spec in enumerate(domain):
             target = min(max(0, spec[1]), spec[2])
             for candidate in _steps(x[i], target, spec[0]):
+                if not (spec[1] <= candidate <= spec[2] and abs(candidate - target) < abs(x[i] - target)):
+                    continue
+                if evaluations >= budget:
+                    exhausted = True
+                    break
                 y = x.copy()
                 y[i] = candidate
+                evaluations += 1
                 if fails(y):
                     x, changed = y, True
                     break
-    return x
+            if exhausted:
+                break
+    info = dict(point=x, evaluations=evaluations, budget=budget, budget_exhausted=exhausted,
+                status='budget_exhausted' if exhausted else 'no_further_candidate',
+                globally_minimal=False)
+    return info if return_info else x
 
 
 def _steps(value, target, kind):
     if value == target:
         return
     if kind == 'int':
-        seen = []
+        seen = set()
         step = abs(value - target)
+        direction = 1 if value > target else -1
         while step >= 1:
-            c = value - int(np.sign(value - target)) * step
-            if c != value and c not in seen:
-                seen.append(c)
+            c = value - direction * step
+            if c != value:
+                seen.add(c)
             step //= 2
         yield from sorted(seen, key=lambda c: abs(c - target))
     else:
+        # Do not round to a fixed decimal scale: it can erase progress, leave a
+        # narrow domain, or erase a small counterexample. Test the final float.
+        seen = set()
         for frac in (1.0, 0.5, 0.25, 0.1):
             c = target + (value - target) * (1 - frac)
-            if c != value:
-                yield round(c, 6)
+            if np.isfinite(c) and c not in seen and abs(c - target) < abs(value - target):
+                seen.add(c)
+                yield c
 
 
 def test_conjecture(lhs: Callable, rhs: Callable, relation: str, bounds: Sequence[Sequence[float]], *, points: int = 2000, dps: int = 40,

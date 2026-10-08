@@ -30,7 +30,7 @@
 | `route_graph` | graph, lessons_path, graph_file, question, mode, operations* | Keep the record of routes tried on a problem |
 | `route_to_lesson` | graph*, problem*, principle*, verified_by, tags | Draft a lesson from a finished route record (one chosen route); you supply the transferable principle |
 | `test_conjecture` | lhs*, rhs*, relation*, names*, bounds*, points, tolerance | Test lhs (==, <=, >=) rhs for random points in a box (double precision) |
-| `find_counterexample` | claim*, names*, domain*, trials, exhaustive_limit | Search for a counterexample of a claim (arithmetic, comparisons, and/or, abs/min/max/gcd/isprime) over integer or real ranges; exhaustive when the integer domain is small, with shrinking |
+| `find_counterexample` | claim*, names*, domain*, trials, exhaustive_limit, shrink_budget | Search for a counterexample of a claim (arithmetic, comparisons, and/or, abs/min/max/gcd/isprime) over integer or real ranges |
 | `check_recurrence` | sequence*, coefficients*, order_bound | Check that a sequence satisfies a_n = c_1 a_{n-1} +  |
 | `guess_sequence` | sequence*, max_order, max_degree, holdout | Guess a constant-coefficient linear recurrence and a polynomial formula for a sequence of rationals (exact) |
 | `find_relation` | value*, constants*, dps, max_coeff | Integer relation (PSLQ) between a value and constants, e.g |
@@ -55,7 +55,7 @@
 | `hypothesis_test` | kind*, a, b, groups, table, alpha | Test with effect size and assumption flags |
 | `bootstrap_ci` | data*, statistic, n_resamples, confidence, seed, method | Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations |
 | `monte_carlo` | expression*, distributions*, n, seed, threshold | Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check |
-| `solve_ode` | rhs*, names*, y0*, t_span*, t_eval, method, rtol | Integrate dy/dt = rhs(t, y) for expressions in t and the named states; repeats at 100 times tighter tolerance and reports the difference as a numerical-error indicator |
+| `solve_ode` | rhs*, names*, y0*, t_span*, t_eval, method, rtol | Integrate dy/dt = rhs(t, y) for expressions in t and the named states; compares dense interpolants with 100 times tighter tolerance at common times before either run terminates |
 | `arima_forecast` | series*, horizon*, max_p, max_d, max_q, seasonal_period | ARIMA forecast: differencing by ADF, p and q by AICc, 95% intervals, Ljung-Box residual test |
 | `pca_report` | X*, names, standardise | Principal components: explained variance, loadings, scores (standardised by default) |
 | `cluster_report` | X*, k_range, seed, standardise | K-means for several k with silhouette, inertia and resampling stability (adjusted Rand index) of the best k |

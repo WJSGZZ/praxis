@@ -20,7 +20,9 @@ kind 可为 suggestion、challenge、decision、implementation、understanding�
 
 用户提出、AI实施是一条可追溯链；AI提出、用户采纳须分别记提案与决定。未采纳但触发了有效检查，也记录检查及不采纳理由。纠正旧记录追加 supersedes 指向旧事件id，不改写历史。摘要沿任务与实际影响组织，不算对话轮数或贡献比例；缺记录表示证据缺口，不能推断没有参与。
 
-纯贡献追加不修改 planning/tasks.md 或计算配置，也不改变数值运行有效性。意见被采纳后若改变数据、代码、依赖、计算条件或 requirements，仍照 pipeline 的实际快照检查过期；贡献日志不能让失效结果恢复有效。
+`planning/contributions.jsonl` 是新案例贡献事件的权威来源，任务沿用 tasks.md 的 ID，运行后的事件引用与处理状态放操作接续记录，不要求双写。旧表可作为注明位置的历史来源，由助手在最终说明中兼容汇总并按来源去重；当前 contribution-summary 只读事件日志，不自动解析旧表。迁移用 retrospective 保留来源，不凭迁移补造缺失事实。最终披露必须包含有证据、仅存在于事件日志的实际作用。
+
+纯贡献追加不修改计算配置，也不改变数值运行有效性；需要时在 planning/progress.md 补一个事件引用；pipeline 整体哈希 tasks.md，纯补记不改 tasks.md，否则实际会触发过期保护。意见被采纳后若改变数据、代码、依赖、计算条件或 requirements，仍照 pipeline 的实际快照检查过期；贡献日志不能让失效结果恢复有效。
 
 ## 三种工作模式
 

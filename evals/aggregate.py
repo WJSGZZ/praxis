@@ -133,6 +133,7 @@ def review_record(item: dict) -> dict:
                 score_source=('checklist' if item.get('schema_version', 1) == 2 else 'legacy_checklist')
                              if 'checklist' in item else 'legacy_direct',
                 validity_status=status, critical_claims=claims, issues=issues,
+                overall_note=item.get('overall_note'),
                 unreviewed_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
                                   for key, entry in items.items() if entry.get('reviewed', True) is False],
                 not_applicable_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
@@ -149,10 +150,16 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
     basis: dict[str, dict[str, set]] = {}
     reviews: dict[str, list[dict]] = {}
     for path in files:
-        for item in json.loads(Path(path).read_text()):
+        for source_index, item in enumerate(json.loads(Path(path).read_text())):
             scores = dimension_scores(item)
             record = review_record(item)
             record['source'] = str(path)
+            record['source_record_index'] = source_index
+            record['review_id'] = f'review-{len(reviews.get(item["paper"], [])) + 1}'
+            record['reviewer'] = item.get('reviewer', item.get('judge'))
+            record['scope'] = item.get('scope')
+            if 'award_estimate' in item:
+                record['award_estimate'] = item['award_estimate']
             reviews.setdefault(item['paper'], []).append(record)
             if 'award_estimate' in item:
                 awards.setdefault(item['paper'], []).append(item['award_estimate'])
@@ -172,48 +179,97 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
     return out
 
 
+def _award_view(award: dict, contest: str | None) -> dict | None:
+    """Validate one scoped declaration; an unknown award system forces abstention."""
+    required = {'contest', 'event', 'edition', 'problem', 'version', 'scope', 'target', 'basis',
+                'gaps', 'actions', 'most_likely', 'range', 'calibrated'}
+    if not isinstance(award, dict) or not required <= set(award):
+        return None  # Preserve legacy awards internally, without inventing their scope.
+    for field in ('contest', 'event', 'edition', 'problem', 'version', 'scope', 'basis'):
+        _text(award[field], f'award {field}')
+    if contest and contest != 'general' and award['contest'] != contest:
+        raise ValueError('Award contest does not match the selected profile')
+    if award['contest'] == 'mcm' and award['event'] not in ('MCM', 'ICM'):
+        raise ValueError('Specify MCM or ICM as the event')
+    target = award['target']
+    if target is not None:
+        _text(target, 'award target')
+    # Explicit null is canonical; retain the previous documented Chinese sentinel.
+    target = None if target in (None, '未设定', 'unset') else target
+    if award['most_likely'] is not None:
+        _text(award['most_likely'], 'award most_likely')
+    for field in ('range', 'gaps', 'actions'):
+        if not isinstance(award[field], list):
+            raise ValueError(f'award {field} needs a list')
+        for value in award[field]:
+            _text(value, f'award {field} item')
+    from evals.competitions import lookup
+    levels = lookup(award['contest'], award['event'], award['edition']).get('award_system')
+    labels = award['range'] + ([award['most_likely']] if award['most_likely'] is not None else [])
+    if target is not None:
+        labels.append(target)
+    if levels and any(label not in levels for label in labels):
+        raise ValueError('Award label (including target) does not belong to the exact contest edition record')
+    if type(award['calibrated']) is not bool:
+        raise ValueError('award calibrated must be boolean')
+    if award['calibrated']:
+        _text(award.get('calibration_evidence'), 'award calibration_evidence')
+        if not levels:
+            raise ValueError('Cannot declare calibrated awards without a verified edition award system')
+    assessment = {key: award[key] for key in (
+        'most_likely', 'range', 'basis', 'gaps', 'actions',
+        'contest', 'event', 'edition', 'problem', 'version', 'scope', 'calibrated')}
+    assessment.update(target=target, target_status='unset' if target is None else 'set',
+                      award_system_status='verified' if levels else 'unverified',
+                      assessment_status='reviewer_estimate' if award['most_likely'] is not None or award['range'] else 'abstained')
+    if award['calibrated']:
+        assessment['calibration_evidence'] = award['calibration_evidence']
+    if not levels:
+        # Keep the proposal for audit, but never present unchecked labels as an estimate.
+        assessment['unverified_proposal'] = {
+            'target': target, 'most_likely': award['most_likely'], 'range': award['range']}
+        assessment.update(target=None, target_status='unset' if target is None else 'unverified',
+                          most_likely=None, range=[], assessment_status='abstained_unverified_award_system')
+    return assessment
+
+
 def user_view(report: dict, contest: str | None = None) -> dict:
-    """Award-first view of existing reviews; never convert a diagnostic to an award."""
+    """Award-first view, with each review's mathematical evidence kept associated."""
     out = {}
     for paper, result in report.items():
-        assessments = []
-        for award in result.get('award_estimates', []):
-            required = {'contest', 'event', 'edition', 'problem', 'version', 'scope', 'target', 'basis',
-                        'gaps', 'actions', 'most_likely', 'range', 'calibrated'}
-            if not isinstance(award, dict) or not required <= set(award):
-                continue  # Preserve legacy awards internally, without inventing their scope.
-            for field in ('contest', 'event', 'edition', 'problem', 'version', 'scope', 'target', 'basis'):
-                _text(award[field], f'award {field}')
-            if contest and contest != 'general' and award['contest'] != contest:
-                raise ValueError('Award contest does not match the selected profile')
-            if award['contest'] == 'mcm' and award['event'] not in ('MCM', 'ICM'):
-                raise ValueError('Specify MCM or ICM as the event')
-            if award['most_likely'] is not None:
-                _text(award['most_likely'], 'award most_likely')
-            for field in ('range', 'gaps', 'actions'):
-                if not isinstance(award[field], list):
-                    raise ValueError(f'award {field} needs a list')
-                for value in award[field]:
-                    _text(value, f'award {field} item')
-            from evals.competitions import lookup
-            levels = lookup(award['contest'], award['event'], award['edition']).get('award_system')
-            labels = award['range'] + ([award['most_likely']] if award['most_likely'] is not None else [])
-            if levels and any(label not in levels for label in labels):
-                raise ValueError('Award label does not belong to the exact contest edition record')
-            if type(award['calibrated']) is not bool:
-                raise ValueError('award calibrated must be boolean')
-            if award['calibrated']:
-                _text(award.get('calibration_evidence'), 'award calibration_evidence')
-            assessments.append({key: award[key] for key in (
-                'target', 'most_likely', 'range', 'basis', 'gaps', 'actions',
-                'contest', 'event', 'edition', 'problem', 'version', 'scope', 'calibrated')})
-            if award['calibrated']:
-                assessments[-1]['calibration_evidence'] = award['calibration_evidence']
+        assessments, reviews = [], []
+        has_attached_awards = any('award_estimate' in r for r in result['reviews'])
+        for index, record in enumerate(result['reviews'], 1):
+            review_id = record.get('review_id', f'review-{index}')
+            assessment = _award_view(record['award_estimate'], contest) if 'award_estimate' in record else None
+            if assessment is not None:
+                assessment.update(review_id=review_id, source=record.get('source'), reviewer=record.get('reviewer'))
+                assessments.append(assessment)
+            reviews.append({
+                'review_id': review_id, 'source': record.get('source'),
+                'source_record_index': record.get('source_record_index'), 'reviewer': record.get('reviewer'),
+                'scope': record.get('scope') or (assessment['scope'] if assessment else None),
+                'validity_status': record['validity_status'],
+                'critical_claims': record.get('critical_claims', []), 'issues': record.get('issues', []),
+                'award_assessment': assessment, 'overall_note': record.get('overall_note'),
+            })
+        if not has_attached_awards:
+            # Old aggregate reports lack the association: do not guess by array position.
+            for award in result.get('award_estimates', []):
+                assessment = _award_view(award, contest)
+                if assessment is not None:
+                    assessment.update(review_id=None, association_status='unavailable_in_legacy_report')
+                    assessments.append(assessment)
+        unknown_system = any(a['award_system_status'] == 'unverified' for a in assessments)
+        status = ('award_system_unverified' if assessments and all(
+                    a['award_system_status'] == 'unverified' for a in assessments)
+                  else 'reviewer_estimates' if assessments else 'insufficient_scoped_award_evidence')
         out[paper] = {'contest': contest or 'general', 'assessments': assessments,
-                      'status': 'reviewer_estimates' if assessments else 'insufficient_scoped_award_evidence',
-                      'validity': [r['validity_status'] for r in result['reviews']],
-                      'note': '各评委估计分别保留；未建立诊断分与奖项的固定换算。' if assessments
-                              else '暂不判断奖项：缺少具体届次、题目、版本、范围或评审依据。'}
+                      'status': status, 'reviews': reviews,
+                      'validity': [r['validity_status'] for r in reviews],
+                      'note': ('部分或全部届次的奖项体系未核实，相关意见暂不判断档次；保留原提议供核查。' if unknown_system
+                               else '各评委估计与主张证据分别保留；未建立诊断分与奖项的固定换算。' if assessments
+                               else '暂不判断奖项：缺少具体届次、题目、版本、范围或评审依据。')}
     return out
 
 

@@ -27,6 +27,20 @@ def test_contribution_append_does_not_expire_run_but_accepted_code_change_does(t
     assert len(contributions.read_events(case)) == 2
 
 
+def test_operation_progress_does_not_expire_run_but_task_definition_does(tmp_path):
+    case, _, _ = make_case(tmp_path)
+    pipeline.run_case(case)
+    progress = case / 'planning/progress.md'
+    progress.write_text('Accepted: latest run; next: review; budget: 10 minutes.\n')
+    assert pipeline.status(case)['runs'][0]['usable_automatic_evidence']
+    progress.write_text('Accepted: latest run; candidate rejected; next: deliver.\n')
+    contributions.append_event(case, event())
+    assert pipeline.status(case)['runs'][0]['usable_automatic_evidence']
+    tasks = case / 'planning/tasks.md'
+    tasks.write_text(tasks.read_text() + '\nChanged target: predict at x=5.\n')
+    assert not pipeline.status(case)['runs'][0]['usable_automatic_evidence']
+
+
 @pytest.mark.parametrize('change', [
     {'source': {}}, {'status': 'implemented'}, {'contribution_percent': 80}, {'human_verified': True},
     {'kind': 'method-innovation'}, {'origin': 'inferred'}, {'supersedes': 'made-up'},

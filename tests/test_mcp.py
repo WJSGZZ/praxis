@@ -151,3 +151,14 @@ def test_route_graph_file_persistence_and_calibration_tool(tmp_path):
     assert sorted(second['graph']['paths']) == ['a', 'b'] and first['graph']['question'] == second['graph']['question']
     fit = server.call('calibrate_curve', dict(expression='a*x + b', parameters=['a', 'b'], x=[0, 1, 2, 3, 4, 5], y=[1.0, 3.1, 4.9, 7.2, 8.9, 11.1], theta0=[1, 0]))
     assert abs(fit['parameters'][0]['estimate'] - 2.02) < 0.1 and fit['converged']
+
+
+def test_numeric_error_contracts_through_mcp():
+    from scripts import mcp_server as server
+    r = server.call('solve_ode', dict(rhs=['-y'], names=['y'], y0=[1.], t_span=[0., 5.]))
+    assert r['tolerance_check_max_difference'] < 1e-6
+    assert r['tolerance_check']['common_interval'] == [0., 5.]
+    r = server.call('find_counterexample', dict(claim='x < 1e-7', names=['x'], domain=[['real', 0., 1.]], shrink_budget=1))
+    assert r['found'] and r['shrinking']['budget_exhausted']
+    r = server.call('find_counterexample', dict(claim='1/n > 0', names=['n'], domain=[['int', 0, 3]]))
+    assert not r['found'] and not r['proved_for_domain'] and r['evaluation_errors'] == 1

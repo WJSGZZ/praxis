@@ -246,15 +246,42 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
     return {'run': str(attempt), **receipt}
 
 
+def run_order(path, receipt):
+    """Order attempts by recorded instants, never a random UUID within a second.
+
+    Legacy receipts may omit timestamps: retain directory-time compatibility.
+    Malformed timestamps fail closed rather than silently selecting old evidence.
+    """
+    def instant(value):
+        try:
+            parsed = datetime.fromisoformat(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f'Invalid run timestamp in {path}: {value!r}') from exc
+        return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
+
+    started = receipt.get('started_utc')
+    ended = receipt.get('ended_utc')
+    if started is None and ended is None:
+        try:
+            start = datetime.strptime(path.parent.name.split('-')[0], '%Y%m%dT%H%M%S').replace(tzinfo=timezone.utc)
+        except ValueError as exc:
+            raise ValueError(f'Cannot order legacy run without timestamp: {path}') from exc
+    else:
+        start = instant(started if started is not None else ended)
+    finish = instant(ended) if ended is not None else start
+    # For exact ties, a failed/incomplete attempt must not be hidden by success.
+    return start, finish, not receipt.get('automatic_checks_passed', False), str(path)
+
+
 def status(case):
     case = under_project(case)
     config = read_json(case / 'case.json')
     changes = input_changes(case, config)
-    runs = sorted((case / 'runs').glob('*/receipt.json'))
+    runs = [(path, read_json(path)) for path in (case / 'runs').glob('*/receipt.json')]
+    runs.sort(key=lambda item: run_order(*item))
     report = {'case': str(case), 'raw_input_changes': changes, 'runs': [],
               'paper_ready': False, 'human_verification': config['human_verification']}
-    for path in runs:
-        receipt = read_json(path)
+    for path, receipt in runs:
         stale = list(changes)
         for relative, checksum in receipt.get('code', {}).items():
             source = (case / relative).resolve()

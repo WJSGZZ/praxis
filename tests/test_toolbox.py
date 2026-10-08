@@ -145,3 +145,32 @@ def test_pca_and_cluster():
     blobs = np.r_[rng.normal(0, .3, (60, 2)), rng.normal(4, .3, (60, 2)), rng.normal([0, 5], .3, (60, 2))]
     c = inference.cluster_report(blobs, (2, 3, 4, 5))
     assert c['best_k'] == 3 and c['stability_ari_mean'] > .9
+
+
+def test_ode_default_common_time_comparison_matches_closed_form():
+    result = inference.solve_ode(lambda t, y: -y, [1.], [0., 5.])
+    assert np.max(np.abs(np.asarray(result['y'])[0] - np.exp(-np.asarray(result['t'])))) < 1e-6
+    assert result['tolerance_check_max_difference'] < 1e-6
+    check = result['tolerance_check']
+    assert check['common_interval'] == [0., 5.]
+    assert check['times'][0] == 0. and check['times'][-1] == 5.
+    backward = inference.solve_ode(lambda t, y: -y, [np.exp(-5.)], [5., 0.])
+    assert backward['tolerance_check_max_difference'] < 1e-6
+    assert backward['y'][0][-1] == pytest.approx(1., abs=1e-6)
+
+
+def test_ode_event_overlap_never_extrapolates_even_without_output_samples():
+    event = lambda t, y: y[0] - .5
+    event.terminal = True
+    for grid in (None, [.1, 1., 3.], [1., 3.]):
+        result = inference.solve_ode(lambda t, y: -y, [1.], [0., 5.], t_eval=grid, events=event)
+        check = result['tolerance_check']
+        first_end = result['events'][0]['t'][0]
+        second_end = result['tighter_events'][0]['t'][0]
+        assert check['common_interval'][1] == min(first_end, second_end)
+        assert max(check['times']) <= min(first_end, second_end)
+        assert first_end == pytest.approx(np.log(2), abs=1e-6)
+        assert result['tolerance_check_max_difference'] < 1e-6
+    # A failed integration cannot masquerade as a successful sensitivity check.
+    with pytest.raises(RuntimeError):
+        inference.solve_ode(lambda t, y: y * y, [1.], [0., 2.], method='RK45')

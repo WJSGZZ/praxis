@@ -53,9 +53,11 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
   --case "$WORKSPACE/cases/training-example"
 ```
 
-每次生成新的运行目录，包含两个阶段的 stdout/stderr、命令、时间、代码与输入哈希、源码／参数快照、依赖源码快照、实际 Python／包版本、检查报告、输出哈希和状态。命令用固定 Python argv，不通过 shell 执行题目或数据里的命令。超时或失败记录保留，先查看根因再调整；不覆盖已跑出的结果。
+每次生成新的运行目录，包含两个阶段的 stdout/stderr、命令、时间、代码与输入哈希、源码／参数快照、依赖源码快照、实际 Python／包版本、检查报告、输出哈希和状态。运行顺序以收据 started_utc／ended_utc 为准，避免同秒目录随机后缀倒置；精确时间平局时失败／未完成优先阻断，旧收据缺时间兼容目录时间，坏时间戳拒绝取证。命令用固定 Python argv，不通过 shell 执行题目或数据里的命令。超时或失败记录保留，先查看根因再调整；不覆盖已跑出的结果。
 
 `automatic-checks-passed` 只表示已记录的自动检查通过。`status` 可发现原始输入、代码、依赖或结果变化，标记过期证据；只用 `usable_automatic_evidence: true` 的结果准备论文，并继续评估现实机制与稳健性。检查本身是否有意义仍需 助手审核，不把脚本状态当成科学结论或用户已核验。`paper_ready` 默认 false，不自动授予论文完成状态。
+
+`source_snapshot` 整体哈希 planning/tasks.md、requirements.json 与 code 下文件。纯操作接续放 planning/progress.md，纯贡献放 contributions.jsonl；这些文件不是计算参数入口，不可用来隐藏实际输入变更。有效成果与候选的接受／恢复决定按 [methods.md](methods.md) 维护；这不是 `status` 自动择优的功能。候选失败不覆盖已接受文件，但当前证据是否可用仍以实际快照为准；最新运行失败时 `evidence` 不会偷偷返回旧成功。要恢复旧快照，明确记录恢复理由、核对输入／代码／环境，并重新执行当前状态要求的检查；不能只在任务表把旧结果改成“有效”。
 
 自动化的边界：程序日志不是完整 AI 对话；哈希不是官方提交回执；本地只读不是不可篡改存证；输入副本不是备份策略。原始大数据与生成输出默认不纳入 Git，实际比赛须安排本地备份。
 

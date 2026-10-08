@@ -30,7 +30,7 @@
 1. **算小例子**：把问题的最小规模版本做成可穷举或可精确求解的程序，得到一批数据。
 2. **猜规律**：对序列用 `guess_sequence`（线性递推与多项式，精确有理数；`holdout` 留出最后几项检验猜测，方程数远多于未知数才算有冗余）；对数值常数用 `find_relation`（PSLQ 整数关系）；对函数关系用 `probe_structure` 判断单调、凸、对称、幂律。
 3. **检验猜想**：在更大规模或更高精度上检验：`test_conjecture`（等式或不等式，随机点）、`modeling.experiment.test_conjecture`（mpmath 高精度）。不要拿拟合所用的数据当检验数据。
-4. **找反例**：`find_counterexample` 对整数域做穷举（总数不超过 `exhaustive_limit`，默认 20 万；此时“无反例”是对该域的证明，输出 `proved_for_domain`），更大的域只是抽样；穷举发现反例时 `cases` 为空、`exhaustive` 为真。命令行里只能写算术、比较和 `isprime`、`gcd` 等；要检验序列上的断言（如递推）用 `check_recurrence` 或自己写脚本。发现反例后，把它缩成最简形式，再据此修改猜想。
+4. **找反例**：`find_counterexample` 对整数域做穷举（总数不超过 `exhaustive_limit`，默认 20 万；此时“无反例”是对该域的证明，输出 `proved_for_domain`），更大的域只是抽样；穷举发现反例时 `cases` 记录已检查数、`exhaustive` 为真（表示采用穷举策略，并非已完成全域）。只有全部求值成功且无反例时才能给出域内证明；异常与非有限结果记录为 `evaluation_errors`，不算反例。命令行里只能写算术、比较和 `isprime`、`gcd` 等；要检验序列上的断言（如递推）用 `check_recurrence` 或自己写脚本。发现反例后，在 `shrink_budget`（默认 1000 次求值）内向简单形式缩小，再据此修改猜想；检查 `shrinking.status`，预算耗尽仍保留已验证反例，不宣称全局最小。
 5. **尝试证明**：给出证明草稿，标明哪些步骤已严格、哪些只是论证。能用交换论证、归纳、守恒、单调性、对偶的先试。
 6. **记录**：每个结论按下面的把握阶梯标注，并保留失败的尝试和被排除的方向（`route_graph` 与 `lesson_add`）。
 

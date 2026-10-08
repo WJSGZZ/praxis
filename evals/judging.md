@@ -64,10 +64,19 @@
 
 `critical_claims`至少一条；如果没来得及核验，就诚实写 `unverified`及缺证范围。所有条目和主张的 `evidence`必须是非空文本，NA及待核的 `reason`也必填。脚本能查结构、类型、引用关系和非空文本，不能判断页码是否真实、证据是否支持结论；这些必须由评委实际检查。
 
-另有一项 `award_estimate`：按该赛事的奖项档次给出范围、依据和不确定度（国赛：国一、国二、省一、省二、省三、未获奖；美赛：Outstanding、Finalist、Meritorious、Honorable Mention、Successful Participant）。赛事评估默认先给出最接近的档次、相邻范围与决定档次的具体证据，不只重复百分制分数；分数不设固定奖项分数线。这是评委的估计，不是校准过的预测：我们没有带获奖等级标注的数据，只有评分表分数和与真实获奖论文的盲对比两个锚点，所以只给范围，不给精确概率，并写明“未校准”。
+另有一项 `award_estimate`：只有在赛事—赛项—届次、作品版本、实际检查范围和依据明确时，才给评委的档次估计；依据不足时允许弃判断。奖项标签以 `competitions.json` 的对应届次 `award_system` 为准，目标、预计档次和范围使用同一套标签，不沿用其他届次或临时缩写。未校准估计不表示可靠获奖概率，也不因诊断高分或与少量优秀作品的比较自动获得校准。档案缺少奖项体系时，工具保留原提议供核查，但将预计档次清空并标明体系未核实，不能输出普通的已定范围。规则已接入也不等于奖项估计已校准。
+
+下面是作用于 2027 MCM 档案的**结构示意**，不是某篇实际作品的评估结果：
 
 ```json
-"award_estimate": {"most_likely": "省一", "range": ["省二", "国二"], "basis": "复算全部一致；摘要缺推荐方案与金额", "calibrated": false}
+"award_estimate": {
+  "contest": "mcm", "event": "MCM", "edition": "2027",
+  "problem": "example", "version": "draft-1", "scope": "摘要与一项独立复算",
+  "target": null, "most_likely": null, "range": [],
+  "basis": "未阅读全文，不能判断奖项档次", "calibrated": false,
+  "gaps": ["核心推荐尚未独立核验"],
+  "actions": ["核查第3节推荐的可行性，再复核摘要结论"]
+}
 ```
 
 维度键：`coverage`、`assumptions`、`model`、`correctness`、`robustness`、`writing`、`verifiability`。兼容旧记录：缺省或 `schema_version:1`仍接受直接 `scores`（0–4）及旧条目id；旧checklist缺省 `reviewed:true`只保留原评委声明，不补造复核。直接分数标为 `legacy_direct`。同时提供checklist和scores时以checklist为准，避免绕过证据校验。新评审不用直接分数路径。历史归档不自动重评分；新的中点舍入规则可能与旧Python偶数舍入在恰好中点时相差0.5，比较版本须记录这一变化。
@@ -95,8 +104,8 @@
 
 ## 面向使用者的呈现
 
-顺序固定为：目标奖项 → 当前档次及相邻范围 → 具体依据 → 与更高档的主要差距 → 最值得实施的修改。目标未知标“未设定”，不替用户决定。依据不足时暂不判断。当前档次不是获奖概率；相邻范围不是统计置信区间，不跨赛事合并。
+顺序固定为：目标奖项 → 当前档次及相邻范围 → 具体依据 → 与更高档的主要差距 → 最值得实施的修改。目标未知用 `target:null` 表示，视图输出 `target_status:unset`；兼容旧输入 `"未设定"` 与 `"unset"`。不替用户决定目标。依据不足时暂不判断。当前档次不是获奖概率；相邻范围不是统计置信区间，不跨赛事合并。
 
 在原 award_estimate 内补 contest、event、edition、problem、version（可用稿件哈希）、scope（实际阅读与复算范围）、target、gaps、actions，保留 most_likely、range、basis、calibrated。未校准写false；写true还必须给 calibration_evidence，工具不能认证该依据。actions定位章节／结论、具体检查或修改及其价值，避免只说“创新不足”。无充分依据时most_likely为null、range为空，说明缺口。
 
-`python -m evals.aggregate --contest=mcm --view=user review.json` 生成奖项导向视图；`--view=internal` 查看诊断数值。旧记录仍归档，缺少范围信息时不补造档次；多评委意见分别保留，不投票抹平冲突。评测与校准继续沿用 PROTOCOL.md，不增平行体系。
+`python -m evals.aggregate --contest=mcm --view=user review.json` 生成奖项导向视图；`--view=internal` 查看诊断数值。旧记录仍归档，缺少范围信息时不补造档次；多评委意见分别保留，不投票抹平冲突。每项评阅通过 `review_id` 关联来源、评委、检查范围、`critical_claims`、根因 `issues` 和奖项意见；每条主张应写具体 `scope` 和 `actions`（适用时），其证据和修改建议不会被压成仅一个状态词。评委可用顶层 `reviewer` 标识自己，旧 `judge` 字段兼容读取；没有身份就保留空值，不猜测独立性。旧汇总若没有评阅—奖项关联，标为 `unavailable_in_legacy_report`，不按两个数组的下标硬配。视图还保留 `overall_note`，不把没有奖项判断的数学审计丢掉。评测与校准继续沿用 PROTOCOL.md，不增平行体系。

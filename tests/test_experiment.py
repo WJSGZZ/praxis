@@ -17,8 +17,10 @@ def test_counterexample_search_exhaustive_and_shrunk():
     r = ex.find_counterexample(lambda x, y: x * y <= (x + y) ** 2 / 4 + 1e-12 and x + y < 1.9, [('real', 0, 2), ('real', 0, 2)])
     assert r['found']
     assert sum(r['shrunk']) <= sum(r['counterexample']) + 1e-9
-    # claims that raise count as failures
-    assert ex.find_counterexample(lambda n: 10 // n > 0, [('int', 0, 5)])['counterexample'] == [0]
+    # An undefined evaluation does not refute the mathematical claim.
+    error = ex.find_counterexample(lambda n: 10 // n > 0, [('int', 0, 5)])
+    assert not error['found'] and not error['proved_for_domain']
+    assert error['evaluation_errors'] == 1 and error['error_examples'][0]['at'] == [0]
 
 
 def test_conjecture_testing_with_high_precision():
@@ -73,3 +75,47 @@ def test_holdout_and_finite_check_proof_of_a_recurrence():
     assert bad['mismatches'] == [4] and not bad['holds_on_data']
     with pytest.raises(ValueError):
         ex.guess_linear_recurrence([1, 2, 3], holdout=3)
+
+
+def test_real_shrink_has_strict_progress_at_small_scales_and_bounds():
+    for value, target in [(1e-6, 0.), (1e-200, 0.), (1.00000001, 1.000000009), (-1e-6, 0.)]:
+        candidates = list(ex._steps(value, target, 'real'))
+        assert len(candidates) == len(set(candidates))
+        assert all(abs(c - target) < abs(value - target) for c in candidates)
+    for domain in [[('real', 1e-12, 2e-12)], [('real', -2e-12, -1e-12)]]:
+        visited = []
+        result = ex._shrink(lambda x: visited.append(x[0]) or True, [domain[0][2]], domain)
+        assert all(domain[0][1] <= c <= domain[0][2] for c in visited + result)
+    info = ex._shrink(lambda x: x[0] >= 1e-7, [1.], [('real', 0., 1.)], budget=3, return_info=True)
+    assert info['budget_exhausted'] and info['evaluations'] == 3
+    assert info['point'][0] >= 1e-7 and not info['globally_minimal']
+    zero = ex._shrink(lambda x: True, [1.], [('real', 0., 1.)], budget=0, return_info=True)
+    assert zero['point'] == [1.] and zero['budget_exhausted']
+
+
+def test_shrink_rounding_regression_in_bounded_subprocess():
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+    source = "from modeling.experiment import _shrink; import json; print(json.dumps(_shrink(lambda x: x[0]>=1e-7, [1.], [('real',0.,1.)])))"
+    child = subprocess.run([sys.executable, '-c', source], capture_output=True, text=True, timeout=10, check=True, cwd=Path(__file__).resolve().parents[1])
+    point = json.loads(child.stdout)[0]
+    assert 1e-7 <= point < 2e-7
+
+
+def test_counterexample_errors_nonfinite_and_budget_are_distinct():
+    for value in (float('nan'), float('inf'), -float('inf')):
+        result = ex.find_counterexample(lambda n: value, [('int', 0, 2)])
+        assert not result['found'] and not result['proved_for_domain']
+        assert result['evaluation_errors'] == 3
+    result = ex.find_counterexample(lambda n: 1 / n > 2, [('int', 0, 3)])
+    assert result['found'] and result['counterexample'] == [1] and result['shrunk'] == [1]
+    assert result['evaluation_errors'] >= 1
+    result = ex.find_counterexample(lambda x: x < 1e-7, [('real', 0., 1.)], shrink_budget=1)
+    assert result['found'] and result['shrinking']['budget_exhausted']
+    for domain in [[('real', float('nan'), 1.)], [('real', 0., float('inf'))], [('int', 0., 1.)]]:
+        with pytest.raises(ValueError):
+            ex.find_counterexample(lambda x: True, domain)
+    with pytest.raises(ValueError):
+        ex.find_counterexample(lambda x: True, [('real', 0., 1.)], shrink_budget=-1)

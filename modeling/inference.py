@@ -116,19 +116,41 @@ def monte_carlo(model: Callable, distributions: dict, *, n: int = 20000, seed: i
 
 def solve_ode(rhs: Callable, y0: Sequence[float], t_span: Sequence[float], t_eval: Sequence[float] | None = None, *, method: str = 'LSODA', rtol: float = 1e-8, atol: float = 1e-10,
               events: Callable | None = None) -> dict:
-    """Integrate dy/dt = rhs(t, y) and repeat at 100 times tighter tolerance; the largest difference is the numerical error indicator."""
+    """Integrate twice, comparing dense interpolants only at common physical times.
+
+    The comparison is a sensitivity indicator, not a certified error bound: it
+    includes both integration and dense-interpolation error. Terminal events may
+    end the two runs at slightly different times; neither run is extrapolated.
+    Returned t/y remain the ordinary-tolerance run's requested/adaptive samples.
+    """
     from scipy.integrate import solve_ivp
-    kw = dict(method=method, t_eval=None if t_eval is None else np.asarray(t_eval, float), events=events, dense_output=False)
+    kw = dict(method=method, t_eval=None if t_eval is None else np.asarray(t_eval, float), events=events, dense_output=True)
     a = solve_ivp(rhs, tuple(t_span), np.asarray(y0, float), rtol=rtol, atol=atol, **kw)
     b = solve_ivp(rhs, tuple(t_span), np.asarray(y0, float), rtol=rtol / 100, atol=atol / 100, **kw)
     if not (a.success and b.success):
         raise RuntimeError(a.message if not a.success else b.message)
-    n = min(a.y.shape[1], b.y.shape[1])
-    err = float(np.max(np.abs(a.y[:, :n] - b.y[:, :n]))) if n else float('nan')
-    out = dict(t=a.t.tolist(), y=a.y.tolist(), method=method, steps=int(a.t.size), tolerance_check_max_difference=err,
-               stiff_warning=bool(method in ('RK45', 'RK23', 'DOP853') and a.nfev > 50 * max(a.t.size, 1)))
+    lo = max(a.sol.t_min, b.sol.t_min)
+    hi = min(a.sol.t_max, b.sol.t_max)
+    # Include internal solver knots even when t_eval omits the terminal event.
+    # Sorted times also work for backward integration; evaluate, never extrapolate.
+    times = np.unique(np.concatenate((a.sol.ts, b.sol.ts, a.t, b.t, [lo, hi])))
+    times = times[(times >= lo) & (times <= hi)]
+    if not times.size:
+        raise RuntimeError('The two ODE solutions have no common effective time interval')
+    difference = np.abs(a.sol(times) - b.sol(times))
+    if not np.isfinite(difference).all():
+        raise RuntimeError('Non-finite ODE tolerance comparison')
+    err = float(np.max(difference))
+    out = dict(t=np.asarray(a.t).tolist(), y=np.asarray(a.y).tolist(), method=method, steps=int(np.asarray(a.t).size), tolerance_check_max_difference=err,
+               tolerance_check=dict(times=times.tolist(), common_interval=[float(lo), float(hi)],
+                                    ordinary_interval=[float(a.sol.t_min), float(a.sol.t_max)],
+                                    tighter_interval=[float(b.sol.t_min), float(b.sol.t_max)],
+                                    comparison='dense interpolants at the union of solver knots and requested samples in the common interval',
+                                    note='Includes interpolation error; a tolerance sensitivity indicator, not a certified error bound. No extrapolation.'),
+               stiff_warning=bool(method in ('RK45', 'RK23', 'DOP853') and a.nfev > 50 * max(np.asarray(a.t).size, 1)))
     if events is not None:
         out['events'] = [dict(t=te.tolist(), y=ye.tolist()) for te, ye in zip(a.t_events, a.y_events)]
+        out['tighter_events'] = [dict(t=te.tolist(), y=ye.tolist()) for te, ye in zip(b.t_events, b.y_events)]
     return out
 
 
