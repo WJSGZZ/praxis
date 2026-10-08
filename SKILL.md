@@ -24,14 +24,14 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 - 涉及比赛、团队分工或限时完整交付时，先读 [references/context-and-team.md](references/context-and-team.md)，接续赛事／届次、实际人数、成员能力与可用时间；通用建模不默认套赛事规则，不默认用户单人。
 - 已确认单人且限时或强调先完成时，读 [references/solo-delivery.md](references/solo-delivery.md)。助手承担优先级、依赖与下一步协调，给用户一个当前事项；滚动形成完整稿，预算不足采用简化路线。
-- 分析记录使用 [references/tasks-template.md](references/tasks-template.md)，写入案例 planning/tasks.md；所有环节更新同一份任务记录。
+- 需要持续接续或跨环节交付时，按 [references/tasks-template.md](references/tasks-template.md) 更新已有任务记录；只有使用案例系统时固定为案例 planning/tasks.md。
 - 参数能否被观测区分、尺度、优化保证、概率区间或干预结论需要判断时，读 [references/mathematical-reasoning.md](references/mathematical-reasoning.md) 的对应条件分支；不增加全题必经阶段。
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
 - 国赛、美赛、研究生赛这类限时开放题，读题分类与常见丢分点见 [references/contest-playbook.md](references/contest-playbook.md)。
 - 工具总表（名称、字段、用途，自动生成）见 [references/tool-index.md](references/tool-index.md)。
-- **开始时先确认交付目标**（竞赛有截止／先做透再收敛／研究／教学），没说就问一次；内部按科研标准做透、有停止规则，再按目标收敛成论文：[references/convergence.md](references/convergence.md)。
-- 判断结构后查哪里有现成路线、没有时怎么办：[references/coverage-map.md](references/coverage-map.md)。交稿前的独立评审与反方检查：[references/review-protocol.md](references/review-protocol.md)。
+- 交付目标先从用户请求与项目状态接续；只有未知目标会改变当前工作时才问。需要完整报告、篇幅取舍或限时收敛时，读 [references/convergence.md](references/convergence.md)；停止深挖的判断统一见 methods.md。
+- 判断结构后查哪里有现成路线、没有时怎么办：[references/coverage-map.md](references/coverage-map.md)。完整稿或重要结论的评审按风险选视角，见 [references/review-protocol.md](references/review-protocol.md)；角色切换不等于独立验证。
 - 陌生领域的机制、标准方程、量级与检查，查 [references/domain-models.md](references/domain-models.md)。
 - 引入外部方法按 methods.md 的统一规则，出处与许可见 THIRD_PARTY_NOTICES.md。
 

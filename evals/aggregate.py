@@ -1,60 +1,159 @@
-"""Combine judge score files (see judging.md) into weighted percentages with the spread between judges.
+"""Aggregate reviewer diagnostics, not paper correctness or award predictions.
 
-    uv run --locked python -m evals.aggregate [--contest=cumcm|mcm] judge1.json judge2.json ...      # each file: a JSON list of judge outputs"""
+    uv run --locked python -m evals.aggregate [--contest=cumcm|mcm] judge1.json ...
+"""
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 
 WEIGHTS = {'coverage': 10, 'assumptions': 15, 'model': 15, 'correctness': 25, 'robustness': 10, 'writing': 10, 'verifiability': 15}
+CHECKLIST_IDS = {dim: [f'{prefix}{i}' for i in range(1, count + 1)] for dim, prefix, count in (
+    ('coverage', 'C', 4), ('assumptions', 'A', 5), ('model', 'M', 5),
+    ('correctness', 'K', 5), ('robustness', 'R', 4), ('writing', 'W', 5), ('verifiability', 'V', 5))}
+PROFILES = json.loads(Path(__file__).with_name('profiles.json').read_text())
+CONTEST_WEIGHTS = {k: v['weights'] for k, v in PROFILES.items() if k != 'general'}
 
 
-PROFILES = json.loads((Path(__file__).with_name('profiles.json')).read_text())
-CONTEST_WEIGHTS = {k: v['weights'] for k, v in PROFILES.items() if k != 'general'}      # per-contest data lives in profiles.json, with its sources
+def _number(value, label: str, low: float, high: float) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:
+        raise ValueError(f'{label} must be a finite number in {low}-{high}')
+    return value
+
+
+def _text(value, label: str) -> None:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f'{label} needs nonempty text')
 
 
 def percent(scores: dict, weights: dict | None = None) -> float:
-    weights = weights or WEIGHTS
+    weights = WEIGHTS if weights is None else weights
     missing = set(weights) - set(scores)
     if missing:
         raise ValueError(f'Missing dimensions: {sorted(missing)}')
-    bad = {k: v for k, v in scores.items() if k in weights and not 0 <= v <= 4}
-    if bad:
-        raise ValueError(f'Scores must lie in 0-4: {bad}')
+    for k in weights:
+        _number(scores[k], f'score for {k}', 0, 4)
     return 100 * sum(weights[k] * scores[k] / 4 for k in weights) / sum(weights.values())
 
 
 def dimension_scores(item: dict) -> dict:
-    """0-4 scores for one judge output: given directly (`scores`) or computed from the checklist (4 x share of met items, to the nearest half, plus a documented adjust of at most 1)."""
-    if 'scores' in item:
-        return item['scores']
+    """NA is excluded; unreviewed applicable items stay in the denominator."""
+    version = item.get('schema_version', 1)
+    if type(version) is not int or version not in (1, 2):
+        raise ValueError('schema_version must be 1 or 2')
+    if 'checklist' not in item and version == 1 and 'scores' in item:
+        percent(item['scores'])  # Validate direct legacy scores too.
+        return {dim: item['scores'][dim] for dim in WEIGHTS}
+    checklist = item.get('checklist', {})
+    if set(checklist) != set(WEIGHTS):
+        raise ValueError('Checklist must contain all seven dimensions')
+    if set(item.get('adjust', {})) - set(WEIGHTS):
+        raise ValueError('Unknown adjust dimension')
     out = {}
     for dim in WEIGHTS:
-        items = item.get('checklist', {}).get(dim)
-        if not items:
+        items = checklist[dim]
+        if not isinstance(items, dict) or not items:
             raise ValueError(f'No checklist for {dim}')
-        base = round(4 * sum(bool(v['met']) for v in items.values()) / len(items) * 2) / 2
-        adjust = item.get('adjust', {}).get(dim)
-        if adjust:
-            if not str(adjust.get('reason', '')).strip() or abs(adjust['value']) > 1:
-                raise ValueError(f'adjust for {dim} needs a reason and a value within 1')
-            base += adjust['value']
+        if version == 2 and set(items) != set(CHECKLIST_IDS[dim]):
+            raise ValueError(f'Checklist IDs for {dim} must be {CHECKLIST_IDS[dim]}')
+        met_count = applicable = 0
+        for key, entry in items.items():
+            if not isinstance(entry, dict) or 'met' not in entry:
+                raise ValueError(f'{dim}/{key} needs met')
+            met = entry['met']
+            if met is not None and type(met) is not bool:
+                raise ValueError(f'{dim}/{key}: met must be true, false or null')
+            _text(entry.get('evidence'), f'evidence for {dim}/{key}')
+            if version == 2 and 'reviewed' not in entry:
+                raise ValueError(f'{dim}/{key}: schema_version 2 needs reviewed')
+            reviewed = entry.get('reviewed', True)
+            if type(reviewed) is not bool:
+                raise ValueError(f'{dim}/{key}: reviewed must be boolean')
+            if met is None:
+                _text(entry.get('reason'), f'NA reason for {dim}/{key}')
+                if not reviewed:
+                    raise ValueError('NA applicability must be reviewed')
+                continue
+            applicable += 1
+            if not reviewed:
+                _text(entry.get('reason'), f'unreviewed reason for {dim}/{key}')
+                if met:
+                    raise ValueError('An unreviewed item cannot be met')
+            met_count += met
+        if not applicable:
+            raise ValueError(f'{dim} has no applicable items; do not silently reweight dimensions')
+        # Explicit round-half-up, rather than Python's round-to-even at ties.
+        base = math.floor(8 * met_count / applicable + 0.5) / 2
+        if dim in item.get('adjust', {}):
+            adjust = item['adjust'][dim]
+            _text(adjust.get('reason'), f'adjust reason for {dim}')
+            base += _number(adjust.get('value'), f'adjust for {dim}', -1, 1)
         out[dim] = min(4.0, max(0.0, base))
     return out
 
 
+def review_record(item: dict) -> dict:
+    """Validate declarations and retain their scope; never infer mathematical truth."""
+    issues = item.get('issues', [])
+    if not isinstance(issues, list) or any(not isinstance(issue, dict) for issue in issues):
+        raise ValueError('issues must be a list of objects')
+    issue_ids = set()
+    for issue in issues:
+        for field in ('id', 'description', 'evidence'):
+            _text(issue.get(field), f'issue {field}')
+        if issue['id'] in issue_ids:
+            raise ValueError(f'Duplicate issue id: {issue["id"]}')
+        issue_ids.add(issue['id'])
+    claims = item.get('critical_claims', [])
+    if not isinstance(claims, list) or any(not isinstance(claim, dict) for claim in claims):
+        raise ValueError('critical_claims must be a list of objects')
+    if item.get('schema_version', 1) == 2 and not claims:
+        raise ValueError('schema_version 2 needs explicit critical_claims')
+    claim_ids = set()
+    for claim in claims:
+        for field in ('id', 'claim', 'evidence'):
+            _text(claim.get(field), f'critical claim {field}')
+        if claim['id'] in claim_ids:
+            raise ValueError(f'Duplicate claim id: {claim["id"]}')
+        claim_ids.add(claim['id'])
+        if claim.get('status') not in ('supported', 'refuted', 'unverified'):
+            raise ValueError('Critical claim status must be supported, refuted or unverified')
+    entries = [entry for dim in item.get('checklist', {}).values() for entry in dim.values()]
+    for entry in entries + claims:
+        refs = entry.get('issue_ids', [])
+        if not isinstance(refs, list) or any(not isinstance(ref, str) or ref not in issue_ids for ref in refs):
+            raise ValueError('issue_ids must reference declared issues in this review')
+    status = 'not_assessed'
+    if claims:
+        status = ('refuted' if any(c['status'] == 'refuted' for c in claims)
+                  else 'unverified' if any(c['status'] == 'unverified' for c in claims) else 'supported')
+    return dict(schema_version=item.get('schema_version', 1),
+                score_source=('checklist' if item.get('schema_version', 1) == 2 else 'legacy_checklist')
+                             if 'checklist' in item else 'legacy_direct',
+                validity_status=status, critical_claims=claims, issues=issues,
+                unreviewed_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
+                                  for key, entry in items.items() if entry.get('reviewed', True) is False],
+                not_applicable_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
+                                      for key, entry in items.items() if entry['met'] is None])
+
+
 def aggregate(files: list[Path], contest: str | None = None) -> dict:
     if contest and contest not in PROFILES:
-        raise ValueError(f'No profile for {contest!r}; known: {sorted(PROFILES)}. Add one to evals/profiles.json, or omit --contest for the general weights.')
+        raise ValueError(f'No profile for {contest!r}; known: {sorted(PROFILES)}')
     weights = PROFILES[contest]['weights'] if contest else WEIGHTS
     per_paper: dict[str, list[float]] = {}
     awards: dict[str, list[dict]] = {}
     dims: dict[str, dict[str, list[float]]] = {}
     basis: dict[str, dict[str, set]] = {}
+    reviews: dict[str, list[dict]] = {}
     for path in files:
         for item in json.loads(Path(path).read_text()):
             scores = dimension_scores(item)
+            record = review_record(item)
+            record['source'] = str(path)
+            reviews.setdefault(item['paper'], []).append(record)
             if 'award_estimate' in item:
                 awards.setdefault(item['paper'], []).append(item['award_estimate'])
             for k, b in item.get('basis', {}).items():
@@ -68,7 +167,8 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
         out[paper] = dict(judges=len(values), percent_each=[round(v, 1) for v in values], percent_mean=round(sum(values) / len(values), 1),
                           percent_range=round(max(values) - min(values), 1), unstable_dimensions=sorted(k for k, d in spread.items() if d > 1),
                           basis={b: sorted(v) for b, v in basis.get(paper, {}).items()},
-                          award_estimates=awards.get(paper, []))
+                          award_estimates=awards.get(paper, []), reviews=reviews[paper],
+                          score_kind='uncalibrated_diagnostic', weights=weights)
     return out
 
 

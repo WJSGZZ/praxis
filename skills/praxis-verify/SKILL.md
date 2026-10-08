@@ -15,10 +15,10 @@ BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.
 - 建议是否稳健：只扰动有依据且可能改变建议的因素。全局敏感性与方案评价工具的条件见 methods.md 末尾；Sobol 只适合独立均匀输入与确定性标量输出。
 - 最优性：可行解与证明界分开报告，最大化用上界、最小化用下界；受限决策族只能称族内最优，须用更宽的族检验差距。见 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的“结构、松弛与界”。
 - 不确定性、数值收敛与统计检验的规范见 [scientific-foundations.md](../../references/scientific-foundations.md)。
-- 证据按七层逐层加深（代码、计算、数学性质、假设、数据与机制、稳健性、独立方法），层次见 [methods.md](../../references/methods.md)；对每个主要结论写一条证伪陈述并做那项检查，没有任何结果能推翻的结论不算结论。
+- 从 methods.md 的证据层次选取能检验当前主要结论的检查，说明什么结果会推翻或限制它；不将七层都设为每题必经检查。
 - 审查现成材料时按同一标准逐条给出：结论、它依赖的证据、证据是否独立、应降低到什么强度，而不是给泛泛评语。
 
-- 交稿前用互相独立的评审角色（数学、建模、数据来源、评分、反方）各读一遍，做法见 [review-protocol.md](../../references/review-protocol.md)。
+- 重要结论或完整稿的审查按风险选择评审视角，见 [review-protocol.md](../../references/review-protocol.md)。同一助手切换角色可找缺口，不能自称独立验证。
 - 用户在场时，把审查结果讲成白话，请用户指出不合直觉之处，一起复盘并判断是否换方法，做法见 [praxis-dialogue](../praxis-dialogue/SKILL.md)。
 
 ## 产出

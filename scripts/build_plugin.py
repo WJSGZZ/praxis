@@ -1,11 +1,14 @@
-"""Export the maintained skill as a self-contained portable plugin directory."""
+"""Export Praxis as a self-contained portable Agent plugin."""
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
+import re
 import shutil
+from urllib.parse import unquote, urlsplit
 
 BUNDLE = Path(__file__).resolve().parents[1]
 FILES = ('SKILL.md', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
@@ -43,9 +46,41 @@ TREES = {
     'demos/domino-research/reproduce': {'.py'},
     'demos/domino-research/reproduce/reference': {'.json', '.md'},
 }
-# Focused skills ship next to the core skill; links to the core are rewritten.
+# Focused skills ship next to the core; all packaged Markdown links follow relocation.
 FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
-LINK_TO_CORE = ('](../../', '](../praxis/')
+
+
+def export_path(relative: Path) -> Path:
+    return relative if relative.parts[0] == 'skills' else Path('skills/praxis') / relative
+
+
+def relocate_links(text: str, path: Path, source: Path, files: list[Path]) -> str:
+    """Relocate local Markdown destinations, including core-to-focused links.
+
+    Only selected resources and their directories are mapped. URLs, anchors,
+    labels and optional titles retain their original text.
+    """
+    destinations = {p: export_path(p.relative_to(source)) for p in files}
+    directories = {p.parent for p in files}
+    target_parent = export_path(path.relative_to(source)).parent
+
+    def replace(match: re.Match) -> str:
+        raw = match.group(1)
+        parsed = urlsplit(raw)
+        if parsed.scheme or parsed.netloc or not parsed.path:
+            return match.group(0)
+        resolved = (path.parent / unquote(parsed.path)).resolve()
+        destination = destinations.get(resolved)
+        if destination is None and resolved in directories:
+            destination = export_path(resolved.relative_to(source))
+        if destination is None:
+            return match.group(0)
+        relative = Path(os.path.relpath(destination, target_parent)).as_posix()
+        # Preserve the original query/fragment spelling and Markdown title.
+        suffix = raw[len(parsed.path):]
+        return '](' + relative + suffix + match.group(2) + ')'
+
+    return re.sub(r'\]\(([^\s)]+)([^)]*)\)', replace, text)
 
 
 def public_files(source: Path) -> list[Path]:
@@ -85,14 +120,11 @@ def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
     hashes = {}
     for path in files:
         relative = path.relative_to(source)
-        if relative.parts[0] == 'skills':
-            # Focused skill: sibling of the core skill, links point at ../praxis/.
-            target = output / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(path.read_text().replace(*LINK_TO_CORE))
+        target = output / export_path(relative)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if path.suffix == '.md':
+            target.write_text(relocate_links(path.read_text(), path, source, files))
         else:
-            target = skill / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, target)
         hashes[target.relative_to(output).as_posix()] = hashlib.sha256(target.read_bytes()).hexdigest()
     (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n')
@@ -102,11 +134,12 @@ def build_plugin(output: Path, source: Path = BUNDLE) -> dict:
     (output / 'LICENSE').write_bytes((source / 'LICENSE').read_bytes())
     (output / 'README.md').write_text('''# Praxis plugin
 
-This directory is generated from the maintained Praxis skill repository.
+This directory is generated from the maintained Praxis Agent plugin repository.
 The portable entry point is plugin.json; mcp.json starts the praxis-tools MCP server
 (computation tools, run with uv). skills/praxis/ is the core skill with
-all references and scripts; skills/praxis-model, -compute, -verify and -report
-are focused skills that read the core's references through ../praxis/.
+all references and scripts; six sibling skills cover modeling, computation,
+verification, exploration, dialogue and reporting. All local Markdown links
+are relocated with their resources.
 
 Before running Python helpers, explicitly prepare their environment:
 

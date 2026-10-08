@@ -3,8 +3,8 @@
  "checked_on": "2026-10-08",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "020effbdc929616cbf572011003275f239a8345a63cb5b7850961d6baf2ebc88",
-  "bytes": 156257,
+  "sha256": "1d9217d13763a8bbdbcebb68e4e7299a5b70e25b33d0711356f7839fae5c460a",
+  "bytes": 156792,
   "pages_total": 24,
   "solution_pages": 23,
   "ai_pages": 1,
@@ -35,7 +35,7 @@
    23,
    24
   ],
-  "visual_review_note": "All pages rendered; contact sheets reviewed, with full-size checks of the summary, proof, algorithm box, user guide and appendix. This is an AI layout review.",
+  "visual_review_note": "All 24 pages rendered and contact sheets reviewed; summary, policy and user guide inspected at full size. Page 11 is a top-aligned figure/table float page with bottom whitespace, not overflow. AI layout review.",
   "typesetting": "XeLaTeX (TeX Live 2026): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
  },
  "model_checks": {
@@ -45,7 +45,24 @@
   "extension_checks": {
    "total": 2,
    "passed": 2,
-   "what": "independent RK45 replay of the optimized schedule; schedule water above the energy lower bound"
+   "what": "Two original coarse-grid candidate checks retained in extended.json; these do not certify the selected scheduled policy."
+  },
+  "schedule_acceptance": {
+   "total": 2,
+   "passed": 2,
+   "water_l": 21.47709423047285,
+   "segments": 6,
+   "buffer_c": 0.1,
+   "meshes": 3,
+   "continuous_limit_tolerance_c": 0.0,
+   "integration_allowance_c": 2e-06,
+   "bounds": {
+    "lower_temperature_bound_c": 39.12974053844497,
+    "upper_temperature_bound_c": 40.83038630841286,
+    "span_upper_bound_c": 1.4964492032627323
+   },
+   "receipt": "reproduce/reference/mesh_check.json",
+   "source_and_input_hashes_checked": true
   }
  },
  "reproduction_checks": {
@@ -53,7 +70,7 @@
   "passed": 18,
   "extra": "Archived report water amount"
  },
- "scope": "Textbook-correlation scenario coefficients with ranges (order-of-magnitude anchors, not a calibration); constrained temperatures checked on three meshes; no bath experiment; no claim of award, full transcript or independent human review",
+ "scope": "Scenario heat-network validation with literature-anchored ranges; independent numerical checks of selected policies, not calibrated physical accuracy or a global spatial optimum. No bath experiment or award prediction.",
  "submission_files": [
   "7391856.pdf"
  ],
@@ -75,13 +92,13 @@
   "sobol_draws": 64,
   "draws_with_accepted_policy": 41,
   "execution_tolerance": "uniform scaling, 200 random 10%/20% segment errors, one-segment +/-20%, buffer price at 0, 0.1, 0.2, 0.3 C on 6 segments",
-  "mesh_check": "reproduce/run_mesh_check.py: 12-segment schedule replayed on three meshes and the 6-segment schedule re-optimized on 12 x 6 x 4",
+  "mesh_check": "Independent three-grid RK45 replay of best + buffered candidates, switch restarts and adaptive continuous envelopes; least-water accepted candidate selected; failed candidates retained.",
   "jet_zone": "ceiling and spread apply outside a 0.15 m radius around the inlet cell; the floor applies to every cell"
  },
  "independent_audit": {
   "date": "2026-10-08",
-  "finding": "the first version's ceiling and spread were not mesh-converged (inlet-cell point source); limits redefined outside a jet zone and all results recomputed",
-  "other_changes": "coefficient wording, deeper-bath and convective-layer scenarios, tolerance reported as distances"
+  "finding": "Unbuffered 12-stage candidate exceeds the spread limit on the finest grid and is rejected. Buffered six-stage 21.48 L policy passes all three networks with strict continuous limits; finite-search, jet-zone, abstract and user-guide claims corrected.",
+  "other_changes": "Independent validation receipts include input/source hashes; report builder rejects stale schedule evidence."
  },
  "preview_pages": [
   1,
@@ -94,8 +111,8 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 194,
-  "scope": "Full local pytest suite, including exported-plugin tool startup",
+  "passed": 241,
+  "scope": "Full local pytest suite including exported MCP behavior, evaluation schema and schedule/stale-evidence regressions",
   "date": "2026-10-08"
  }
 }

@@ -6,7 +6,7 @@ license: MIT
 
 # Praxis · 数据与计算
 
-BUNDLE 指 `praxis` 技能目录；脚本在 `BUNDLE/scripts/`。需要 Python 3.12 和 uv，`uv sync --locked --project <BUNDLE>` 后用 `uv run --locked` 执行。没有终端时只做设计，不声称已运行。
+BUNDLE 指 `praxis` 技能目录；脚本在 `BUNDLE/scripts/`。需要 Python 3.12 和 uv；环境准备、跨工作区调用与命令统一见 [automation.md](../../references/automation.md)。没有终端时只做设计，不声称已运行。
 
 ## 做什么
 

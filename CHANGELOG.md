@@ -5,6 +5,16 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修复插件导出后的双向技能与参考链接；整包链接检查覆盖核心、专项与案例，导出 MCP 实测握手、独立答案与失败恢复。规则按职责归并，完整研究、多人评审与网格检查按实际缺口启用。
+  Plugin exports now relocate links across the entire package. Checks cover core and focused skills, references, an MCP handshake, a known-answer computation and recovery after a failed call. Shared guidance is consolidated by responsibility and applied to the task's actual scope.
+- 评审 schema v2 区分不适用、尚未核验和反例，关键主张与诊断分并列；保留旧记录兼容，不改赛事权重或设奖项分数线。
+  Review schema v2 distinguishes inapplicable checks, missing verification and refuted claims. Claim validity is reported alongside diagnostics; legacy inputs remain supported without changing contest weights or inventing award thresholds.
+- 美赛案例拒绝最细网格越界的 19.35 L 候选，改用通过独立三网格连续包络的六段 21.48 L 方案；论文、复现验收与双语展示同步，并保留失败证据。
+  The MCM case rejects the 19.35 L candidate that violates the finest-grid spread limit. The selected six-stage policy uses 21.48 L and passes independent continuous-time bounds on three meshes; the paper, reproduction checks and bilingual presentation retain the failed candidate explicitly.
+
+- 明确教程与算法包的最小核验：确认实际算法、指标方向、候选边界、预测参数及留出指标；组合方法与单一基线比较。写作指南不再以引文数量衡量依据，摘要证据可标为临时情景输入；经验模板与官方要求区分。评分可给出未校准的奖项范围，并将 COMAP 通用评审指引与自定量表区分。
+  Tutorial code is checked for its actual algorithm, criterion direction, feasibility, fitted parameters and held-out metrics. Combined methods must earn their extra complexity against a single-method baseline. Citation counts are not quality targets; abstract-only evidence may support explicitly provisional scenarios. Award estimates remain uncalibrated, and COMAP guidance is distinguished from the project’s numerical rubric.
+
 - 两个完整案例为图表补入正文解释和自动交叉引用；美赛使用者说明保持独立单页，论文共 24 页（23 页解答加 1 页 AI 报告）；国赛支撑包排除 LaTeX 编译中间文件。修复图表引用检查误判段首引用的问题，并加入成稿回归检查。
   Both cases now connect figures and tables to their arguments through automatic references. The MCM user guide stays on one page; the report has 24 pages (23 solution pages plus the AI report). The CUMCM archive excludes TeX intermediates. Float checks accept paragraph-initial references, with regressions against the final documents.
 

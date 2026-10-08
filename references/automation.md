@@ -1,10 +1,10 @@
 # 自动执行与证据契约
 
-先按 agent-compatibility.md 核对宿主能读取本地文件并执行终端；能力缺失时仅做相应分析，不能编造运行。解析技能真实位置为 BUNDLE，当前用户工作项目为 WORKSPACE。先执行 `uv sync --project "$BUNDLE" --locked`；需要开发测试时增加 `--group dev`。用 `"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE"` 调用工具，不要依赖技能安装目录作为当前工作目录。下列命令的 BUNDLE 与 WORKSPACE 均应替换为实际绝对路径。
+执行计算时，解析技能真实位置为 BUNDLE，当前用户工作项目为 WORKSPACE。宿主能力未知或调用失败时按 [agent-compatibility.md](agent-compatibility.md) 核对；能力缺失只做可完成的分析，不能编造运行。环境未准备时执行 `uv sync --project "$BUNDLE" --locked`；需要开发测试时增加 `--group dev`。用 `"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE"` 调用工具，不要依赖技能安装目录作为当前工作目录。下列命令的 BUNDLE 与 WORKSPACE 均应替换为实际绝对路径。
 
 ## 先判断要不要走案例系统
 
-案例脚本（`init`、`run`、`status`、`evidence`）适合要保留追溯索引的任务。一道题、一个人、自己写一串互相读取结果的阶段脚本时可以不走它，但至少做到：每个出现在论文里的数字都能追到某个脚本和输出文件（一个 `run_all.sh` 或 README 逐条列出）；检查记录成带名字、结果和证据的 `checks.json`，用 `check_pdf.py --checks` 核对论文声称的检查数；最终材料的哈希写进清单。
+案例脚本（`init`、`run`、`status`、`evidence`）适合要保留运行快照与机器证据索引的任务。已有可复现执行链时可以沿用：报告数字能回指脚本与输出文件，检查有名字、结果与证据，最终材料有版本／哈希清单。选择不使用案例系统不等于放弃追溯，也不能声称具有 pipeline 的自动过期检测。需要 `check_pdf.py --checks` 核对检查数时，将真实检查保存成下文契约的 checks.json。
 
 ## 接收 Word 和 Excel 附件
 
@@ -28,9 +28,7 @@
 
 ## 内容理解不是脚本替代的
 
-从原文识别子任务、变量、单位与交付物，写入 `planning/tasks.md`。对每个主要假设说明依据、失效现象及影响。脚本不自动读懂任意赛题，也不会替 助手写出真实模型；技能负责引导 助手选择、实现并设计独立检查。
-
-读题后有合理基线就自主推进。保留选择理由和备选，不等待用户逐项确认。实际偏好或关键事实缺失才问，同时做可独立推进的工作。
+题意、路线、假设和推进条件统一按 [methods.md](methods.md) 写入对应任务记录。脚本不自动理解题目、选择模型或确认检查的独立性；本文件只规定如何接收、执行与追溯已经明确的工作。
 
 ## 模型与验证器
 

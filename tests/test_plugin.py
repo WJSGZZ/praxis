@@ -90,6 +90,28 @@ def test_focused_skills_are_valid_and_links_resolve_in_repo_and_export(tmp_path)
                 assert (root / link).resolve().is_file(), (root, link)
 
 
+def test_all_packaged_markdown_links_resolve_after_relocation(tmp_path):
+    """Core, focused, references and showcases must form one usable package."""
+    output = tmp_path / 'plugin'
+    build_plugin(output)
+    for path in output.rglob('*.md'):
+        for link in _links(path.read_text()):
+            assert (path.parent / link).resolve().exists(), (path.relative_to(output), link)
+    core = output / 'skills/praxis/SKILL.md'
+    assert '](../praxis-model/SKILL.md)' in core.read_text()
+    convergence = output / 'skills/praxis/references/convergence.md'
+    assert '](../../praxis-dialogue/SKILL.md)' in convergence.read_text()
+
+
+def test_link_relocation_preserves_anchors_titles_and_external_urls():
+    from scripts.build_plugin import relocate_links, public_files
+    text = ('[model](skills/praxis-model/SKILL.md#route "Choose a route") '
+            '[web](https://example.com/skills/praxis-model/SKILL.md) [here](#route)')
+    actual = relocate_links(text, BUNDLE / 'SKILL.md', BUNDLE, public_files(BUNDLE))
+    assert actual == ('[model](../praxis-model/SKILL.md#route "Choose a route") '
+                      '[web](https://example.com/skills/praxis-model/SKILL.md) [here](#route)')
+
+
 def test_export_declares_a_working_mcp_server(tmp_path):
     output = tmp_path / 'plugin'
     build_plugin(output)
@@ -107,6 +129,37 @@ def test_export_declares_a_working_mcp_server(tmp_path):
     assert result.returncode == 0, result.stderr
     names = {t['name'] for t in json.loads(result.stdout)['result']['tools']}
     assert {'solve_lp', 'ahp_weights', 'check_references'} <= names
+
+
+def test_exported_mcp_handshake_computation_and_error_recovery(tmp_path):
+    output = tmp_path / 'plugin'
+    build_plugin(output)
+    messages = [
+        {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize',
+         'params': {'protocolVersion': '2025-06-18', 'capabilities': {},
+                    'clientInfo': {'name': 'plugin-check', 'version': '1'}}},
+        {'jsonrpc': '2.0', 'method': 'notifications/initialized'},
+        {'jsonrpc': '2.0', 'id': 2, 'method': 'tools/call',
+         'params': {'name': 'solve_lp', 'arguments': {'c': [3, 2], 'A_ub': [[1, 1], [1, 0], [0, 1]],
+                    'b_ub': [4, 2, 3], 'maximize': True}}},
+        {'jsonrpc': '2.0', 'id': 3, 'method': 'tools/call',
+         'params': {'name': 'solve_lp', 'arguments': {}}},
+        {'jsonrpc': '2.0', 'id': 4, 'method': 'ping'},
+    ]
+    result = subprocess.run([sys.executable, '-m', 'scripts.mcp_server'],
+                            cwd=output / 'skills/praxis', input='\n'.join(map(json.dumps, messages)) + '\n',
+                            capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stderr
+    replies = [json.loads(line) for line in result.stdout.splitlines()]
+    assert [reply['id'] for reply in replies] == [1, 2, 3, 4]
+    assert replies[0]['result']['serverInfo']['name'] == 'praxis-tools'
+    assert not replies[1]['result']['isError']
+    answer = json.loads(replies[1]['result']['content'][0]['text'])
+    # Independent bound: 3x+2y = 2(x+y)+x <= 2*4+2 = 10; attained at (2,2).
+    assert answer['objective'] == pytest.approx(10)
+    assert answer['x'] == pytest.approx([2, 2])
+    assert replies[2]['result']['isError']
+    assert replies[3]['result'] == {}
 
 
 def test_plugin_manifest_version_matches_pyproject():

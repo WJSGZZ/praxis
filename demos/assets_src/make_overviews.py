@@ -82,7 +82,9 @@ def mcm(lang: str, out: Path):
     inlet = (ny // 2) * nz + nz - 1
     zone = np.linalg.norm(z["xyz"] - z["xyz"][inlet], axis=1) > res["parameters"]["inlet_exclusion"]
     hot = T[:, zone].max(1)  # hottest cell outside the inlet jet zone
-    best = ext["control"]["best"]
+    mesh = json.loads((ref / "mesh_check.json").read_text())
+    best = mesh["accepted_schedule"]
+    assert best and all(c["passed"] for c in mesh["checks"]), "No accepted schedule"
     vals = {"const": res["policy"]["water_l"], "sched": best["water_l"], "ideal": res["analytic"]["mixed_optimum_l"], "bound": res["analytic"]["energy_lower_bound_l"]}
     txt = {
         "zh": dict(title="水温要均匀，策略就不能只看平均值", sub="三维热网络 · 解析基线 · 独立积分与能量核验",

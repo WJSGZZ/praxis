@@ -65,12 +65,13 @@
    "敏感性分析与优缺点讨论",
    "摘要与写作的清晰性"
   ],
-  "criteria_source": "ours (not checked against COMAP's judging documents)",
+  "criteria_source": "Paraphrase of COMAP 2027 instructions, VI. Contest Instructions, During the Contest - Choosing and Solving the Problem, item 6 (summary; variables and hypotheses; assumptions; model motivation; error/sensitivity/stability; strengths/weaknesses; explicit results). Checked 2026-10-08. This is general official guidance, not an official numerical rubric.",
   "rules": "scripts/contest_rules.py --contest mcm",
   "rules_source": "COMAP 当届说明页（2026 届，2026-10-08 核对）",
-  "source": "rules: official page; criteria and weights: ours, unverified",
+  "source": "rules and general judging guidance: official page; numerical rubric and weights: ours",
   "checked": "2026-10-08",
-  "note": "摘要页决定第一印象；权重加重摘要与敏感性只是工作假设。",
-  "rules_source_url": "https://www.contest.comap.com/undergraduate/contests/mcm/instructions.php"
+  "note": "COMAP 强调摘要、清晰论证、假设理由和模型检验，未给百分制或奖项分数线；本项目的条目与权重是工作判断，未按真实获奖样本校准。",
+  "rules_source_url": "https://www.contest.comap.com/undergraduate/contests/mcm/instructions.php",
+  "criteria_source_url": "https://www.contest.comap.com/undergraduate/contests/mcm/instructions.php"
  }
 }

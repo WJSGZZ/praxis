@@ -49,7 +49,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 <tr>
 <td valign="top"><strong>23-page Chinese report · 12 model checks</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
-<td valign="top"><strong>24-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a 12-segment schedule 19.35 L (20% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients come from textbook correlations, with stated ranges.</td>
+<td valign="top"><strong>24-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a buffered six-segment schedule 21.48 L (about 11% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients come from textbook correlations, with stated ranges.</td>
 </tr>
 <tr>
 <td valign="top"><strong>Report PDF + supporting ZIP</strong><br>Modeling code and reproduction evidence are available on the case page.</td>
@@ -212,11 +212,19 @@ praxis-plugin/
 
 Your problems, data, and cases stay in your own workspace, never in the plugin.
 
+| Layer | What it does | How it connects |
+|---|---|---|
+| Skills | Frame the question, choose methods, assess evidence and write | Focused capabilities share one modeling method |
+| MCP and scripts | Run calculations, audit data and check references | The same tools are available through MCP or the command line |
+| Evidence workflow | Connect tasks to runs, checks and report claims | Changed inputs or code send affected results back for review |
+
+The agent coordinates the work using deterministic scripts and your project's rules; no separate orchestration service is required.
+
 </details>
 
 ## Reliability
 
-- 160+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
+- 240+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 
@@ -238,4 +246,3 @@ uv run --locked python -m examples.exploration_demo
 ## Sources and licensing
 
 Original code and documentation use the [MIT License](LICENSE). Workflow design references MathModelHub; Sobol analysis and TOPSIS use SALib and pyMCDM. See [Third-party notices](THIRD_PARTY_NOTICES.md) for reuse scope and upstream licenses. Cite methods, data, and tools where they are actually used in your report.
-

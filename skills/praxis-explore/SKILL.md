@@ -6,14 +6,14 @@ license: MIT
 
 # Praxis · 结构、路径与探索
 
-BUNDLE 指 `praxis` 技能目录。标准题不必展开：写一行“为什么选它、放弃了什么”即可。问题陌生、第一条路线太顺、结论影响大或没有标准答案时，才按下面做。
+BUNDLE 指 `praxis` 技能目录。标准题不必展开：写一行“为什么选它、放弃了什么”即可。本技能寻找与比较路线；已有模型的证据是否充分，交给 [praxis-verify](../praxis-verify/SKILL.md)。结构未知、当前路线受反例挑战或确需寻找替代方法时，才展开下面的探索。
 
 ## 做什么
 
 1. **发现结构**：按 [structure-discovery.md](../../references/structure-discovery.md) 的问题清单提问，用 `probe_structure`、`dimensional_analysis`、`check_total_unimodularity` 低成本探测；把发现的结构、依据等级和推论写下来。现实机制到数学结构的对应表也在那里。
 2. **比较路线**：按 [path-search.md](../../references/path-search.md)，从结构各取一条再加最简基线，至少三条结构不同的路线；廉价探索、正面攻击（逆向、事前验尸、证伪、反例搜索、独立方法）、淘汰并留存中间结果、重组、收敛。用 `route_graph` 保存记录；工具会拒绝没有原因的淘汰、没有存活攻击的选定、少于三条的比较和没有后备的假设。
 3. **没有答案时**：按 [research-mode.md](../../references/research-mode.md) 做实验数学：算小例子 → `guess_sequence`、`find_relation` 猜规律 → `test_conjecture`、`find_counterexample` 检验与证伪 → 尝试证明；每条结论标把握等级，声称新之前先检索文献。
-4. **留下经验**：任务收尾按 [learning-loop.md](../../references/learning-loop.md) 复盘，`lesson_add` 存课程，新题开始前 `lesson_search`；用 `evals.planted` 的已知答案题做回归与盲测。
+4. **留下经验**：有可迁移的成功或失败时，按 [learning-loop.md](../../references/learning-loop.md) 审核并存储课程；相关新题形成候选前再检索。工具或指南改动的验收选对应的已知答案与未见题，不用课程数量证明进步。
 
 ## 怎么调用
 
@@ -36,10 +36,10 @@ uv run --locked python -m scripts.mcp_server --call probe_structure '{"property"
 
 ## 边界
 
-- 结构是假设：探测找不到反例只是证据，找到反例才是证明。结论里按证据等级表述。
+- 结构探测找不到反例只是当前范围的证据；找到并复核反例可推翻该性质，不能证明它成立。升级为“已推导”需解析推导或有适用前提的完整证明。
 - 探索有预算。证据足够就停，不为显得全面而增加路线。
 - 工具只记录和探测，不替人判断路线是否合适；选择及理由由人和 Agent 共同负责，必要时与用户按 [praxis-dialogue](../praxis-dialogue/SKILL.md) 讨论。
-- 结构探测给出的是证据：要把“凸”“单调”这类结论升级成“已推导”，需要另外做解析推导（如 Hessian、导数符号）；工具的 `proved` 字段只在找到反例时为真。路线记录和课程放在用户项目里，不上传，不写入未公开材料。
+- 工具的 `proved` 字段只在找到反例时为真，解释时要保留这个语义。路线记录与课程保存在用户项目中；共享边界见 learning-loop.md。
 
 ## 产出与交接
 
