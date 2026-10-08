@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 两个完整案例为图表补入正文解释和自动交叉引用；美赛使用者说明保持独立单页，论文共 24 页（23 页解答加 1 页 AI 报告）；国赛支撑包排除 LaTeX 编译中间文件。修复图表引用检查误判段首引用的问题，并加入成稿回归检查。
+  Both cases now connect figures and tables to their arguments through automatic references. The MCM user guide stays on one page; the report has 24 pages (23 solution pages plus the AI report). The CUMCM archive excludes TeX intermediates. Float checks accept paragraph-initial references, with regressions against the final documents.
+
 - 评委评分表改为条目核对为主：每个维度由可对照的条目换算，印象只能在 ±1 内微调且须写理由，并标明分数来自复算还是判断；新增限时阅读评委模式和注入错误的校准；`evals/aggregate.py` 接受条目清单。
   The judging sheet now works from checkable items per dimension, with at most a documented ±1 adjustment and a record of whether a score is computed or judged; a time-boxed reading-judge mode and error-injection calibration are added; `evals/aggregate.py` accepts checklists.
 - 修复（外部复核发现）：教训检索支持中文查询（字二元组与中文标签，种子教训补了中文标签，并把尚未在另一道题上验证过的两条降为“观察到一次”）；任何嵌套的乘方都被拒绝；相对路径一律相对工作区；国赛附录标题检测排除带句读的行。

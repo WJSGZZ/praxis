@@ -3,10 +3,10 @@
  "checked_on": "2026-10-08",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "60d2bf8816362d9b0304a4f6ba53302b92db5a800c2d8e466ec6a8649b64b25f",
-  "bytes": 152514,
-  "pages_total": 23,
-  "solution_pages": 22,
+  "sha256": "020effbdc929616cbf572011003275f239a8345a63cb5b7850961d6baf2ebc88",
+  "bytes": 156257,
+  "pages_total": 24,
+  "solution_pages": 23,
   "ai_pages": 1,
   "text_bounds_checked": true,
   "pages_rendered_and_visually_reviewed": [
@@ -32,9 +32,10 @@
    20,
    21,
    22,
-   23
+   23,
+   24
   ],
-  "visual_review_note": "Every page rendered and checked; ink margins measured per page so figures, tables and code boxes stay inside the text block and centred",
+  "visual_review_note": "All pages rendered; contact sheets reviewed, with full-size checks of the summary, proof, algorithm box, user guide and appendix. This is an AI layout review.",
   "typesetting": "XeLaTeX (TeX Live 2026): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
  },
  "model_checks": {
@@ -81,5 +82,20 @@
   "date": "2026-10-08",
   "finding": "the first version's ceiling and spread were not mesh-converged (inlet-cell point source); limits redefined outside a jet zone and all results recomputed",
   "other_changes": "coefficient wording, deeper-bath and convective-layer scenarios, tolerance reported as distances"
+ },
+ "preview_pages": [
+  1,
+  8
+ ],
+ "user_guide_page": 21,
+ "float_callout_review": {
+  "date": "2026-10-08",
+  "unreferenced": [],
+  "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
+ },
+ "test_suite": {
+  "passed": 194,
+  "scope": "Full local pytest suite, including exported-plugin tool startup",
+  "date": "2026-10-08"
  }
 }

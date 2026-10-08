@@ -36,7 +36,12 @@ def extract(path):
 
 
 def unreferenced_floats(records):
-    """Figures and tables whose number appears only in their own caption: the text never points the reader to them."""
+    """Flag numbered floats with only one mention (their caption).
+
+    A reference can start a paragraph, so removing every line that starts with
+    'Figure 1' would also remove valid prose. This is a text heuristic, not a
+    semantic check that the additional mention explains the float's claim.
+    """
     norm = lambda word: word.lower() if word.isascii() else word
     caption = re.compile(r'^\s*(图|表|Figure|Table)\s*(\d+)\s*[:.：]?', re.I | re.M)
     mention = re.compile(r'(图|表|Figure|Table)\s*(\d+)', re.I)
@@ -44,11 +49,10 @@ def unreferenced_floats(records):
     for r in records:
         text = r['text']
         captions |= {(norm(m.group(1)), m.group(2)) for m in caption.finditer(text)}
-        body = caption.sub(' ', text)                                    # captions removed; what is left can refer to them, across line breaks too
-        for m in mention.finditer(re.sub(r'\s+', ' ', body)):
+        for m in mention.finditer(re.sub(r'\s+', ' ', text)):
             key = (norm(m.group(1)), m.group(2))
             mentions[key] = mentions.get(key, 0) + 1
-    return sorted(f'{k[0]} {k[1]}' for k in captions if not mentions.get(k))
+    return sorted(f'{k[0]} {k[1]}' for k in captions if mentions.get(k, 0) < 2)
 
 
 def evaluate(records, contest, *, margins=None, forbidden=()):

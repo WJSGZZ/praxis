@@ -61,7 +61,7 @@ def tx(s,math=True):
         elif tok=='<br/>':out.append(r'\\ ')
         elif tok.startswith('<font') or tok=='</font>':pass
         else:out.append(plain(tok) if math else plain_nomath(tok))
-    return re.sub(r'@fig:(\w+)@',r'\\ref{fig:\1}',''.join(out))
+    return re.sub(r'@(fig|tab):([\w]+)@',r'\\ref{\1:\2}',''.join(out))
 def para(s,kind='body'):
     if kind=='title':tex.append(r'\begin{center}{\LARGE\bfseries '+tx(s)+r'}\end{center}'+'\n')
     elif kind=='heading':
@@ -80,16 +80,40 @@ def page(title,hard=False):
 def table(rows,widths=None):
     global tabcount
     tabcount+=1;n=len(rows[0]);tot=float(sum(widths)) if widths else 1
+    introductions={
+      1: 'The coverage map in Table @tab:1@ links each requested outcome to the argument or result that answers it.',
+      2: 'The comparison in Table @tab:2@ motivates the modeling choice: a thermal network resolves spatial differences without requiring the unobserved velocity field of a flow solver.',
+      3: 'The baseline in Table @tab:3@ separates geometry and comfort assumptions from the coefficients whose physical anchors are examined next.',
+      4: 'The relations and ranges in Table @tab:4@ show how each heat-loss coefficient is anchored; the selected values define a scenario rather than a fitted bath.',
+      5: 'The notation in Table @tab:5@ distinguishes cell capacities, transport and boundary exchange so the energy balance can be checked term by term.',
+      6: 'The results in Table @tab:6@ show that the selected constant rate meets the stated temperature limits while accounting for the total replacement water.',
+      7: 'The comparison in Table @tab:7@ separates feasible search results from proved bounds: scheduling saves water relative to the constant rate, but the remaining gap is not an optimality certificate.',
+      8: 'The scenarios in Table @tab:8@ distinguish changes in water storage from changes in body displacement and heat exchange; each row uses its own reconstructed geometry.',
+      9: 'The outcomes in Table @tab:9@ show why mixing and boundary heat loss must be varied separately: stronger transport can help, while added surface loss can offset the gain.',
+      10: 'The three-grid replay in Table @tab:10@ checks the quantities constrained outside the fixed jet zone and separately reports the inlet-cell peak, which is not covered by that ceiling.',
+      11: 'The inputs in Table @tab:11@ and Table @tab:12@ make the scenario comparisons reproducible: only the listed quantities change from the baseline.',
+    }
+    if tabcount in introductions: para(introductions[tabcount])
     if widths:cols='@{}'+''.join(r'>{\raggedright\arraybackslash}p{%.4f\dimexpr\linewidth-%d\tabcolsep\relax}'%(w/tot,2*(n-1)) for w in widths)+'@{}'
     else:cols='l'*n
     lines=[' & '.join(tx(c) for c in row) for row in rows]
-    tex.append(r'\begin{table}[htbp]\centering\small\caption{'+CAPS[tabcount-1]+'}\n\\begin{tabular}{'+cols+'}\n\\toprule\n'+lines[0]+r' \\ \midrule'+'\n'+(r' \\ '+'\n').join(lines[1:])+r' \\ \bottomrule'+'\n\\end{tabular}\n\\end{table}\n')
+    tex.append(r'\begin{table}[htbp]\centering\small\caption{'+CAPS[tabcount-1]+'}'+r'\label{tab:'+str(tabcount)+'}'+'\n\\begin{tabular}{'+cols+'}\n\\toprule\n'+lines[0]+r' \\ \midrule'+'\n'+(r' \\ '+'\n').join(lines[1:])+r' \\ \bottomrule'+'\n\\end{tabular}\n\\end{table}\n')
 def eq(s):
     global eqcount
     eqcount+=1;tex.append(r'\begin{equation}'+re.sub(r'\{\\rm ',r'{\\mathrm ',s)+r'\end{equation}'+'\n')
 figcount=[0]
 def figure(name,caption,height=None):
     figcount[0]+=1
+    introductions={
+      'roadmap.png': 'The roadmap in Figure @fig:roadmap@ shows how the proved mixed benchmark, spatial model and independent checks contribute to the final recommendation.',
+      'spatial.png': 'The layers in Figure @fig:spatial@ locate the remaining spatial temperature differences; a single shared scale makes the top-layer inlet path comparable with the deeper water.',
+      'temperature.png': 'The trajectory in Figure @fig:temperature@ contrasts the volume-weighted mean with the coldest cell and the full spatial range, showing why the mean alone cannot establish comfort.',
+      'control.png': 'The schedule in Figure @fig:control@ concentrates replenishment in the middle of the bath; its temperature trajectory must therefore be checked over the no-flow intervals as well.',
+      'frontier.png': 'The frontier in Figure @fig:frontier@ quantifies the water cost of a tighter temperature preference, separating the spatial search from the ideal benchmark and energy bound.',
+      'bounds.png': 'The bracket in Figure @fig:bounds@ separates admissible policies from lower bounds; it supports a comparison of water use without claiming that the spatial search proves a global optimum.',
+      'ranges.png': 'The draws in Figure @fig:ranges@ show how surface heat loss changes water demand within the tested ranges, while the rejected draws expose conditions where the search finds no acceptable policy.',
+    }
+    if name in introductions: para(introductions[name])
     m=re.match(r'^Figure (\d+)\. (.*)$',caption,re.S);assert m,caption
     tex.append(texplot.figure_env(FIG[name],tx(m.group(2)),label='fig:'+name.replace('.png','')))
 PREAMBLE=r'''\documentclass[12pt,letterpaper]{article}
@@ -150,7 +174,7 @@ a2.band(tc,Yc.min(1),Vc.max(1)).line(tc,Yc.min(1),color='accent',style='dashed')
 a2.label(25.5,float(np.interp(25.5,tc,Vc.max(1)))+0.1,'Hottest cell',color='main',anchor='south west',dx='0pt').label(8,float(np.interp(8,tc,Yc.min(1)))-0.03,'Coldest cell',color='accent',anchor='north',dx='0pt')
 FIG['control.png']=a1.tex()+'\n'+a2.tex()
 boxes=['Assumptions\nand anchors\n§2','Mixed benchmark\nand bound\n§3–4','Spatial network\nand solver\n§5–6','Rate, schedule,\nscenarios\n§7–9','Validation,\nranges, mesh\n§10–11','Conclusion,\nuser guide\n§12–13']
-FIG['roadmap.png']=texplot.flow_diagram(boxes,node_width='2.1cm')
+FIG['roadmap.png']=texplot.flow_diagram(boxes,node_width='2.05cm')
 rows_=lr['rows'];okr=[r_ for r_ in rows_ if r_['feasible']];bad=[r_ for r_ in rows_ if not r_['feasible']]
 top=max(r_['water_l'] for r_ in okr)*1.08
 ax=texplot.Axis('Surface coefficient (W/(m$^2$ K))','Added water (L)',height='5.0cm')
@@ -277,8 +301,8 @@ rows=[['Policy','Water (L)','Change','Min / max (°C)','Spread (°C)'],['Best co
 for run in ct:rows.append([f'{run["segments"]} segments',f'{run["water_l"]:.2f}',f'{100*(run["water_l"]/b["water_l"]-1):+.1f}%',f'{run["min_temp"]:.2f} / {run["max_temp"]:.2f}',f'{run["max_span"]:.2f}'])
 rows+=[['Perfect-mixing optimum',f'{a["mixed_optimum_l"]:.2f}','','',''],['Energy lower bound',f'{a["energy_lower_bound_l"]:.2f}','','','']]
 table(rows,[150,70,70,100,78])
-pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,  max_{i in Omega} T_i(t) <= Tmax,\n              spread over Omega <= span   (every 5 s)\nreplay the best x at 5 s; keep it only if all margins >= 0'''
-tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt,xleftmargin=5pt,xrightmargin=5pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\medskip\n')
+pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,\n              max_{i in Omega} T_i(t) <= Tmax,\n              spread over Omega <= span   (every 5 s)\nreplay the best x at 5 s;\nkeep it only if all margins >= 0'''
+tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt,xleftmargin=5pt,xrightmargin=5pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\par\\medskip\n')
 
 figure('control.png',f'Figure 6. Best {K}-segment schedule against the best constant rate (top) and the range of cell temperatures outside the inlet jet zone (bottom); dotted lines mark the limits.',height=176)
 para(f'The {K}-segment schedule is {"off" if lead else "on"} for the first {lead*seg_min:.1f} minutes and off for the last {trail*seg_min:.1f} minutes, with a peak of {max(flows):.2f} L/min between. It adds {ctl["water_l"]:.2f} L, {save:.1f}% below the constant rate, and narrows the gap to the energy lower bound from {b["water_l"]-a["energy_lower_bound_l"]:.1f} L to {ctl["water_l"]-a["energy_lower_bound_l"]:.1f} L. Refining from 3 to {K} segments gains only {100*(ct[0]["water_l"]-ctl["water_l"])/ct[0]["water_l"]:.1f}%: the saving comes from the shape. The optimum touches the lower limit and the spread limit ({ctl["max_span"]:.2f}°C) and stays {p["ceiling"]-ctl["max_temp"]:.2f}°C below the upper limit ({ctl["max_temp"]:.2f}°C).')
@@ -366,7 +390,7 @@ para('<b>Weaknesses.</b> The surface stream and the effective D stand in for flo
 para('The limitations are consequential. Three-dimensional geometry is represented, but fluid momentum, buoyancy, jet entrainment, free-surface motion and detailed body anatomy are not solved. No bath experiment was conducted. Temperature limits express a preference assumption. Coarse cell averages cannot establish burn safety near the inlet, and the shape scenarios do not resolve stable vertical layers. The shell\'s own heat capacity (a few percent of the water\'s for a thin plastic or enamelled steel tub, more for cast iron or ceramic) is ignored.')
 para('Before using a numerical rate in practice, identify the real tub’s cooling and mixing behavior. Until then, the defensible transferable advice is to avoid unnecessary replenishment, distinguish cold-region temperature from the mean, improve distribution before increasing flow, and reconsider a strategy when geometry or motion changes. The following page translates these principles without requiring the user to interpret the equations.')
 
-page('13. A warmer bath, with less replacement water')
+page('13. A warmer bath, with less replacement water',True)
 para('A guide for the person in the bathtub','heading')
 para(f'<b>Decide what “warm enough” means.</b> A bath need not stay at exactly its starting temperature to remain acceptable. In our example, allowing a 1°C fall still needs about {b["water_l"]:.0f} L of replacement water, while allowing a 2°C fall needs only {sc["loose comfort"]["policy"]["water_l"]:.1f} L. Your actual comfort and health needs must determine the acceptable range.')
 para('<b>Distribute the warmth before turning up the tap.</b> The water near the faucet can warm while the far end remains cool. Gentle movement can help redistribute heat. More vigorous motion is not automatically better: it may also increase heat loss from the surface.')
@@ -377,7 +401,7 @@ para('<b>Remember where the added water goes.</b> Once the tub is full, extra wa
 para('<b>A bubble layer may help, but the amount is uncertain.</b> An intact insulating surface layer can reduce heat loss. Our calculation explores such a layer; it does not measure the effect of a particular additive. If the layer disappears or the bath behaves differently, reassess rather than relying on the example’s saving.')
 para('<b>The practical rule:</b> use the bath’s stored warmth, keep temperature distributed, and add only as much water as your actual conditions require. The numerical example explains these tradeoffs; it is not a tested bathing or safety standard.')
 
-page('14. References and reproducible algorithm')
+page('14. References and reproducible algorithm',True)
 refs=[
 '[1] COMAP. 2016 MCM Problem A: A Hot Bath. 2016. Official problem PDF: contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf.',
 '[2] U.S. Department of Energy. DOE Fundamentals Handbook: Thermodynamics, Heat Transfer, and Fluid Flow. DOE-HDBK-1012/2-92, June 1992. Convection heat transfer, Eq. (2-9).',

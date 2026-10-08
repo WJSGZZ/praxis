@@ -2,6 +2,7 @@
 import shutil
 import subprocess
 import tempfile
+from zipfile import ZipFile
 from pathlib import Path
 
 import pytest
@@ -128,3 +129,23 @@ def test_figures_and_tables_that_the_text_never_mentions_are_flagged():
     en = [page('Summary\nTeam # 1234567 Page 1 of 3'), page('Team # 1234567 Page 2 of 3\nSee Figure 1.\nFigure 1. Curve\nTable 2. Parameters'), page('Team # 1234567 Page 3 of 3\ntext')]
     w = [x for x in contest_rules.evaluate(en, 'mcm')['warnings'] if 'never referred' in x][0]
     assert 'table 2' in w.lower() and 'figure 1' not in w.lower()
+
+
+def test_float_references_can_start_a_paragraph_and_cross_a_line_break():
+    pages = [page('图 1 显示收益的边际变化。\n图 1 风险收益曲线\n'
+                  'Table\n2 gives the inputs.\nTable 2. Inputs\n'
+                  'Figure 3 shows the bound.\nFigure 3. Bound\n'
+                  '表 4 未引用的参数表')]
+    assert contest_rules.unreferenced_floats(pages) == ['表 4']
+
+
+def test_demo_figures_and_tables_have_reader_callouts():
+    for relative in ['demos/mcm-2016-a/deliverables/7391856.pdf',
+                     'demos/cumcm-1998-a/deliverables/paper.pdf']:
+        assert contest_rules.unreferenced_floats(contest_rules.extract(ROOT / relative)) == []
+    mcm = contest_rules.extract(ROOT / 'demos/mcm-2016-a/deliverables/7391856.pdf')
+    guide = [r for r in mcm if 'A guide for the person in the bathtub' in r['text']]
+    assert len(guide) == 1 and 'The practical rule:' in guide[0]['text']
+    assert 'References and reproducible algorithm' not in guide[0]['text']
+    with ZipFile(ROOT / 'demos/cumcm-1998-a/deliverables/supporting_materials.zip') as archive:
+        assert not any(Path(name).suffix in {'.aux', '.out', '.log'} for name in archive.namelist())
