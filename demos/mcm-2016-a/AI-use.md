@@ -14,4 +14,4 @@ Structure and presentation of the later revision were informed by a brief readin
 
 Earlier corrections: an initial 38°C floor needed no replenishment; a stricter scenario with weak mixing had no accepted candidate; the claim that flow necessarily improves every cell monotonically was removed; a continuous-time derivative envelope rejected the initial 0.01°C reserve, which was increased to 0.03°C and verified. The numerical pipeline also rejected a run whose reviewed files changed during execution. Accepted evidence came from a subsequent unchanged-source run.
 
-The PDF appends its own Report on Use of AI Tools and cites AI participation. This file is a development record outside the single-file submission, not a required second attachment. It does not claim that the unavailable interaction transcript was exported or reviewed.
+The PDF appends its own Report on Use of AI and cites AI participation. This file is a development record outside the single-file submission, not a required second attachment. It does not claim that the unavailable interaction transcript was exported or reviewed.

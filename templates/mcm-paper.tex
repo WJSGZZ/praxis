@@ -1,5 +1,9 @@
 % English paper skeleton in the style of the Praxis MCM case (XeLaTeX or tectonic).
 % Compile twice:  xelatex main.tex   (or: tectonic main.tex)
+% Hard rules (COMAP 2026 instructions): the whole PDF is at most 25 pages, counting the summary sheet, contents, references, appendices and any code;
+% 12 pt body text; team control number and page number at the top of every page; no names or institutions. The Report on Use of AI follows the
+% solution, is not counted, and is required when AI tools were used (also cite them inline and in the references).
+% Check the compiled PDF: uv run --locked python -m scripts.contest_rules main.pdf --contest mcm --forbidden "University name"
 % This is NOT an official COMAP Summary Sheet: compare the first page with the current official sheet before submitting.
 \documentclass[12pt,letterpaper]{article}
 \usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
@@ -71,6 +75,6 @@ Compare with a simple baseline, perturb parameters and execution, and state what
 \begingroup\small\setlength{\parindent}{0pt}\hangindent=1.5em
 [1] Author. Title. Publisher, year. \url{https://example.org/}\par
 \endgroup
-\clearpage\section*{Report on Use of AI Tools}\addcontentsline{toc}{section}{Report on Use of AI Tools}
+\clearpage\section*{Report on Use of AI}\addcontentsline{toc}{section}{Report on Use of AI}
 Name each tool and version, what it did, what was adopted or changed, how outputs were verified, and what the record cannot show.
 \end{document}

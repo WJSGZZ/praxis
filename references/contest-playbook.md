@@ -90,5 +90,7 @@
 | AI | 在正文行内引用并列入参考文献，文末另加“Report on Use of AI” | 按当届参赛须知与赛区要求披露 |
 | 提交 | 单个 PDF | 论文 PDF 或 Word（建议 PDF，不超 20 MB）加支撑材料压缩包（不超 20 MB） |
 
+成稿后运行 `uv run --locked python -m scripts.contest_rules 论文.pdf --contest mcm|cumcm [--forbidden 学校名]`，机械核对页数、首页、目录、页码与队号、正文字号、页边距和附录；它只查这些硬规则，不评内容。
+
 模板与规则冲突时以规则为准：`templates/mcm-paper.tex` 带目录，`templates/cumcm-paper.tex` 不带，两者都不是官方模板，使用前对照当届官方文件。
 

@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 新增 `scripts/contest_rules.py`：按美赛（COMAP 2026）与国赛（格式规范 2019/2021/2023）的硬性规则检查 PDF；两个论文模板按各自规则收紧并有测试；美赛 AI 使用报告标题与官方一致；国赛案例的代码页与参考文献不再侵入 2.5 厘米页边距。
+  `scripts/contest_rules.py` checks a PDF against the published hard rules of MCM/ICM and CUMCM; both paper templates follow their rules and are tested; the MCM case's AI report carries the official title and the CUMCM case keeps its code and references out of the 2.5 cm margin.
+
 （发布前把这一节改成新版本号。版本号只增不改：已发布的版本不再修改，修复发下一个小版本。小改动只提交，不发版；新增或改名技能与工具、结果格式变化才升次版本号。）
 
 ## 0.3.0 · 2026-10-08

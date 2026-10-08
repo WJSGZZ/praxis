@@ -384,7 +384,7 @@ refs=[
 '[4] SciPy developers. scipy.sparse.linalg.expm_multiply and scipy.integrate.solve_ivp, API documentation. docs.scipy.org/doc/scipy/reference/. Accessed 7 October 2026.',
 '[5] Bergman, T. L., Lavine, A. S., Incropera, F. P., DeWitt, D. P. Fundamentals of Heat and Mass Transfer, 7th ed. Wiley, 2011. Natural convection above a heated horizontal surface (characteristic length A/P); heat and mass transfer analogy.',
 '[6] Menzies, C., Clarke, N., Steward, C. J., Thake, C. D., Pugh, C. J. A., Cullen, T. Vascular, inflammatory and perceptual responses to hot water immersion: impacts of water depth and temperature in young healthy adults. Experimental Physiology, 2025. doi:10.1113/EP092761.',
-'[7] OpenAI, Codex (GPT-6-based assistant), and Anthropic, Claude Sonnet 5.5 in Claude Code. Used on 7 October 2026 for modeling, code, validation and report composition; exact builds not independently established. See Report on Use of AI Tools.',
+'[7] OpenAI, Codex (GPT-6-based assistant), and Anthropic, Claude Sonnet 5.5 in Claude Code. Used on 7 October 2026 for modeling, code, validation and report composition; exact builds not independently established. See Report on Use of AI.',
 '[8] Munk, W. H., Anderson, E. R. Notes on a theory of the thermocline. Journal of Marine Research, 7(3), 276–295, 1948.',
 ]
 for ref in refs:para(ref,'ref')
@@ -403,7 +403,7 @@ for part in range(2):
  table(rows,[144,324])
  para('Accepted candidates are independently replayed on their scenario network at intervals of no more than five seconds. These scenario checks are sampled checks; the stronger one-second continuous-time envelope is reported for the selected baseline policy only. “None accepted” refers to the documented finite search and is not an infeasibility theorem.')
 
-page('Report on Use of AI Tools',True)
+page('Report on Use of AI',True)
 para('Tool and scope','heading')
 para('OpenAI Codex, a GPT-6-based assistant, was used on 7 October 2026. The later revision (textbook-correlation coefficients, schedule optimization, range analysis, a mesh-convergence audit and rebuilding of this report) used Anthropic’s Claude, Sonnet 5.5, through Claude Code on the same date. Structure and presentation were informed by five Outstanding papers on other problems; none on this problem was read. The assistant once read COMAP’s published judges’ commentary on this problem during development and then removed every change it had prompted. The assistant selected the historical problem, located and read sources, formulated the mixed and spatial models, wrote and revised Python code, designed checks, interpreted numerical runs, generated figures, and drafted and typeset the English report. An assistant sub-agent wrote the independent-RHS validation routine; this is AI-assisted code review, not review by another human.')
 para('Task','heading')
