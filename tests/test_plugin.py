@@ -107,3 +107,10 @@ def test_export_declares_a_working_mcp_server(tmp_path):
     assert result.returncode == 0, result.stderr
     names = {t['name'] for t in json.loads(result.stdout)['result']['tools']}
     assert {'solve_lp', 'ahp_weights', 'check_references'} <= names
+
+
+def test_plugin_manifest_version_matches_pyproject():
+    import json
+    import tomllib
+    root = Path(__file__).resolve().parents[1]
+    assert json.loads((root / 'packaging/plugin.json').read_text())['version'] == tomllib.loads((root / 'pyproject.toml').read_text())['project']['version']

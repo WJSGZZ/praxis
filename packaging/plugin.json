@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "praxis",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Evidence-based mathematical modeling for compatible agents: a coordinating skill plus focused skills for modeling, computation, verification and reporting.",
   "author": {"name": "WJSGZZ"},
   "repository": "https://github.com/WJSGZZ/praxis",

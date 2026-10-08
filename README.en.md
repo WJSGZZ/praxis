@@ -213,7 +213,7 @@ Your problems, data, and cases stay in your own workspace, never in the plugin.
 
 ## Reliability
 
-- 63 automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
+- 160+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 
