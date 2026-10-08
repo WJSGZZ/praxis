@@ -59,3 +59,5 @@ BUNDLE 指 `praxis` 技能目录。用户在场、愿意讨论时使用；限时
 - Klein，“Performing a Project Premortem”，*Harvard Business Review*，2007 年 9 月。
 - Box，“Science and Statistics”，*Journal of the American Statistical Association* 71（1976）：“所有模型都是错的，但有些是有用的”。
 - 逆向思维、证伪、苏格拉底式追问、第一性原理是通用的思维方法；这里只取它们能落到检查的用法。
+
+用户做出的决定（接受假设、选路线、判断结果是否合理）记入 planning/tasks.md 的“人的决定与复核记录”，AI 使用声明据此如实写人的参与。
