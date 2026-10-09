@@ -52,7 +52,7 @@ Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divide
 
 **[Read the complete 23-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
 
-Rebuilding the manuscript requires Songti SC and Heiti SC; the verified typesetting environment is XeLaTeX on macOS. Numerical reproduction runs separately and needs neither LaTeX nor the paper fonts.
+The manuscript uses Fandol 0.3, supplied by TeX Live, MiKTeX and Tectonic, rather than operating-system fonts. The pinned font files are recorded in the [font manifest](../../templates/cumcm-fonts.json). Install the named package if it is missing; do not substitute a different face. Numerical reproduction is independent of typesetting.
 
 ## Run it yourself
 

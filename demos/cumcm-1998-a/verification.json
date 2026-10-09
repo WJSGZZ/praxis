@@ -32,12 +32,6 @@
  "homepage_visual_review": "Four new showcase PNGs inspected at full size; Chinese cover and chart also inspected at 900px and 390px. Small-print reading on mobile requires opening the full image.",
  "local_readme_links_checked": 91,
  "visual_system_version": 2,
- "chinese_font_faces": {
-  "display": "STSongti-SC-Regular",
-  "section": "STSongti-SC-Regular",
-  "body": "PingFangSC-Regular",
-  "metric": "PingFangSC-Regular"
- },
  "localization": "Independently authored Chinese and English headlines, explanatory copy, and line breaks",
  "font_selection_review": [
   "STSongti-SC-Regular",
@@ -59,7 +53,7 @@
  },
  "format_review": "Level-1 headings centered, level-2 left; captions centered (figure below, table above) with note lines; three-line tables; true subscripts and equations; pgfplots figures labelled in Chinese with the knee marked; references with breakable URLs; code appendix with line numbers. Official CUMCM rules checked: A4, margins at least 2.5 cm, centered Arabic page numbers, abstract page with title and keywords, no identity information, 13 pages before the appendix, appendix with file list and full code; font and size are free.",
  "typesetting": "XeLaTeX (TeX Live 2026) (ctex, newtxtext/newtxmath, pgfplots, booktabs); sources in the support archive under paper/; compile log clean of missing glyphs; every page rendered and inspected",
- "checked_on": "2026-10-08",
+ "checked_on": "2026-10-09",
  "float_callout_review": {
   "date": "2026-10-08",
   "unreferenced": [],
@@ -70,7 +64,7 @@
   "scope": "Full local pytest; original numerical receipts retained, exact-rational headline calculation repeated independently",
   "date": "2026-10-08"
  },
- "build_archive_review": "26 original members retained; only build_paper.py and paper/main.tex changed. Numerical code/data/results and AI-use PDF bytes unchanged; no new compiler logs/cache files included.",
+ "build_archive_review": "26 members retained; main paper and AI disclosure migrated to pinned open fonts; README and frozen generator preamble synchronized. Numerical code/data/results and both document bodies unchanged.",
  "incremental_revision": {
   "date": "2026-10-08",
   "optimization_reused": true,
@@ -79,20 +73,59 @@
   "format_precheck_errors": [],
   "format_precheck_warnings": []
  },
+ "portable_font_revision": {
+  "profile": "praxis-cumcm-v2",
+  "font_package": "Fandol 0.3",
+  "mathematical_body_unchanged": true,
+  "ai_disclosure_body_unchanged": true,
+  "support_archive_members": 26,
+  "numerical_results_reused": true,
+  "native_compiler": "passed",
+  "system_xelatex": "passed",
+  "cross_platform_ci": "pending",
+  "text_backend": "pdfium-standard-cjk-mapping"
+ },
+ "layout_revision_history": [
+  {
+   "date": "2026-10-09",
+   "profile": {
+    "profile": "praxis-cumcm-v1",
+    "style_sha256": "fc3d63cdd97547cb70beef5a6cacc1a1bff5834a3b4d19ca2033a7a364c352cf"
+   },
+   "pdf_sha256": "cb60655cfe93e3f4501eb2c131b02d9df4bceb27cbac4b9ddff716ca5ac8b95e",
+   "numerical_rerun": false,
+   "pages_rendered": 23,
+   "native_compiler": "font access blocked; system XeLaTeX succeeded",
+   "archive_changed_members": [
+    "README.md",
+    "build_paper.py",
+    "paper/main.tex"
+   ]
+  }
+ ],
  "layout_revision": {
   "date": "2026-10-09",
   "profile": {
-   "profile": "praxis-cumcm-v1",
-   "style_sha256": "fc3d63cdd97547cb70beef5a6cacc1a1bff5834a3b4d19ca2033a7a364c352cf"
+   "profile": "praxis-cumcm-v2",
+   "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd",
+   "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4"
   },
-  "pdf_sha256": "cb60655cfe93e3f4501eb2c131b02d9df4bceb27cbac4b9ddff716ca5ac8b95e",
+  "pdf_sha256": "e2117545cb21d0bce09aacbb81b51849e4566c89a22dcc906095abb7764b2626",
   "numerical_rerun": false,
   "pages_rendered": 23,
-  "native_compiler": "font access blocked; system XeLaTeX succeeded",
+  "native_compiler": "passed",
   "archive_changed_members": [
    "README.md",
    "build_paper.py",
-   "paper/main.tex"
+   "paper/main.tex",
+   "paper/ai-use.tex",
+   "AI工具使用详情.pdf"
   ]
+ },
+ "showcase_chinese_font_faces": {
+  "display": "STSongti-SC-Regular",
+  "section": "STSongti-SC-Regular",
+  "body": "PingFangSC-Regular",
+  "metric": "PingFangSC-Regular"
  }
 }

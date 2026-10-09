@@ -42,3 +42,5 @@ Public demonstration:
 Proof-artifact organization reference:
 
 - [openai/math](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb), Apache-2.0, reviewed at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. The repository README, Lean README and Comparator challenge instructions informed the original scope-checking guidance in references/methods.md: link a claim to its exact statement, assumptions, proof artifact and verification scope, and distinguish supporting results from main theorems. No manuscripts, reasoning summaries, Lean code, data or proof tools are copied or installed. The repository license does not make unverified mathematical claims correct; Praxis did not compile these proofs.
+
+Typesetting dependency: [Fandol 0.3](https://ctan.org/pkg/fandol), by Clerk Ma and Jie Su, GPL with the upstream font exception. Font binaries are supplied by the user’s TeX distribution or Tectonic bundle and are not vendored. `templates/cumcm-fonts.json` records the exact files used by the portable Chinese layout; the generated PDFs contain embedded subsets.

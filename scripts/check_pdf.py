@@ -51,6 +51,8 @@ def summarize_checks(path, claimed_count=None):
 def inspect_pdf(path, max_pages=None, max_bytes=None, forbidden=(), forbidden_fonts=(),
                 require_embedded_fonts=False, checks_path=None, claimed_check_count=None):
     raw = path.read_bytes()
+    from scripts.pdf_text import extract_pages
+    extracted = extract_pages(path)
     errors, warnings = [], []
     with path.open('rb') as stream:
         doc = PdfReader(stream)
@@ -72,11 +74,12 @@ def inspect_pdf(path, max_pages=None, max_bytes=None, forbidden=(), forbidden_fo
                     entry=font_record(font);key=(entry['face'],entry['subtype'],entry['embedding_present'])
                     if key not in fonts:fonts[key]={**entry,'pages':[]}
                     if number not in fonts[key]['pages']:fonts[key]['pages'].append(number)
-            text=page.extract_text(visitor_text=record_text) or ''
+            page.extract_text(visitor_text=record_text)
+            text = extracted[number - 1]['text']
             texts.append(text)
             if not text.strip():
                 warnings.append(f'Page {number}: no extracted text; image review required')
-            pages.append({'page':number,'size_points':[float(page.mediabox.width),float(page.mediabox.height)],'text_characters':len(text)})
+            pages.append({'page':number,'size_points':[float(page.mediabox.width),float(page.mediabox.height)],'text_characters':len(text),'text_backend':extracted[number - 1]['text_backend']})
         searchable='\n'.join(texts)+json.dumps(metadata)
         for term in forbidden:
             if term and term.casefold() in searchable.casefold():

@@ -55,7 +55,7 @@ def test_export_contains_style_and_checker():
 
 def test_chinese_profile_keeps_its_own_layout_and_rejects_contents():
     text = preamble(None, '中文题目', 'cumcm') + r'\section*{摘要}内容\end{document}'
-    assert check(text, 'cumcm')['profile'] == 'praxis-cumcm-v1'
+    assert check(text, 'cumcm')['profile'] == 'praxis-cumcm-v2'
     assert 'Team' not in text
     check((ROOT / 'templates/cumcm-paper.tex').read_text(), 'cumcm')
     with pytest.raises(ValueError, match='contents'):
@@ -105,3 +105,22 @@ def test_optional_components_and_archived_chinese_source():
 def test_rejects_hierarchy_and_font_default_changes(override):
     with pytest.raises(ValueError, match='override'):
         check(paper().replace('Body.', override))
+
+
+def test_portable_chinese_profile_and_disclosure_match():
+    import json
+    import zipfile
+    style = (ROOT / 'templates/cumcm-style.tex').read_text()
+    profile = json.loads((ROOT / 'templates/cumcm-fonts.json').read_text())
+    assert profile['profile'] == 'praxis-cumcm-v2'
+    for name in profile['files']:
+        assert name in style
+    assert 'Songti SC' not in style and 'Heiti SC' not in style
+    with zipfile.ZipFile(ROOT / 'demos/cumcm-1998-a/deliverables/supporting_materials.zip') as z:
+        ai = z.read('paper/ai-use.tex').decode()
+        for line in style.splitlines():
+            if line.startswith('\\setCJK'):
+                assert line in ai
+        assert 'fontset=none' in ai
+    from scripts.build_plugin import public_files
+    assert ROOT / 'templates/cumcm-fonts.json' in public_files(ROOT)

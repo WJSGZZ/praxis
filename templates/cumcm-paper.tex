@@ -4,13 +4,13 @@
 % （没有程序要写明“本论文没有用到程序”）、论文中不得出现身份、学校和赛区信息。字体与字号不做统一要求。
 % 编译后检查：uv run --locked python -m scripts.contest_rules main.pdf --contest cumcm --forbidden 学校名。以当年官方文件为准。
 \newcommand{\PraxisTitle}{论文题目}
-% BEGIN PRAXIS CUMCM STYLE v1
-% Praxis CUMCM house style v1; content and contest rules are separate.
+% BEGIN PRAXIS CUMCM STYLE v2
+% Praxis CUMCM house style v2; content and contest rules are separate.
 \documentclass[a4paper,12pt,fontset=none]{ctexart}
 \usepackage[top=2.54cm,bottom=2.54cm,left=2.8cm,right=2.8cm]{geometry}
-\setCJKmainfont[BoldFont={Songti SC Bold}]{Songti SC}
-\setCJKsansfont{Heiti SC}
-\setCJKmonofont{Songti SC}
+\setCJKmainfont[BoldFont=FandolSong-Bold.otf,ItalicFont=FandolSong-Regular.otf,BoldItalicFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
+\setCJKsansfont[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\setCJKmonofont[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
 \usepackage{amsmath,amssymb}
 \usepackage{newtxtext,newtxmath}
 \usepackage{booktabs,graphicx,xcolor,pgfplots,caption,needspace,fvextra,array,tabularx}

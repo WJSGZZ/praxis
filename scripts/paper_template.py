@@ -11,6 +11,7 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
+VERSIONS = {'mcm': 1, 'cumcm': 2}
 BEGIN = '% BEGIN PRAXIS MCM STYLE v1\n'
 END = '% END PRAXIS MCM STYLE\n'
 
@@ -20,7 +21,7 @@ def style_block(contest='mcm'):
         raise ValueError('Unknown layout profile')
     name = contest.upper()
     source = ROOT / f'templates/{contest}-style.tex'
-    return (f'% BEGIN PRAXIS {name} STYLE v1\n' +
+    return (f'% BEGIN PRAXIS {name} STYLE v{VERSIONS[contest]}\n' +
             source.read_text().replace('@@PLOTS@@', texplot.PREAMBLE) +
             f'% END PRAXIS {name} STYLE\n')
 
@@ -51,7 +52,7 @@ def summary_header(problem):
 def check(text, contest='mcm'):
     """Reject missing/modified styles and direct layout overrides, not scientific content."""
     block = style_block(contest)
-    begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v1\n'
+    begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v{VERSIONS[contest]}\n'
     end = f'% END PRAXIS {contest.upper()} STYLE\n'
     if text.count(begin) != 1 or text.count(end) != 1 or block not in text:
         raise ValueError('Paper layout differs from the shared source; regenerate with scripts.paper_template')
@@ -75,7 +76,7 @@ def check(text, contest='mcm'):
         raise ValueError('Missing shared summary-page header')
     if contest == 'cumcm' and r'\tableofcontents' in rest:
         raise ValueError('CUMCM papers must not have a table of contents')
-    return {'profile': f'praxis-{contest}-v1', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
+    return {'profile': f'praxis-{contest}-v{VERSIONS[contest]}', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
 
 
 def main():

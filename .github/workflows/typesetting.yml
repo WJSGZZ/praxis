@@ -1,0 +1,35 @@
+name: portable-typesetting
+on:
+  push:
+    branches: [main]
+    paths: ['templates/**', 'scripts/paper_template.py', 'scripts/pdf_text.py', 'scripts/check_pdf.py', 'scripts/contest_rules.py', 'demos/cumcm-1998-a/deliverables/**', '.github/scripts/typesetting.py', '.github/workflows/typesetting.yml']
+  pull_request:
+    paths: ['templates/**', 'scripts/paper_template.py', 'scripts/pdf_text.py', 'scripts/check_pdf.py', 'scripts/contest_rules.py', 'demos/cumcm-1998-a/deliverables/**', '.github/scripts/typesetting.py', '.github/workflows/typesetting.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  typeset:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run --locked python .github/scripts/typesetting.py
+        # Run with the repository on the module search path on every host.
+        env:
+          PYTHONPATH: .
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typesetting-${{ matrix.os }}
+          path: |
+            .session/typesetting/*.pdf
+            .session/typesetting/*.json
+            .session/typesetting/*.txt
+            .session/typesetting/*.log
+          include-hidden-files: true

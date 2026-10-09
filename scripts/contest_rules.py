@@ -12,7 +12,6 @@ import re
 import sys
 from pathlib import Path
 
-from pypdf import PdfReader
 
 MCM_PAGE_LIMIT = 25
 CUMCM_BODY_PAGES = 30
@@ -22,16 +21,10 @@ MIN_MARGIN_PT = 2.5 / 2.54 * 72 - 3
 
 def extract(path):
     """One record per page: text, its lines, and the most common font size by character count."""
-    records = []
-    for page in PdfReader(str(path)).pages:
-        sizes = collections.Counter()
-
-        def visitor(text, cm, tm, font_dict, font_size):
-            if text.strip():
-                sizes[round(float(font_size) * abs(float(tm[0]) if tm[0] else 1.0) * abs(float(cm[0]) if cm[0] else 1.0), 1)] += len(text.strip())
-        text = page.extract_text(visitor_text=visitor) or ''
-        lines = [x.strip() for x in text.splitlines() if x.strip()]
-        records.append(dict(text=text, lines=lines, body_size=sizes.most_common(1)[0][0] if sizes else None))
+    from scripts.pdf_text import extract_pages
+    records = extract_pages(path)
+    for record in records:
+        record['lines'] = [x.strip() for x in record['text'].splitlines() if x.strip()]
     return records
 
 

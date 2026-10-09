@@ -52,7 +52,7 @@
 
 **[阅读完整 23 页论文 →](deliverables/paper.pdf)** 用 XeLaTeX 排版：中文用 ctex，西文与公式用 Times 系，图由 pgfplots 从数据直接绘制；一级标题居中，图题在图下、表题在表上。正文不含目录，附录列出支撑材料文件清单和完整源程序，符合 2026 年国赛格式规范；字体与字号官方不作统一要求。
 
-论文源文件使用固定的中文字体 Songti SC／Heiti SC，并已在 macOS XeLaTeX 验证；其他系统须先准备同名字体，不能静默换字。独立复现数值计算不需要 LaTeX 或这些字体。
+论文采用固定的 Fandol 0.3 宋体／黑体，随 TeX Live、MiKTeX 或 Tectonic 提供，不依赖 macOS／Windows 系统字体。文件版本与哈希见[字体清单](../../templates/cumcm-fonts.json)；遇到缺失应安装该字体包，不能静默换字。数值复现不需要 LaTeX。
 
 ## 自己跑一次
 

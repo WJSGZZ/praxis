@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 中文论文迁移至固定的 Fandol 0.3 开放字体，移除系统字体依赖；国赛正文与 AI 使用详情同步，新增三系统干净环境编译检查及字体哈希验证。标准中文 CID 字体的提取改用正确映射，避免乱码导致匿名和结构检查漏检。
+  Chinese reports now use pinned Fandol fonts from the TeX distribution. The paper and disclosure share the same font choices, with clean-runner compilation checks for Windows, Linux and macOS. Standard CJK CID mappings are handled correctly during intake and PDF inspection.
+
 - 科研绘图不再默认步长抽稀长序列，避免漏掉窄峰；检查全部点的非有限值，明确点数上限超出时拒绝静默删点。图形按论证需要选择，不把配图或子标题设为模板必填项。
 
 - 美赛报告共用单一版式源与摘要页生成器；新增模板漂移检查，收费站终稿与浴缸旗舰统一排版，数学内容不变。冻结入口增加版式门禁与源文件哈希；组件是否选用独立于样式约束，目录两级统一引线。国赛2026正文上限修正为30页（摘要与附录不计）。

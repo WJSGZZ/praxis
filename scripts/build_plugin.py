@@ -22,7 +22,7 @@ TREES = {
     'references': {'.md'},
     'scripts': {'.py'},
     'modeling': {'.py'},
-    'templates': {'.tex', '.jsonl'},
+    'templates': {'.tex', '.jsonl', '.json'},
     'examples': {'.py'},
     'evals': {'.py', '.md', '.json'},
     'demos/assets_src': {'.py'},

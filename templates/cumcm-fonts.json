@@ -1,0 +1,25 @@
+{
+  "profile": "praxis-cumcm-v2",
+  "font_package": "Fandol 0.3",
+  "source": "https://ctan.org/pkg/fandol",
+  "license": "GPL + GPL font exception (upstream README)",
+  "provisioning": "TeX Live / MiKTeX fandol package, or Tectonic bundle; no OS font fallback",
+  "files": {
+    "FandolSong-Regular.otf": {
+      "sha256": "a3820003227d4abe31fe28b493200d94a849ccfd078b50a019264f70353020b0",
+      "bytes": 4947904
+    },
+    "FandolSong-Bold.otf": {
+      "sha256": "ffa76a70e128947a4dd22151d5ee829b23e24ce3cb6fe8ad49891cd1c2d9e9b9",
+      "bytes": 5777588
+    },
+    "FandolHei-Regular.otf": {
+      "sha256": "4afa97aa8751e0118617df88272b58d43691b5cffb7ea024c4580496e9f34d28",
+      "bytes": 5808908
+    },
+    "FandolHei-Bold.otf": {
+      "sha256": "42ca2de27b45e16a284768673b6205a5add9e17871ee0e7db9c0d03f061d96fd",
+      "bytes": 3581972
+    }
+  }
+}

@@ -78,7 +78,8 @@ def init_case(case_root, name, problem, data=(), phase='preparation', encoding='
             doc = PdfReader(stream)
             if doc.is_encrypted:
                 raise ValueError('Encrypted problem PDF must be opened by its owner first')
-            text = '\n\n'.join(page.extract_text() or '' for page in doc.pages)
+            from scripts.pdf_text import extract_pages
+            text = '\n\n'.join(page['text'] for page in extract_pages(problem))
         visual_review = True  # Text extraction can miss diagrams and equations.
     else:
         text = problem.read_text(encoding=encoding)
