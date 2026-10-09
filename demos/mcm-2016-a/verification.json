@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
-  "bytes": 171871,
+  "sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
+  "bytes": 173474,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,9 +37,9 @@
    25,
    26
   ],
-  "visual_review_note": "Final26page contact review and readable21/22/23; final21 inspected after command/actual water notation correction. Zero out-of-page nonspace characters. Preview pages1/8 pixel-identical to previous9177 at1.6scale; preview assets retained. Native final generated source compile succeeded.",
+  "visual_review_note": "All26 pages rendered/contact reviewed; readable1/2/21/22/24/26 plus independent reviewer readable1/9/10/12/13/20/21/22/23/26. Final full text reread against original problem. Shared typography unchanged; native actual saved source compilation succeeded. Zero out-of-page nonspace characters; all extracted fonts have embedded programs.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "364c2817c210ff154c327c076b70ed6b"
+  "md5": "57f8766b5e61ab71fb6a0d4dffc7e921"
  },
  "model_checks": {
   "total": 17,
@@ -763,18 +763,18 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
+  "version_sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external same-family AI prior full7349 and d00c revision checks retained; current c533 pp22/26 text and images plus six-case tables checked against predeclared results. Independent Decimal check of66 stored terminal interval objects; ten independent RHS/energy/conditional envelopes. Nonblind, uncalibrated; no fresh complete-paper rereading, full historical-prediction reconstruction or physical validation.",
+  "review_scope": "Author-external same-family AI freshly reread original problem and all26 current PDF pages; all-page contacts and10 full-size pages including all5 figures. New proof, source/archive identities and readonly6-object/102-case audit checked. Prior independent RHS and scalar results reused, no expensive thermal/optimization rerun. Existing same-question O/commentary comparison, nonblind and uncalibrated.",
   "basis": [
-   "Proved mixed benchmark and complete problem coverage with independent numerical checks.",
-   "Common-reserve structural ambiguity, matched observation ablation and explicit empty-set faults connect assumptions to decisions.",
-   "Conditional retained-tail induction and command-water domination cap strengthen explanation; revised conclusion links temperature tolerance, transport and available information.",
-   "Two predeclared off-bank parameter cases complete30minutes; four changed-physics cases explicitly refuse certificate reuse before checked temperature failure. Complete and partial horizons are distinguished."
+   "Complete original requirements, conservative spatial model, proved mixed benchmark and independent numerical validation.",
+   "Transport changes timing; motion trades mixing against surface loss; structural ambiguity and matched trial costs connect observations to actions.",
+   "Exact-remainder proof establishes narrow continuous static-parameter neighborhoods for two fixed realized schedules, distinct from controller-wide guarantees.",
+   "Finite-bank feedback, retained-tail argument, completed-service command cap and explicit refusal boundaries are stated with their conditions."
   ],
-  "main_gap": "Two off-bank positive points and four refusal boundaries do not establish a quantitative continuous applicability neighbourhood or safe recovery after rejection.",
-  "highest_value_next_action": "Quantify a bounded continuous parameter neighbourhood around accepted conditions, with independently checkable perturbation bounds; keep changed-physics rejection separate from completion.",
-  "strength_note": "Strong F center, nearer the F/O boundary in qualitative current-increment review; O not established."
+  "main_gap": "The prescribed flow path, effective mixing closure and homogenized body still carry the strongest transport-to-action claims. Narrow fixed-action boxes do not validate these mechanisms or every feedback branch.",
+  "highest_value_next_action": "Challenge remote cooling, timing and heat short circuit using a transport mechanism independent of the present assembly closure; compare action conclusions under matched conditions rather than increasing same-matrix counts.",
+  "strength_note": "Fresh whole-paper review: strong F center, adjacent F-O reference; O competitiveness has substantive support, but O is not established."
  },
  "feedback_revision": {
   "previous_pdf": {
@@ -973,5 +973,108 @@
   "passed": 652,
   "date": "2026-10-10",
   "scope": "Final adopted d00c PDF/metadata and current case-assessment binding regression;652 passed,0 failures/0 skips,3 expected invalid-plot warnings,143.65s. Numerical searches unchanged."
+ },
+ "continuous_parameter_revision": {
+  "date": "2026-10-10",
+  "previous_pdf": {
+   "sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
+   "bytes": 171871,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "Final26page contact review and readable21/22/23; final21 inspected after command/actual water notation correction. Zero out-of-page nonspace characters. Preview pages1/8 pixel-identical to previous9177 at1.6scale; preview assets retained. Native final generated source compile succeeded.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "364c2817c210ff154c327c076b70ed6b"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
+   "checked_on": "2026-10-10",
+   "review_scope": "Author-external same-family AI prior full7349 and d00c revision checks retained; current c533 pp22/26 text and images plus six-case tables checked against predeclared results. Independent Decimal check of66 stored terminal interval objects; ten independent RHS/energy/conditional envelopes. Nonblind, uncalibrated; no fresh complete-paper rereading, full historical-prediction reconstruction or physical validation.",
+   "basis": [
+    "Proved mixed benchmark and complete problem coverage with independent numerical checks.",
+    "Common-reserve structural ambiguity, matched observation ablation and explicit empty-set faults connect assumptions to decisions.",
+    "Conditional retained-tail induction and command-water domination cap strengthen explanation; revised conclusion links temperature tolerance, transport and available information.",
+    "Two predeclared off-bank parameter cases complete30minutes; four changed-physics cases explicitly refuse certificate reuse before checked temperature failure. Complete and partial horizons are distinguished."
+   ],
+   "main_gap": "Two off-bank positive points and four refusal boundaries do not establish a quantitative continuous applicability neighbourhood or safe recovery after rejection.",
+   "highest_value_next_action": "Quantify a bounded continuous parameter neighbourhood around accepted conditions, with independently checkable perturbation bounds; keep changed-physics rejection separate from completion.",
+   "strength_note": "Strong F center, nearer the F/O boundary in qualitative current-increment review; O not established."
+  },
+  "pdf_sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
+  "tex_sha256": "f16d7c67327467e06e6ae4d91d78231c1cd02af5b2667a92d1715310a215ba9d",
+  "generator_sha256": "6b70d07fa4250e3b57fdb2822921b0d943c9752710ba847f4733541e377047eb",
+  "archive": "reproduce/reference/continuous-transfer.json",
+  "archive_sha256": "1bab284b7a882a82a3b43057cc84826bbe82aac06d74bd20c0a75f6132eb0e8a",
+  "certified_halfwidths": {
+   "D": 6.25e-06,
+   "surface_h": 0.15625,
+   "body_h": 0.3125,
+   "flow_multiplier": 0.003125
+  },
+  "physical_outward_bounds_c": [
+   39.0759,
+   40.7769,
+   1.1746
+  ],
+  "independent_cases": 102,
+  "figures": 5,
+  "tables": 14,
+  "equations": 22,
+  "native_compiler": "success",
+  "scope": "Fixed realized commands, static four-parameter boxes and specified three networks; conditional floating-point state/derivative bounds, not directed rounding, physical calibration, all feedback branches or all common reserves. Original baseline and searches unchanged.",
+  "review": "Fresh full current paper and original-problem author-external same-family AI review; nonblind, uncalibrated, no human review.",
+  "rejected_candidate": "28-page draft retained privately; typography unchanged; redundant introductions and duplicated prose reduced to fit25 solution+1AI pages.",
+  "preview_binding": {
+   "pdf_sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
+   "scale": 1.6,
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "sha256": "19a579d09e183ba66c315d68cd2821d7fda1a9ac63228034649f4f27e7de3fca"
+    },
+    "report-proof.png": {
+     "page": 7,
+     "sha256": "867c1814470a19b0f34e047db9d2622904cdee3d0680f12a4f58cce92a9d28de"
+    }
+   }
+  },
+  "out_of_page_characters": 0,
+  "embedded_fonts_checked": true
  }
 }

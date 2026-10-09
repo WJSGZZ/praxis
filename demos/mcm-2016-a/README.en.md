@@ -65,11 +65,11 @@ Table 8 compares the three policies on one finite ambiguity set: 130, 174 and 17
 <table>
 <tr>
 <td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-summary.png" alt="Summary Sheet: method, results and validation" width="100%"></a></td>
-<td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-proof.png" alt="Proof of the optimal ideal-model strategy and the energy bound" width="100%"></a></td>
+<td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-proof.png" alt="Optimal-policy proof for the perfectly mixed model" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>Summary Sheet: problem, method, result</strong><br>The decision, the numbers and the evidence level on one page.</td>
-<td><strong>Argument: from proof to bound</strong><br>The optimal strategy of the ideal model and the energy bound.</td>
+<td><strong>Argument: why coast, then hold</strong><br>Four steps establish the mixed-model optimum.</td>
 </tr>
 </table>
 
@@ -79,13 +79,13 @@ Table 8 compares the three policies on one finite ambiguity set: 130, 174 and 17
 
 ## A neighborhood, rather than two isolated successes
 
-The [continuous-parameter supplement](reproduce/reference/continuous-transfer.md) keeps the realized commands fixed and controls the exact remainder around four-parameter neighborhoods. Both routes qualify on three meshes; 102 independently integrated corners and centers challenge the implementation. Stricter common reserves do not all qualify, and feedback branch selection is outside this certificate. The current PDF has not incorporated this supplement, so its version-bound award assessment is unchanged.
+The [continuous-parameter supplement](reproduce/reference/continuous-transfer.md) keeps the realized commands fixed and controls the exact remainder around four-parameter neighborhoods. Both routes qualify on three meshes; 102 independently integrated corners and centers challenge the implementation. Stricter common reserves do not all qualify, and feedback branch selection is outside this certificate. Section 11.3 now states the conditions and exact-remainder argument in the paper; the supplement retains the detailed calculation and failed route. A whole-paper assessment, rather than this numerical audit, judges the manuscript.
 
 ## Assessment
 
-**Target: Outstanding Winner. Current reference: strong Finalist, with an adjacent F–O range; O is not established.** The author-external AI review combines earlier whole-paper understanding with actual checks of this revision. It is non-blind and uncalibrated. The mixed-model proof, independent checks and common-reserve comparison support a decision chain from structural ambiguity to trial costs and observed actions. The revised argument connects temperature tolerance, transport and available information, and proves a 26.09 L command cap for completed services. With a shared delivery multiplier α, the corresponding actual-water bound is α×26.09 L.
+**Target: Outstanding Winner. Current reference: strong Finalist, with an adjacent F–O range; O is not established.** An author-external AI reread the original problem and all 26 current pages, reviewing page overviews and readable views of all five figures. The assessment is non-blind and uncalibrated. Complete coverage, a proved mixed benchmark and conservative spatial modeling support a coherent argument about timing, structural ambiguity, trial costs and reading-dependent actions. The completed-service command cap is 26.09 L; with a shared delivery multiplier α, the actual-water bound is α×26.09 L.
 
-Transfer now has concrete positive and refusal cases: the unchanged controller completes two off-grid conditions and rejects four changed-physics conditions excluded from design and screening. This strengthens the decision boundary, but establishes neither a continuous parameter neighbourhood nor a recovery policy. A fresh review of that increment retains the strong-F reference. The new supplement adds narrow neighborhoods for fixed commands; incorporating that argument into the manuscript and extending coverage to feedback branches remain separate tasks. The water cap and fixed-candidate payback result still do not prove optimal feedback.
+The revision closes a specific gap: two fixed realized schedules now have explicit continuous neighborhoods and controlled exact remainders in Section 11.3, with matching summary and conclusions. That guarantee covers static parameters and specified networks, not every feedback branch or every stronger reserve. The most valuable remaining challenge is to test remote cooling, timing and heat short circuit against a transport mechanism independent of the present assembly closure. More checks of the same matrix would add less. Fixed-candidate payback does not transfer to feedback, and certificate refusal does not establish safe recovery.
 
 The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
 

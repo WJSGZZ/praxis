@@ -88,9 +88,13 @@ STRUCT_OBS=structure_observation_values(ROOT)
 STRUCT_DEC=structure_decision_values(ROOT)
 from common_reserve import common_reserve_values
 FAIR=common_reserve_values(ROOT)
-from feedback_study import feedback_values, transfer_values
+from feedback_study import feedback_values, transfer_values, continuous_values
 FB=feedback_values(ROOT)
 FT=transfer_values(ROOT)
+BOX=continuous_values(ROOT)
+BOX_CERTS=[next(x for x in row["scales"] if x["scale"]==BOX["scale"]) for row in BOX["rows"]]
+BOX_CENTER=BOX["rows"][0]["parameters"]; BOX_WIDTH=BOX_CERTS[0]["halfwidths"]
+BOX_BOUND=[math.floor(min(x["temperature_bounds_c"][0] for x in BOX_CERTS)*1e4)/1e4, math.ceil(max(x["temperature_bounds_c"][1] for x in BOX_CERTS)*1e4)/1e4, math.ceil(max(x["temperature_bounds_c"][2] for x in BOX_CERTS)*1e4)/1e4]
 FBZERO=FB["completed"][("variants","zero_noise")]
 FBRANDOM=FB["completed"][("variants-resume","random_noise")]
 assert STRUCT_DEC["all_base_envelopes_passed"] and STRUCT_DEC["repair_sampled_passes"]==STRUCT_DEC["repair_checks"], "Revise structural decision interpretation"
@@ -179,18 +183,18 @@ def table(rows,widths=None,caption=None,label=None):
         established=False
     n=len(rows[0]);tot=float(sum(widths)) if widths else 1
     introductions={
-      1: 'The coverage map in Table @tab:1@ links each requested outcome to the argument or result that answers it.',
-      2: 'The comparison in Table @tab:2@ motivates the modeling choice: a thermal network resolves spatial differences without requiring the unobserved velocity field of a flow solver.',
-      3: 'The baseline in Table @tab:3@ separates geometry and comfort assumptions from the coefficients whose physical anchors are examined next.',
-      4: 'The relations and ranges in Table @tab:4@ show how each heat-loss coefficient is anchored; the selected values define a scenario rather than a fitted bath.',
-      5: 'The notation in Table @tab:5@ distinguishes cell capacities, transport and boundary exchange so the energy balance can be checked term by term.',
-      6: 'The results in Table @tab:6@ show that the selected constant rate meets the stated temperature limits while accounting for the total replacement water.',
-      7: 'The comparison in Table @tab:7@ separates feasible search results from proved bounds: scheduling saves water relative to the constant rate, but the remaining gap is not an optimality certificate.',
-      8: 'The scenarios in Table @tab:8@ distinguish changes in water storage from changes in body displacement and heat exchange; each row uses its own reconstructed geometry.',
-      9: 'The outcomes in Table @tab:9@ show why mixing and boundary heat loss must be varied separately: stronger transport can help, while added surface loss can offset the gain.',
-      10: 'The three-grid replay in Table @tab:10@ checks the quantities constrained outside the fixed jet zone and separately reports the inlet-cell peak, which is not covered by that ceiling.',
-      11: 'Table @tab:11@ compares all three-grid envelopes under identical design reserves; each row is a structure-specific bank, not a probability.',
-      12: 'The inputs in Table @tab:12@ make the scenario comparisons reproducible: only the listed quantities change from the baseline.',
+      1: 'Table @tab:1@ maps each requirement to its answer.',
+      2: 'Table @tab:2@ contrasts spatial resolution and data requirements.',
+      3: 'Table @tab:3@ separates assumed inputs from anchored coefficients.',
+      4: 'Table @tab:4@ summarizes the coefficient anchors and scenario ranges.',
+      5: 'Table @tab:5@ defines storage, transport and exchange symbols.',
+      6: 'Table @tab:6@ reports the constant-rate trajectory and water use.',
+      7: 'Table @tab:7@ separates candidates from proved bounds.',
+      8: 'Table @tab:8@ isolates geometry, storage and body changes.',
+      9: 'Table @tab:9@ separates transport benefits from boundary losses.',
+      10: 'Table @tab:10@ compares constrained temperatures and the excluded inlet peak.',
+      11: 'Table @tab:11@ compares structure-specific banks at the same reserves.',
+      12: 'Table @tab:12@ lists the changes defining each scenario.',
     }
     if established and tabcount in introductions: para(introductions[tabcount])
     if widths:cols='@{}'+''.join(r'>{\raggedright\arraybackslash}p{%.4f\dimexpr\linewidth-%d\tabcolsep\relax}'%(w/tot,2*(n-1)) for w in widths)+'@{}'
@@ -205,10 +209,10 @@ def figure(name,caption,height=None):
     figcount[0]+=1
     introductions={
       'roadmap.png': 'The roadmap in Figure @fig:roadmap@ shows how the proved mixed benchmark, spatial model and independent checks contribute to the final recommendation.',
-      'spatial.png': 'The layers in Figure @fig:spatial@ locate the remaining spatial temperature differences; a single shared scale makes the top-layer inlet path comparable with the deeper water.',
-      'temperature.png': 'The trajectory in Figure @fig:temperature@ contrasts the volume-weighted mean with the coldest cell and the full spatial range, showing why the mean alone cannot establish comfort.',
-      'control.png': 'The schedule in Figure @fig:control@ concentrates replenishment in the middle of the bath; its temperature trajectory must therefore be checked over the no-flow intervals as well.',
-      'frontier.png': 'Figure @fig:frontier@ compares the spatial constant-rate search with the analytical well-mixed optimum and energy lower bound. The spatial curve joins accepted search results; it does not certify an optimum over all controls.',
+      'spatial.png': 'Figure @fig:spatial@ locates cold regions across layers on one scale.',
+      'temperature.png': 'Figure @fig:temperature@ contrasts the mean, coldest cell and spatial range.',
+      'control.png': 'Figure @fig:control@ shows flow timing and temperature constraints.',
+      'frontier.png': 'Figure @fig:frontier@ compares searched spatial policies with analytical benchmarks.',
       'bounds.png': 'The bracket in Figure @fig:bounds@ separates admissible policies from lower bounds; it supports a comparison of water use without claiming that the spatial search proves a global optimum.',
       'ranges.png': 'The draws in Figure @fig:ranges@ show how surface heat loss changes water demand within the tested ranges, while the rejected draws expose conditions where the search finds no acceptable policy.',
     }
@@ -282,7 +286,7 @@ para('Maintaining a warm bath is a coupled problem of heat loss, replenishment a
 para('We prove a coast-then-hold policy optimal for a well-mixed bath, then use a three-dimensional finite-volume thermal network with coefficients derived from textbook correlations and tied to a published immersion study where one exists (Section 2). The best constant rate is compared with an optimized piecewise-constant schedule; neither is proved optimal among all controls.')
 para(f'In a {rv["water_volume_l"]:.2f} L water-volume scenario lasting {rv["horizon_min"]:g} minutes, with an initial temperature of {p["initial"]:g}°C and a {p["floor"]:g}°C lower limit, the best accepted constant-rate candidate adds <b>{b["water_l"]:.2f} L</b> at {b["flow_lpm"]:.3f} L/min from the start, and a {ctl["segments"]}-segment schedule with a {ctl["buffer_c"]:g}°C design margin needs <b>{ctl["water_l"]:.2f} L</b>, {save:.0f}% less. The well-mixed optimum is {a["mixed_optimum_l"]:.2f} L, while an independent energy argument gives a {a["energy_lower_bound_l"]:.2f} L lower bound for the spatial problem. A finer mesh changes the constant-rate result by {100*abs(r["mesh"]["fine_policy"]["water_l"]-b["water_l"])/b["water_l"]:.2f}%, and the selected scheduled policy passes independent continuous-time bounds on all three tested meshes.')
 para(f'Across {lr["samples"]} Sobol draws over the stated parameter ranges, {lr["feasible"]} yield an accepted constant-rate candidate, needing {qq["0.05"]:.0f}–{qq["0.95"]:.0f} L (5th–95th percentile). Weak mixing often defeats this finite search. Motion improves transport, but the associated extra surface loss can offset the saving. The assumed foam layer reduces constant-flow demand to {sc["foam"]["policy"]["water_l"]:.1f} L; this is a scenario, not a measured additive effect.')
-para(f'Geometry and mixing change the recommendation: a deep, narrow tub needs {sc["deep narrow"]["policy"]["water_l"]:.2f} L at equal volume, and weaker mixing moves inflow to the start. Cooling cannot identify the inlet route; alternative flow/body mechanisms still fit two probes. We therefore carry all compatible structures into the decision. Passive/pulse trials leave 1465/467 structure–parameter pairs. At identical extra temperature reserves, candidates use {FAIR["volumes"]["passive"]:.2f}/{FAIR["volumes"]["pulse"]:.2f} L and pass {FAIR["objects"]} model-grid envelopes. For these fixed candidates, the 6 L pulse trial pays back with equal resets from the {FAIR["crossover"]}rd unchanged use. Minute-by-minute probe updates then reduce the passive backup to {sum(FBZERO['flows']):.2f}/{sum(FBRANDOM['flows']):.2f} L in zero-noise/one random-noise nominal cases. Two specified condition shifts invalidate the model set within one minute; this is a detection result, not safe fault recovery. These are conditional model results; AI assistance is disclosed.')
+para(f'Geometry and mixing change the recommendation: a deep, narrow tub needs {sc["deep narrow"]["policy"]["water_l"]:.2f} L at equal volume, and weaker mixing moves inflow to the start. Cooling cannot identify the inlet route, and alternative flow/body mechanisms fit two probes. Passive/pulse trials retain 1465/467 pairs; at common reserves, candidates use {FAIR["volumes"]["passive"]:.2f}/{FAIR["volumes"]["pulse"]:.2f} L across {FAIR["objects"]} model-grid envelopes. A reusable 6 L pulse trial pays from unchanged use {FAIR["crossover"]} with equal resets. Probe updates reduce the passive backup to {sum(FBZERO["flows"]):.2f}/{sum(FBRANDOM["flows"]):.2f} L in two nominal noise cases. Two off-grid realized schedules also satisfy physical limits in narrow four-parameter neighborhoods; changed physics can invalidate reuse. These conditional results do not establish safe fault recovery.')
 para('<b>Keywords:</b> thermal network; energy balance; lower bound; optimal control; sensitivity analysis')
 
 tex.append(table_of_contents())
@@ -355,8 +359,8 @@ para(f'A fixed envelope volume is preserved by balancing inlet and overflow. In 
 
 page('5.1 Spatial evidence: the mean is not the whole bath')
 figure('spatial.png','Figure 4. Final temperatures in the three horizontal cell layers. All layers use one color scale; the top layer contains the prescribed inlet-to-overflow stream. Geometry is in metres, and values are cell averages.',height=199)
-para('The heat map is calculated from the same archived trajectory as Figure @fig:temperature@. It shows where the imposed transport path and environmental/body sinks leave temperature differences. The plots are horizontal slices through a three-dimensional network with exchange between layers, not three independent two-dimensional models.')
-para('The maps reveal the location of cold regions that a mean or overall range hides. They depict declared cell averages, while the mesh table checks resolution; they do not resolve anatomy, recirculation or a faucet jet.')
+para('The heat map and Figure @fig:temperature@ use the same archived trajectory. Exchange couples the horizontal layers into one three-dimensional network. The cold-region locations explain information lost by a mean or range; the mesh table tests resolution. These are homogenized cell averages, not resolved anatomy, recirculation or a faucet jet.')
+# Homogenized-body and unresolved-jet scope is retained in the preceding paragraph.
 # The homogenized-body and unresolved-jet limits are stated in Sections 1, 2 and 5.
 
 page('6. Inlet transport, solver and strategy search')
@@ -517,20 +521,29 @@ para('Starting from 1,465 passive-compatible pairs on the 96-cell grid, read pro
 eq(r'I_{mj,k}=[-0.02,0.02]\cap\bigcap_{\ell=0}^{k}[z_{j,\ell}-\widehat T_{mj,\ell}-0.020002,\ z_{j,\ell}-\widehat T_{mj,\ell}+0.020002].')
 para('Exclude a model if either interval is empty. Choose the least of 0, 0.8, 0.9 and 1 times the current backup rate whose next minute and remaining backup satisfy all survivors’ common targets. Chord bounds include the dynamic body state, refine unresolved five-second intervals to 0.0390625 s, and assume the same 2e-6°C allowance.')
 para(f'<b>Conditional feasibility and water cap.</b> Each accepted minute is checked with the original remaining backup. Subsequent observations only shrink the set, preserving that feasible tail. Induction applies if the truth stays in the static bank and propagators are valid. For L/min commands $0\\le q_k\\le q_k^{{\\mathrm{{backup}}}}$, a completed service has $J_{{\\mathrm{{cmd}}}}=\\sum_k q_k\\Delta t\\le\\sum_k q_k^{{\\mathrm{{backup}}}}\\Delta t\\le{FB["backup_command_l"]:.2f}$ L ($\\Delta t=1$ minute). A shared $\\alpha>0$ gives $J_{{\\mathrm{{act}}}}=\\alpha J_{{\\mathrm{{cmd}}}}\\le\\alpha\\times{FB["backup_command_l"]:.2f}$ L. This proves neither minimum water nor fault or timeout recovery.')
-para(f'With fixed probe biases (+0.013, −0.011)°C, zero reading noise uses {sum(FBZERO["flows"]):.2f} L and retains 114 models at the last action; one uniform bounded-noise sequence (seed 20261010) uses {sum(FBRANDOM["flows"]):.2f} L and retains one. Both start with 1,465 hypotheses and the same {FB["backup_command_l"]:.2f} L backup; Figure @fig:feedback@ shows that useful action changes need not await unique identification. These are nominal surface/fixed truths, not tests of all possible truths or a probabilistic performance estimate.')
+para(f'Fixed probe biases (+0.013, −0.011)°C give {sum(FBZERO["flows"]):.2f} L with zero reading noise and {sum(FBRANDOM["flows"]):.2f} L with one bounded-noise sequence (seed 20261010); 114/1 models remain. Both start from 1,465 hypotheses and the {FB["backup_command_l"]:.2f} L backup. Figure @fig:feedback@ shows action changes before unique identification. These are two nominal surface/fixed examples, not population performance.')
 figure('feedback.png','Figure 10. Observations change replenishment. Both nominal cases start from the same bank and backup; a logarithmic count axis distinguishes slow and rapid elimination. The constant bias and noise bounds are shared.',height=180)
-para('A matched 12-model ablation retains every model: three nominal structures then use 26.00 L, versus 22.86/22.86/22.08 L with observations. Its smaller bank differs from the 1,465-model cases. Six completed feedback trajectories pass 18 independent half-second, three-grid RHS/energy replays; these frozen actions do not certify continuous fine-grid feedback for the whole bank.')
-para('At minute 10, changing supply from 50 to 45°C or surface loss from 25 to 40 W/(m² K) empties the static set at minute 11. Terminal readings and bias intervals independently confirm exclusion of all 23 preceding survivors. Stop reusing the certificate and reassess conditions; neither 11-minute run is a completed bath or a water-saving success. Detection cannot identify the cause or guarantee a safe response to other faults.')
+para('A separate matched 12-model ablation uses 26.00 L without observations versus 22.86/22.86/22.08 L with them in three structures. Six feedback trajectories pass 18 independent half-second three-grid RHS/energy replays; realized actions do not certify fine-grid feedback throughout the bank.')
+para('Minute-10 shifts to 45°C supply or 40 W/(m² K) surface loss empty the set at minute 11; terminal bias intervals independently exclude all 23 preceding survivors. Neither partial service counts as savings. An empty set invalidates reuse, without identifying the cause or certifying recovery.')
+
+page('11.3 Check transfer beyond the parameter grid')
+para(f'Six predeclared bank-external truths give two complete services ({sum(FT["completed"]["offgrid_surface"]["flows"]):.2f}/{sum(FT["completed"]["offgrid_deep"]["flows"]):.2f} L commands). Changed storage, dimensions, supply or loss empties the bank after 28/5/11/9 minutes, before a checked temperature violation. Partial services are not savings; refusal supplies no recovery policy.')
+para(f'For the two completed surface/deep paths, fix the realized commands, baseline geometry, uniform 40°C water, 34°C fixed contact, 50°C inlet and 22°C air. Around $(D,h_s,h_b,\\alpha)=({BOX_CENTER["D"]:.6f},{BOX_CENTER["h_surface"]:.3f},{BOX_CENTER["h_body"]:.2f},{BOX_CENTER["flow_multiplier"]:.4f})$, the respective halfwidths are {BOX_WIDTH["D"]:.2e} m²/s, {BOX_WIDTH["h_surface"]:.5f} and {BOX_WIDTH["h_body"]:.4f} W/(m² K), and {BOX_WIDTH["flow_multiplier"]:.6f}. Parameters are static; these are mathematical neighborhoods, not measured tolerances.')
+para(r'<b>Fixed-command perturbation bound.</b> Write $U^{\prime}=M_\theta U+c_\theta$, affine in the four parameters. For halfwidths $w_j$, set $K_j=w_j\partial_jM$, $f_j=w_j\partial_jc$, and $\theta=\theta_0+w\odot z$ with $|z_j|\le1$. Nominal variations satisfy $S_j^{\prime}=M_0S_j+K_jU_0+f_j$, $S_j(0)=0$.')
+tex.append(r'\begin{proof}'+'\n')
+para(r'The exact remainder $r=U_\theta-U_0-\sum_jz_jS_j$ satisfies')
+eq(r'r^{\prime}=M_\theta r+\sum_{j,k}z_jz_kK_jS_k,\qquad r(0)=0.')
+para(r'Positive parameters give nonnegative off-diagonals and nonpositive row sums at every vertex, hence throughout the affine box. Contraction [10] and variation of constants give')
+eq(r'\|r(t)\|_\infty\le R(t),\qquad R(t)=\sum_{j,k}\int_0^t\|K_jS_k(u)\|_\infty\,du.')
+para(r'The cellwise radius is $\sum_j|S_j|+R$: subtract it for the floor, add it for the ceiling, and twice for spread. States are continuous at flow switches; $R$ accumulates across them.')
+tex.append(r'\end{proof}'+'\n')
+para(f'Half-second derivative/chord bounds enclose the intervals; assumed errors are 2e-6°C, 2e-6°C/s and 2e-6°C/s² for states and first/second derivatives. The tested halfwidth scales were 4, 2, 1 and 0.4 times those above; the displayed box is the largest qualifying both paths on all three meshes: floor ≥{BOX_BOUND[0]:.4f}°C, ceiling ≤{BOX_BOUND[1]:.4f}°C, spread ≤{BOX_BOUND[2]:.4f}°C. Common extra reserves do not all pass. Independent RHS/energy checks cover all {len(BOX["checks"])} corners/centers; finite points challenge implementation, not prove coverage. A prior max-norm defect bound certified none. This exact-remainder result assumes numerical accuracy and certifies fixed actions, not all feedback branches or real baths.')
 
 tex.append(r'\FloatBarrier'+'\n')
 page('12. Conclusions and a policy with clear scope')
-para('<b>Choose tolerance, then check transport.</b> Figure @fig:frontier@ gives the price of maintaining warmth. Stored heat can postpone or eliminate inflow; the mixed optimum requires distributed heat. Weak mixing can require earlier replenishment. Geometry and body contact change demand; motion improves distribution but may increase loss, whereas foam changes loss. Two readings can miss a cold region.')
-para(f'The baseline constant rate is {b["flow_lpm"]:.3f} L/min, or {b["water_l"]:.2f} L over {rv["horizon_min"]:g} minutes; the {K}-stage schedule uses {ctl["water_l"]:.2f} L with a {ctl["buffer_c"]:g}°C design reserve and three-grid continuous checks. The floor covers every cell; ceiling/spread exclude the inlet zone. These are conditional candidates, not globally optimal faucet prescriptions.')
-para(f'<b>Test transfer before reuse.</b> Six predeclared bank-external truths yield two complete off-grid services ({sum(FT["completed"]["offgrid_surface"]["flows"]):.2f}/{sum(FT["completed"]["offgrid_deep"]["flows"]):.2f} L commands), with three-grid conditional envelopes. Changing storage, dimensions, inlet temperature or loss empties the set at 28/5/11/9 minutes, before any checked temperature violation. Partial services are not savings; these tests establish neither continuous uncertainty coverage nor recovery. Cell averages do not establish hot-jet safety.')
-
-para(f'Structural ambiguity need not prevent a decision. With common reserves across the expanded bank, passive/pulse candidates use {FAIR["volumes"]["passive"]:.2f}/{FAIR["volumes"]["pulse"]:.2f} L. Between these fixed candidates, a reusable 6 L trial pays back from use {FAIR["crossover"]} with equal resets and unchanged conditions. Different observations or reset costs can reverse this conditional choice.')
-
-para(f'<b>Use feedback within its assumptions.</b> The {FB["backup_command_l"]:.2f} L command cap and {sum(FBZERO["flows"]):.2f}/{sum(FBRANDOM["flows"]):.2f} L noise cases require static parameters, uniform initial state, bounded errors and valid propagation. The fixed-candidate trial crossover does not apply to feedback. An empty set invalidates certificate reuse and supplies no recovery policy.')
+para('<b>Choose tolerance, then check transport.</b> Figure @fig:frontier@ prices warmth. Stored heat can defer inflow; weak mixing may require it immediately. Geometry and body contact change demand; motion redistributes heat but can raise loss, while foam reduces loss.')
+para(f'The baseline uses {b["water_l"]:.2f} L; the {K}-stage policy uses {ctl["water_l"]:.2f} L with a {ctl["buffer_c"]:g}°C design margin and three-grid checks. Common-reserve passive/pulse candidates use {FAIR["volumes"]["passive"]:.2f}/{FAIR["volumes"]["pulse"]:.2f} L; a reusable 6 L pulse pays from use {FAIR["crossover"]} with equal resets and unchanged conditions. Those fixed-candidate costs do not establish optimal feedback.')
+para(f'<b>Match each guarantee to its scope.</b> Static-bank feedback caps commands at {FB["backup_command_l"]:.2f} L and yields {sum(FBZERO["flows"]):.2f}/{sum(FBRANDOM["flows"]):.2f} L in the nominal noise cases. Section 11.3 extends two realized schedules to narrow static parameter boxes; it does not extend every feedback branch. Four changed-physics refusals invalidate reuse, without certifying recovery. Cell averages do not establish hot-jet safety. These conclusions require the stated initial state, transport and error conditions.')
 
 page('13. A warmer bath, with less replacement water',True)
 para('A guide for the person in the bathtub','heading')
@@ -552,6 +565,7 @@ refs=[
 '[7] OpenAI, Codex (GPT-6-based assistant), and Anthropic, Claude Sonnet 5.5 in Claude Code. Used during 7–10 October 2026 for modeling, code, validation and report composition; exact builds not independently established. See Report on Use of AI.',
 '[8] Munk, W. H., Anderson, E. R. Notes on a theory of the thermocline. Journal of Marine Research, 7(3), 276–295, 1948.',
 '[9] NASA/NPARC Alliance. Verification Assessment and Validation Assessment, CFD tutorial. www.grc.nasa.gov/WWW/wind/valid/tutorial/. Accessed 9 October 2026.',
+'[10] Higham, N. J. What Is the Logarithmic Norm? 18 January 2022. nhigham.com/2022/01/18/what-is-the-logarithmic-norm/. Theorems 3 and 6. Accessed 10 October 2026.',
 ]
 for ref in refs:para(ref,'ref')
 para('Algorithm and computational record','heading')
@@ -572,13 +586,13 @@ for part in range(1):
 
 page('Report on Use of AI',True)
 para('Tool and scope','heading')
-para('OpenAI Codex (GPT-6-based) and Anthropic Claude Sonnet 5.5 through Claude Code assisted modeling, code, calculations, figures and writing on 7–10 October 2026; exact builds were not independently established. After sealing a version, comparative learning read Outstanding papers 44845 and 54164 in full text, page overviews, selected readable figures and COMAP commentary. Their data and figures were not copied; this is not an unseen-problem trial. AI sub-agents contributed the independent-RHS routine and probe checks; no independent human verification is claimed.')
+para('Codex (GPT-6-based) and Claude Sonnet 5.5 via Claude Code assisted modeling, calculation, validation, figures and writing on 7–10 October 2026; exact builds remain unverified. Post-sealing learning used full text of Outstanding papers 44845/54164, page overviews, selected figures and COMAP commentary; their data/figures were not copied. AI sub-agents supplied independent RHS/probe checks. This was not an unseen-problem trial.')
 para('Task','heading')
 para('The task was to produce a complete historical MCM case; no conversation wording is reproduced.')
 para('Outputs, corrections and verification','heading')
-para('On 8 October, independent integration rejected the 19.35 L schedule and accepted a buffered alternative; later fixed-policy replays checked limited body storage and flow-path changes. On 9 October, the baseline values were bound to archived results without repeating that optimization. Earlier coefficient and inlet-zone corrections are recorded in the accompanying development history. References [1]–[4] were checked at the linked sources and [6] in its open manuscript; [5] and [8] were not opened, so their relations were checked indirectly. The AI produced the code, derivations, figures and report; all reported numerical results came from actual calculations.')
+para('Independent integration rejected the 19.35 L schedule and accepted a buffered alternative; fixed-policy replays then checked contact storage and flow paths. Baseline optimization was reused; coefficient/inlet-zone corrections remain recorded. Sources [1]–[4] and [6] were checked directly, and [10] at Theorems 3/6; [5]/[8] were not opened, so their relations were checked indirectly. AI produced the derivations and report from actual numerical results.')
 para(f'Control studies compared known-mixing schedules, pulse/passive ambiguity sets, alternative structures and failed candidates. New common-reserve candidates covered {FAIR["objects"]} model-grid objects, with {FAIR["independent_cases"]} independent extremal replays; two reserve failures were retained and corrected. Archived producers retain their versions. Analytical diffusion and inlet-cascade tests verify discretization. Baseline optimization was reused, and all observations are synthetic.')
-para('Finite-bank feedback yielded nine complete services, including three no-observation controls, with 18 sampled feedback replays. Two shifts stopped at 660 s with reconstructed terminal intervals. Six additional predeclared off-bank truths yielded two complete services and four refusals; ten independent conditional-envelope replays cover full trajectories or actual prefixes. An author-external AI checked recorded empty intervals, without reconstructing unrecorded historical predictions.')
+para('Finite-bank feedback gave nine complete services and 18 sampled replays; two shifts stopped at 660 s. Six predeclared off-bank truths gave two complete services and four refusals, with ten independent envelope replays. AI reviewed stored empty intervals, not missing historical predictions. An exact-remainder derivation then qualified narrow fixed-action parameter boxes, challenged by 102 independent RHS/energy replays; a failed loose bound was retained. AI reviewed the proof and numerical identities; no human verification or feedback-wide certificate is claimed.')
 para('Record limitations','heading')
 para('The artifact retains the task description, tool identity, scope, code and numerical receipts, but lacks a full exported transcript and every intermediate AI output. These records do not substitute for human verification or physical bath experiments.')
 

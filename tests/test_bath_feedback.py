@@ -142,3 +142,24 @@ def test_continuum_rejects_semantically_rebound_archive(tmp_path,defect):
     m['members']={k:hashlib.sha256(v).hexdigest() for k,v in blobs.items()}
     (ref/'continuous-transfer.json').write_text(json.dumps(m))
     with pytest.raises(ValueError):module.continuous_values(tmp_path)
+
+
+def test_delivered_neighborhood_claims_match_the_bound_archive_and_retain_scope():
+    """Catch a stale manuscript/metadata after changing which box was accepted."""
+    import math
+    from pypdf import PdfReader
+    result = module.continuous_values(HERE)
+    selected = [next(s for s in row['scales'] if s['scale'] == result['scale'])
+                for row in result['rows']]
+    lower = math.floor(min(s['temperature_bounds_c'][0] for s in selected) * 10000) / 10000
+    upper = math.ceil(max(s['temperature_bounds_c'][1] for s in selected) * 10000) / 10000
+    spread = math.ceil(max(s['temperature_bounds_c'][2] for s in selected) * 10000) / 10000
+    record = json.loads((HERE.parent / 'verification.json').read_text())['continuous_parameter_revision']
+    assert record['physical_outward_bounds_c'] == [lower, upper, spread]
+    assert record['independent_cases'] == len(result['checks'])
+    text = '\n'.join(p.extract_text() for p in PdfReader(HERE.parent / 'deliverables/7391856.pdf').pages)
+    for value in [lower, upper, spread]:
+        assert f'{value:.4f}' in text
+    normalized = ' '.join(text.split())
+    assert 'Common extra reserves do not all pass.' in normalized
+    assert 'not all feedback branches' in normalized

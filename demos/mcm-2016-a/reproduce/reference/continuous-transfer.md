@@ -1,6 +1,6 @@
 # A continuous neighborhood for two fixed bath schedules
 
-This supplement extends the off-bank study. The accepted PDF has not yet incorporated this derivation; its award assessment stays bound to that PDF. The calculation certifies two **realized, fixed command sequences** over narrow four-dimensional parameter boxes. It does not certify every feedback decision, changing parameters, a real bath, or a global water optimum.
+This supplement provides the detailed derivation and archive for Section 11.3 of the current [paper](../../deliverables/7391856.pdf). Its award assessment remains bound to the complete manuscript. The calculation certifies two **realized, fixed command sequences** over narrow four-dimensional parameter boxes. It does not certify every feedback decision, changing parameters, a real bath, or a global water optimum.
 
 ## Conditions and results
 

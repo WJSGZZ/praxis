@@ -136,6 +136,15 @@
       "generator": "reproduce/study_feedback.py",
       "use": "Minute-wise bounded reading errors and constant-bias intervals;9 complete services,6 realized feedback policies and18 sampled three-grid independent RHS/energy replays;2 partial empty-set faults. Not measured bath data or probabilistic performance.",
       "scope": "Original archived producers preserve batch timeouts and completed-subrow scope. Portable audit/replay is a later implementation; replay does not regenerate action choices. Terminal identity reconstruction and independent interval arithmetic are separately bound."
+    },
+    {
+      "id": "logarithmic-norm",
+      "author": "Nicholas J. Higham",
+      "title": "What Is the Logarithmic Norm?",
+      "date": "2022-01-18",
+      "url": "https://nhigham.com/2022/01/18/what-is-the-logarithmic-norm/",
+      "read": "Explanation including Theorems3 and6, 10 October2026",
+      "use": "Standard infinity logarithmic norm and contraction bound in Section11.3; new bath application is not claimed as a new general theorem."
     }
   ]
 }
