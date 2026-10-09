@@ -54,6 +54,8 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **A decision that survives structural ambiguity.** The same nominal readings retain 1,465 passive and 467 pulse-compatible structure–parameter pairs. Base-grid success hid two refined-mesh ceiling failures, and a small flow reduction did not create a like-for-like reserve comparison. New candidates meet the same 39.13°C floor, 40.9°C outside-zone ceiling and 1.4°C spread targets in **5,796 model–grid envelopes**, with independent integration and energy checks of 54 extremal cases. They command **26.09 L** after passive observation or **23.63 L** after a pulse. A single reusable 6 L test pays back from the **third** use when delivery bias stays positive and fixed and total reset costs match. The earlier seventh-use result applies to the original structure and different candidates. Neither crossover is an empirical savings claim or a global optimum.
 
+**Make the next action depend on the readings.** The same 1,465-model bank and 26.09 L backup yield complete nominal services of 23.59 L with zero reading noise and 23.16 L with one bounded random sequence, retaining 114 and one model respectively. Eighteen independent three-grid sampled replays check six realized feedback schedules. Two changes imposed at minute ten empty the compatibility set one minute later: those partial services demonstrate detection, not water savings or safe recovery. The third-use crossover above compares fixed candidates; it has not been established between feedback and pulse strategies.
+
 ## Two pages of the paper
 
 **Turn ambiguous measurements into a decision.** A synthetic two-probe pulse leaves 178 compatible models in a 2,835-point parameter grid. Four of those models fail sampled checks of the original schedule. A replacement uses **23.48 L commanded** and passes 534 conditional envelope checks across three specified meshes. That coverage costs 9.33% more commanded water, plus a separate **6 L** calibration pulse and unmodeled reset costs. These are finite-set numerical results, not an empirical confidence region or a real-bath reliability guarantee; the complete record is `reference/calibration-study.json`.
@@ -75,7 +77,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 ## Assessment
 
-**Target: Outstanding Winner. Current reference: Finalist, with an adjacent F–O range; O is not established.** The review is non-blind, conducted by an AI reviewer separate from the author, and has no calibrated award boundaries. Strengths include the proved mixed benchmark, conservation and independent checks, and a common-reserve decision that carries observational ambiguity into candidate costs. The clearest remaining weakness is operational: a reader still lacks a validated, simple way to change actions from observations and detect when earlier conditions no longer apply.
+**Target: Outstanding Winner. Current reference: strong Finalist competitiveness, with an adjacent F–O range; O is not established.** The review is non-blind, conducted by an AI reviewer separate from the author, and has no calibrated award boundaries. Strengths include the proved mixed benchmark, conservation and independent checks, and a common-reserve decision that carries observational ambiguity into candidate costs. The added feedback, matched ablation and empty-set fault cases now connect readings to action. The remaining weakness is synthesis: results with different reserves, compatible banks and policy families need a clearer choice argument tied to thermal mechanisms and available information. The fixed-policy crossover cannot be transferred to feedback.
 
 The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
 
@@ -99,6 +101,8 @@ uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py -
 uv run --locked python demos/mcm-2016-a/reproduce/study_structure_decision.py --output demos/mcm-2016-a/reproduce/reproduced/structure-decision.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode audit --output demos/mcm-2016-a/reproduce/reproduced/common-reserve-audit.json
 uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode replay-extrema --seconds 180 --output demos/mcm-2016-a/reproduce/reproduced/common-reserve-extrema.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode audit --output demos/mcm-2016-a/reproduce/reproduced/feedback-audit.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode replay --seconds 30 --output demos/mcm-2016-a/reproduce/reproduced/feedback-replay.json
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.

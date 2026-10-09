@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "status": "archived",
+  "base_commit": "79650694e91d72828d216c342ba65697084d1b16",
+  "archive_sha256": "b06f2bdb164e033b358a5f98d2803c7e8281ca5357e1da918347a5ef770cc04e",
+  "members": {
+    "root/run.py": "50b72926640a988cd4f00d6af58d8d942dfb63ef4b50f9c38a5787060e168848",
+    "root/results.json": "b4a0376cecfd8f93d2f2d605d79d5c7f7610031d1982e6661404d67f134199ff",
+    "root/design.json": "a0ba17f3c6afd27b9b5beb7a3374eab6223b8bb10a5d7b7013b4e3976d2cc1f4",
+    "expanded/run.py": "4af4a1457b29993a6af1f580011864755af6cc37ed23e1b05c61d05b671deabc",
+    "expanded/results.json": "0701a34c58120e0666f23df43d87a9b05fc66ba9f01db407345a776c4dadb02d",
+    "expanded/design.json": "88f485aafa13e8b822fbcf56e5ee91466d75131150fc94ada36021d37a366bfa",
+    "no-observer/run.py": "a96ebb2199eb223aa34aee5195b0161587187e1cc9ca1fb405cd19d1a1816e13",
+    "no-observer/results.json": "1c9b46e424095d6e60b3d0d62270acff94a25cce1985ecae6c866bb007ecb3f1",
+    "no-observer/design.json": "5e44a5f344ae8307f637c76690ed653b01d9c1e6d79a4332f2d6b59014bfe71a",
+    "variants/run.py": "514c7c3ceffe42ec5343fbea17dc85e7cef1b1c9653b77e2d29871d33cc3f8ef",
+    "variants/results.json": "3c833159ca64177c86de247e4da46fe212146d492288e3a6e7071e59602fc502",
+    "variants/design.json": "f358c15178ae1106d899cf21a0e1516ff293a942daab66857ba07083e95bfe2b",
+    "variants-resume/run.py": "36b599a57bef18dd528db1b6fca026fdc5491d3081b3fcfc5ce1d6de1d8b7232",
+    "variants-resume/results.json": "1ba0fd2515c3765c04d7f072c5dbfcd4b2ce187a969ded864e749c49f847852c",
+    "variants-resume/design.json": "d656fddacee6d54ba2fff84a0c591d4e0d15f9a6ac18c98b5044ace4c82daef6",
+    "drift-counter/run.py": "46c5777f002a8cbf1a2ba1db0b432a26e26f3f620133861c06cb9eb6bfb25901",
+    "drift-counter/results.json": "012747f11bb2db53758b6ecee5e2a40dde4ab042e629292a6fa962b65efe8a5b",
+    "drift-counter/design.json": "ec279540a867cd0a649e8760abb6d05d5157d252d314867a6019ab9b386fa87e",
+    "loss-branch/run.py": "30ed297253da26e505767f1ab64637e10b0a37e1f983aa57bbc7f2b996663f14",
+    "loss-branch/results.json": "9884a805a18bd934c0f8ab69d6888ab8a7365723c496f1d005402ebfbbf66a49",
+    "loss-branch/design.json": "ca8df894a959d3ad7ccfe4aea58fb60e3e877682b582c64cb9e0c402e67d9893",
+    "terminal-identity/run.py": "65b68d0a9d308582560478bb3f58d6c7aa41605e825b83bc752db4454c3e12e7",
+    "terminal-identity/results.json": "2474f7243e1952528f78ea35c0011226bab3bbdfe7964134358802baa76c5100",
+    "terminal-identity/design.json": "13da10609d805e10be902b1e35364d884228ef31560cc17ba57d42c648720796",
+    "mesh-replays.json": "cf6e538c7f8c3f0f368a762f947a7125130463f778f2e30a5725caf1a03ad068",
+    "noise-mesh-replays.json": "4b6251399afa9a34b54fa78c3989e6a9c820bba1c6e97f85debdbb3f8440eb88",
+    "terminal-identity/interval-check.json": "82d5e465653e7d876460714c7f4d2b50b39dc351e79d256a49dca02143b27f77",
+    "terminal-identity/check_intervals_original.py": "44d1d70eea670b65e7ae94808eacc477439c33a9d74a91dd00403f2aa7d78b37",
+    "terminal-identity/review-independent-check.json": "b07f2eff4e88e1606dada619dfe8befb80e70dde923d26c9eb11dc1ed5f313ab",
+    "loss-branch/nominal-prefix-source.json": "1ba0fd2515c3765c04d7f072c5dbfcd4b2ce187a969ded864e749c49f847852c",
+    "terminal-identity/nominal-prefix-source.json": "1ba0fd2515c3765c04d7f072c5dbfcd4b2ce187a969ded864e749c49f847852c"
+  },
+  "model_source_sha256": {
+    "common_reserve.py": "2c7ad0e36494cf61b02879f4bbe3158ad1e2634dc2dbcb511e328e4fa3134445",
+    "check_structure.py": "138019ded773f2cc4ad24cd38105a405362cf75b69da8db1f495fd2d0f8232e6",
+    "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+    "reference/common-reserve.json": "688a21b03ec308c714bfbe50198bd2571d6b5cbc44fc29504fa5e2965a23487d",
+    "reference/common-reserve.npz": "7219bc19d42f4290c964426685a0d7cbb66c7e58442865555e26f9a417b910c4",
+    "reference/structure-decision.json": "48e79ada48c19ccafd36d7f71f595b0a80410af54a2c7c8d84f1e80b1069085c"
+  },
+  "stages": [
+    "root",
+    "expanded",
+    "no-observer",
+    "variants",
+    "variants-resume",
+    "drift-counter",
+    "loss-branch",
+    "terminal-identity"
+  ],
+  "scope": "Synthetic finite-bank one-minute set-membership feedback research. Original source versions retained; audit is not mathematical or empirical certification. Complete rows remain valid across outer batch timeouts; fault rows are incomplete service.",
+  "physical_limits": {
+    "floor": 39,
+    "ceiling": 41,
+    "span": 1.5
+  },
+  "common_reserve": {
+    "floor": 39.13,
+    "ceiling": 40.9,
+    "span": 1.4
+  },
+  "sampling_s": 0.5,
+  "nominal_bias": [
+    0.013,
+    -0.011
+  ],
+  "reading_noise_bound_c": 0.02,
+  "constant_bias_bound_c": 0.02,
+  "numerical_allowance_c": 2e-06,
+  "probes": [
+    89,
+    6
+  ],
+  "portability": "Archived producers expect frozen/ relative snapshot. The portable audit/replay entry uses current guarded consumers; no archived source is automatically executed."
+}

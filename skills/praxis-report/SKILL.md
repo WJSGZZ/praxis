@@ -27,4 +27,6 @@ BUNDLE 指 `praxis` 技能目录。按当前请求读 [writing.md](../../referen
 
 写作中发现的论证缺口，写回对应任务 ID。最终交付沿用用户已有文件与规范；公开、上传或提交需要明确授权。
 
+每份完整竞赛或研究作品交付及重要修订后，交 praxis-verify 按 [judging.md](../../evals/judging.md) 给绑定当前版本的作品评价与理由：竞赛使用对应奖项视图，研究使用定性研究视图。实际检查范围不足时明确保留待评；局部改字或编译检查不冒充重新评阅整稿。
+
 目标阶段需要答辩时，从当前有效论文整理讲述提纲、关键主张的页码／图号／运行证据、局限、备选与真实贡献说明，交 [praxis-dialogue](../praxis-dialogue/SKILL.md) 按 [defense-coaching.md](../../references/defense-coaching.md) 训练选手。讲稿与问答不添加论文之外的未验证优势；论文改后同步核对受影响材料，材料完成不等于选手已会答辩。

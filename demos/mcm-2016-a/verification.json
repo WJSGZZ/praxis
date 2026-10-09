@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "ef703ecb8b2fe09914933d5fd2711e55920d00a5f1c2f11eec833e563d7c1f82",
-  "bytes": 172312,
+  "sha256": "9177c38786d9d9a4d9038a6ab99ed5cd2f8927167bbbdf862606ebbdf2d136e7",
+  "bytes": 170653,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,9 +37,9 @@
    25,
    26
   ],
-  "visual_review_note": "All26 final pages rendered/contact-reviewed; changed1/16/21/22/24/26 read at actual readable size. Same-scale comparison to full-reviewed candidate; zero out-of-page nonspace characters. Native final saved source compilation succeeded.",
+  "visual_review_note": "All26 final pages rendered/contact reviewed; pages1/21/22/23 inspected at readable size after final scope correction. Zero out-of-page nonspace characters. Native compile succeeded for the actual saved paper.tex.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "a44e740225d16a05586ada83587c999c"
+  "md5": "37c788d77f566ee729d093ac3bc12f8a"
  },
  "model_checks": {
   "total": 17,
@@ -124,9 +124,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 591,
-  "date": "2026-10-09",
-  "scope": "Full local public suite after final c413 adopted PDF and associated source replacement; three intentional plot warnings; no baseline optimization rerun"
+  "passed": 651,
+  "date": "2026-10-10",
+  "scope": "Final adopted9177 PDF, sources, metadata and optional-guide-heading correction; isolated full suite,0 failures/0 skips,3 expected invalid-plot warnings,147.79s. Original baseline and expensive searches not rerun."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -626,6 +626,11 @@
    "passed": 599,
    "date": "2026-10-09",
    "scope": "Full local core/contract/metadata suite,3intentional plot warnings; final precision-only PDF/metadata change followed by associated checks. No baseline optimization rerun."
+  },
+  {
+   "passed": 591,
+   "date": "2026-10-09",
+   "scope": "Full local public suite after final c413 adopted PDF and associated source replacement; three intentional plot warnings; no baseline optimization rerun"
   }
  ],
  "structure_observation_revision": {
@@ -758,15 +763,75 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "ef703ecb8b2fe09914933d5fd2711e55920d00a5f1c2f11eec833e563d7c1f82",
+  "version_sha256": "9177c38786d9d9a4d9038a6ab99ed5cd2f8927167bbbdf862606ebbdf2d136e7",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external AI complete26page candidate review; subsequent targeted precision/scope correction check. Author reviewed final full text and all final rendered pages. Nonblind, no award-boundary calibration or probability.",
+  "review_scope": "Author-external same-family AI full7349 candidate review, followed by actual9177 pages1/20/22/23 fixed-versus-feedback scope correction review. Nonblind, uncalibrated; no optimization/all-bank integration rerun.",
   "basis": [
-   "Complete problem coverage with a proved mixed benchmark and spatial energy bounds.",
-   "Same observations retain structural ambiguity; common-reserve candidate policies pass5796 finite three-grid envelopes and54 extremal independent checks.",
-   "Trial/reuse/reset assumptions explicitly connect candidate water costs to a conditional decision."
+   "Complete problem coverage, proved mixed benchmark, energy bounds and independent numerical checks.",
+   "Matched12-model ablation isolates observation updates;1465-bank nominal examples change actions without requiring unique identification.",
+   "Constant-bias intervals, a checked remaining tail and two explicit certificate-invalidating faults connect observations with decisions."
   ],
-  "main_gap": "A user can follow conditional numerical schedules, but observation-triggered changes and detection of invalid reused conditions are not yet independently demonstrated.",
-  "highest_value_next_action": "Validate a simple observation-triggered action and failure-detection rule under equal service/error conditions."
+  "main_gap": "Mechanism-to-policy synthesis remains fragmented across different banks, reserves and policy families; broad conditional choice is not yet as clear as the individual results.",
+  "highest_value_next_action": "Organize the valid policy families into a concise applicability/choice argument tied to temperature tolerance, transport and model information; do not extrapolate the fixed-candidate crossover to feedback.",
+  "strength_note": "Strong F competitiveness in the qualitative nonblind review; no calibrated award boundary."
+ },
+ "feedback_revision": {
+  "previous_pdf": {
+   "sha256": "ef703ecb8b2fe09914933d5fd2711e55920d00a5f1c2f11eec833e563d7c1f82",
+   "bytes": 172312,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All26 final pages rendered/contact-reviewed; changed1/16/21/22/24/26 read at actual readable size. Same-scale comparison to full-reviewed candidate; zero out-of-page nonspace characters. Native final saved source compilation succeeded.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "a44e740225d16a05586ada83587c999c"
+  },
+  "tex_sha256": "21a3b3bf808fbff737a610d841adc40ecc125ca08d57519d7168df282c620062",
+  "generator_sha256": "56a6c714d6779b24204fe437d54c692b32438e434ce3ae9e63a02ce4b6ed39a4",
+  "archive": "reproduce/reference/feedback-study.json",
+  "portable_replay_receipt": "reproduce/reference/feedback-portable-check.json",
+  "complete_services": 9,
+  "observed_services": 6,
+  "matched_ablation_services": 3,
+  "independent_realized_mesh_replays": 18,
+  "portable_elapsed_s": 6.228319499990903,
+  "partial_fault_services": 2,
+  "scope": "Finite static-bank bias-interval feedback and retained backup; nominal realized trajectories only. Faults are11minute partial services, not savings. Sampled fine-grid replay does not certify all-bank continuous feedback.",
+  "scientific_review": "Author-external same-family AI full7349 candidate review, followed by actual9177 pages1/20/22/23 fixed-versus-feedback scope correction review. Nonblind, uncalibrated; no optimization/all-bank integration rerun.",
+  "builtin_compiler": "success on actual final reproduce/paper/paper.tex",
+  "figures": 5,
+  "tables": 14,
+  "equations": 20,
+  "numerical_baseline_changed": false,
+  "visual_note": "Sobol range scatter replaced by the observation/action/count figure; its numeric sensitivity evidence stays in the text. Figure5 kept before Conclusions; fonts and margins unchanged."
  }
 }

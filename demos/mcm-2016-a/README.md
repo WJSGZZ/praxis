@@ -56,6 +56,8 @@
 
 **让测量、结构和成本真正连起来。** 同一组名义读数下，三种结构保留被动／脉冲 1465／467 个相容组合。旧方案在基础网格通过，却有两个细网格最高温越界；局部减流修补也没有统一设计余量。新比较对两组候选都要求最低温 39.13°C、入口区外最高温 40.9°C、温差 1.4°C，全部 **5,796 项模型—网格条件包络**通过，54 个极端对象另由独立积分与能量核验。候选指令水量为 **26.09／23.63 L**；一次 6 L 试验可复用、稳定正供水倍率和总复位费用相同时，脉冲从第 **3** 次使用更省。三次和前面的七次对应不同结构范围与候选，不能混用。这是有限模型上的公平余量比较，尚未证明全局最优或现实节水效果。
 
+**让观测直接调整下一分钟的供水。** 从同一 1,465 模型集合和 26.09 L 备份出发，恒定探头偏差与零噪声／单个有界随机序列分别得到 23.59／23.16 L 的完整服务；最后保留 114／1 个模型。六条实际反馈轨迹另有 18 次独立三网格采样重放。两种第十分钟条件漂移在一分钟后清空相容集，停止沿用旧证书；11 分钟部分服务不算节水成功，故障识别也不等于安全恢复。前述第三次成本交叉只比较两条固定候选，反馈与脉冲的重复使用交叉尚未测定。
+
 ## 翻两页报告
 
 <table>
@@ -75,7 +77,7 @@
 
 ## 作品评议
 
-目标是 **Outstanding Winner（O）**。当前最终稿的非盲、未校准 AI 审读给出 **Finalist（F）为中心、F—O 相邻参考范围**，尚不认定达到 O。主要优势是可证明的完混基线、守恒与独立验证，以及把相同观测下的结构歧义传递到同余量策略和含试验／重置的成本决策。主要差距是尚未验证读者能根据观测改变动作、识别条件失效的简单操作规则；这是最值得继续投入的方向。
+目标是 **Outstanding Winner（O）**。当前最终稿的非盲、未校准 AI 全文审读及范围修订核对给出 **较强的 Finalist（F）竞争力、F—O 相邻参考范围**，尚不认定达到 O。主要优势是可证明的完混基线、守恒与独立验证，以及把相同观测下的结构歧义传递到同余量策略和含试验／重置的成本决策。新增观测反馈、匹配消融与故障识别已补足行动连接。当前主要差距是不同储备、相容集合和策略族仍较分散，应把温度容忍、输运机制与可用信息收敛为清楚的策略选择关系；不能把固定候选的成本交叉移用于反馈策略。
 
 [版本与检查范围](verification.json)绑定当前 PDF；这不是实际评奖结果或获奖概率。
 
@@ -99,6 +101,8 @@ uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py -
 uv run --locked python demos/mcm-2016-a/reproduce/study_structure_decision.py --output demos/mcm-2016-a/reproduce/reproduced/structure-decision.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode audit --output demos/mcm-2016-a/reproduce/reproduced/common-reserve-audit.json
 uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode replay-extrema --seconds 180 --output demos/mcm-2016-a/reproduce/reproduced/common-reserve-extrema.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode audit --output demos/mcm-2016-a/reproduce/reproduced/feedback-audit.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode replay --seconds 30 --output demos/mcm-2016-a/reproduce/reproduced/feedback-replay.json
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。

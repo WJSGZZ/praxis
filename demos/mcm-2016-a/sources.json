@@ -82,14 +82,14 @@
       "id": "comparative-44845",
       "team": "44845",
       "title": "2016 MCM A Outstanding paper, University of Colorado Boulder",
-      "read": "Full text, physical/printed pages 1\u201344; all-page layout overview and readable pages 12, 26, 37, 39; implementation source and all references not independently verified",
+      "read": "Full text, physical/printed pages 1–44; all-page layout overview and readable pages 12, 26, 37, 39; implementation source and all references not independently verified",
       "use": "heat redistribution and feedback as mechanisms to test; original privately held, not redistributed; not all derivations independently verified"
     },
     {
       "id": "comparative-54164",
       "team": "54164",
       "title": "2016 MCM A Outstanding paper, Adlai E. Stevenson High School",
-      "read": "Full text, physical pages 1\u201344 (printed 1\u201342 follows two front pages); all-page overview and readable physical pages 11, 14, 17, 40; raw experiments not independently verified",
+      "read": "Full text, physical pages 1–44 (printed 1–42 follows two front pages); all-page overview and readable physical pages 11, 14, 17, 40; raw experiments not independently verified",
       "use": "limited comparison; original privately held, not redistributed; experiments not independently verified"
     },
     {
@@ -128,6 +128,14 @@
         "reproduce/reference/common-reserve-qualifier-original.py"
       ],
       "scope": "Original frozen full run and subsequent guarded portable implementation are different source versions. Audit does not compute; extremal mode replays54; optional qualify mode reruns the finite bank."
+    },
+    {
+      "id": "synthetic-observation-feedback",
+      "path": "reproduce/reference/feedback-study.json",
+      "archive": "reproduce/reference/feedback-study.npz",
+      "generator": "reproduce/study_feedback.py",
+      "use": "Minute-wise bounded reading errors and constant-bias intervals;9 complete services,6 realized feedback policies and18 sampled three-grid independent RHS/energy replays;2 partial empty-set faults. Not measured bath data or probabilistic performance.",
+      "scope": "Original archived producers preserve batch timeouts and completed-subrow scope. Portable audit/replay is a later implementation; replay does not regenerate action choices. Terminal identity reconstruction and independent interval arithmetic are separately bound."
     }
   ]
 }
