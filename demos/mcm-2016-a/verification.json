@@ -3,10 +3,10 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "365ddeb3b2ed550c4a2051a15c48c5f33bc392adeff24957bb6d4a872381dc3d",
-  "bytes": 166502,
-  "pages_total": 25,
-  "solution_pages": 24,
+  "sha256": "b410c6dbb16bb1158e4f1393838c4a5269b7fdf47c548b8ec25f3bbe830df4ef",
+  "bytes": 169587,
+  "pages_total": 26,
+  "solution_pages": 25,
   "ai_pages": 1,
   "text_bounds_checked": true,
   "pages_rendered_and_visually_reviewed": [
@@ -34,11 +34,12 @@
    22,
    23,
    24,
-   25
+   25,
+   26
   ],
-  "visual_review_note": "All 25 final pages rendered/contact-reviewed; measurement comparison, structure/conclusion and guide viewed at readable size. Full final text reviewed; zero out-of-page characters.",
+  "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15–16 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "8449f277016e80a045fc15fc26740d42"
+  "md5": "ec4693d0583e779f872e1635912b0720"
  },
  "model_checks": {
   "total": 17,
@@ -507,5 +508,56 @@
   "original_optimization_rerun": false,
   "full_award_reassessment": "not performed; historical estimate not automatically rebound",
   "tests": "568 passed after final PDF replacement; 3 intentional plotting warnings"
+ },
+ "information_revision": {
+  "previous_pdf": {
+   "sha256": "365ddeb3b2ed550c4a2051a15c48c5f33bc392adeff24957bb6d4a872381dc3d",
+   "bytes": 166502,
+   "pages_total": 25,
+   "solution_pages": 24,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "visual_review_note": "All 25 final pages rendered/contact-reviewed; measurement comparison, structure/conclusion and guide viewed at readable size. Full final text reviewed; zero out-of-page characters.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "8449f277016e80a045fc15fc26740d42"
+  },
+  "receipt": "reproduce/reference/information-value.json",
+  "receipt_sha256": "978db06b858ca8759aebf2f7093965fcafca650b53a9b3cf716405888ad811dc",
+  "candidate_models": 510,
+  "continuous_checks": 1530,
+  "passed": 1530,
+  "commanded_water_l": 24.391245588080675,
+  "cost_scope": "Two separate nominal synthetic observations and two conditional candidates; common stable delivery multiplier and unknown actual reset litres. Equal-reset crossover from seventh unchanged use, not expected information value/global optimum/real-bath validation.",
+  "physics_verification": "reproduce/reference/finite-volume-verification.json",
+  "physics_scope": "Insulated empty-domain continuum diffusion and independent zero-diffusion cascade; finest observed order near two; no resolved velocity or experimental validation.",
+  "source": "reproduce/paper/paper.tex",
+  "source_sha256": "78b6bc245926ca45b9f0d86195f69d071ea61b36e17b5595b276f8cf008f6b45"
  }
 }

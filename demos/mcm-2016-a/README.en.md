@@ -46,6 +46,10 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 - **A change in mixing changes the accepted candidate.** With known diffusivity and exact delivery, the added six-stage schedules use 27.00 L and 20.30 L and pass conditional continuous envelopes on three meshes. They do not establish globally optimal water demand across scenarios. Two fixed probes miss two sampled violations across nine cases, exposing a concrete observation gap. The archived control-study receipt includes complete rates, unsuccessful attempts and checks.
 
+**Choose the measurement, not just the faucet schedule.** With the same finite prior, probes and error assumptions, a 30-minute passive-cooling observation retains 510 models. Its **24.39 L** candidate passes 1,530 conditional model-grid envelopes. The pulse candidate saves only 0.91 L during control and spends 6 L on its trial. Equal reset costs favor passive observation for up to six uses; the pulse candidate becomes cheaper from the seventh, provided the bath, bather, probes and delivery conditions remain unchanged. This compares two nominal synthetic observations and two candidates, without establishing expected information value or global optimality.
+
+**Test the discretization against independent answers.** An empty-domain diffusion mode approaches second order across four successively refined meshes (finest observed order 1.98); the zero-diffusion inlet path matches an analytical stirred-cell cascade. These checks test implementation, not the assumed mixing closure or experimental accuracy.
+
 ## Two pages of the paper
 
 **Turn ambiguous measurements into a decision.** A synthetic two-probe pulse leaves 178 compatible models in a 2,835-point parameter grid. Four of those models fail sampled checks of the original schedule. A replacement uses **23.48 L commanded** and passes 534 conditional envelope checks across three specified meshes. That coverage costs 9.33% more commanded water, plus a separate **6 L** calibration pulse and unmodeled reset costs. These are finite-set numerical results, not an empirical confidence region or a real-bath reliability guarantee; the complete record is `reference/calibration-study.json`.
@@ -61,7 +65,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 </tr>
 </table>
 
-**[Read the complete 25-page paper →](deliverables/7391856.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-four pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
+**[Read the complete 26-page paper →](deliverables/7391856.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-five pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
 
 ## Run it yourself
 
@@ -75,6 +79,8 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # candidat
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # replay stored policies; no optimization
 uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demos/mcm-2016-a/reproduce/reproduced/control-study.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_calibration.py --output demos/mcm-2016-a/reproduce/reproduced/calibration-study.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_information_value.py --output demos/mcm-2016-a/reproduce/reproduced/information-value.json --seconds 360
+uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --output demos/mcm-2016-a/reproduce/reproduced/finite-volume-verification.json
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.
@@ -82,7 +88,7 @@ The baseline entry point refuses an existing `reproduce/reproduced/` directory. 
 ## File map
 
 ```text
-deliverables/7391856.pdf      # the only submission file (English, 25 pages)
+deliverables/7391856.pdf      # the only submission file (English, 26 pages)
 reproduce/                    # entry points, archived numbers, paper builder
 assets/                       # images for the homepage and this page
 sources.json                  # provenance record
@@ -94,7 +100,7 @@ The submission folder holds a single English PDF, as the MCM requires; `7391856`
 
 ## Sources, limits and license
 
-- The official [COMAP problem](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf) is used; selected pages of same-problem Outstanding papers 44845 and 54164, together with the judges’ commentary, were read after the earlier final version was sealed. Their data and figures were not copied. The subsequent control study belongs to a comparative-learning revision, not an unseen-problem assessment; the source record states the actual reading scope.
+- The official [COMAP problem](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf) is used; the full text of same-problem Outstanding papers 44845 and 54164 was read, alongside page overviews, selected figures and the judges’ commentary after the earlier final version was sealed. Their data and figures were not copied. The subsequent control study belongs to a comparative-learning revision, not an unseen-problem assessment; the source record states the actual reading scope.
 - It is not an official answer or a prize result, and the statement is linked, not redistributed. The layout follows the [current submission rules](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php) as checked on 2026-10-07; AI involvement is disclosed truthfully, with no claim of a full chat export or independent human review. [Sources](sources.json) · [Verification](verification.json) · [AI record](AI-use.md)
 - Model, code, paper and original figures are under the repository's MIT license; outside materials keep their own rights. The case tests a thermal network and a delivery process under stated conditions; it is not certification of measured accuracy.
 

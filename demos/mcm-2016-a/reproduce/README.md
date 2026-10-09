@@ -31,3 +31,12 @@ The calibration study reconstructs a synthetic finite ambiguity set, optimizes a
 `check_calibration_transfer.py --output <new.json>` 不重跑优化：以同一178模型、5秒采样比较归档恒流，并在十个搜索选定模型、四种结构中重放新方案（2／1秒采样和能量检查）。`reference/calibration-transfer.json` 绑定实际源码与输入，约7秒；不将这40个组合称为完整结构范围或连续保证。
 
 The frozen-policy transfer check keeps the ambiguity set and physical limits fixed. It adds a constant-policy comparison and sampled structural replays of the new policy, with no optimization. The ten selected models do not establish coverage of every compatible model under alternative structures.
+
+
+`study_information_value.py --output <new.json> --seconds 360` 比较两种替代测量设计：30分钟零入水冷却观测与既有6L脉冲。公开入口实际运行272.40秒，保留510模型与1,530项三网格条件包络；相容集合不是概率分布，试验复位成本另计，不是先后做两次试验的联合推断。`reference/information-value.json`绑定当时实际执行的源码；后加的过期输入拒绝检查不改变旧运行身份，原执行源逐字节保留在`reference/information-study-27f9e95.py`。新运行使用当前入口并生成新收据；预算为协作式检查，不是系统硬截止。
+
+The information-design study compares alternative passive and pulse observations under a common finite prior. Its archived run took 272.40 seconds and checked all 510 retained models on three meshes. Reset water is unknown and separate; neither sequential joint inference nor expected information value is established. The exact executed source is retained alongside the receipt; a subsequent stale-input guard is tested separately rather than presented as part of that historical run.
+
+`check_finite_volume.py --output <new.json>` 使用独立解析答案核验空域极限：绝热三维扩散模态的单元平均解，及零扩散入口路径的串联搅拌单元响应。四套逐步加密网格的最细观测阶约1.98，最粗两网格约1.76也保留；网格16→24不是嵌套划分。实跑约0.075秒。这不检验人体占据几何、浮力、湍流或真实浴缸。文件与数值见`reference/finite-volume-verification.json`。
+
+The discretization check uses an independent continuum diffusion mode and analytical inlet-cascade response. Successive refinement approaches second order in the empty domain; the coarser pre-asymptotic result is retained. This verifies implementation in those limits, not the bath's unresolved velocity or mixing closure.

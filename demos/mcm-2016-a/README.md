@@ -48,6 +48,10 @@
 
 **从测量歧义走到策略。** 合成双探头脉冲观测在 2,835 个参数组合中留下 178 个相容模型；原六段方案有四个模型采样越界。新开环候选指令用水 **23.48 L**，三个指定网格的 534 项条件数值包络全部通过。代价是比名义方案多约 9.33% 的指令用水，并另需 **6 L** 标定脉冲及未计的复位成本；有限相容集不是实测置信区间或现实可靠性保证。完整条件与流量见 `reference/calibration-study.json`。
 
+**测量也有用水成本。** 同样的有限先验、探头和误差条件下，30 分钟被动冷却观测留下 510 个模型；相应候选补水 **24.39 L**，1,530 项三网格条件包络全部通过。脉冲候选少补约 0.91 L，却先用 6 L 做试验。若两种试验复位成本相同，且浴缸、人体、探头和供水条件保持不变，累计到第 7 次使用才由脉冲候选更省水。这是两组名义合成观测与候选的成本比较；被动观测不等于没有测量，也不等于准备成本为零。
+
+**数值方法另有解析答案对照。** 空域三维扩散在四套逐步加密的网格上接近二阶（最细观测阶 1.98），无扩散入口链与独立串联搅拌单元解析解一致。这检验离散实现，未验证真实流场、湍流或浴缸实验。
+
 ## 翻两页报告
 
 <table>
@@ -61,7 +65,7 @@
 </tr>
 </table>
 
-**[阅读完整 25 页英文论文 →](deliverables/7391856.pdf)** 使用固定的 Tectonic 0.17.0 与 v33 资源包排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；24 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
+**[阅读完整 26 页英文论文 →](deliverables/7391856.pdf)** 使用固定的 Tectonic 0.17.0 与 v33 资源包排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；25 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
 
 ## 自己跑一次
 
@@ -75,6 +79,8 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选�
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # 原方案的结构对照，不重优化
 uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demos/mcm-2016-a/reproduce/reproduced/control-study.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_calibration.py --output demos/mcm-2016-a/reproduce/reproduced/calibration-study.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_information_value.py --output demos/mcm-2016-a/reproduce/reproduced/information-value.json --seconds 360
+uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --output demos/mcm-2016-a/reproduce/reproduced/finite-volume-verification.json
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。
@@ -82,7 +88,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/study_calibration.py --output 
 ## 文件地图
 
 ```text
-deliverables/7391856.pdf      # 唯一提交文件（英文，25 页）
+deliverables/7391856.pdf      # 唯一提交文件（英文，26 页）
 reproduce/                    # 复现入口、归档数值、论文构建器
 assets/                       # 首页与案例页图片
 sources.json                  # 来源记录
@@ -94,7 +100,7 @@ AI-use.md                     # AI 使用记录
 
 ## 来源、边界与许可
 
-- 使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；原终稿封存后，对照阅读了同题 O 奖论文 44845、54164 的部分页面及官方评语，随后开展条件控制研究；没有复制其数据或图形。这是对照学习后的开发案例，不能作为未见题测试。实际阅读范围见来源记录。
+- 使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；原终稿封存后，对照阅读了同题 O 奖论文 44845、54164 的全文，并检查整篇版面概览及选定图表及官方评语，随后开展条件控制研究；没有复制其数据或图形。这是对照学习后的开发案例，不能作为未见题测试。实际阅读范围见来源记录。
 - 不是标准答案或获奖成果；原题只给链接，不重新分发。历史题按 2026-10-07 核查的[当前提交规范](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php)编排；AI 参与范围真实披露，未声称有完整聊天导出或独立人工审核。[来源记录](sources.json) · [验收记录](verification.json) · [AI 记录](AI-use.md)
 - 模型、代码、论文和原创图形按仓库 MIT 许可；外部资料各保留自身权利。本案例检验的是给定条件下的热网络与交付流程，不是实测准确性认证。
 

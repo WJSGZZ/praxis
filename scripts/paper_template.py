@@ -132,6 +132,20 @@ def check(text, contest='mcm'):
     return {'profile': f'praxis-{contest}-v{VERSIONS[contest]}', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
 
 
+def check_explicit_references(text):
+    """Check literal references in our standalone generated documents.
+
+    Macro-generated keys and external documents are outside this static check;
+    rendering remains necessary. LastPage is provided by the shared package.
+    """
+    text = re.sub(r'(?<!\\)%[^\n]*', '', text)
+    labels = set(re.findall(r'\\label\s*\{([^{}]+)\}', text))
+    references = set(re.findall(r'\\(?:ref|pageref|eqref)\*?\s*\{([^{}]+)\}', text))
+    missing = {key for key in references-labels-{'LastPage'} if '\\' not in key}
+    if missing:
+        raise ValueError('Unresolved explicit cross-reference: ' + ', '.join(sorted(missing)))
+
+
 def compile_paper(tex, contest, output, compiler=None):
     """Canonical compiler + bundle; a receipt binds this actual source and PDF."""
     import json
@@ -140,6 +154,7 @@ def compile_paper(tex, contest, output, compiler=None):
     import tempfile
     tex, output = Path(tex).resolve(), Path(output).resolve()
     source = tex.read_bytes()
+    check_explicit_references(source.decode('utf-8'))
     layout = check(tex.read_text(encoding='utf-8'), contest) if contest else None
     runtime = json.loads((ROOT / 'templates/typesetting-runtime.json').read_text(encoding='utf-8'))
     executable = compiler or shutil.which('tectonic') or str(Path.home()/'.local/bin/tectonic')

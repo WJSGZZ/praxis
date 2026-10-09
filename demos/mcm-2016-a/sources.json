@@ -98,6 +98,24 @@
       "use": "Original synthetic finite-grid measurement ambiguity and conditional control study, independently replayed in portable source. No purchased data, physical temperature measurements or borrowed result.",
       "generator": "reproduce/study_calibration.py",
       "sha256": "aa007c17bb525b9e6776c48f09e42722a718a2bfeffb6ce362b30de80b864337"
+    },
+    {
+      "id": "numerical-verification",
+      "url": "https://www.grc.nasa.gov/WWW/wind/valid/tutorial/verassess.html",
+      "read": "full verification assessment page, 9 October 2026",
+      "use": "Independent analytical and refinement checks; distinguish discretization verification from physical validation."
+    },
+    {
+      "id": "physical-validation",
+      "url": "https://www.grc.nasa.gov/WWW/wind/valid/tutorial/valassess.html",
+      "read": "full validation assessment page, 9 October 2026",
+      "use": "Experimental applicability and uncertainty boundary; no bath experiment claimed."
+    },
+    {
+      "id": "finite-volume-context",
+      "url": "https://pages.nist.gov/fipy/en/3.99/numerical/index.html",
+      "read": "numerical method overview, 9 October 2026",
+      "use": "Finite-volume transport methodology only; FiPy not installed or executed."
     }
   ]
 }

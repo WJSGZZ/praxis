@@ -283,3 +283,11 @@ def test_research_running_title_is_explicit():
     text = (ROOT/'templates/research-paper.tex').read_text()
     with pytest.raises(ValueError, match='running title'):
         check(text.replace('[Mathematical research title]', ''), 'research')
+
+
+def test_removed_table_is_rejected_but_forward_and_package_references_are_valid():
+    from scripts.paper_template import check_explicit_references
+    check_explicit_references(r"Table \ref{remaining}. Page \pageref{LastPage}. \label{remaining}")
+    with pytest.raises(ValueError, match='removed'):
+        check_explicit_references(r"Table \ref{remaining} and Table \ref{removed}. \label{remaining}")
+    check_explicit_references("% \\ref{commented-out}\n" + r"\label{remaining} \eqref{remaining}")

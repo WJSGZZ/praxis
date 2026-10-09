@@ -1,0 +1,90 @@
+{
+  "status": "completed",
+  "accepted": true,
+  "diffusion_rows": [
+    {
+      "grid": [
+        4,
+        2,
+        2
+      ],
+      "rms_error_c": 0.021168136389527248,
+      "max_error_c": 0.027657503042014753,
+      "semidiscrete_max_error_c": 2.1316282072803006e-14,
+      "eigen_residual_c_per_s": 1.3877787807814457e-17,
+      "relative_energy_drift": 2.441238023801004e-16
+    },
+    {
+      "grid": [
+        8,
+        4,
+        4
+      ],
+      "rms_error_c": 0.0062351343997256205,
+      "max_error_c": 0.014763707893969524,
+      "semidiscrete_max_error_c": 3.552713678800501e-14,
+      "eigen_residual_c_per_s": 1.1102230246251565e-16,
+      "relative_energy_drift": 2.9146832707919284e-16
+    },
+    {
+      "grid": [
+        16,
+        8,
+        8
+      ],
+      "rms_error_c": 0.001620845039075531,
+      "max_error_c": 0.004388721987709232,
+      "semidiscrete_max_error_c": 9.237055564881302e-14,
+      "eigen_residual_c_per_s": 1.0685896612017132e-15,
+      "relative_energy_drift": 8.704785251042738e-16
+    },
+    {
+      "grid": [
+        24,
+        12,
+        12
+      ],
+      "rms_error_c": 0.0007255408054864336,
+      "max_error_c": 0.0020128578886158266,
+      "semidiscrete_max_error_c": 1.2079226507921703e-13,
+      "eigen_residual_c_per_s": 2.0539125955565396e-15,
+      "relative_energy_drift": 5.812758292566129e-16
+    }
+  ],
+  "observed_orders": [
+    1.763401699143957,
+    1.9436744894482079,
+    1.9823792228432713
+  ],
+  "advection_rows": [
+    {
+      "time_s": 30.0,
+      "max_error_c": 1.4210854715202004e-14,
+      "inlet_temp_c": 41.92689416357848,
+      "outlet_temp_c": 40.0000000009037
+    },
+    {
+      "time_s": 120.0,
+      "max_error_c": 4.263256414560601e-14,
+      "inlet_temp_c": 45.752214441764245,
+      "outlet_temp_c": 40.000033585001226
+    },
+    {
+      "time_s": 300.0,
+      "max_error_c": 2.1316282072803006e-14,
+      "inlet_temp_c": 48.824002333072464,
+      "outlet_temp_c": 40.01671670683191
+    }
+  ],
+  "elapsed_s": 0.07453537500987295,
+  "source_sha256": {
+    "check_finite_volume.py": "9d3819a1368d142c0beb6eb55d5bf7ac29a61e7413bdbaab9dcbc75dfc8b9705",
+    "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db"
+  },
+  "scope": "Code verification: empty insulated constant-D Cartesian diffusion, and zero-D inlet-path step response. No verification of occupied-cell continuum convergence, inferred flow, turbulence or real baths.",
+  "method_sources": [
+    "https://pages.nist.gov/fipy/en/3.99/numerical/index.html",
+    "https://www.grc.nasa.gov/WWW/wind/valid/tutorial/verassess.html",
+    "https://www.grc.nasa.gov/WWW/wind/valid/tutorial/valassess.html"
+  ]
+}
