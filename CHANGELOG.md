@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 新增可选案例协调入口：初次运行前检索本地经验，以同一接续记录连接预算、最新证据、明确质量判断和报告。失败不覆盖已接受指针，过期证据阻断交付；可交付与值得继续分别判断。
+  An optional case coordinator connects local lesson retrieval, bounded execution, current evidence, reviews and reports in one resumable record. Accepted identities survive failed candidates, while stale evidence blocks delivery. A complete draft and a decision to stop are tracked separately.
+
 - 新增可选本地运行反馈：实际来源与阶段事件、未知身份和缺日志、失败与停止状态保持可见；显式文件清单、分享副本、双重哈希及目录／ZIP共层检查。拒绝越界、符号链接、异常压缩、非有限元数据及早于开始的结束时间；不自动上传，不以反馈包代替研究验收。
   Optional run feedback now records sourced metadata, actual events and stopping states, with explicit file selection and separate original/share hashes. The same read-only checks handle folders and ZIPs; unsafe paths, malformed archives, non-finite metadata and inconsistent end times are rejected. Export does not upload files or certify a study.
 

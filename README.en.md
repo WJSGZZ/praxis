@@ -192,7 +192,7 @@ WORKSPACE="/absolute/path/to/your/project"
 
 The agent writes and reviews the case's `model.py` and `validate.py`, then executes `run`. Data, cases, and outputs are excluded from Git by default; project rules come from your workspace.
 
-See the [Execution contract](references/automation.md) for the complete interface.
+See the [Execution contract](references/automation.md) for the complete interface. For work that spans several rounds, the [task coordinator](references/workflow.md) retrieves relevant local lessons at initialization and tracks one next action against the budget, current evidence, reviews and report. Failed or stale runs block delivery. A valid draft can remain open for a worthwhile improvement; the agent still chooses the mathematics and reviews the science.
 
 For troubleshooting after delivery, [run feedback](references/feedback.md) preserves the stages, reviews, revisions and stopping reason you actually record. Select the files to include in a local sharing copy; folders and ZIPs use the same read-only checks. Nothing is uploaded automatically. Unavailable model identity, costs and chat history remain unknown, and a readable feedback package does not certify the underlying research.
 

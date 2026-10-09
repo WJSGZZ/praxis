@@ -28,7 +28,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 - 涉及比赛、团队分工或限时完整交付时，先读 [references/context-and-team.md](references/context-and-team.md)，接续赛事／届次、实际人数、成员能力与可用时间；通用建模不默认套赛事规则，不默认用户单人。
 - 已确认单人且限时或强调先完成时，读 [references/solo-delivery.md](references/solo-delivery.md)。助手承担优先级、依赖与下一步协调，给用户一个当前事项；滚动形成完整稿，预算不足采用简化路线。
-- 需要持续接续或跨环节交付时，按 [references/tasks-template.md](references/tasks-template.md) 更新已有任务记录；只有使用案例系统时固定为案例 planning/tasks.md。
+- 需要持续接续或跨环节交付时，按 [references/tasks-template.md](references/tasks-template.md) 更新已有任务记录；使用 pipeline 案例时可调用 [references/workflow.md](references/workflow.md) 的预算、经验检索和下一行动入口，先阅读命中的经验再形成路线，不把状态机当作科学审阅。
 - 参数能否被观测区分、尺度、优化保证、概率区间或干预结论需要判断时，读 [references/mathematical-reasoning.md](references/mathematical-reasoning.md) 的对应条件分支；不增加全题必经阶段。
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
