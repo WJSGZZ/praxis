@@ -72,7 +72,7 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
   --checks /实际运行/checks.json --claimed-check-count 12
 ```
 
-字体禁用与是否要求嵌入由本稿规格配置，不内置赛事的某一种字体名单。逐页视觉检查仍需 PDF 查看工具。scripts/freeze_pdf.py 创建字节一致的新副本与哈希回执，不是正式提交回执。
+字体禁用与是否要求嵌入由本稿规格配置，不内置赛事的某一种字体名单。逐页视觉检查仍需 PDF 查看工具。正式论文先用 scripts.paper_template 的 --compile 入口核验 templates/typesetting-runtime.json 固定的编译器及完整资源包；scripts/freeze_pdf.py 的 --tex／--contest 门禁还必须提供同次 --build-receipt，核对实际源码、PDF与资源版本后创建字节一致的新副本。通用快照不等于论文通过门禁，构建记录也不是正式提交回执。
 
 scripts/check_references.py 读取每行一条的参考文献文本，用 Crossref 免费接口核对其中的 DOI 是否存在、题名与年份是否与引文相符，输出 verified / mismatch / not_found / network_error / no_doi。需要联网；没有 DOI 的书、标准和网页只报告 no_doi，必须手工核对。通过只说明记录存在，不说明该文献支持所引论断。
 

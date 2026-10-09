@@ -88,7 +88,22 @@ def test_layout_gate_records_source_and_style(tmp_path):
     pdf = tmp_path / 'source.pdf'
     writer = PdfWriter(); writer.add_blank_page(width=612, height=792)
     with pdf.open('wb') as f: writer.write(f)
-    receipt = freeze(pdf, tmp_path / 'final.pdf', tex=source, contest='mcm')
+    import json
+    from scripts.paper_template import ROOT as template_root
+    runtime = json.loads((template_root/'templates/typesetting-runtime.json').read_text())
+    build = tmp_path/'synthetic-build.json'
+    # Synthetic provenance tests binding only; real compilation is tested in CI.
+    build.write_text(json.dumps({'runtime':runtime, 'layout':check(source.read_text()),
+        'tex_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+        'pdf_sha256':hashlib.sha256(pdf.read_bytes()).hexdigest()}))
+    with pytest.raises(ValueError, match='build-receipt'):
+        freeze(pdf, tmp_path/'missing.pdf', tex=source, contest='mcm')
+    assert not (tmp_path/'missing.pdf').exists()
+    receipt = freeze(pdf, tmp_path / 'final.pdf', tex=source, contest='mcm', build_receipt=build)
+    pdf.write_bytes(pdf.read_bytes()+b'\n% changed after compilation')
+    with pytest.raises(ValueError, match='does not match'):
+        freeze(pdf, tmp_path/'stale.pdf', tex=source, contest='mcm', build_receipt=build)
+    assert not (tmp_path/'stale.pdf').exists()
     assert receipt['layout']['tex_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
     assert receipt['layout']['profile'] == 'praxis-mcm-v1'
 
@@ -124,3 +139,29 @@ def test_portable_chinese_profile_and_disclosure_match():
         assert 'fontset=none' in ai
     from scripts.build_plugin import public_files
     assert ROOT / 'templates/cumcm-fonts.json' in public_files(ROOT)
+
+
+def test_canonical_build_rejects_wrong_runtime_before_output(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    import subprocess
+    from scripts.paper_template import compile_paper
+    source = tmp_path/'main.tex'; source.write_text(paper(), encoding='utf-8')
+    output = tmp_path/'build'
+    # These are refusal-path unit tests, not claims of an actual compiler run.
+    monkeypatch.setattr(subprocess, 'run', lambda *a, **k: SimpleNamespace(stdout='Tectonic 0.16.0'))
+    with pytest.raises(ValueError, match='requires Tectonic'):
+        compile_paper(source, 'mcm', output, 'test-compiler')
+    assert not output.exists()
+    def wrong_bundle(command, **kwargs):
+        return SimpleNamespace(stdout='Tectonic 0.17.0' if '--version' in command else b'wrong-bundle')
+    monkeypatch.setattr(subprocess, 'run', wrong_bundle)
+    with pytest.raises(ValueError, match='resource bundle'):
+        compile_paper(source, 'mcm', output, 'test-compiler')
+    assert not output.exists()
+
+
+def test_build_receipt_cannot_silently_be_ignored(tmp_path):
+    from scripts.freeze_pdf import freeze
+    with pytest.raises(ValueError, match='require TeX'):
+        freeze(tmp_path/'missing.pdf', tmp_path/'final.pdf', build_receipt=tmp_path/'receipt.json')
+    assert not (tmp_path/'final.pdf').exists()

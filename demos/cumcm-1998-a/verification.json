@@ -95,7 +95,15 @@
    "font_file_hashes_verified": true,
    "all_four_documents_text_and_72dpi_page_rasters_equal": true
   },
-  "text_backend": "pdfium-standard-cjk-mapping"
+  "text_backend": "pdfium-standard-cjk-mapping",
+  "canonical_runtime": {
+   "profile": "praxis-typesetting-v1",
+   "compiler": "Tectonic 0.17.0",
+   "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+   "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+   "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+  },
+  "disclosure_runtime_note": "AI-use text now distinguishes historical XeLaTeX from the current pinned Tectonic build. Main scientific body and numerical files unchanged."
  },
  "layout_revision_history": [
   {
@@ -113,26 +121,46 @@
     "build_paper.py",
     "paper/main.tex"
    ]
+  },
+  {
+   "date": "2026-10-09",
+   "profile": {
+    "profile": "praxis-cumcm-v2",
+    "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd",
+    "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4"
+   },
+   "pdf_sha256": "e2117545cb21d0bce09aacbb81b51849e4566c89a22dcc906095abb7764b2626",
+   "numerical_rerun": false,
+   "pages_rendered": 23,
+   "native_compiler": "passed",
+   "archive_changed_members": [
+    "README.md",
+    "build_paper.py",
+    "paper/main.tex",
+    "paper/ai-use.tex",
+    "AI工具使用详情.pdf"
+   ]
   }
  ],
  "layout_revision": {
   "date": "2026-10-09",
   "profile": {
    "profile": "praxis-cumcm-v2",
-   "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd",
-   "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4"
+   "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd"
   },
-  "pdf_sha256": "e2117545cb21d0bce09aacbb81b51849e4566c89a22dcc906095abb7764b2626",
+  "runtime": {
+   "profile": "praxis-typesetting-v1",
+   "compiler": "Tectonic 0.17.0",
+   "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+   "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+   "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+  },
+  "pdf_sha256": "129a80f82bfdd6fd3befe3a5161e47a5f4851a4c1b3b6bf1061581928f13ba04",
+  "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4",
   "numerical_rerun": false,
+  "scientific_tex_unchanged": true,
   "pages_rendered": 23,
-  "native_compiler": "passed",
-  "archive_changed_members": [
-   "README.md",
-   "build_paper.py",
-   "paper/main.tex",
-   "paper/ai-use.tex",
-   "AI工具使用详情.pdf"
-  ]
+  "canonical_build_verified": true
  },
  "showcase_chinese_font_faces": {
   "display": "STSongti-SC-Regular",

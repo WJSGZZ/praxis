@@ -2,6 +2,8 @@
 import hashlib
 import json
 import platform
+import os
+import sys
 from pathlib import Path
 import shutil
 import subprocess
@@ -11,7 +13,8 @@ import zipfile
 
 from scripts.check_pdf import inspect_pdf
 from scripts.contest_rules import evaluate, extract
-from scripts.paper_template import check
+from scripts.paper_template import check, compile_paper
+from scripts.freeze_pdf import freeze
 
 ROOT = Path.cwd()
 OUT = ROOT / '.session/typesetting'
@@ -54,24 +57,31 @@ def main(compiler=None):
     executable = Path(compiler).resolve() if compiler else install()
     version = subprocess.run([str(executable), "--version"], check=True, capture_output=True, text=True).stdout.strip()
     if version != "Tectonic 0.17.0": raise ValueError("Unexpected compiler version: " + version)
-    fonts = json.loads((ROOT / 'templates/cumcm-fonts.json').read_text())
-    for name, record in fonts['files'].items():
-        data = subprocess.run([str(executable), '-X', 'bundle', 'cat', name], check=True, capture_output=True).stdout
-        if hashlib.sha256(data).hexdigest() != record['sha256']:
-            raise ValueError('TeX bundle font differs from pinned profile: ' + name)
     for contest in ('cumcm', 'mcm'):
         shutil.copyfile(ROOT / f'templates/{contest}-paper.tex', OUT / f'{contest}-template.tex')
     with zipfile.ZipFile(ROOT / 'demos/cumcm-1998-a/deliverables/supporting_materials.zip') as archive:
         for name in ('main', 'ai-use'):
             (OUT / f'{name}.tex').write_bytes(archive.read(f'paper/{name}.tex'))
+    os.environ['PATH'] = str(executable.parent) + os.pathsep + os.environ.get('PATH', '')
+    bath = ROOT/'demos/mcm-2016-a/reproduce'
+    generated = subprocess.run([sys.executable, str(bath/'build_report.py'), '--run', str(bath/'reference')], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
+    (OUT/'bath-generator.txt').write_text(generated.stdout+generated.stderr, encoding='utf-8')
+    if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
+    shutil.copyfile(bath/'paper/main.tex', OUT/'bath.tex')
+    shutil.copyfile(ROOT/'research/merge-after-toll/paper/paper.tex', OUT/'toll.tex')
     checks = {}
-    for name, contest in [('cumcm-template', 'cumcm'), ('mcm-template', 'mcm'), ('main', 'cumcm'), ('ai-use', None)]:
+    for name, contest in [('cumcm-template', 'cumcm'), ('mcm-template', 'mcm'), ('main', 'cumcm'), ('ai-use', None), ('bath', 'mcm'), ('toll', 'mcm')]:
         tex = OUT / f'{name}.tex'
         if contest: check(tex.read_text(encoding='utf-8'), contest)
-        run = subprocess.run([str(executable), '--keep-logs', str(tex)], cwd=OUT, capture_output=True, text=True, encoding='utf-8', errors='replace')
-        (OUT / f'{name}.compile.txt').write_text(run.stdout + run.stderr, encoding='utf-8')
-        if run.returncode: raise RuntimeError(run.stdout + run.stderr)
-        pdf = OUT / f'{name}.pdf'
+        built = OUT/(name+'-build')
+        compile_paper(tex, contest, built, executable)
+        pdf = built/(name+'.pdf')
+        if contest:
+            freeze(pdf, built/'frozen.pdf', tex=tex, contest=contest,
+                   build_receipt=built/(name+'.build.json'))
+        for suffix in ('.pdf', '.compile.txt', '.log', '.build.json'):
+            source = built/(name+suffix)
+            if source.exists(): shutil.copyfile(source, OUT/(name+suffix))
         report = inspect_pdf(pdf, require_embedded_fonts=True)
         if report['errors']: raise ValueError(report['errors'])
         if name in {'cumcm-template', 'main', 'ai-use'}:
@@ -86,6 +96,12 @@ def main(compiler=None):
             if report['total_pages'] != 23 or rules['facts']['body_pages'] != 12:
                 raise ValueError('Unexpected pagination')
             report['contest_rules'] = rules
+        if name in {'bath', 'toll'}:
+            rules = evaluate(extract(pdf), 'mcm')
+            if rules['errors']: raise ValueError(rules['errors'])
+            if report['total_pages'] != (25 if name == 'bath' else 17):
+                raise ValueError('Unexpected MCM pagination')
+            report['contest_rules'] = rules
         checks[name] = report
     (OUT / 'verification.json').write_text(json.dumps({'platform': platform.platform(), 'compiler': 'Tectonic 0.17.0', 'checks': checks}, ensure_ascii=False, indent=2), encoding='utf-8')
 
@@ -99,9 +115,9 @@ def compare_artifacts(directory):
     results = {}
     reference = None
     for folder in folders:
-        manifest = json.loads((folder / 'verification.json').read_text())
+        manifest = json.loads((folder / 'verification.json').read_text(encoding='utf-8'))
         fingerprints = {}
-        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template'):
+        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template', 'bath', 'toll'):
             path = folder / (name + '.pdf')
             if hashlib.sha256(path.read_bytes()).hexdigest() != manifest['checks'][name]['sha256']:
                 raise ValueError('Artifact differs from runner verification: ' + str(path))

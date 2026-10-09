@@ -57,7 +57,7 @@
 </tr>
 </table>
 
-**[阅读完整 25 页英文论文 →](deliverables/7391856.pdf)** 用 XeLaTeX 排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；24 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
+**[阅读完整 25 页英文论文 →](deliverables/7391856.pdf)** 使用固定的 Tectonic 0.17.0 与 v33 资源包排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；24 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
 
 ## 自己跑一次
 
@@ -71,7 +71,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选�
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # 原方案的结构对照，不重优化
 ```
 
-基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 XeLaTeX 或 tectonic，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。
+基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。
 
 ## 文件地图
 

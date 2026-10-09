@@ -8,14 +8,14 @@ sys.path.insert(0,str(ROOT/'code'))
 import model,control
 TEAM_CONTROL_NUMBER='7391856'
 parser=argparse.ArgumentParser();parser.add_argument('--run',type=Path,required=True);args=parser.parse_args()
-r=json.loads((args.run/'results.json').read_text());checks=json.loads((args.run/'checks.json').read_text())
+r=json.loads((args.run/'results.json').read_text(encoding='utf-8'));checks=json.loads((args.run/'checks.json').read_text(encoding='utf-8'))
 assert all(c['passed'] for c in checks)
 p=r['parameters'];b=r['policy'];a=r['analytic'];sc=r['scenarios'];z=np.load(args.run/'trajectory.npz')
-ST=json.loads((args.run/'structure.json').read_text())
+ST=json.loads((args.run/'structure.json').read_text(encoding='utf-8'))
 assert all(hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==digest for name,digest in ST['input_sha256'].items()), 'Structural evidence is stale'
-E=json.loads((args.run/'extended.json').read_text());wf=lambda floor:next(f_['constant_l'] for f_ in E['frontier'] if f_['floor']==floor);raw_ctl=E['control']['best'];prov=E['provenance'];lr=E['literature_ranges'];ctl_checks=E['checks']
+E=json.loads((args.run/'extended.json').read_text(encoding='utf-8'));wf=lambda floor:next(f_['constant_l'] for f_ in E['frontier'] if f_['floor']==floor);raw_ctl=E['control']['best'];prov=E['provenance'];lr=E['literature_ranges'];ctl_checks=E['checks']
 assert all(c['passed'] for c in ctl_checks)
-MC=json.loads((args.run/'mesh_check.json').read_text())
+MC=json.loads((args.run/'mesh_check.json').read_text(encoding='utf-8'))
 assert MC.get('input_sha256') == hashlib.sha256((args.run/'extended.json').read_bytes()).hexdigest(), 'Schedule evidence is stale'
 assert E['parameters'] == p, 'Baseline and schedule parameters differ'
 assert set(MC.get('source_sha256', {})) == {'run_mesh_check.py', 'code/model.py', 'code/policy_validation.py'} and all(hashlib.sha256((ROOT/name).read_bytes()).hexdigest() == digest for name,digest in MC['source_sha256'].items()), 'Schedule source evidence is stale'
@@ -134,15 +134,9 @@ def compile_pdf(stem,title):
     d=ROOT/'paper';d.mkdir(exist_ok=True)
     source=PREAMBLE+''.join(tex)+'\n\\end{document}\n'
     check_layout(source)
-    (d/(stem+'.tex')).write_text(source)
-    xe=shutil.which('xelatex') or next(iter(sorted(Path.home().glob('texlive/*/bin/*/xelatex'))),None)
-    if xe:
-        for _ in range(3):res=subprocess.run([str(xe),'-interaction=nonstopmode','-halt-on-error',stem+'.tex'],cwd=d,capture_output=True,text=True)
-        ok=res.returncode==0;log=res.stdout
-    else:
-        res=subprocess.run([shutil.which('tectonic') or str(Path.home()/'.local/bin/tectonic'),stem+'.tex'],cwd=d,capture_output=True,text=True);ok=res.returncode==0;log=res.stdout+res.stderr
-    (d/(stem+'.compile.log')).write_text(log)
-    assert ok,log[-2500:]
+    (d/(stem+'.tex')).write_text(source, encoding='utf-8')
+    from scripts.paper_template import compile_in_place
+    compile_in_place(d/(stem+'.tex'), 'mcm')
     return d/(stem+'.pdf')
 
 # Figures are pgfplots/TikZ source built from the numerical record; fonts match the paper.

@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "a46acfabbcb6af23c3bd3692f7b5eedaa2bac6ac41fb28eac6dd0bd74e6c3ebd",
-  "bytes": 162195,
+  "sha256": "6a3ec0fe20b4325d176c358ff04a3a845b4454be1cd5024c6730013c13f8f828",
+  "bytes": 164353,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -152,10 +152,32 @@
    "profile": "praxis-mcm-v1",
    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
   },
-  "pdf_sha256": "a46acfabbcb6af23c3bd3692f7b5eedaa2bac6ac41fb28eac6dd0bd74e6c3ebd",
+  "runtime": {
+   "profile": "praxis-typesetting-v1",
+   "compiler": "Tectonic 0.17.0",
+   "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+   "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+   "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+  },
+  "pdf_sha256": "6a3ec0fe20b4325d176c358ff04a3a845b4454be1cd5024c6730013c13f8f828",
+  "tex_sha256": "880960ba64ff6744505744ec9f3b320264d114ec57ef4821ae04b4f8eea89605",
   "numerical_rerun": false,
+  "scientific_tex_unchanged": true,
   "pages_rendered": 25,
-  "native_compiler": "success",
-  "plot_revision": "No silent decimation; rebuilt with archived numerical evidence, all pages pixel-identical to the layout revision"
- }
+  "canonical_build_verified": true
+ },
+ "layout_revision_history": [
+  {
+   "date": "2026-10-09",
+   "profile": {
+    "profile": "praxis-mcm-v1",
+    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+   },
+   "pdf_sha256": "a46acfabbcb6af23c3bd3692f7b5eedaa2bac6ac41fb28eac6dd0bd74e6c3ebd",
+   "numerical_rerun": false,
+   "pages_rendered": 25,
+   "native_compiler": "success",
+   "plot_revision": "No silent decimation; rebuilt with archived numerical evidence, all pages pixel-identical to the layout revision"
+  }
+ ]
 }

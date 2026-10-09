@@ -19,7 +19,7 @@ def number(x, digits=0):
 def document(r, output):
     profile = Path(__file__).with_name('layout-profile.json')
     if profile.exists():
-        expected = json.loads(profile.read_text())['style_sha256']
+        expected = json.loads(profile.read_text(encoding='utf-8'))['style_sha256']
         current = check_layout(preamble('7391857', 'Layout check') + summary_header('B'))['style_sha256']
         if current != expected:
             raise ValueError('Frozen research layout differs; explicitly revise the layout profile before rebuilding')
@@ -275,12 +275,12 @@ Python and its scientific libraries performed layout enumeration, flow construct
 \end{document}
 ''')
     output.mkdir(parents=True,exist_ok=True)
-    tex=output/'paper.tex';source=''.join(pieces);check_layout(source);tex.write_text(source)
+    tex=output/'paper.tex';source=''.join(pieces);check_layout(source);tex.write_text(source, encoding='utf-8')
     return tex
 
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--results',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
-    r=json.loads(a.results.read_text());tex=document(r,a.output)
-    (a.output/'build-input.json').write_text(json.dumps({'results_sha256':hashlib.sha256(a.results.read_bytes()).hexdigest(),'builder_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'phase':r['phase'],**check_layout(tex.read_text())},indent=2))
+    r=json.loads(a.results.read_text(encoding='utf-8'));tex=document(r,a.output)
+    (a.output/'build-input.json').write_text(json.dumps({'results_sha256':hashlib.sha256(a.results.read_bytes()).hexdigest(),'builder_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'phase':r['phase'],**check_layout(tex.read_text(encoding='utf-8'))},indent=2), encoding='utf-8')
     print(tex)

@@ -45,7 +45,7 @@ uv run --locked python research/merge-after-toll/paper/build_report.py \
   --results research/merge-after-toll/reference/accepted.json --output .session/merge-paper
 ```
 
-The last command generates editable LaTeX from the frozen results. Compiling another PDF requires an existing XeLaTeX installation.
+The last command generates editable LaTeX from the frozen results. To compile it, use Tectonic 0.17.0 through `uv run --locked python -m scripts.paper_template research/merge-after-toll/paper/paper.tex --contest mcm --compile --output-directory outputs/toll-build-001` from the repository root. This pins the complete TeX bundle and records source/PDF hashes; review every page before freezing a new deliverable.
 
 ## Read the evidence
 

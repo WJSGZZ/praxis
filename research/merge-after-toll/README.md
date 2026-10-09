@@ -47,7 +47,7 @@ uv run --locked python research/merge-after-toll/reproduce.py --output .session/
 uv run --locked python research/merge-after-toll/reproduce.py --candidate --output .session/merge-candidate
 uv run --locked python research/merge-after-toll/reproduce.py --baseline --output .session/merge-baseline
 
-# 从冻结数值生成可编辑论文；需要本机已有XeLaTeX才能另编译PDF
+# 从冻结数值生成可编辑论文；正式PDF使用固定Tectonic入口
 uv run --locked python research/merge-after-toll/paper/build_report.py \
   --results research/merge-after-toll/reference/accepted.json --output .session/merge-paper
 ```
@@ -68,3 +68,11 @@ uv run --locked python research/merge-after-toll/paper/build_report.py \
 本轮没有读取同题解答或评委评论，预训练接触未知。另一Agent角色可见作者代码后进行审计，不是隔离盲评，也不是人工核验。没有使用者参与本题建模或核验的记录；开发者的产品要求与本题贡献分开。完整原始模型对话无法从摘要重建。
 
 原创代码、说明与论文按仓库MIT许可提供；第三方题面与文献权利归原权利人。研究归档不随默认插件安装包分发，也不随每次技能调用加载。缺少实测服务、驾驶行为、几何储车映射、重车与制动数据，当前结论适合条件分析与方法检验。
+
+正式排版（仓库根目录，输出目录须不存在）：
+
+```bash
+uv run --locked python -m scripts.paper_template research/merge-after-toll/paper/paper.tex --contest mcm --compile --output-directory outputs/toll-build-001
+```
+
+编译器与完整资源包固定于 `templates/typesetting-runtime.json`；逐页检查后再携带同次 `.build.json` 冻结，不把历史数学审阅冒充本次排版审阅。

@@ -1,0 +1,7 @@
+{
+  "profile": "praxis-typesetting-v1",
+  "compiler": "Tectonic 0.17.0",
+  "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+  "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+  "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+}

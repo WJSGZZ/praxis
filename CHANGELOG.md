@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 正式论文同时固定 Tectonic 0.17.0 与完整 TeX 资源包，拒绝静默更换编译器；冻结校验同次构建记录、源码和 PDF 哈希。国赛、浴缸与收费站成品同步重排，数值模型不重算；跨系统检查涵盖六份文档并比较逐页文字及渲染。
+  Canonical paper builds pin both the compiler and the full TeX bundle. Layout-gated snapshots require a matching build receipt; CI compares six documents across Windows, Linux and macOS.
+
 - 中文论文迁移至固定的 Fandol 0.3 开放字体，移除系统字体依赖；国赛正文与 AI 使用详情同步，新增三系统干净环境编译检查及字体哈希验证。标准中文 CID 字体的提取改用正确映射，避免乱码导致匿名和结构检查漏检。
   Chinese reports now use pinned Fandol fonts from the TeX distribution. The paper and disclosure share the same font choices, with clean-runner compilation checks for Windows, Linux and macOS. Standard CJK CID mappings are handled correctly during intake and PDF inspection.
 
