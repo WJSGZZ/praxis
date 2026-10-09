@@ -9,7 +9,7 @@
 [![Version](https://img.shields.io/badge/Version-0.3.0-3F6B6B?style=flat-square)](CHANGELOG.md)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-7A5C3E?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
-[![Paper](https://img.shields.io/badge/Paper-XeLaTeX-5B6B7F?style=flat-square)](templates/)
+[![Paper](https://img.shields.io/badge/Paper-LaTeX-5B6B7F?style=flat-square)](templates/)
 [![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
 
 **简体中文** · [English](README.en.md)
@@ -64,6 +64,8 @@
 </table>
 
 **[更多案例 →](demos/README.md)** 从组合计数与开放数学探索，到有完整证据的决策研究。
+
+论文由共享版式源生成：国赛、美赛分别适配，数学研究稿使用 [AMS 风格模板](templates/research-paper.tex)。固定编译环境、样式漂移检查和三系统排版 CI 用来维持一致；章节与图按论证需要选择，最终仍检查实际 PDF。图由有效数据生成，使用 PGFplots/TikZ 矢量绘制，复杂数值场可按需求使用成熟科学绘图库。
 
 如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 

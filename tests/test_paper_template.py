@@ -225,3 +225,61 @@ def test_contents_precedes_body_and_is_not_duplicated():
             check(paper().replace('Body.', body))
     hook = r'\pretocmd{\section}{\Needspace{5\baselineskip}}{}{}'
     check(paper().replace(r'\begin{document}', r'\begin{document}' + hook))
+
+
+
+def test_research_style_accepts_optional_structure_and_refuses_font_drift():
+    from scripts.paper_template import style_block
+    text = (r'\newcommand{\PraxisTitle}{A result}' + '\n' + style_block('research') +
+            r'\title[A result]{A result}\begin{document}\begin{abstract}A claim.\end{abstract}'
+            r'\maketitle\begin{theorem}A conditional result.\end{theorem}'
+            r'\begin{proof}An argument.\end{proof}\end{document}')
+    assert check(text, 'research')['profile'] == 'praxis-research-v1'
+    check((ROOT/'templates/research-paper.tex').read_text(), 'research')
+    check((ROOT/'demos/collatz-research/reproduce/paper/paper.tex').read_text(), 'research')
+    for command in [r'\usepackage{newtxtext}', r'\usepackage{lmodern}',
+                    r'\geometry{margin=20mm}', r'\linespread{1.3}']:
+        with pytest.raises(ValueError, match='override'):
+            check(text.replace(r'\maketitle', command+r'\maketitle'), 'research')
+    with pytest.raises(ValueError, match='differs'):
+        check(text.replace('margin=30mm', 'margin=25mm'), 'research')
+    from scripts.build_plugin import public_files
+    assert ROOT/'templates/research-style.tex' in public_files(ROOT)
+    assert ROOT/'templates/research-paper.tex' in public_files(ROOT)
+
+
+def test_cumcm_figure_data_and_proofs_follow_archived_records():
+    import ast
+    import json
+    import re
+    import zipfile
+    with zipfile.ZipFile(ROOT/'demos/cumcm-1998-a/deliverables/supporting_materials.zip') as z:
+        source = z.read('build_paper.py').decode()
+        paper = z.read('paper/main.tex').decode()
+        env = {'re': re, 'out': []}
+        nodes = [n for n in ast.parse(source).body
+                 if (isinstance(n, ast.FunctionDef) and n.name in
+                     {'esc','T','fig_caption','fig_wrap','fig_margin_error','fig_baselines','fig_dropone'})
+                 or (isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id in
+                     {'UNI','SYM','URL','GOPT'} for t in n.targets))]
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), '<formatting>', 'exec'), env)
+        for number, function, record in [(3,'fig_margin_error','robustness'),
+                                         (4,'fig_baselines','alternatives'),
+                                         (5,'fig_dropone','alternatives')]:
+            groups = json.loads(z.read('reference/'+record+'.json'))['groups']
+            env['out'].clear()
+            env[function](groups['four'], groups['fifteen'], number)
+            assert '\n'.join(env['out']).strip() in paper
+        # Independent subtraction, not a second call of the chart implementation.
+        assert '(1.322,2)' in paper  # (20.1907639778 - 18.8683846154) percentage points
+        assert '(0.971,3)' in paper  # (32.2899959934 - 31.3188019073) percentage points
+        assert 'axis cs:20.191,-1' not in paper
+        assert paper.count(r'\begin{proof}') == paper.count(r'\end{proof}') == 3
+        assert r'$\blacksquare$ 将' not in paper
+        assert '∎' not in source
+
+
+def test_research_running_title_is_explicit():
+    text = (ROOT/'templates/research-paper.tex').read_text()
+    with pytest.raises(ValueError, match='running title'):
+        check(text.replace('[Mathematical research title]', ''), 'research')

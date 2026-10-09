@@ -9,7 +9,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 [![Version](https://img.shields.io/badge/Version-0.3.0-3F6B6B?style=flat-square)](CHANGELOG.md)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-7A5C3E?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
-[![Paper](https://img.shields.io/badge/Paper-XeLaTeX-5B6B7F?style=flat-square)](templates/)
+[![Paper](https://img.shields.io/badge/Paper-LaTeX-5B6B7F?style=flat-square)](templates/)
 [![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
 
 [简体中文](README.md) · **English**
@@ -64,6 +64,8 @@ The competition cases make the full workflow inspectable; they do not define the
 </table>
 
 **[Browse all cases →](demos/README.en.md)** Explore mathematical research and decision studies, with papers, code, and checks.
+
+Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
 
 Explore either case or bring your own problem. **Star Praxis** if you would like to follow its development.
 

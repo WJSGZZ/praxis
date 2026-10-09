@@ -14,7 +14,7 @@ demos/**/paper/
 # This curated research source is shipped; generated paper outputs stay local.
 !demos/collatz-research/reproduce/paper/
 demos/collatz-research/reproduce/paper/*
-!demos/collatz-research/reproduce/paper/main.tex
+!demos/collatz-research/reproduce/paper/paper.tex
 demos/**/reproduce/submission/
 
 # Local-only notes and generated distributions; public maintenance code stays tracked.

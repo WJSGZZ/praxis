@@ -46,7 +46,7 @@ tex=[];eqcount=0;tabcount=0;SEC=[0]
 CAPS=['Where each requirement is answered','Modeling options compared','Baseline inputs','Coefficient anchors and the values used','Symbols',
  'Baseline result under the best constant rate','Constant rate, scheduled flow and the bounds','Geometry, size and body scenarios',
  'Mixing, surface, comfort and supply scenarios','Mesh replay: constrained temperatures','Fixed-policy structural replay','Scenario definitions','Scenario definitions (continued)']
-UNI={'′':r"$'$",'Ṫ':r'$\dot T$','∫':r'$\int$','≥':r'$\geq$','≤':r'$\leq$','≈':r'$\approx$','→':r'$\rightarrow$','≠':r'$\neq$','⁻':r'$^{-}$','¹':r'$^{1}$','⁰':r'$^{0}$','∂':r'$\partial$','ρ':r'$\rho$','Δ':r'$\Delta$','∑':r'$\sum$','−':'-','µ':r'$\mu$','∞':r'$\infty$','∎':r'$\blacksquare$'}
+UNI={'′':r"$'$",'Ṫ':r'$\dot T$','∫':r'$\int$','≥':r'$\geq$','≤':r'$\leq$','≈':r'$\approx$','→':r'$\rightarrow$','≠':r'$\neq$','⁻':r'$^{-}$','¹':r'$^{1}$','⁰':r'$^{0}$','∂':r'$\partial$','ρ':r'$\rho$','Δ':r'$\Delta$','∑':r'$\sum$','−':'-','µ':r'$\mu$','∞':r'$\infty$'}
 def esc(s):
     s=s.replace('\\',r'\textbackslash{}')
     for a,b in [('&',r'\&'),('%',r'\%'),('$',r'\$'),('#',r'\#'),('_',r'\_'),('{',r'\{'),('}',r'\}'),('~',r'\textasciitilde{}'),('^',r'\textasciicircum{}')]:s=s.replace(a,b)
@@ -131,7 +131,7 @@ def figure(name,caption,height=None):
       'spatial.png': 'The layers in Figure @fig:spatial@ locate the remaining spatial temperature differences; a single shared scale makes the top-layer inlet path comparable with the deeper water.',
       'temperature.png': 'The trajectory in Figure @fig:temperature@ contrasts the volume-weighted mean with the coldest cell and the full spatial range, showing why the mean alone cannot establish comfort.',
       'control.png': 'The schedule in Figure @fig:control@ concentrates replenishment in the middle of the bath; its temperature trajectory must therefore be checked over the no-flow intervals as well.',
-      'frontier.png': 'The frontier in Figure @fig:frontier@ quantifies the water cost of a tighter temperature preference, separating the spatial search from the ideal benchmark and energy bound.',
+      'frontier.png': 'Figure @fig:frontier@ compares the spatial constant-rate search with the analytical well-mixed optimum and energy lower bound. The spatial curve joins accepted search results; it does not certify an optimum over all controls.',
       'bounds.png': 'The bracket in Figure @fig:bounds@ separates admissible policies from lower bounds; it supports a comparison of water use without claiming that the spatial search proves a global optimum.',
       'ranges.png': 'The draws in Figure @fig:ranges@ show how surface heat loss changes water demand within the tested ranges, while the rejected draws expose conditions where the search finds no acceptable policy.',
     }
@@ -179,11 +179,11 @@ if bad:ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),color
 ax.vline(p['h_surface'])
 FIG['ranges.png']=ax.tex()
 fr=E['frontier'];okf=[f_ for f_ in fr if f_['constant_l'] is not None]
-ax=texplot.Axis('Allowed fall below the starting temperature ($^\\circ$C)','Added water (L)',height='5.0cm',legend_columns=2)
-ax.line([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],label='Perfectly mixed optimum (proved)').line([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='muted',style='dashed',width=0.9,label='Energy lower bound')
-ax.line([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='accent',marks='*',label='Best constant rate, spatial model')
+ax=texplot.Axis('Allowed temperature drop ($^\\circ$C)','Added water (L)',height='5.0cm',legend_columns=2)
+ax.line([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],label='Mixed optimum').line([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='muted',style='dashed',width=0.9,label='Energy bound')
+ax.line([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='accent',marks='*',label='Spatial constant rate')
 badf=[f_ for f_ in fr if f_['constant_l'] is None]
-if badf:ax.scatter([f_['fall'] for f_ in badf],[0]*len(badf),color='accent',mark='x',size=2.6,label='None accepted')
+if badf:ax.scatter([f_['fall'] for f_ in badf],[0]*len(badf),color='accent',mark='x',size=2.6,label='No candidate found')
 ax.vline(p['initial']-p['floor'])
 FIG['frontier.png']=ax.tex()
 cube=T[-1].reshape(tuple(r['grid']))
@@ -245,13 +245,16 @@ para('A heat-loss model must approach an environmental equilibrium rather than z
 
 page('4. What can be proved about water use?')
 para('Let $\\ell(T)=H_a(T-T_a)+H_b(T-T_b)$ be the heat loss of the mixed bath, and let the inlet be hotter than every temperature considered. <b>Proposition 1.</b> Coasting to the lower limit and then holding it uses the least water, provided the holding rate is within the faucet bound. The proof has four steps.')
+tex.append(r'\begin{proof}'+'\n')
 para('<b>Step 1, an identity.</b> Dividing the balance by $T_{\\mathrm{in}}-T$ and integrating over the horizon gives')
 eq(r'\int q\,dt=\frac{C}{\rho c_p}\log\frac{T_{\rm in}-T_0}{T_{\rm in}-T_f}+\int\frac{\ell(T)}{\rho c_p(T_{\rm in}-T)}\,dt')
 para('<b>Step 2, monotonicity.</b> The integrand $\\ell(T)/(T_{\\mathrm{in}}-T)$ has derivative $[H_a(T_{\\mathrm{in}}-T_a)+H_b(T_{\\mathrm{in}}-T_b)]/(T_{\\mathrm{in}}-T)^2>0$, so it increases with $T$, and the logarithmic term increases with the final temperature. Water use is therefore an increasing functional of the temperature path.')
 para('<b>Step 3, the lowest admissible path.</b> Because $q\\ge 0$, comparison with the no-flow solution gives $T(t)\\ge T_c(t)$, the cooling curve of Section 3, and feasibility requires $T(t)\\ge T_{\\min}$. The pointwise lowest admissible path is $\\max(T_c(t),T_{\\min})$: coast until $T_c$ reaches $T_{\\min}$, then hold.')
 para('<b>Step 4, attainability.</b> Holding $T=T_{\\min}$ means $\\dot T=0$, which needs the rate')
 eq(r'q_{\rm hold}=\frac{\ell(T_{\min})}{\rho c_p(T_{\rm in}-T_{\min})}')
-para(f'When this rate is within the bound, the path is feasible, and by Step 2 it is optimal. ∎ For the baseline it adds {a["mixed_optimum_l"]:.2f} L: wait {a["coast_s"]/60:.2f} min, then supply {a["hold_lpm"]:.3f} L/min. This is a proved optimum of the mixed model, not a guarantee for a spatially nonuniform tub.')
+para('When this rate is within the bound, the path is feasible and, by Step 2, optimal.')
+tex.append(r'\end{proof}'+'\n')
+para(f'For the baseline, the mixed-model optimum adds {a["mixed_optimum_l"]:.2f} L: wait {a["coast_s"]/60:.2f} min, then supply {a["hold_lpm"]:.3f} L/min. Optimality is established for the mixed model; spatial policies are assessed separately.')
 para('<b>Proposition 2 (energy lower bound).</b> In the spatial model, suppose every cell satisfies $T_i(t)\\ge T_{\\min}$. Summing the cell balances gives $\\sum_i C_iT_i(t_f)-CT_0=-\\int L\\,dt+\\rho c_p\\int q(T_{\\mathrm{in}}-T_{\\mathrm{out}})\\,dt$, with $L$ the total loss. Each loss term increases with its cell temperature, and $H_a$ and $H_b$ are the sums of the cell conductances, so $L(t)\\ge\\ell(T_{\\min})$. The outlet cell satisfies $T_{\\mathrm{out}}\\ge T_{\\min}$, so $T_{\\mathrm{in}}-T_{\\mathrm{out}}\\le T_{\\mathrm{in}}-T_{\\min}$, and the left side is at least $C(T_{\\min}-T_0)$. Combining these three facts,')
 eq(r'J\geq\max\left(0,\frac{1000[\ell(T_{\min})t_f-C(T_0-T_{\min})]}{\rho c_p(T_{\rm in}-T_{\min})}\right)')
 para(f'The resulting {a["energy_lower_bound_l"]:.2f} L is a genuine conditional lower bound, valid for any control, but it is not tight: the initial water is hotter than the floor and loses more heat, and limited mixing adds further cost. Section 7.1 shows how much of the gap an optimized schedule recovers.')
@@ -308,7 +311,7 @@ page('7.2 What does staying close to the start temperature cost?')
 fm={f_['floor']:f_ for f_ in E['frontier']}
 w=lambda fl:fm[fl]['constant_l']
 para(f'The task asks for a bath close to its initial temperature without wasting much water, which is a trade-off rather than a single optimum. Figure @fig:frontier@ repeats the search while the allowed fall below 40°C changes from 0.25 to 3°C; the 1°C case is the baseline. With a fall of 2.5°C or more the stored heat suffices and no water is added. At 2°C the best constant rate adds {w(38.0):.1f} L, at 1.5°C {w(38.5):.1f} L, at 1°C {w(39.0):.1f} L and at 0.75°C {w(39.25):.1f} L. Between 2°C and 0.75°C each further 0.5°C of tolerance is therefore worth roughly {(w(39.25)-w(38.0))/(2.0-.75)/2:.0f} L, almost linearly. At 0.5°C the best constant rate adds {w(39.5):.1f} L; for a fall of 0.25°C no constant-rate policy was accepted, while the perfectly mixed bath would still need {fm[39.75]["mixed_l"]:.1f} L.')
-figure('frontier.png','Figure 7. Added water against the allowed temperature fall. The mixed optimum and energy bound are closed forms; markers on the brown curve are searched constant-rate policies, and the dotted line is the baseline.',height=182)
+figure('frontier.png','Figure 7. Water use versus temperature tolerance. Crosses denote unsuccessful searches, not zero water demand; the dotted line marks the baseline.',height=182)
 para(f'The curve is the practical answer to “how close is close enough”: below a 2.5°C fall every degree of tolerance bought back costs about the same, so the tolerance is worth choosing deliberately. The perfectly mixed curve lies below the spatial one at every tolerance, and the gap widens as the tolerance tightens, from {fm[38.0]["constant_l"]-fm[38.0]["mixed_l"]:.1f} L at 2°C to {fm[39.25]["constant_l"]-fm[39.25]["mixed_l"]:.1f} L at 0.75°C: the stricter the comfort requirement, the more uneven mixing costs. Only constant-rate policies are searched here; scheduled flow (Section 7.1) lowers the baseline point by about {save:.0f}% at this one point. Schedules at other tolerances have not been optimized here.')
 
 page('7.3 Can a user follow the schedule?')
@@ -444,7 +447,7 @@ para('Record limitations','heading')
 para('A full exported interaction transcript and every intermediate AI output were not available in this artifact. The task description, tool identification, scope, code artifacts and numerical receipts are retained in the accompanying development record; this report does not invent a transcript. No independent human review or physical bath experiment is claimed.')
 
 TOTAL=SEC[0]
-pdf=compile_pdf('main','A Hot Bath')
+pdf=compile_pdf('paper','A Hot Bath')
 (ROOT/'submission').mkdir(exist_ok=True)
 shutil.copyfile(pdf,ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf'))
 print(json.dumps({'pdf':str(ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf')),'sections':TOTAL,'equations':eqcount,'tables':tabcount,'figures':figcount[0],'checks':len(checks)}))

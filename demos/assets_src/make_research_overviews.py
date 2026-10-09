@@ -114,7 +114,7 @@ def collatz(lang,faces):
     case=ROOT/'demos/collatz-research'
     cert=json.loads((case/'reproduce/runs/certificate.json').read_text())
     rows=cert['checkpoints'];cap=cert['cap'];H=cert['finite_scan']['domain'][1]
-    pages=len(PdfReader(case/'deliverables/note.pdf').pages)
+    pages=len(PdfReader(case/'deliverables/paper.pdf').pages)
     zh=lang=='zh'
     c=ResearchCanvas(lang,faces)
     frame(c,'COLLATZ',pages,
@@ -144,7 +144,7 @@ def domino(lang,faces):
     case=ROOT/'demos/domino-research'
     data=json.loads((case/'reproduce/reference/results.json').read_text())
     values=data['counts']['transfer_matrix_n0_to_16'];zh=lang=='zh'
-    pages=len(PdfReader(case/'deliverables/note.pdf').pages)
+    pages=len(PdfReader(case/'deliverables/paper.pdf').pages)
     c=ResearchCanvas(lang,faces)
     frame(c,'DOMINO TILINGS',pages,
           '发现规律，还要证明为何成立' if zh else 'From a pattern to a proof',

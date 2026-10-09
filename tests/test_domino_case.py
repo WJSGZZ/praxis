@@ -28,4 +28,4 @@ def test_case_pages_state_the_archived_terms():
     last = str(archived['counts']['transfer_matrix_n0_to_16'][-1])
     for page in ('README.md', 'README.en.md'):
         assert last in (CASE / page).read_text()
-    assert (CASE / 'deliverables/note.pdf').stat().st_size > 10_000
+    assert (CASE / 'deliverables/paper.pdf').stat().st_size > 10_000

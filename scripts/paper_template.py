@@ -1,4 +1,4 @@
-"""Single-source MCM layout, embedded into standalone TeX with a drift check.
+"""Single-source contest and mathematical-research layouts, embedded into standalone TeX with a drift check.
 
 House style is not a certification of any contest edition's submission rules.
 """
@@ -11,13 +11,13 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 1, 'cumcm': 2}
+VERSIONS = {'mcm': 1, 'cumcm': 2, 'research': 1}
 BEGIN = '% BEGIN PRAXIS MCM STYLE v1\n'
 END = '% END PRAXIS MCM STYLE\n'
 
 
 def style_block(contest='mcm'):
-    if contest not in {'mcm', 'cumcm'}:
+    if contest not in VERSIONS:
         raise ValueError('Unknown layout profile')
     name = contest.upper()
     source = ROOT / f'templates/{contest}-style.tex'
@@ -110,9 +110,11 @@ def check(text, contest='mcm'):
                   r'\\(?:renewcommand|def)\s*\{?\\(?:normalsize|familydefault|rmdefault|sfdefault|baselinestretch)\b|'
                   r'\\thispagestyle\s*\{(?:empty|plain)\}|'
                   r'\\setlength\s*\{\\(?:parindent|parskip|textwidth|textheight|headheight|oddsidemargin)\}|'
-                  r'\\usepackage(?:\[[^\]]*\])?\{[^}]*\b(?:geometry|fontspec|newtxtext|newtxmath|times|mathptmx)[^}]*\}')
+                  r'\\usepackage(?:\[[^\]]*\])?\{[^}]*\b(?:geometry|fontspec|fontenc|lmodern|newtxtext|newtxmath|times|mathptmx)[^}]*\}')
     if re.search(prohibited, rest):
         raise ValueError('Direct layout override outside the shared style')
+    if contest == 'research' and not re.search(r'\\title\s*\[[^\]\n]+\]', rest):
+        raise ValueError('Research manuscripts need an explicit short running title')
     if contest == 'cumcm' and r'\tableofcontents' in rest:
         raise ValueError('CUMCM papers must not have a table of contents')
     if contest == 'mcm':
@@ -193,8 +195,8 @@ def compile_in_place(tex, contest, compiler=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('tex', type=Path, help='Standalone TeX generated with the MCM style')
-    parser.add_argument('--contest', choices=['mcm', 'cumcm'], default='mcm')
+    parser.add_argument('tex', type=Path, help='Standalone TeX generated with a shared style')
+    parser.add_argument('--contest', choices=list(VERSIONS), default='mcm')
     parser.add_argument('--compile', action='store_true', help='Compile with the pinned canonical runtime')
     parser.add_argument('--output-directory', type=Path, help='New output directory for canonical build artifacts')
     parser.add_argument('--compiler', help='Path to Tectonic 0.17.0')

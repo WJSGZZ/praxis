@@ -2,7 +2,7 @@
 
 **How Praxis works when no answer key exists: guess a pattern, hold terms out, hunt for counterexamples, prove it twice, and label how sure each claim is.**
 
-[中文](README.md) · [Research note (PDF)](deliverables/note.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
+[中文](README.md) · [Research note (PDF)](deliverables/paper.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
 
 ## What the problem asks
 
@@ -36,8 +36,8 @@ In how many ways can a 3×2n rectangle be tiled with 1×2 dominoes? Call the cou
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-page1.png" alt="Note page 1: result, three counts, guess and hold-out" width="100%"></a></td>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-proofs.png" alt="Page 2: the local board decomposition and forced dominoes" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-page1.png" alt="Note page 1: result, three counts, guess and hold-out" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-proofs.png" alt="Page 2: the local board decomposition and forced dominoes" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>Result and discovery</strong><br>The theorem, three ways of counting, the guess and its hold-out test.</td>
@@ -45,7 +45,7 @@ In how many ways can a 3×2n rectangle be tiled with 1×2 dominoes? Call the cou
 </tr>
 </table>
 
-**[Read the complete 4-page research note →](deliverables/note.pdf)** Typeset with the pinned Tectonic 0.17.0 runtime; the figure is drawn by pgfplots from the archived numbers.
+**[Read the complete 4-page research note →](deliverables/paper.pdf)** Built from the shared [AMS-style template](../../templates/research-paper.tex), using 11pt Latin Modern on A4 with 30mm margins. All four pages were inspected after the pinned Tectonic build. The plots draw directly from archived values.
 
 ## Run it yourself
 
@@ -61,7 +61,7 @@ To retypeset the note you need Tectonic 0.17.0 and the pinned resource bundle: `
 ## File map
 
 ```text
-deliverables/note.pdf         # the research note (English, 4 pages)
+deliverables/paper.pdf         # the research note (English, 4 pages)
 reproduce/explore.py          # three counts, guess and tests, finite check, route record and lesson
 reproduce/build_note.py       # typesets the note from the archived numbers
 reproduce/reference/          # archived numbers and the route record

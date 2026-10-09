@@ -2,9 +2,9 @@
 
 **开放数学研究怎样推进：找出首收缩结构，证明锐上界，把无限域条件命题归约到有限检查，再明确这条路线的局限。**
 
-[English](README.en.md) · [论文 PDF](deliverables/note.pdf) · [复现源码](reproduce/) · [案例总览](../README.md)
+[English](README.en.md) · [论文 PDF](deliverables/paper.pdf) · [复现源码](reproduce/) · [案例总览](../README.md)
 
-[![首收缩深度与未覆盖自然密度](assets/overview-zh.png)](deliverables/note.pdf)
+[![首收缩深度与未覆盖自然密度](assets/overview-zh.png)](deliverables/paper.pdf)
 
 ## 这道题问什么
 
@@ -40,13 +40,13 @@
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-page1.png" alt="第1页：问题定义与条件定理" width="100%"></a></td>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-barrier.png" alt="第3页：首次收缩屏障与精确算例" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-page1.png" alt="第1页：问题定义与条件定理" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-barrier.png" alt="第3页：首次收缩屏障与精确算例" width="100%"></a></td>
 </tr>
 <tr><td><strong>问题与主结论</strong><br>区分系数收缩和实际下降，写清定理条件。</td><td><strong>屏障与算例</strong><br>用可逐项核对的小例子解释最大偏移构造。</td></tr>
 </table>
 
-**[阅读完整7页论文 →](deliverables/note.pdf)** 使用amsart、11pt Latin Modern、A4及30mm边距。七页已逐页查看；正文含屏障构造图与扫描界／密度对照图，图用于解释证明和计算结构。
+**[阅读完整7页论文 →](deliverables/paper.pdf)** 采用共享 [AMS 研究模板](../../templates/research-paper.tex)，使用 amsart、11pt Latin Modern、A4 及 30mm 边距。七页已逐页查看；正文含屏障构造图与扫描界／密度对照图，图用于解释证明和计算结构。
 
 ## 自己跑一次
 
@@ -63,8 +63,8 @@ uv run --locked python .session/collatz-replay/code/analyze.py
 ## 文件地图
 
 ```text
-deliverables/note.pdf          # 完整英文论文，7页
-reproduce/paper/main.tex       # 与交付PDF对应的LaTeX源码
+deliverables/paper.pdf          # 完整英文论文，7页
+reproduce/paper/paper.tex       # 与交付PDF对应的LaTeX源码
 reproduce/code/                # 证书生成、独立检查与展示数值
 reproduce/runs/                # 固定的精确证书及核验结果
 verification.json             # 证据范围与文件哈希

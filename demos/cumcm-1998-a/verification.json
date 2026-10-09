@@ -19,7 +19,7 @@
   7
  ],
  "report_pages": 23,
- "preview_visual_review": "Regenerated abstract and proof previews from the current PDF; all pages rendered and contact sheets checked.",
+ "preview_visual_review": "Current abstract and proof previews regenerated; all 23 pages rendered/contact-reviewed and changed proof/figure pages viewed full size.",
  "reproduction_environment": "Existing locked project environment; no fresh-install or Windows claim",
  "homepage_visuals": [
   "overview-zh.png",
@@ -52,7 +52,7 @@
   "tests": "greedy and equal-weight baselines at 0.5x/1x/2x knee cap, drop-one-asset, standard-deviation risk reading"
  },
  "format_review": "Level-1 headings centered, level-2 left; captions centered (figure below, table above) with note lines; three-line tables; true subscripts and equations; pgfplots figures labelled in Chinese with the knee marked; references with breakable URLs; code appendix with line numbers. Official CUMCM rules checked: A4, margins at least 2.5 cm, centered Arabic page numbers, abstract page with title and keywords, no identity information, 13 pages before the appendix, appendix with file list and full code; font and size are free.",
- "typesetting": "XeLaTeX (TeX Live 2026) (ctex, newtxtext/newtxmath, pgfplots, booktabs); sources in the support archive under paper/; compile log clean of missing glyphs; every page rendered and inspected",
+ "typesetting": "Pinned Tectonic 0.17.0 and v33 bundle; CUMCM v2 open fonts, newtx math, PGFplots vector plots; source inside supporting ZIP. Native source compilation also passed.",
  "checked_on": "2026-10-09",
  "float_callout_review": {
   "date": "2026-10-08",
@@ -64,7 +64,7 @@
   "scope": "Full local pytest; original numerical receipts retained, exact-rational headline calculation repeated independently",
   "date": "2026-10-08"
  },
- "build_archive_review": "26 members retained; main paper and AI disclosure migrated to pinned open fonts; README and frozen generator preamble synchronized. Numerical code/data/results and both document bodies unchanged.",
+ "build_archive_review": "26 original member names preserved; only build_paper.py and paper/main.tex changed in this editorial revision. Numerical code, data, archives and AI detail bytes preserved.",
  "incremental_revision": {
   "date": "2026-10-08",
   "optimization_reused": true,
@@ -140,27 +140,71 @@
     "paper/ai-use.tex",
     "AI工具使用详情.pdf"
    ]
+  },
+  {
+   "date": "2026-10-09",
+   "profile": {
+    "profile": "praxis-cumcm-v2",
+    "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd"
+   },
+   "runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+   },
+   "pdf_sha256": "129a80f82bfdd6fd3befe3a5161e47a5f4851a4c1b3b6bf1061581928f13ba04",
+   "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4",
+   "numerical_rerun": false,
+   "scientific_tex_unchanged": true,
+   "pages_rendered": 23,
+   "canonical_build_verified": true
   }
  ],
  "layout_revision": {
   "date": "2026-10-09",
   "profile": {
    "profile": "praxis-cumcm-v2",
-   "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd"
+   "style_sha256": "ec739324e5b7ddf1505cc64320d6d5096efd1c5db511cb895f5ff5134c8bb9a6"
   },
-  "runtime": {
-   "profile": "praxis-typesetting-v1",
-   "compiler": "Tectonic 0.17.0",
-   "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
-   "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
-   "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
-  },
-  "pdf_sha256": "129a80f82bfdd6fd3befe3a5161e47a5f4851a4c1b3b6bf1061581928f13ba04",
-  "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4",
-  "numerical_rerun": false,
-  "scientific_tex_unchanged": true,
+  "pdf_sha256": "645e675dc022ca998a418336a6a0830372035f29d9777cfbc340b60b01556240",
+  "tex_sha256": "90df1424b4273bd6038bf8f81e5154a3016a23daad60ec5982c580c9da33cdda",
+  "numerical_inputs_and_results_unchanged": true,
+  "new_optimization": false,
   "pages_rendered": 23,
-  "canonical_build_verified": true
+  "all_pages_contact_reviewed": true,
+  "changed_pages_viewed_full_size": true,
+  "native_compiler": "success",
+  "canonical_build_verified": true,
+  "historical_full_mathematical_review_rebound": false,
+  "previous_current_binding": {
+   "layout_revision": {
+    "date": "2026-10-09",
+    "profile": {
+     "profile": "praxis-cumcm-v2",
+     "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd"
+    },
+    "runtime": {
+     "profile": "praxis-typesetting-v1",
+     "compiler": "Tectonic 0.17.0",
+     "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+     "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+     "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+    },
+    "pdf_sha256": "129a80f82bfdd6fd3befe3a5161e47a5f4851a4c1b3b6bf1061581928f13ba04",
+    "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4",
+    "numerical_rerun": false,
+    "scientific_tex_unchanged": true,
+    "pages_rendered": 23,
+    "canonical_build_verified": true
+   }
+  },
+  "changes": "Three proof boundaries; buffer and drop-one figures show return loss in percentage points from the archived reference. Figure comparison labels shortened. Other three figures retained after relevance/data review.",
+  "archive_changed_members": [
+   "build_paper.py",
+   "paper/main.tex"
+  ]
  },
  "showcase_chinese_font_faces": {
   "display": "STSongti-SC-Regular",
@@ -202,5 +246,49 @@
   "ai_detail_pages": 1,
   "human_review": false,
   "support_readme": "Regenerated from the archived build_paper.py README string; pinned compiler/font guidance now matches the existing generator. Mathematical inputs and PDF unchanged."
+ },
+ "editorial_revision": {
+  "date": "2026-10-09",
+  "profile": {
+   "profile": "praxis-cumcm-v2",
+   "style_sha256": "ec739324e5b7ddf1505cc64320d6d5096efd1c5db511cb895f5ff5134c8bb9a6"
+  },
+  "pdf_sha256": "645e675dc022ca998a418336a6a0830372035f29d9777cfbc340b60b01556240",
+  "tex_sha256": "90df1424b4273bd6038bf8f81e5154a3016a23daad60ec5982c580c9da33cdda",
+  "numerical_inputs_and_results_unchanged": true,
+  "new_optimization": false,
+  "pages_rendered": 23,
+  "all_pages_contact_reviewed": true,
+  "changed_pages_viewed_full_size": true,
+  "native_compiler": "success",
+  "canonical_build_verified": true,
+  "historical_full_mathematical_review_rebound": false,
+  "previous_current_binding": {
+   "layout_revision": {
+    "date": "2026-10-09",
+    "profile": {
+     "profile": "praxis-cumcm-v2",
+     "style_sha256": "ba6d57f1c7a7a599d6f442ac399a526b03e75d246f5ebcd72c3ca7222e2929dd"
+    },
+    "runtime": {
+     "profile": "praxis-typesetting-v1",
+     "compiler": "Tectonic 0.17.0",
+     "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+     "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+     "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+    },
+    "pdf_sha256": "129a80f82bfdd6fd3befe3a5161e47a5f4851a4c1b3b6bf1061581928f13ba04",
+    "tex_sha256": "a9b2ac9c4b72e8afa0322e233b73158819b245c80e57b794444a6b07851e2dd4",
+    "numerical_rerun": false,
+    "scientific_tex_unchanged": true,
+    "pages_rendered": 23,
+    "canonical_build_verified": true
+   }
+  },
+  "changes": "Three proof boundaries; buffer and drop-one figures show return loss in percentage points from the archived reference. Figure comparison labels shortened. Other three figures retained after relevance/data review.",
+  "archive_changed_members": [
+   "build_paper.py",
+   "paper/main.tex"
+  ]
  }
 }

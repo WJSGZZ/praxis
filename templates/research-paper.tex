@@ -1,0 +1,56 @@
+\newcommand{\PraxisTitle}{Mathematical research title}
+% BEGIN PRAXIS RESEARCH STYLE v1
+% Praxis mathematical research house style v1; target-journal instructions take precedence.
+\documentclass[11pt,a4paper]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,booktabs,caption,needspace,placeins}
+\usepackage[margin=30mm]{geometry}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{fillbetween,groupplots}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{main}{HTML}{0072B2}
+\definecolor{accent}{HTML}{D55E00}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{light}{HTML}{B8BDC2}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oisky}{HTML}{56B4E9}
+\definecolor{oiyellow}{HTML}{F0E442}
+\definecolor{teal}{HTML}{17766E}
+\definecolor{clay}{HTML}{9E6440}
+\definecolor{slate}{HTML}{5D696E}
+\definecolor{sand}{HTML}{AAA69B}
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=true}
+\captionsetup[table]{position=above,skip=5pt}
+\captionsetup[figure]{position=below,skip=7pt}
+\raggedbottom
+\renewcommand{\topfraction}{.9}\renewcommand{\textfraction}{.08}\renewcommand{\floatpagefraction}{.8}
+\setlength{\emergencystretch}{2em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\renewcommand{\proofname}{Proof}
+% END PRAXIS RESEARCH STYLE
+
+\title[Mathematical research title]{Mathematical research title}
+\author{}\date{}
+\begin{document}
+\begin{abstract}
+State the question, precise conclusion, evidence and scope here.
+\end{abstract}
+\maketitle
+\section{Question and result}
+Replace this specimen with the actual definitions and result.
+\section{Argument}
+\begin{proposition}For every integer $n$, $n(n+1)$ is even.\end{proposition}
+\begin{proof}One of two consecutive integers is even.\end{proof}
+\end{document}

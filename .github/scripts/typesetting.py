@@ -57,7 +57,7 @@ def main(compiler=None):
     executable = Path(compiler).resolve() if compiler else install()
     version = subprocess.run([str(executable), "--version"], check=True, capture_output=True, text=True).stdout.strip()
     if version != "Tectonic 0.17.0": raise ValueError("Unexpected compiler version: " + version)
-    for contest in ('cumcm', 'mcm'):
+    for contest in ('cumcm', 'mcm', 'research'):
         shutil.copyfile(ROOT / f'templates/{contest}-paper.tex', OUT / f'{contest}-template.tex')
     with zipfile.ZipFile(ROOT / 'demos/cumcm-1998-a/deliverables/supporting_materials.zip') as archive:
         for name in ('main', 'ai-use'):
@@ -67,10 +67,16 @@ def main(compiler=None):
     generated = subprocess.run([sys.executable, str(bath/'build_report.py'), '--run', str(bath/'reference')], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
     (OUT/'bath-generator.txt').write_text(generated.stdout+generated.stderr, encoding='utf-8')
     if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
-    shutil.copyfile(bath/'paper/main.tex', OUT/'bath.tex')
+    shutil.copyfile(bath/'paper/paper.tex', OUT/'bath.tex')
     shutil.copyfile(ROOT/'research/merge-after-toll/paper/paper.tex', OUT/'toll.tex')
+    domino = ROOT/'demos/domino-research/reproduce'
+    generated = subprocess.run([sys.executable, str(domino/'build_note.py')], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
+    (OUT/'domino-generator.txt').write_text(generated.stdout+generated.stderr, encoding='utf-8')
+    if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
+    shutil.copyfile(domino/'paper/paper.tex', OUT/'domino.tex')
+    shutil.copyfile(ROOT/'demos/collatz-research/reproduce/paper/paper.tex', OUT/'collatz.tex')
     checks = {}
-    for name, contest in [('cumcm-template', 'cumcm'), ('mcm-template', 'mcm'), ('main', 'cumcm'), ('ai-use', None), ('bath', 'mcm'), ('toll', 'mcm')]:
+    for name, contest in [('cumcm-template', 'cumcm'), ('mcm-template', 'mcm'), ('main', 'cumcm'), ('ai-use', None), ('bath', 'mcm'), ('toll', 'mcm'), ('research-template', 'research'), ('domino', 'research'), ('collatz', 'research')]:
         tex = OUT / f'{name}.tex'
         if contest: check(tex.read_text(encoding='utf-8'), contest)
         built = OUT/(name+'-build')
@@ -102,6 +108,11 @@ def main(compiler=None):
             if report['total_pages'] != (25 if name == 'bath' else 17):
                 raise ValueError('Unexpected MCM pagination')
             report['contest_rules'] = rules
+        if contest == 'research':
+            if not any('LMRoman' in f['face'] for f in report['fonts']):
+                raise ValueError('Research font substituted')
+            if name in {'domino', 'collatz'} and report['total_pages'] != (4 if name == 'domino' else 7):
+                raise ValueError('Unexpected research pagination')
         checks[name] = report
     (OUT / 'verification.json').write_text(json.dumps({'platform': platform.platform(), 'compiler': 'Tectonic 0.17.0', 'checks': checks}, ensure_ascii=False, indent=2), encoding='utf-8')
 
@@ -117,7 +128,7 @@ def compare_artifacts(directory):
     for folder in folders:
         manifest = json.loads((folder / 'verification.json').read_text(encoding='utf-8'))
         fingerprints = {}
-        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template', 'bath', 'toll'):
+        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template', 'bath', 'toll', 'research-template', 'domino', 'collatz'):
             path = folder / (name + '.pdf')
             if hashlib.sha256(path.read_bytes()).hexdigest() != manifest['checks'][name]['sha256']:
                 raise ValueError('Artifact differs from runner verification: ' + str(path))

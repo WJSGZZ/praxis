@@ -114,9 +114,9 @@ def test_all_packaged_markdown_links_resolve_after_relocation(tmp_path):
     assert '](../../praxis-dialogue/SKILL.md)' in convergence.read_text()
     # The gallery remains usable without the source checkout or private archives.
     for relative in ('demos/README.md', 'demos/README.en.md',
-                     'demos/collatz-research/deliverables/note.pdf',
+                     'demos/collatz-research/deliverables/paper.pdf',
                      'demos/collatz-research/reproduce/code/verify.py',
-                     'demos/collatz-research/reproduce/paper/main.tex'):
+                     'demos/collatz-research/reproduce/paper/paper.tex'):
         assert (output / 'skills/praxis' / relative).is_file()
 
 

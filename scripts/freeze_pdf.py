@@ -54,7 +54,7 @@ def main():
     parser.add_argument("destination", type=Path)
     parser.add_argument("--tex", type=Path, help="Required with --contest; validate shared layout before snapshot")
     parser.add_argument("--build-receipt", type=Path, help="Canonical .build.json receipt required for layout-gated freezing")
-    parser.add_argument("--contest", choices=["mcm", "cumcm"])
+    parser.add_argument("--contest", choices=["mcm", "cumcm", "research"])
     args = parser.parse_args()
     receipt_path = args.destination.with_suffix(".pdf.receipt.json")
     if receipt_path.exists():

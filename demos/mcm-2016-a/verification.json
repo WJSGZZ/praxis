@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
-  "bytes": 164359,
+  "sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
+  "bytes": 164924,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -36,8 +36,9 @@
    24,
    25
   ],
-  "visual_review_note": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
-  "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded"
+  "visual_review_note": "Every current page rendered/contact-reviewed; proof and frontier pages additionally inspected at full size.",
+  "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+  "md5": "f8e16648c0e8db6a062b724bb5406dda"
  },
  "model_checks": {
   "total": 17,
@@ -152,26 +153,84 @@
    "profile": "praxis-mcm-v1",
    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
   },
-  "runtime": {
-   "profile": "praxis-typesetting-v1",
-   "compiler": "Tectonic 0.17.0",
-   "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
-   "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
-   "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
-  },
-  "pdf_sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
-  "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
-  "numerical_rerun": false,
-  "scientific_tex_unchanged": true,
+  "pdf_sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
+  "tex_sha256": "75bad364e5b8f84616cf9ece4dc7cc227619e7dee7c765ccb33834bff05b56d8",
+  "numerical_inputs_and_results_unchanged": true,
+  "new_optimization": false,
   "pages_rendered": 25,
-  "canonical_build_verified": true,
-  "revision": "Integrated summary metadata, shared isolated contents component, and continuous page numbering",
-  "changed_pixel_pages": [
-   1
-  ],
+  "all_pages_contact_reviewed": true,
+  "changed_pages_viewed_full_size": true,
   "native_compiler": "success",
-  "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
-  "historical_mathematical_review_rebound": false
+  "canonical_build_verified": true,
+  "historical_full_mathematical_review_rebound": false,
+  "previous_current_binding": {
+   "pdf": {
+    "sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
+    "bytes": 164924,
+    "pages_total": 25,
+    "solution_pages": 24,
+    "ai_pages": 1,
+    "text_bounds_checked": true,
+    "pages_rendered_and_visually_reviewed": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25
+    ],
+    "visual_review_note": "Every current page rendered/contact-reviewed; proof and frontier pages additionally inspected at full size.",
+    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+    "md5": "f8e16648c0e8db6a062b724bb5406dda"
+   },
+   "layout_revision": {
+    "date": "2026-10-09",
+    "profile": {
+     "profile": "praxis-mcm-v1",
+     "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+    },
+    "runtime": {
+     "profile": "praxis-typesetting-v1",
+     "compiler": "Tectonic 0.17.0",
+     "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+     "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+     "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+    },
+    "pdf_sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
+    "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
+    "numerical_rerun": false,
+    "scientific_tex_unchanged": true,
+    "pages_rendered": 25,
+    "canonical_build_verified": true,
+    "revision": "Integrated summary metadata, shared isolated contents component, and continuous page numbering",
+    "changed_pixel_pages": [
+     1
+    ],
+    "native_compiler": "success",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "historical_mathematical_review_rebound": false
+   }
+  },
+  "changes": "Proof environment separates proof from baseline interpretation; shorter series labels and figure caption. No equations or archived numerical results changed."
  },
  "layout_revision_history": [
   {
@@ -205,6 +264,80 @@
    "scientific_tex_unchanged": true,
    "pages_rendered": 25,
    "canonical_build_verified": true
+  },
+  {
+   "date": "2026-10-09",
+   "profile": {
+    "profile": "praxis-mcm-v1",
+    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+   },
+   "runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+   },
+   "pdf_sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
+   "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
+   "numerical_rerun": false,
+   "scientific_tex_unchanged": true,
+   "pages_rendered": 25,
+   "canonical_build_verified": true,
+   "revision": "Integrated summary metadata, shared isolated contents component, and continuous page numbering",
+   "changed_pixel_pages": [
+    1
+   ],
+   "native_compiler": "success",
+   "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+   "historical_mathematical_review_rebound": false
   }
- ]
+ ],
+ "editorial_revision": {
+  "date": "2026-10-09",
+  "profile": {
+   "profile": "praxis-mcm-v1",
+   "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+  },
+  "pdf_sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
+  "tex_sha256": "75bad364e5b8f84616cf9ece4dc7cc227619e7dee7c765ccb33834bff05b56d8",
+  "numerical_inputs_and_results_unchanged": true,
+  "new_optimization": false,
+  "pages_rendered": 25,
+  "all_pages_contact_reviewed": true,
+  "changed_pages_viewed_full_size": true,
+  "native_compiler": "success",
+  "canonical_build_verified": true,
+  "historical_full_mathematical_review_rebound": false,
+  "previous_current_binding": {
+   "layout_revision": {
+    "date": "2026-10-09",
+    "profile": {
+     "profile": "praxis-mcm-v1",
+     "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+    },
+    "runtime": {
+     "profile": "praxis-typesetting-v1",
+     "compiler": "Tectonic 0.17.0",
+     "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+     "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+     "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+    },
+    "pdf_sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
+    "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
+    "numerical_rerun": false,
+    "scientific_tex_unchanged": true,
+    "pages_rendered": 25,
+    "canonical_build_verified": true,
+    "revision": "Integrated summary metadata, shared isolated contents component, and continuous page numbering",
+    "changed_pixel_pages": [
+     1
+    ],
+    "native_compiler": "success",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "historical_mathematical_review_rebound": false
+   }
+  },
+  "changes": "Proof environment separates proof from baseline interpretation; shorter series labels and figure caption. No equations or archived numerical results changed."
+ }
 }

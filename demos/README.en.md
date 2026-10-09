@@ -37,8 +37,8 @@ Computation can suggest a pattern; a proof establishes where it holds. These not
 <td width="50%" valign="top"><a href="collatz-research/README.en.md"><img src="collatz-research/assets/overview-en.png" alt="Collatz: first-contraction depth, residual density and a finite exception bound" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>Domino tilings · Discover, test, prove</strong><br>Combinatorial counting · 4-page English note<br><br>Compare three counting methods, test four held-out terms, then derive the recurrence through decomposition and a transfer-matrix argument.<br><br><a href="domino-research/README.en.md">Explore →</a> · <a href="domino-research/deliverables/note.pdf">Note</a> · <a href="domino-research/reproduce/">Reproduce</a></td>
-<td valign="top"><strong>Collatz · A finite check with infinite reach</strong><br>Open-problem exploration · 7-page English note<br><br>A sharp first-crossing envelope reduces a conditional all-integer statement to exact finite checks. The same analysis exposes the route's limits.<br><br><a href="collatz-research/README.en.md">Explore →</a> · <a href="collatz-research/deliverables/note.pdf">Note</a> · <a href="collatz-research/reproduce/">Reproduce</a></td>
+<td valign="top"><strong>Domino tilings · Discover, test, prove</strong><br>Combinatorial counting · 4-page English note<br><br>Compare three counting methods, test four held-out terms, then derive the recurrence through decomposition and a transfer-matrix argument.<br><br><a href="domino-research/README.en.md">Explore →</a> · <a href="domino-research/deliverables/paper.pdf">Note</a> · <a href="domino-research/reproduce/">Reproduce</a></td>
+<td valign="top"><strong>Collatz · A finite check with infinite reach</strong><br>Open-problem exploration · 7-page English note<br><br>A sharp first-crossing envelope reduces a conditional all-integer statement to exact finite checks. The same analysis exposes the route's limits.<br><br><a href="collatz-research/README.en.md">Explore →</a> · <a href="collatz-research/deliverables/paper.pdf">Note</a> · <a href="collatz-research/reproduce/">Reproduce</a></td>
 </tr>
 </table>
 

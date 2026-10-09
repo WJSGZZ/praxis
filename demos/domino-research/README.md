@@ -2,7 +2,7 @@
 
 **没有标准答案时怎样工作：猜规律、留出检验、找反例、用两种方法各证明一次，并给每条结论标明把握。**
 
-[English](README.en.md) · [研究笔记（PDF，英文）](deliverables/note.pdf) · [复现代码](reproduce/) · [返回 Praxis](../../README.md) · [案例总览](../README.md)
+[English](README.en.md) · [研究笔记（PDF，英文）](deliverables/paper.pdf) · [复现代码](reproduce/) · [返回 Praxis](../../README.md) · [案例总览](../README.md)
 
 ## 这道题问什么
 
@@ -36,8 +36,8 @@
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-page1.png" alt="笔记第 1 页：结论、三种算法与猜测检验" width="100%"></a></td>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-proofs.png" alt="笔记第 2 页：棋盘拆分、强制骨牌与递推证明" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-page1.png" alt="笔记第 1 页：结论、三种算法与猜测检验" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-proofs.png" alt="笔记第 2 页：棋盘拆分、强制骨牌与递推证明" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>结论与发现过程</strong><br>结果、三种计数方法、猜测与留出检验。</td>
@@ -45,7 +45,7 @@
 </tr>
 </table>
 
-**[阅读完整 4 页研究笔记 →](deliverables/note.pdf)** 用固定 Tectonic 0.17.0 资源环境排版，图由 pgfplots 从归档数值直接绘制。
+**[阅读完整 4 页研究笔记 →](deliverables/paper.pdf)** 采用共享 [AMS 研究模板](../../templates/research-paper.tex)：A4、11pt Latin Modern、30mm 边距与统一的定理／证明样式。固定 Tectonic 资源环境构建；四页逐页查看，图由 pgfplots 从归档数值绘制。
 
 ## 自己跑一次
 
@@ -61,7 +61,7 @@ uv run --locked python demos/domino-research/reproduce/explore.py   # 重算全�
 ## 文件地图
 
 ```text
-deliverables/note.pdf         # 研究笔记（英文，4 页）
+deliverables/paper.pdf         # 研究笔记（英文，4 页）
 reproduce/explore.py          # 三种计数、猜测与检验、有限核对、路线记录与课程
 reproduce/build_note.py       # 由归档数值排版笔记
 reproduce/reference/          # 归档数值与路线记录

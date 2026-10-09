@@ -92,10 +92,11 @@
     "scope": "Original six-page manuscript. The original reviewed hash below is retained and is not rebound to the revised source."
   },
   "pdf": {
-    "path": "deliverables/note.pdf",
+    "path": "deliverables/paper.pdf",
     "pages": 7,
-    "byte_identical_to_current_workspace_manuscript_pdf": true,
-    "byte_identical_to_original_six_page_pdf": false
+    "byte_identical_to_current_workspace_manuscript_pdf": false,
+    "byte_identical_to_original_six_page_pdf": false,
+    "workspace_comparison_note": "Public paper migrated separately; original private research manuscript is preserved."
   },
   "replay_check": {
     "verify_and_analyze_run_in_temporary_copy": true,
@@ -105,14 +106,14 @@
     "certificate_regenerated_during_this_check": false
   },
   "sha256": {
-    "deliverables/note.pdf": "03d9bf41641a6c3ae5807b7fae7f36e5fc8be03be793e79cd1a972f92287f44b",
-    "reproduce/paper/main.tex": "119df1fbeb76204c6651a9475d5ef09c50ea64fcf7ebe47a5546c18609c2816c",
     "reproduce/code/certify.py": "f465274de2ff34312436d8944cde0e98ec21a5522c930e276b915e5ba9a56a55",
     "reproduce/code/verify.py": "666ea6def89ca8eef0a0f39dbff5e5640efbcb3ce12c23c3165b812a59418910",
     "reproduce/code/analyze.py": "ada42cb06dcd84aeeecd97ac0c41d28130fa26ab82c4e2572d29a7cbd86f66c3",
     "reproduce/runs/certificate.json": "14bfcc8af3782eb7f33cfcb362b6ae5e43d51a5dc5d90fe1fd183508eea45800",
     "reproduce/runs/independent-verification.json": "3a608f73eb1edda3724c6010cdb7c45c58f0af4361b119d86dd605cbe8da067a",
-    "reproduce/runs/analysis.json": "853bf13725fb0b2979fbfcc3673e64aea3094e2db68683f7fe1b03b9502962eb"
+    "reproduce/runs/analysis.json": "853bf13725fb0b2979fbfcc3673e64aea3094e2db68683f7fe1b03b9502962eb",
+    "deliverables/paper.pdf": "fc7e43090fb74cc50a42cd527ceedb14083b9239baeb532847cc19dcbade05eb",
+    "reproduce/paper/paper.tex": "01c37bf8040bcfeb5789075e8362e65fc8ed1c55c06803f22f4fa8d6175dfc97"
   },
   "presentation_revision": {
     "date": "2026-10-09",
@@ -130,5 +131,42 @@
     },
     "mathematical_certificate_changed": false,
     "top_journal_suitability": "not established"
+  },
+  "editorial_revision": {
+    "date": "2026-10-09",
+    "profile": {
+      "profile": "praxis-research-v1",
+      "style_sha256": "2328532c595107018c0920e9e9ffea56d68ccc08024ae6463c2559bbfc1b9838"
+    },
+    "pdf_sha256": "fc7e43090fb74cc50a42cd527ceedb14083b9239baeb532847cc19dcbade05eb",
+    "tex_sha256": "01c37bf8040bcfeb5789075e8362e65fc8ed1c55c06803f22f4fa8d6175dfc97",
+    "numerical_inputs_and_results_unchanged": true,
+    "new_optimization": false,
+    "pages_rendered": 7,
+    "all_pages_contact_reviewed": true,
+    "changed_pages_viewed_full_size": true,
+    "native_compiler": "success",
+    "canonical_build_verified": true,
+    "historical_full_mathematical_review_rebound": false,
+    "previous_current_binding": {
+      "pdf": {
+        "path": "deliverables/paper.pdf",
+        "pages": 7,
+        "byte_identical_to_current_workspace_manuscript_pdf": false,
+        "byte_identical_to_original_six_page_pdf": false,
+        "workspace_comparison_note": "Public paper migrated separately; original private research manuscript is preserved."
+      },
+      "sha256": {
+        "reproduce/code/certify.py": "f465274de2ff34312436d8944cde0e98ec21a5522c930e276b915e5ba9a56a55",
+        "reproduce/code/verify.py": "666ea6def89ca8eef0a0f39dbff5e5640efbcb3ce12c23c3165b812a59418910",
+        "reproduce/code/analyze.py": "ada42cb06dcd84aeeecd97ac0c41d28130fa26ab82c4e2572d29a7cbd86f66c3",
+        "reproduce/runs/certificate.json": "14bfcc8af3782eb7f33cfcb362b6ae5e43d51a5dc5d90fe1fd183508eea45800",
+        "reproduce/runs/independent-verification.json": "3a608f73eb1edda3724c6010cdb7c45c58f0af4361b119d86dd605cbe8da067a",
+        "reproduce/runs/analysis.json": "853bf13725fb0b2979fbfcc3673e64aea3094e2db68683f7fe1b03b9502962eb",
+        "deliverables/paper.pdf": "fc7e43090fb74cc50a42cd527ceedb14083b9239baeb532847cc19dcbade05eb",
+        "reproduce/paper/paper.tex": "01c37bf8040bcfeb5789075e8362e65fc8ed1c55c06803f22f4fa8d6175dfc97"
+      }
+    },
+    "changes": "Shared AMS research profile, explicit short running title, same worked-example tuple moved to display to prevent overflow. Mathematical body and certificate unchanged."
   }
 }

@@ -37,8 +37,8 @@
 <td width="50%" valign="top"><a href="collatz-research/README.md"><img src="collatz-research/assets/overview-zh.png" alt="Collatz：首收缩深度、未覆盖自然密度及有限例外界" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>多米诺 · 从规律到证明</strong><br>组合计数 · 4 页英文笔记<br><br>三种算法核对小例子，保留四项检验猜测，再用构造分解与转移矩阵分别证明递推。<br><br><a href="domino-research/README.md">查看案例 →</a> · <a href="domino-research/deliverables/note.pdf">论文</a> · <a href="domino-research/reproduce/">复现</a></td>
-<td valign="top"><strong>Collatz · 有限核对与严格归约</strong><br>开放数学探索 · 7 页英文笔记<br><br>首收缩锐包络把无限整数域中的条件命题归约到有限检查，并证明继续扩大同类计算的局限。<br><br><a href="collatz-research/README.md">查看案例 →</a> · <a href="collatz-research/deliverables/note.pdf">论文</a> · <a href="collatz-research/reproduce/">复现</a></td>
+<td valign="top"><strong>多米诺 · 从规律到证明</strong><br>组合计数 · 4 页英文笔记<br><br>三种算法核对小例子，保留四项检验猜测，再用构造分解与转移矩阵分别证明递推。<br><br><a href="domino-research/README.md">查看案例 →</a> · <a href="domino-research/deliverables/paper.pdf">论文</a> · <a href="domino-research/reproduce/">复现</a></td>
+<td valign="top"><strong>Collatz · 有限核对与严格归约</strong><br>开放数学探索 · 7 页英文笔记<br><br>首收缩锐包络把无限整数域中的条件命题归约到有限检查，并证明继续扩大同类计算的局限。<br><br><a href="collatz-research/README.md">查看案例 →</a> · <a href="collatz-research/deliverables/paper.pdf">论文</a> · <a href="collatz-research/reproduce/">复现</a></td>
 </tr>
 </table>
 

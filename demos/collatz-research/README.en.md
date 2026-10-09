@@ -2,9 +2,9 @@
 
 **A sharp first-crossing envelope turns a conditional statement over all positive integers into a finite computation—and explains why this route cannot settle the general problem.**
 
-[简体中文](README.md) · [Research note](deliverables/note.pdf) · [Reproduction sources](reproduce/) · [All cases](../README.en.md)
+[简体中文](README.md) · [Research note](deliverables/paper.pdf) · [Reproduction sources](reproduce/) · [All cases](../README.en.md)
 
-[![First-contraction depth and unclassified natural density](assets/overview-en.png)](deliverables/note.pdf)
+[![First-contraction depth and unclassified natural density](assets/overview-en.png)](deliverables/paper.pdf)
 
 ## The question
 
@@ -40,13 +40,13 @@ A separate AI reviewer checked the six-page baseline and key numerical evidence,
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-page1.png" alt="Page 1: definitions and the conditional theorem" width="100%"></a></td>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-barrier.png" alt="Page 3: first-crossing barriers and a worked example" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-page1.png" alt="Page 1: definitions and the conditional theorem" width="100%"></a></td>
+<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-barrier.png" alt="Page 3: first-crossing barriers and a worked example" width="100%"></a></td>
 </tr>
 <tr><td><strong>The question and theorem</strong><br>The definitions keep coefficient contraction separate from actual descent.</td><td><strong>The barrier in a small example</strong><br>Inspect the parity word, offset and residue restriction directly.</td></tr>
 </table>
 
-**[Read the seven-page paper →](deliverables/note.pdf)** Typeset in amsart with 11pt Latin Modern on A4 and 30mm margins. Every page was visually inspected. Two figures explain the first-crossing construction and distinguish the scan bound from the remaining residue density.
+**[Read the seven-page paper →](deliverables/paper.pdf)** Uses the shared [AMS-style research template](../../templates/research-paper.tex): amsart, 11pt Latin Modern, A4 and 30mm margins. Every page was visually inspected. Two figures explain the first-crossing construction and distinguish the scan bound from the remaining residue density.
 
 ## Reproduce it
 
@@ -63,8 +63,8 @@ The core scripts use only the Python standard library. These commands recheck th
 ## File map
 
 ```text
-deliverables/note.pdf          # complete English paper, seven pages
-reproduce/paper/main.tex       # corresponding manuscript source
+deliverables/paper.pdf          # complete English paper, seven pages
+reproduce/paper/paper.tex       # corresponding manuscript source
 reproduce/code/                # generator, independent checker, decimal analysis
 reproduce/runs/                # fixed exact certificate and checking results
 verification.json             # scope and evidence hashes
