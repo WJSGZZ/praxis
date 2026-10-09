@@ -36,10 +36,16 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     text=' '.join(' '.join(p.extract_text().split()) for p in pages)
     assert 'Challenge the transport mechanism' in text
     assert '-31.51' in text and '-26.28' in text
-    assert 'A permitted short circuit is therefore not evidence that it caused the' in text
+    assert 'a permitted short circuit does not establish the cause' in text
+    assert 'over the remaining bath' in text
+    # PDF word-spacing may be emitted as glyph placement rather than spaces.
+    assert 'followedbythebackup' in ''.join(text.split())
+    assert 'retain the qualified backup' in text
     revision=meta['transport_revision']
     assert revision['checks']==24 and revision['replays']==36
-    assert revision['generator_sha256']==hashlib.sha256((HERE/'build_report.py').read_bytes()).hexdigest()
+    # Historical revisions retain their own sources; only the active PDF binding
+    # follows later report revisions.
+    assert meta['pdf']['generator_sha256']==hashlib.sha256((HERE/'build_report.py').read_bytes()).hexdigest()
 
 
 @pytest.mark.parametrize('defect',['stale','coverage','failed','water','refinement','outlet'])
