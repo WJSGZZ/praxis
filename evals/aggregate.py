@@ -290,7 +290,8 @@ def _award_view(award: dict, contest: str | None) -> dict | None:
         for value in award[field]:
             _text(value, f'award {field} item')
     from evals.competitions import lookup
-    levels = lookup(award['contest'], award['event'], award['edition']).get('award_system')
+    edition_record = lookup(award['contest'], award['event'], award['edition'])
+    levels = edition_record.get('award_system')
     labels = award['range'] + ([award['most_likely']] if award['most_likely'] is not None else [])
     if target is not None:
         labels.append(target)
@@ -308,6 +309,8 @@ def _award_view(award: dict, contest: str | None) -> dict | None:
     assessment.update(target=target, target_status='unset' if target is None else 'set',
                       award_system_status='verified' if levels else 'unverified',
                       assessment_status='reviewer_estimate' if award['most_likely'] is not None or award['range'] else 'abstained')
+    if edition_record.get('award_system_scope'):
+        assessment['award_system_scope'] = edition_record['award_system_scope']
     if award['calibrated']:
         assessment['calibration_evidence'] = award['calibration_evidence']
     if not levels:

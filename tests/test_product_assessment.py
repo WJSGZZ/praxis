@@ -75,7 +75,7 @@ def test_target_unset_is_explicit_and_does_not_become_a_label(target):
 
 
 @pytest.mark.parametrize('contest,event,edition', [
-    ('mcm', 'MCM', '2028'), ('cumcm', 'undergraduate', '2026'),
+    ('mcm', 'MCM', '2028'), ('cumcm', 'undergraduate', '2027'),
     ('mathorcup', 'main', '2026'),
 ])
 def test_missing_edition_award_system_abstains_instead_of_bypassing_validation(contest, event, edition):
@@ -163,3 +163,17 @@ def test_math_audit_without_award_keeps_claims_and_repair_advice(tmp_path):
 def test_an_explicit_target_alone_is_not_an_award_estimate():
     view = user_view(report([{**award(), 'most_likely': None, 'range': []}]), 'mcm')['A']
     assert view['assessments'][0]['assessment_status'] == 'abstained'
+
+
+def test_cumcm_national_awards_use_verified_labels_without_regional_inheritance():
+    a = {**award(), "contest": "cumcm", "event": "undergraduate", "edition": "2026",
+         "target": "全国一等奖", "most_likely": "全国二等奖",
+         "range": ["全国二等奖", "全国一等奖"]}
+    out = user_view(report([a]), "cumcm")["A"]["assessments"][0]
+    assert out["award_system_status"] == "verified"
+    assert out["most_likely"] == "全国二等奖"
+    assert out["calibrated"] is False
+    assert out["award_system_scope"].startswith("National awards only")
+    for label in ("全国三等奖", "赛区一等奖"):
+        with pytest.raises(ValueError, match="Award label"):
+            user_view(report([{**a, "most_likely": label}]), "cumcm")
