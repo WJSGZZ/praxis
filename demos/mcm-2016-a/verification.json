@@ -339,5 +339,24 @@
    }
   },
   "changes": "Proof environment separates proof from baseline interpretation; shorter series labels and figure caption. No equations or archived numerical results changed."
+ },
+ "control_study_revision": {
+  "date": "2026-10-09",
+  "pdf_sha256": "5beb92779de6b8412a09dc8d159af97cb2c1b0d369df50b00936c3ab5343170a",
+  "previous_pdf_sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
+  "study_sha256": "57947a76f51cf5cb447470c28d1247b6846182936b9bd13416e9945a50ad749d",
+  "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
+  "total_pages": 25,
+  "solution_pages": 24,
+  "ai_report_pages": 1,
+  "all_pages_contact_reviewed": true,
+  "changed_scientific_pages_viewed_full_size": true,
+  "native_compiler": "success",
+  "associated_tests_passed": 73,
+  "original_baseline_optimization_rerun": false,
+  "new_conditional_optimization": true,
+  "scope": "Two known-D candidates, independently replayed on three grids with conditional floating-point continuous envelopes; nine fixed-probe diagnostic scenarios. No calibrated physical feedback policy or global optimality claim.",
+  "scientific_review": "Author-external AI review of the preceding candidate; numeric claims unchanged, reviewer wording corrections integrated. Historical full-paper reviews are not rebound to this PDF.",
+  "visual_note": "Page 11 retains the existing figure/table layout with lower blank space; no clipping detected in whole-document contact review."
  }
 }

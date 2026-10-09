@@ -39,10 +39,12 @@
 - **更少的水不一定是更好的答案。** 19.35 L 的十二段候选在最细网格上温差达到 1.531°C，超过 1.5°C，已被拒绝。选用 21.48 L 的六段方案：前三套网格的最大温差分别约为 1.400、1.395、1.416°C，独立连续时间检查也通过。
 - **证明与候选分开。** 理想模型有最优性证明；空间结果是经过检查的候选，不是全局最优。恒定流量比能量下界多 8.7 L，带余量方案多 6.1 L。
 - **每个推荐都检查自己的证据。** 17 项基准检查核对独立 RHS、能量、解析极限、几何与情景；分段方案另外在每次流量切换处重启独立 RK45，并按每段导数界检查采样点之间的温度，不能借基准检查代替。
-- **数值余量不等于使用可靠性。** 留 0.1°C 余量比无余量六段候选多用约 10% 的水（19.50 → 21.48 L）；在指定的每段独立 10% 随机误差模型下，200 次试验中约 74% 不越界。这不足以支持通用手动操作建议，实际使用还需要标定和温度反馈。
+- **数值余量不等于使用可靠性。** 留 0.1°C 余量比无余量六段候选多用约 10% 的水（19.50 → 21.48 L）；在每段独立的正态乘法误差试验中（均值 1、标准差 0.1，负乘子截为 0，并非 ±10% 的有界误差），200 次试验中约 74% 不越界。这不足以支持通用手动操作建议，实际使用还需要标定和温度反馈。
 - **搜索失败保留其范围。** 弱混合、高损失、宽浅缸等情景没有被搜索接受的恒定流量，有限搜索不能推出所有恒定流量均不可行。恒流细网格用水 24.12 L（差 0.11%）是诊断，不是收敛阶或真实物理精度认证。
 
 - **结构对照补的是模型边界。** 原有恒流和六段方案在有限接触热容量、深层流路及组合情景中均通过采样检查；没有重优化，也没有据此声称实际浴缸已标定。恒流另以半秒回放通过零阈值放宽的连续包络。
+
+- **混合条件会改变候选时序。** 在已知混合系数与准确供水条件下，两份六段候选分别用 27.00 L 和 20.30 L，三网格条件连续核验通过；它们不是跨情景全局最优比较。固定两探头在九个情景中漏掉两个采样违例，说明有限测温不能直接替整缸水背书。完整流量、失败尝试与检查收据见 `reference/control-study.json`。
 
 ## 翻两页报告
 
@@ -69,6 +71,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # 基准、
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # 分段优化、范围分析、执行容差，约 20 分钟
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选筛选、三网格独立连续时间检查
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # 原方案的结构对照，不重优化
+uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demos/mcm-2016-a/reproduce/reproduced/control-study.json --seconds 180
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。
@@ -88,7 +91,7 @@ AI-use.md                     # AI 使用记录
 
 ## 来源、边界与许可
 
-- 使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；没有读取或复制同题的获奖论文或他人解答。开发中曾读过一次评委评述，由它引起的改动已全部撤回，所以这不是完全盲做的案例。
+- 使用 [COMAP 官方原题](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf)；原终稿封存后，对照阅读了同题 O 奖论文 44845、54164 的部分页面及官方评语，随后开展条件控制研究；没有复制其数据或图形。这是对照学习后的开发案例，不能作为未见题测试。实际阅读范围见来源记录。
 - 不是标准答案或获奖成果；原题只给链接，不重新分发。历史题按 2026-10-07 核查的[当前提交规范](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php)编排；AI 参与范围真实披露，未声称有完整聊天导出或独立人工审核。[来源记录](sources.json) · [验收记录](verification.json) · [AI 记录](AI-use.md)
 - 模型、代码、论文和原创图形按仓库 MIT 许可；外部资料各保留自身权利。本案例检验的是给定条件下的热网络与交付流程，不是实测准确性认证。
 

@@ -1,5 +1,5 @@
 {
-  "checked_on": "2026-10-07",
+  "checked_on": "2026-10-09",
   "sources": [
     {
       "id": "problem",
@@ -69,6 +69,28 @@
       "year": 1948,
       "read": "not opened; the scalar stability function (1+3.33 Ri)^(-3/2) was checked against a turbulence-model source file and a web summary",
       "use": "order-of-magnitude reduction of vertical mixing under stable stratification for the stratified scenario; velocity and temperature scales are assumptions"
+    },
+    {
+      "id": "comparative-commentary-2016-a",
+      "authors": "Kathleen M. Shannon",
+      "title": "2016 MCM Problem A judges commentary",
+      "url": "https://faculty.winthrop.edu/abernathyz/MathComps/2016_MCM_A-Com.pdf",
+      "read": "five pages; post-seal comparative learning",
+      "use": "practical actions, spatial mixing and critical comparison; not an authoritative numerical answer"
+    },
+    {
+      "id": "comparative-44845",
+      "team": "44845",
+      "title": "2016 MCM A Outstanding paper, University of Colorado Boulder",
+      "read": "selected summary, contents and control-discussion pages only",
+      "use": "heat redistribution and feedback as mechanisms to test; original privately held, not redistributed; not all derivations independently verified"
+    },
+    {
+      "id": "comparative-54164",
+      "team": "54164",
+      "title": "2016 MCM A Outstanding paper, Adlai E. Stevenson High School",
+      "read": "summary and title page only",
+      "use": "limited comparison; original privately held, not redistributed; experiments not independently verified"
     }
   ]
 }

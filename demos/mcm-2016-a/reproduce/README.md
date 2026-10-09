@@ -19,3 +19,7 @@ The calculation is portable Python. Report builds require Tectonic 0.17.0 with t
 历史 `reference/mesh_check.json` 仍绑定原验证器，精确源码保留为 `reference/mesh-validator-335052c.py`。当前 `run_mesh_check.py` 另修复了空候选恢复；本次只在短合成案例验证新分支，没有重跑原全时域三网格验收。报告重建可引用哈希匹配的历史验证器及未变的物理源码，不将旧结果认证为新版验证器运行；新验收须生成自己的新收据。
 
 The archived mesh receipt keeps its original validator, preserved byte-for-byte as `reference/mesh-validator-335052c.py`. The current validator adds failed-candidate recovery, checked on short synthetic cases only. Report reconstruction can use the hash-matched historical source and unchanged physical code; it does not claim a new full-horizon validation.
+
+`study_control.py --output <new.json> --seconds 180` 在归档基线之外重算有限测温与已知混合系数的条件策略；`reference/control-study.json` 保存九情景探头诊断、两候选的完整流量、优化尝试和三网格条件连续核验。拒绝覆盖输出；时间边界在计算节点检查，不是操作系统强制超时。它不重跑原基线优化，也不提供真实参数辨识、噪声传感或人工执行保证。报告构建器核对该收据的源码哈希与基线流量。
+
+The focused control study reuses the archived baseline and records fixed-probe diagnostics plus independently replayed schedules at two known mixing coefficients. Choose a new output path. Its cooperative time checks do not provide an operating-system deadline; the study does not establish parameter identification or a deployable feedback controller.

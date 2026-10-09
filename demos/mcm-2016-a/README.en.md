@@ -39,10 +39,12 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 - **A smaller number can fail the problem.** The 19.35 L, twelve-stage candidate reaches a 1.531°C spread on the finest mesh and is rejected. The selected 21.48 L policy produces sampled spreads of 1.400, 1.395 and 1.416°C on three meshes, with independent continuous-time bounds also passing.
 - **Bounds and policies answer different questions.** The mixed optimum is proved. The spatial policies are verified candidates, without a global optimality claim. Their gaps above the energy bound are 8.7 L for constant flow and 6.1 L for the buffered schedule.
 - **Checks follow the policy being recommended.** Seventeen baseline checks cover a separate RHS, energy, analytical limits, geometry and scenario replay. Scheduled flow has its own three-grid RK45 replay, restarted at each switch, and segment-specific derivative bounds between samples.
-- **Numerical slack is not operational reliability.** A 0.1°C margin costs about 10% more water than the unbuffered six-stage candidate (19.50 → 21.48 L). Under the stated independent 10% segment-error model, about 74% of 200 draws stay within the limits. That supports a margin comparison, not a general manual faucet prescription; calibration and temperature feedback are still needed.
+- **Numerical slack is not operational reliability.** A 0.1°C margin costs about 10% more water than the unbuffered six-stage candidate (19.50 → 21.48 L). With independent Gaussian segment multipliers of mean 1 and standard deviation 0.1, clipped below zero rather than bounded to ±10%, about 74% of 200 draws stay within the limits. That supports a margin comparison, not a general manual faucet prescription; calibration and temperature feedback are still needed.
 - **Failed searches retain their scope.** Weak mixing, high loss and the wide shallow tub yield no accepted constant-flow candidate. Finite search does not prove that all constant flows fail. The fine-grid constant-flow result, 24.12 L (0.11% apart), is a diagnostic rather than a convergence-order or physical-accuracy certificate.
 
 - **Structural replay tests a specific dependency.** The archived policies pass sampled checks with finite contact storage, a deeper flow path, and both changes together. Their optima and physical accuracy remain untested. A separate half-second replay bounds constant-flow temperatures without relaxing the physical limits.
+
+- **A change in mixing changes the accepted candidate.** With known diffusivity and exact delivery, the added six-stage schedules use 27.00 L and 20.30 L and pass conditional continuous envelopes on three meshes. They do not establish globally optimal water demand across scenarios. Two fixed probes miss two sampled violations across nine cases, exposing a concrete observation gap. The archived control-study receipt includes complete rates, unsuccessful attempts and checks.
 
 ## Two pages of the paper
 
@@ -69,6 +71,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # baseline,
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # schedules, range analysis, execution tolerance; about 20 minutes
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # candidate selection and three-grid continuous-time checks
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # replay stored policies; no optimization
+uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demos/mcm-2016-a/reproduce/reproduced/control-study.json --seconds 180
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.
@@ -88,7 +91,7 @@ The submission folder holds a single English PDF, as the MCM requires; `7391856`
 
 ## Sources, limits and license
 
-- The official [COMAP problem](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf) is used; no prize-winning paper or other solution to this problem was read or copied. A judges' commentary was read once during development and every change it prompted was reverted, so this is not a fully blind case.
+- The official [COMAP problem](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf) is used; selected pages of same-problem Outstanding papers 44845 and 54164, together with the judges’ commentary, were read after the earlier final version was sealed. Their data and figures were not copied. The subsequent control study belongs to a comparative-learning revision, not an unseen-problem assessment; the source record states the actual reading scope.
 - It is not an official answer or a prize result, and the statement is linked, not redistributed. The layout follows the [current submission rules](https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php) as checked on 2026-10-07; AI involvement is disclosed truthfully, with no claim of a full chat export or independent human review. [Sources](sources.json) · [Verification](verification.json) · [AI record](AI-use.md)
 - Model, code, paper and original figures are under the repository's MIT license; outside materials keep their own rights. The case tests a thermal network and a delivery process under stated conditions; it is not certification of measured accuracy.
 
