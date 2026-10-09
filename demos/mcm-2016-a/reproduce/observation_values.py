@@ -86,3 +86,65 @@ def structure_observation_values(root):
         require(abs(difference-row['maximum_method_difference_c']) < 1e-12 and difference < 2e-6, 'Structural four-summary comparison differs')
         require(replay['instantaneous_balance_residual_w'] < 1e-6 and replay['integrated_balance_residual_j'] < .1, 'Structural energy check failed')
     return dict(receipt=receipt, observation_count=len(rows), replay_count=len(checks), all_banks_nonempty=all(r['compatible_count'] > 0 for r in rows), maximum_summary_difference_c=max(r['maximum_method_difference_c'] for r in checks))
+
+
+def structure_decision_values(root):
+    """Keep finite-bank envelopes, mesh counterexamples and repairs distinct."""
+    import math
+    root = Path(root)
+    receipt = json.loads((root/'reference/structure-decision.json').read_text())
+    def require(condition, message):
+        if not condition:
+            raise ValueError(message)
+    require(receipt['status'] == 'completed', 'Structure decision study incomplete')
+    require(hashlib.sha256((root/'study_structure_decision.py').read_bytes()).hexdigest() == receipt['source_sha256'], 'Structure decision source stale')
+    require(set(receipt['inputs']) == {'code/model.py','check_structure.py','study_calibration.py','reference/calibration-study.json','reference/information-value.json'} and all(hashlib.sha256((root/name).read_bytes()).hexdigest() == digest for name,digest in receipt['inputs'].items()), 'Structure decision inputs stale')
+    cal = json.loads((root/'reference/calibration-study.json').read_text())
+    iv = json.loads((root/'reference/information-value.json').read_text())
+    require(receipt['parameter_grid'] == cal['parameter_grid'] and receipt['probes'] == cal['probes'] and receipt['reading_bound_c'] == receipt['constant_bias_bound_c'] == .02, 'Structure decision observation conditions differ')
+    require(receipt['structures'] == {'surface_fixed':['surface',None],'deep_fixed':['deep',None],'surface_finite':['surface',253310.]}, 'Structure decision mechanisms differ')
+    require(receipt['designs'] == {'passive':[0.]*6,'pulse':[0.,0.,1.2,0.,0.,0.]}, 'Structure decision trial differs')
+    keys = list(cal['parameter_grid'])
+    prior = [dict(zip(keys,v)) for v in itertools.product(*cal['parameter_grid'].values())]
+    policies = receipt['policies']
+    require(set(policies) == {'frozen','scaled'} and policies['frozen'] == {'passive':iv['rounds'][-1]['flow_lpm'],'pulse':cal['rounds'][-1]['flow_lpm']}, 'Structure decision frozen policies differ')
+    require(set(policies['scaled']) == {'passive','pulse'} and policies['scaled']['pulse'] == policies['frozen']['pulse'] and policies['scaled']['passive'] == [q*.99 for q in policies['frozen']['passive']], 'Structure decision repair differs')
+    expected = {(s,d) for s in receipt['structures'] for d in receipt['designs']}
+    banks = {(b['structure'],b['design']):b for b in receipt['banks']}
+    require(set(banks) == expected and len(banks) == len(receipt['banks']), 'Structure decision banks missing/duplicate')
+    for bank in banks.values():
+        indices = bank['indices']; selected = bank['selected_indices']
+        require(indices and len(indices) == len(set(indices)) and all(type(i) is int and 0 <= i < len(prior) for i in indices), 'Structure decision bank indices differ')
+        require(selected and len(selected) == len(set(selected)) and set(selected) <= set(indices), 'Structure decision selected identities differ')
+    envelopes = receipt['base_envelopes']
+    require(len(envelopes) == 2*len(expected) and {(g['policy'],g['structure'],g['design']) for g in envelopes} == {(p,s,d) for p in policies for s,d in expected}, 'Structure decision envelope groups differ')
+    for group in envelopes:
+        indices = banks[(group['structure'],group['design'])]['indices']
+        records = group['records']
+        require([r['prior_index'] for r in records] == indices, 'Structure decision envelope coverage differs')
+        for row in records:
+            require(all(math.isfinite(row[k]) for k in ['lower_bound_c','upper_bound_c','span_bound_c','max_row_sum','min_off_diagonal']), 'Structure decision envelope not finite')
+            passed = row['lower_bound_c'] >= 39 and row['upper_bound_c'] <= 41 and row['span_bound_c'] <= 1.5
+            require(row['continuous_passed'] == passed and row['max_row_sum'] <= 1e-12 and row['min_off_diagonal'] >= -1e-12, 'Structure decision physical envelope differs')
+    replays = receipt['selected_replays']
+    replay_keys = {(r['policy'],r['structure'],r['design'],r['prior_index'],tuple(r['grid'])) for r in replays}
+    require(len(replays) == len(replay_keys) and replay_keys == {(p,s,d,i,g) for p in policies for (s,d),b in banks.items() for i in b['selected_indices'] for g in [(8,4,3),(12,6,4),(16,8,6)]}, 'Structure decision mesh coverage differs')
+    for row in replays:
+        p,s,d,i = (row[k] for k in ['policy','structure','design','prior_index'])
+        require(row['parameters'] == prior[i], 'Structure decision parameter binding differs')
+        route,capacity = receipt['structures'][s]
+        require(row['route'] == route and row['body_capacity_j_per_k'] == capacity and row['sample_s'] == 1., 'Structure decision replay conditions differ')
+        require(abs(row['water_l']-5*sum(policies[p][d])*prior[i]['flow_multiplier']) < 1e-8, 'Structure decision delivered water differs')
+        require(all(math.isfinite(row[k]) for k in ['min_temp','max_temp','max_span','instantaneous_balance_residual_w','integrated_balance_residual_j']), 'Structure decision replay not finite')
+        passed = row['min_temp'] >= 39 and row['max_temp'] <= 41 and row['max_span'] <= 1.5
+        require(row['sampled_passed'] == passed, 'Structure decision failure relabeled')
+        require(row['instantaneous_balance_residual_w'] < 1e-6 and row['integrated_balance_residual_j'] < .1, 'Structure decision energy check failed')
+        if row['grid'] == [8,4,3]:
+            require(0 <= row['same_sample_summary_difference_c'] < 2e-6, 'Structure decision matched sample disagreement')
+        else:
+            require(row['same_sample_summary_difference_c'] is None, 'Structure decision comparison scope differs')
+    frozen_failures = [r for r in replays if r['policy'] == 'frozen' and not r['sampled_passed']]
+    scaled = [r for r in replays if r['policy'] == 'scaled']
+    passive = 5*sum(policies['scaled']['passive']); pulse = 5*sum(policies['scaled']['pulse'])
+    require(passive > pulse, 'Structure decision cost order changed')
+    return dict(receipt=receipt, banks=banks, base_checks=sum(len(b['indices']) for b in banks.values()), frozen_failures=frozen_failures, repair_checks=len(scaled), repair_sampled_passes=sum(r['sampled_passed'] for r in scaled), repair_passive_l=passive, repair_delta_l=passive-pulse, repair_crossover=math.floor(6/(passive-pulse))+1, all_base_envelopes_passed=all(r['continuous_passed'] for g in envelopes for r in g['records']))

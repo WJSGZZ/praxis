@@ -84,3 +84,39 @@ def test_structural_consumption_rejects_broken_or_relabelled_diagnostics(monkeyp
     monkeypatch.setattr(module.json,'loads',lambda value: broken if value == text else loads(value))
     with pytest.raises(ValueError):
         module.structure_observation_values(HERE)
+
+
+def test_joint_structure_banks_preserve_mesh_failures_and_repair_scope():
+    values = module.structure_decision_values(HERE)
+    assert values['base_checks'] == 1932 and values['all_base_envelopes_passed']
+    assert {(r['prior_index'],tuple(r['grid'])) for r in values['frozen_failures']} == {(89,(16,8,6)),(274,(16,8,6))}
+    assert all(r['max_temp'] > 41 for r in values['frozen_failures'])
+    assert values['repair_checks'] == values['repair_sampled_passes'] == 51
+    assert 9*values['repair_delta_l'] < 6 < 10*values['repair_delta_l']
+    assert values['repair_crossover'] == 10
+
+
+@pytest.mark.parametrize('error', ['missing_bank_member','missing_mesh','relabel_failure','wrong_multiplier','wrong_structure','invalid_bound'])
+def test_joint_structure_evidence_cannot_hide_failure_or_change_scope(monkeypatch,error):
+    text = (HERE/'reference/structure-decision.json').read_text()
+    broken = json.loads(text)
+    if error == 'missing_bank_member': broken['base_envelopes'][0]['records'].pop()
+    elif error == 'missing_mesh': broken['selected_replays'].pop()
+    elif error == 'relabel_failure': next(r for r in broken['selected_replays'] if not r['sampled_passed'])['sampled_passed'] = True
+    elif error == 'wrong_multiplier': broken['selected_replays'][0]['water_l'] += .1
+    elif error == 'wrong_structure': broken['selected_replays'][0]['route'] = 'deep'
+    else: broken['base_envelopes'][0]['records'][0]['upper_bound_c'] = float('nan')
+    loads = json.loads
+    monkeypatch.setattr(module.json,'loads',lambda value: broken if value == text else loads(value))
+    with pytest.raises(ValueError): module.structure_decision_values(HERE)
+
+
+def test_joint_structure_budget_preserves_incomplete_evidence(tmp_path):
+    output = tmp_path/'partial.json'
+    command = [sys.executable,str(HERE/'study_structure_decision.py'),'--output',str(output),'--seconds','1e-12']
+    run = subprocess.run(command,capture_output=True,text=True,timeout=15)
+    assert run.returncode != 0
+    assert json.loads(output.read_text())['status'].startswith('failed: TimeoutError')
+    saved = output.read_bytes()
+    assert subprocess.run(command,capture_output=True,text=True,timeout=15).returncode != 0
+    assert output.read_bytes() == saved

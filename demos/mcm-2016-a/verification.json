@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "c413c29860485f24c9cbbd3ba6ec4dc36cf0f00a7472c6c6bbec681d321f6570",
-  "bytes": 171567,
+  "sha256": "2b7c9736d1d55c25a2803057b8fc4da982bf13362c7b298dcef0abee00b1ee5c",
+  "bytes": 171718,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,9 +37,9 @@
    25,
    26
   ],
-  "visual_review_note": "All26 pages rendered/contact-reviewed; 1/21/22/23/26 viewed at readable size, final21/22 reread/reviewed after upper-bound rounding and pagination correction. Shared typography unchanged, zero out-of-page characters and native current source compile succeeded.",
+  "visual_review_note": "All26pages contact-reviewed;1/22/23/26 read at1050px. Final precision correction changes only22 by all26 pixel comparison; final22 reread/viewed. Native saved actual source compile success, zero out-of-page characters.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "419fe40a2e7fa73e9d97beb4a86ba81a"
+  "md5": "739acaea43ba7a5cfe2f92383f4dacc8"
  },
  "model_checks": {
   "total": 17,
@@ -621,6 +621,11 @@
    "passed": 585,
    "date": "2026-10-09",
    "scope": "Final adopted observation-control PDF and source;3intentional plot warnings; no full baseline optimization rerun"
+  },
+  {
+   "passed": 599,
+   "date": "2026-10-09",
+   "scope": "Full local core/contract/metadata suite,3intentional plot warnings; final precision-only PDF/metadata change followed by associated checks. No baseline optimization rerun."
   }
  ],
  "structure_observation_revision": {
@@ -670,6 +675,59 @@
   "observations": 8,
   "fixed_policy_replays": 6,
   "scope": "Synthetic alternative structures still fit original structure. Six existing endpoint policies pass specified-structure 1s sampled replay; no new policy inference or coverage of new banks, continuous/empirical guarantee. Four summary quantities compared, not full trajectory norm.",
-  "scientific_review": "Author-external AI derived operators and checked complete records, candidate full text and final21/22 revisions. No new human verification. Nonblind uncalibrated reference remains F/M-F."
+  "scientific_review": "Author-external AI derived operators and checked complete records, candidate full text and final21/22 revisions. No new human verification. Nonblind uncalibrated reference remains F/M-F.",
+  "status": "Historical revision; superseded by structure_decision_revision, source/PDF identities retain original binding"
+ },
+ "structure_decision_revision": {
+  "previous_pdf": {
+   "sha256": "c413c29860485f24c9cbbd3ba6ec4dc36cf0f00a7472c6c6bbec681d321f6570",
+   "bytes": 171567,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All26 pages rendered/contact-reviewed; 1/21/22/23/26 viewed at readable size, final21/22 reread/reviewed after upper-bound rounding and pagination correction. Shared typography unchanged, zero out-of-page characters and native current source compile succeeded.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "419fe40a2e7fa73e9d97beb4a86ba81a"
+  },
+  "source": "reproduce/paper/paper.tex",
+  "source_sha256": "ae86808b977c886d3fc706959c610936d9acc093e63d3fc2e86047c922b71698",
+  "receipt": "reproduce/reference/structure-decision.json",
+  "receipt_sha256": "48e79ada48c19ccafd36d7f71f595b0a80410af54a2c7c8d84f1e80b1069085c",
+  "base_checks_per_candidate": 1932,
+  "original_selected_checks": 51,
+  "original_selected_failures": 2,
+  "repair_selected_checks": 51,
+  "repair_selected_passes": 51,
+  "repair_scope": "Original-candidate extrema reused; not all fine-bank or fine-continuous certification. Unequal design reserves, not optimization. Originalcost7uses separate from repaircandidate10uses.",
+  "review": "Author-external entire26page a218 text review, final2b7c page22 and all-page text comparison; author all26 pixel comparison and actual final22 viewing. Nonblind uncalibrated F center/M-F reference unchanged. Scientific/public-private evidence review completed."
  }
 }

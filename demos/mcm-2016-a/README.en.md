@@ -52,6 +52,8 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **Ask what the experiment can actually reveal.** With no inlet flow, the inlet route and delivery multiplier disappear from the equations. Denser passive readings cannot recover them. Eight synthetic traces from alternative flow paths or contact storage still fit the original model within its error bounds. Six existing endpoint-policy replays remain feasible at the sampled times. The useful distinction is between identifying a mechanism and testing a decision: neither substitutes for the other. These fixed-policy diagnostics do not infer new policies or certify the changed compatibility sets.
 
+**Carry structural ambiguity into the decision check.** The same nominal readings admit 1,465 passive and 467 pulse structure–parameter pairs. Both frozen candidates pass all 1,932 base-grid envelopes, yet replaying 17 original-candidate extrema on three meshes reveals two ceiling violations above 41°C. A 1% reduction in passive commands passes the base envelopes and the same 51 sampled checks; its equal-reset candidate-cost crossover moves to use ten. The repaired candidates have unequal design reserves. This limited comparison neither replaces the seven-use result above nor certifies the full expanded bank on finer meshes.
+
 ## Two pages of the paper
 
 **Turn ambiguous measurements into a decision.** A synthetic two-probe pulse leaves 178 compatible models in a 2,835-point parameter grid. Four of those models fail sampled checks of the original schedule. A replacement uses **23.48 L commanded** and passes 534 conditional envelope checks across three specified meshes. That coverage costs 9.33% more commanded water, plus a separate **6 L** calibration pulse and unmodeled reset costs. These are finite-set numerical results, not an empirical confidence region or a real-bath reliability guarantee; the complete record is `reference/calibration-study.json`.
@@ -88,6 +90,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --outpu
 uv run --locked python demos/mcm-2016-a/reproduce/screen_observations.py --output demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --seconds 120
 uv run --locked python demos/mcm-2016-a/reproduce/study_observation_control.py --input demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --output demos/mcm-2016-a/reproduce/reproduced/observation-control.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py --output demos/mcm-2016-a/reproduce/reproduced/structure-inference.json --seconds 150
+uv run --locked python demos/mcm-2016-a/reproduce/study_structure_decision.py --output demos/mcm-2016-a/reproduce/reproduced/structure-decision.json --seconds 180
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.

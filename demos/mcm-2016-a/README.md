@@ -54,6 +54,8 @@
 
 **拟合正确，不代表机制正确。** 无入水时，供水倍率和入口流路从方程中消失；再密的被动测温也识别不了它们。用深层流路或有限接触热容量生成八组观测，原结构仍能在规定误差内拟合。六次既有端点策略在这些替代机制下通过采样检查，说明“结构没有唯一识别”和“策略在所测变化下仍可用”可以同时成立。这是固定策略诊断，没有针对新观测重新求解，也不是新相容集上的全覆盖保证。
 
+**把结构歧义接到策略检查。** 同一组名义读数下，三种结构留下被动／脉冲 1465／467 个结构–参数组合。原候选的 1932 项基础网格连续包络均通过，但原候选的 17 个极端成员在三网格重放时有两项最高温超过 41°C。将被动流量统一减 1% 后，基础包络和同一批 51 项采样检查通过，候选成本比较的等复位费用交叉移到第 10 次。这是设计储备未统一的有限修复，不替代前面的七次主比较，也不保证整个扩展集合在细网格上通过。
+
 ## 翻两页报告
 
 <table>
@@ -88,6 +90,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --outpu
 uv run --locked python demos/mcm-2016-a/reproduce/screen_observations.py --output demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --seconds 120
 uv run --locked python demos/mcm-2016-a/reproduce/study_observation_control.py --input demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --output demos/mcm-2016-a/reproduce/reproduced/observation-control.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py --output demos/mcm-2016-a/reproduce/reproduced/structure-inference.json --seconds 150
+uv run --locked python demos/mcm-2016-a/reproduce/study_structure_decision.py --output demos/mcm-2016-a/reproduce/reproduced/structure-decision.json --seconds 180
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。
