@@ -56,6 +56,12 @@ For perturbed inputs, the original allocation proportions are reduced to satisfy
 
 The manuscript uses Fandol 0.3, supplied by TeX Live, MiKTeX and Tectonic, rather than operating-system fonts. The pinned font files are recorded in the [font manifest](../../templates/cumcm-fonts.json). Install the named package if it is missing; do not substitute a different face. Numerical reproduction is independent of typesetting.
 
+## Assessment
+
+**Target: National First Prize. Reference: competitive at its lower edge, with a National Second–First Prize range.** An AI reviewer separate from the author read the current 23-page paper and performed independent rational-arithmetic checks of eight representative allocations and two capital thresholds. The review is non-blind and its award boundaries are uncalibrated; it is not a contest result.
+
+The strongest contribution is explaining when the fee-constrained problem reduces to a continuous knapsack and when a feasible allocation attains a provable global bound. Both asset sets are covered, and principal, fees and profit are kept distinct. The next improvement should connect the firm's preferences to its risk limit: the present geometric knee is a transparent convention, but the paper does not yet explain the trade-offs that would make it the right choice for a particular firm. The [version-bound record](verification.json) identifies the unchanged PDF, actual review scope and computations that were not repeated.
+
 ## Run it yourself
 
 From the Praxis repository root:

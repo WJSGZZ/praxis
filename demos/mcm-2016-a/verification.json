@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "9177c38786d9d9a4d9038a6ab99ed5cd2f8927167bbbdf862606ebbdf2d136e7",
-  "bytes": 170653,
+  "sha256": "d00c0dee309143b80c695608cf439e98b000babfb85884504089f93193f40da6",
+  "bytes": 171839,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,9 +37,9 @@
    25,
    26
   ],
-  "visual_review_note": "All26 final pages rendered/contact reviewed; pages1/21/22/23 inspected at readable size after final scope correction. Zero out-of-page nonspace characters. Native compile succeeded for the actual saved paper.tex.",
+  "visual_review_note": "Final26page contact review and readable21/22/23; final21 inspected after command/actual water notation correction. Zero out-of-page nonspace characters. Preview pages1/8 pixel-identical to previous9177 at1.6scale; preview assets retained. Native final generated source compile succeeded.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "37c788d77f566ee729d093ac3bc12f8a"
+  "md5": "364c2817c210ff154c327c076b70ed6b"
  },
  "model_checks": {
   "total": 17,
@@ -124,9 +124,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 651,
+  "passed": 652,
   "date": "2026-10-10",
-  "scope": "Final adopted9177 PDF, sources, metadata and optional-guide-heading correction; isolated full suite,0 failures/0 skips,3 expected invalid-plot warnings,147.79s. Original baseline and expensive searches not rerun."
+  "scope": "Final adopted d00c PDF/metadata and current case-assessment binding regression;652 passed,0 failures/0 skips,3 expected invalid-plot warnings,143.65s. Numerical searches unchanged."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -227,7 +227,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -290,7 +290,7 @@
     1
    ],
    "native_compiler": "success",
-   "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+   "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
    "historical_mathematical_review_rebound": false
   }
  ],
@@ -335,7 +335,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -596,7 +596,7 @@
     25,
     26
    ],
-   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15–16 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
+   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15\u201316 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
    "md5": "ec4693d0583e779f872e1635912b0720"
   },
@@ -763,17 +763,17 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "9177c38786d9d9a4d9038a6ab99ed5cd2f8927167bbbdf862606ebbdf2d136e7",
+  "version_sha256": "d00c0dee309143b80c695608cf439e98b000babfb85884504089f93193f40da6",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external same-family AI full7349 candidate review, followed by actual9177 pages1/20/22/23 fixed-versus-feedback scope correction review. Nonblind, uncalibrated; no optimization/all-bank integration rerun.",
+  "review_scope": "Author-external same-family AI: prior full7349 reading and9177 correction; current0857 pp21/22/23 text,21/22 images and all-page contacts; finald00c p21 notation text/image correction. Independent exact sums and pointwise backup bound for9 completed records. Nonblind and uncalibrated; no new dynamics, optimization or full final-paper rereading.",
   "basis": [
-   "Complete problem coverage, proved mixed benchmark, energy bounds and independent numerical checks.",
-   "Matched12-model ablation isolates observation updates;1465-bank nominal examples change actions without requiring unique identification.",
-   "Constant-bias intervals, a checked remaining tail and two explicit certificate-invalidating faults connect observations with decisions."
+   "Proved mixed benchmark and complete problem coverage with independent numerical checks.",
+   "Common-reserve structural ambiguity, matched observation ablation and explicit empty-set faults connect assumptions to decisions.",
+   "Conditional retained-tail induction and command-water domination cap strengthen explanation; revised conclusion links temperature tolerance, transport and available information."
   ],
-  "main_gap": "Mechanism-to-policy synthesis remains fragmented across different banks, reserves and policy families; broad conditional choice is not yet as clear as the individual results.",
-  "highest_value_next_action": "Organize the valid policy families into a concise applicability/choice argument tied to temperature tolerance, transport and model information; do not extrapolate the fixed-candidate crossover to feedback.",
-  "strength_note": "Strong F competitiveness in the qualitative nonblind review; no calibrated award boundary."
+  "main_gap": "Reliable transfer domain remains narrow: finite static bank and two fault refusals do not establish completion boundaries under broader physical conditions.",
+  "highest_value_next_action": "Use conditions excluded from design and screening to test when service completes and when the certificate must be rejected; do not merely add same-scope counts.",
+  "strength_note": "Strong F center, nearer the F/O boundary in qualitative current-increment review; O not established."
  },
  "feedback_revision": {
   "previous_pdf": {
@@ -833,5 +833,83 @@
   "equations": 20,
   "numerical_baseline_changed": false,
   "visual_note": "Sobol range scatter replaced by the observation/action/count figure; its numeric sensitivity evidence stays in the text. Figure5 kept before Conclusions; fonts and margins unchanged."
+ },
+ "policy_synthesis_revision": {
+  "previous_pdf": {
+   "sha256": "9177c38786d9d9a4d9038a6ab99ed5cd2f8927167bbbdf862606ebbdf2d136e7",
+   "bytes": 170653,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All26 final pages rendered/contact reviewed; pages1/21/22/23 inspected at readable size after final scope correction. Zero out-of-page nonspace characters. Native compile succeeded for the actual saved paper.tex.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "37c788d77f566ee729d093ac3bc12f8a"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "9177c38786d9d9a4d9038a6ab99ed5cd2f8927167bbbdf862606ebbdf2d136e7",
+   "checked_on": "2026-10-10",
+   "review_scope": "Author-external same-family AI full7349 candidate review, followed by actual9177 pages1/20/22/23 fixed-versus-feedback scope correction review. Nonblind, uncalibrated; no optimization/all-bank integration rerun.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark, energy bounds and independent numerical checks.",
+    "Matched12-model ablation isolates observation updates;1465-bank nominal examples change actions without requiring unique identification.",
+    "Constant-bias intervals, a checked remaining tail and two explicit certificate-invalidating faults connect observations with decisions."
+   ],
+   "main_gap": "Mechanism-to-policy synthesis remains fragmented across different banks, reserves and policy families; broad conditional choice is not yet as clear as the individual results.",
+   "highest_value_next_action": "Organize the valid policy families into a concise applicability/choice argument tied to temperature tolerance, transport and model information; do not extrapolate the fixed-candidate crossover to feedback.",
+   "strength_note": "Strong F competitiveness in the qualitative nonblind review; no calibrated award boundary."
+  },
+  "tex_sha256": "5caf80a2739a4bb6e1ac640bce057cca31abe00e1647e5845aeddacb863c896a",
+  "generator_sha256": "0aeebed7f2bf56e5b2cc66e89803340f5033efeecc6ee080876126e62994f766",
+  "scope": "Conditional retained-tail argument and completed-service command cap; command versus actual delivered water separated. Mechanism/information-to-policy synthesis. Archived numerical values and sources unchanged; no new optimization or closed-loop simulation.",
+  "completed_recorded_services_cap_checked": 9,
+  "command_upper_display_l": 26.09,
+  "actual_water_bound": "positive shared delivery multiplier times command cap",
+  "figures": 5,
+  "tables": 14,
+  "equations": 20,
+  "native_compiler": "success",
+  "preview_pages_unchanged": [
+   1,
+   8
+  ],
+  "current_award_review": "Author-external same-family AI: prior full7349 reading and9177 correction; current0857 pp21/22/23 text,21/22 images and all-page contacts; finald00c p21 notation text/image correction. Independent exact sums and pointwise backup bound for9 completed records. Nonblind and uncalibrated; no new dynamics, optimization or full final-paper rereading.",
+  "conditional_cap": "Completed-service command J_cmd<=26.09L; for shared stable alpha>0, J_act=alpha*J_cmd<=alpha*26.09L; does not promise optimality or recovery.",
+  "reviewer_independent_arithmetic": "All9 completed serialized trajectories satisfy pointwise and total backup bounds by exact Fraction arithmetic without tolerance; not a dynamics or roundoff proof."
  }
 }

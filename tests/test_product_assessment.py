@@ -177,3 +177,18 @@ def test_cumcm_national_awards_use_verified_labels_without_regional_inheritance(
     for label in ("全国三等奖", "赛区一等奖"):
         with pytest.raises(ValueError, match="Award label"):
             user_view(report([{**a, "most_likely": label}]), "cumcm")
+
+
+def test_flagship_award_assessments_bind_the_current_delivered_manuscript():
+    import hashlib
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    for slug, filename in [('cumcm-1998-a', 'paper.pdf'), ('mcm-2016-a', '7391856.pdf')]:
+        demo = root / 'demos' / slug
+        record = json.loads((demo / 'verification.json').read_text())['current_award_assessment']
+        assert record['version_sha256'] == hashlib.sha256((demo / 'deliverables' / filename).read_bytes()).hexdigest()
+        assert record['target'] and record['review_scope'] and record['basis']
+        assert record['main_gap'] and record['highest_value_next_action']
+        assert 'verification.json' in (demo / 'README.md').read_text()
+        assert 'verification.json' in (demo / 'README.en.md').read_text()

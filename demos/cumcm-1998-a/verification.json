@@ -290,5 +290,26 @@
    "build_paper.py",
    "paper/main.tex"
   ]
+ },
+ "current_award_assessment": {
+  "target": "全国一等奖",
+  "reference_center": "全国一等奖",
+  "adjacent_reference_range": [
+   "全国二等奖",
+   "全国一等奖"
+  ],
+  "version_sha256": "645e675dc022ca998a418336a6a0830372035f29d9777cfbc340b60b01556240",
+  "reviewer": "Author-external AI review; nonblind; uncalibrated",
+  "review_scope": "Existing full23page PDF text and contact-sheet review plus readable pages7,8,11,12; original official problem p11,19 input rows checked; independent rational checks at8 representative configurations and2 capital thresholds. Current PDF hash reconfirmed unchanged at publication; no new full review claimed.",
+  "award_framework": "Qualitative national first/second reference under official CUMCM criteria; historical exercise, not actual1998 judging or award probability.",
+  "basis": [
+   "Complete four-asset/general/fifteen-asset requirements, fee-budget definitions and risk-return family.",
+   "Exchange argument for bounded continuous knapsack and critical-capital condition explain when original feasible solutions attain a global bound.",
+   "Independent rational calculations match8 representative allocations and both thresholds; scope of fifteen-asset small-capital enumeration and stochastic scenarios remains explicit."
+  ],
+  "main_gap": "The chosen geometric knee is a declared convention; the firm's preferences do not yet determine risk tolerance and the final recommendation clearly.",
+  "highest_value_next_action": "Relate the existing solution family to marginal willingness to trade net return for risk; retain the geometric knee as a conditional example.",
+  "limits": "No award calibration, human peer review, new Monte Carlo/MILP/full enumeration run, or complete cited-literature reading.",
+  "strength_note": "Edge competitiveness, with National Second–First reference range; nonblind and uncalibrated."
  }
 }

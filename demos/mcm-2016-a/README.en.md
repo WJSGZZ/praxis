@@ -77,7 +77,9 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 ## Assessment
 
-**Target: Outstanding Winner. Current reference: strong Finalist competitiveness, with an adjacent F–O range; O is not established.** The review is non-blind, conducted by an AI reviewer separate from the author, and has no calibrated award boundaries. Strengths include the proved mixed benchmark, conservation and independent checks, and a common-reserve decision that carries observational ambiguity into candidate costs. The added feedback, matched ablation and empty-set fault cases now connect readings to action. The remaining weakness is synthesis: results with different reserves, compatible banks and policy families need a clearer choice argument tied to thermal mechanisms and available information. The fixed-policy crossover cannot be transferred to feedback.
+**Target: Outstanding Winner. Current reference: strong Finalist, with an adjacent F–O range; O is not established.** The author-external AI review combines earlier whole-paper understanding with actual checks of this revision. It is non-blind and uncalibrated. The mixed-model proof, independent checks and common-reserve comparison support a decision chain from structural ambiguity to trial costs and observed actions. The revised argument connects temperature tolerance, transport and available information, and proves a 26.09 L command cap for completed services. With a shared delivery multiplier α, the corresponding actual-water bound is α×26.09 L.
+
+The previously fragmented policy choice is now clearer. The principal remaining gap is transfer: a finite static bank and two detected departures do not establish when service can be completed under broader physical conditions. The most useful next test would use conditions excluded from design and screening, checking both successful completion and refusal to reuse an invalid certificate. Neither the cap nor the fixed-candidate trial crossover proves optimal feedback.
 
 The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
 
