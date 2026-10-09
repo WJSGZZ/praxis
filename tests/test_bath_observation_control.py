@@ -48,3 +48,39 @@ def test_control_budget_preserves_partial_and_cannot_overwrite(tmp_path):
     saved = output.read_bytes()
     assert subprocess.run(command,capture_output=True,text=True,timeout=15).returncode != 0
     assert saved == output.read_bytes()
+
+
+def test_structural_screen_keeps_fit_and_fixed_policy_scope_separate():
+    values = module.structure_observation_values(HERE)
+    assert values['observation_count'] == 8 and values['replay_count'] == 6
+    assert values['all_banks_nonempty']
+    assert values['maximum_summary_difference_c'] < 2e-6
+    rows = values['receipt']['observations']
+    # All five supply multipliers remain compatible together in a passive trial:
+    # there is no supply term to identify, even with the whole observed trace.
+    for row in rows:
+        if row['design'] != 'passive':
+            continue
+        indices = set(row['compatible_indices'])
+        assert all({5*(i//5)+j for j in range(5)} <= indices for i in indices)
+
+
+@pytest.mark.parametrize('error', ['missing_bank','duplicate_index','wrong_policy','wrong_structure','violating_temperature'])
+def test_structural_consumption_rejects_broken_or_relabelled_diagnostics(monkeypatch, error):
+    text = (HERE/'reference/structure-inference.json').read_text()
+    broken = copy.deepcopy(json.loads(text))
+    if error == 'missing_bank':
+        broken['observations'].pop()
+    elif error == 'duplicate_index':
+        row = broken['observations'][0]
+        row['compatible_indices'][0] = row['compatible_indices'][1]
+    elif error == 'wrong_policy':
+        broken['checks'][0]['flow_lpm'][0] += .1
+    elif error == 'wrong_structure':
+        broken['checks'][0]['rk45']['route'] = 'surface'
+    else:
+        broken['checks'][0]['rk45']['max_span'] = 1.6
+    loads = json.loads
+    monkeypatch.setattr(module.json,'loads',lambda value: broken if value == text else loads(value))
+    with pytest.raises(ValueError):
+        module.structure_observation_values(HERE)

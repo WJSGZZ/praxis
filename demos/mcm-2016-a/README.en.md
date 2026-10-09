@@ -50,6 +50,8 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **Test the discretization against independent answers.** An empty-domain diffusion mode approaches second order across four successively refined meshes (finest observed order 1.98); the zero-diffusion inlet path matches an analytical stirred-cell cascade. These checks test implementation, not the assumed mixing closure or experimental accuracy.
 
+**Ask what the experiment can actually reveal.** With no inlet flow, the inlet route and delivery multiplier disappear from the equations. Denser passive readings cannot recover them. Eight synthetic traces from alternative flow paths or contact storage still fit the original model within its error bounds. Six existing endpoint-policy replays remain feasible at the sampled times. The useful distinction is between identifying a mechanism and testing a decision: neither substitutes for the other. These fixed-policy diagnostics do not infer new policies or certify the changed compatibility sets.
+
 ## Two pages of the paper
 
 **Turn ambiguous measurements into a decision.** A synthetic two-probe pulse leaves 178 compatible models in a 2,835-point parameter grid. Four of those models fail sampled checks of the original schedule. A replacement uses **23.48 L commanded** and passes 534 conditional envelope checks across three specified meshes. That coverage costs 9.33% more commanded water, plus a separate **6 L** calibration pulse and unmodeled reset costs. These are finite-set numerical results, not an empirical confidence region or a real-bath reliability guarantee; the complete record is `reference/calibration-study.json`.
@@ -85,6 +87,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/study_information_value.py --o
 uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --output demos/mcm-2016-a/reproduce/reproduced/finite-volume-verification.json
 uv run --locked python demos/mcm-2016-a/reproduce/screen_observations.py --output demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --seconds 120
 uv run --locked python demos/mcm-2016-a/reproduce/study_observation_control.py --input demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --output demos/mcm-2016-a/reproduce/reproduced/observation-control.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py --output demos/mcm-2016-a/reproduce/reproduced/structure-inference.json --seconds 150
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.
