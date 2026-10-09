@@ -30,6 +30,7 @@
 | 不知道结构与候选路线 | [structure-discovery.md](structure-discovery.md)、[path-search.md](path-search.md) | 有依据的结构、候选与取舍 |
 | 表示、识别能力或最优性不清楚 | [mathematical-reasoning.md](mathematical-reasoning.md) | 参数／结论能被支持到什么范围 |
 | 不确定性、数值误差或统计检查不清楚 | [scientific-foundations.md](scientific-foundations.md) | 与该结论对应的检查及误差报告 |
+| 多表键、实体别名、分类口径或预测信息边界不清楚 | [data-computing.md](data-computing.md) | 连接覆盖与总量对账、允许处理及实际评估身份 |
 | 文件、执行、版本或证据连接不清楚 | [automation.md](automation.md) | 实际运行、有效版本与可追溯连接 |
 | 结果太多，交付主线不清楚 | [convergence.md](convergence.md)、[writing.md](writing.md) | 从有效证据到报告的取舍与论证 |
 | 成稿可能漏答或经不起质疑 | [review-protocol.md](review-protocol.md) | 可复现的缺口与处理决定 |
