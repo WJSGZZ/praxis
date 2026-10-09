@@ -653,9 +653,9 @@
   "reproduction": "uv run --locked python research/merge-after-toll/reproduce.py --output .session/merge-replay",
   "default_plugin_bundle": false,
   "files_sha256": {
-    "README.en.md": "56ff8cea8839c5e0f38c0700b3935b7341bb260232e8fa159945e9d2e6a5b68f",
-    "README.md": "b9a587531970f36c6654b42e18a7a7f4eec8daf55dfd7ef29752dbfb804c038f",
-    "audit.py": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
+    "README.en.md": "fc41384d05056d8e7c12e25c1cb70a3ed325c19a29077aeb79e0a8c9ac5a46c2",
+    "README.md": "6af9177dece2f4531b3300dffefe1f235c172e5cdd88e6c5f6cdb1f0009e2092",
+    "audit.py": "8503e5daeb6929f21c22b697d5ff381fe35b6a6edddaf5d78c7322cdd31407a7",
     "baseline/code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
     "baseline/code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
     "baseline/code/model.py": "52d4feb8c6842d2f19ddc060fb5c1a06709075925b233d131a6ad6990710350c",
@@ -689,7 +689,8 @@
     "reviews/study.md": "c154372cc3aa8c46bd3867fa99c8cd3bf948151c0ae17ed2cf03450277d73bfc",
     "reviews/user-assessment.json": "08dcbbf9699f9c6a0166e6b059b18e048ed3b8e1a443a57f4bb818f64dbe08dd",
     "reviews/exposure-correction.json": "5a8d0ed0473a90b7b16f60f47c5abc027cc26d8df09003e6374f1aabd11261b9",
-    "reviews/frontmatter-revision.json": "5aeae8d26bc885959d92b7f16fb2bc9c6a4dcc4cf092cc8254ca4094f1ca902f"
+    "reviews/frontmatter-revision.json": "5aeae8d26bc885959d92b7f16fb2bc9c6a4dcc4cf092cc8254ca4094f1ca902f",
+    "reviews/routing-audit-revision.json": "2e4382767c7ea2b51f6c9f82d9330421edab0447848b00ee405e8cf0eec2cb07"
   },
   "layout_revision": {
     "previous_archive_commit": "5b18d15a370ac71d1f680a1e451285c5de20abd9",
@@ -741,5 +742,10 @@
     "native_compiler": "success",
     "visual_review": "Current summary, contents and body start viewed. Pages 2\u201317 are pixel-identical to the saved previous current PDF; prior full-page review is inherited, not repeated.",
     "historical_reviews_rebound": false
+  },
+  "audit_revision": {
+    "previous_audit_sha256": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
+    "revision": "reviews/routing-audit-revision.json",
+    "scope": "Current executable audit; historical independent-audit.json remains bound to its original inputs and review."
   }
 }

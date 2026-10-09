@@ -61,6 +61,8 @@ uv run --locked python research/merge-after-toll/paper/build_report.py \
 - [reviews/](reviews/)：研究过程、英文审读及评估范围。奖项评估未校准，不从内部诊断分推奖项。
 - [manifest.json](manifest.json)：有效源码指纹、环境、时间、来源、暴露范围、运行收据指纹和文件哈希。
 
+2026-10-09增量核验修正了审计器的分流输入：均衡策略与有限占用比较使用相同的有效策略及占用条件。旧归档布局未触发差异，新增多路线反例曾出现差异；修复后18项同输入对照通过，两份归档各21项新审计通过。原数值、论文、被拒候选与旧审计回执保留，见[修订证据](reviews/routing-audit-revision.json)。审计通过不将被拒策略改为接受。
+
 ## 来源与边界
 
 题目来自[COMAP官方题面](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2017/problems/2017_MCM_Problem_B.pdf)。归档不复制题面PDF或购买资料。通用参考是FHWA的[模型标定指导](https://ops.fhwa.dot.gov/trafficanalysistools/tat_vol3/sect5.htm)、[历史收费后区域指导](https://mutcd.fhwa.dot.gov/rpt/tcstoll/chapter642.htm)和[窗口布置指导](https://mutcd.fhwa.dot.gov/rpt/tcstoll/chapter224.htm)；历史指南不代表现行所有规范。

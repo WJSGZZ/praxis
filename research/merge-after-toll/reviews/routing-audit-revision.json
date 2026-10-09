@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-09",
+  "base_public_commit": "ac1814228b7e31c9399d8cb4a2382237739d3655",
+  "old_audit_sha256": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
+  "current_audit_sha256": "8503e5daeb6929f21c22b697d5ff381fe35b6a6edddaf5d78c7322cdd31407a7",
+  "root_cause": "Audit used capacity routing even when comparator used balanced demand routing. Finite balanced routing also requires the same occupancy inputs.",
+  "archived_designs_before_max_gap": 5.684341886080802e-14,
+  "multiroute_before": [
+    {
+      "routing_strategy": "capacity",
+      "profile": "multiple_routes",
+      "scenario": "nominal",
+      "max_gap": 0
+    },
+    {
+      "routing_strategy": "capacity",
+      "profile": "multiple_routes",
+      "scenario": "cash_heavy",
+      "max_gap": 0
+    },
+    {
+      "routing_strategy": "capacity",
+      "profile": "multiple_routes",
+      "scenario": "electronic_heavy",
+      "max_gap": 0
+    },
+    {
+      "routing_strategy": "balanced",
+      "profile": "multiple_routes",
+      "scenario": "nominal",
+      "max_gap": 108.0
+    },
+    {
+      "routing_strategy": "balanced",
+      "profile": "multiple_routes",
+      "scenario": "cash_heavy",
+      "max_gap": 24.0
+    },
+    {
+      "routing_strategy": "balanced",
+      "profile": "multiple_routes",
+      "scenario": "electronic_heavy",
+      "max_gap": 8.0
+    }
+  ],
+  "after_18_cases_max_gap": 5.684341886080802e-14,
+  "checks": {
+    "accepted": {
+      "count": 21,
+      "passed": true
+    },
+    "rejected-routing": {
+      "count": 21,
+      "passed": true
+    }
+  },
+  "unchanged": "Frozen numerical references, reports, original audit receipt, model and rejected-candidate decision. Passing the audit is numerical consistency, not accepting the rejected route.",
+  "scope": "Seeded three-mixture synthetic multiroute regression and fresh audits of two archived inputs; no optimization or field/award validation."
+}

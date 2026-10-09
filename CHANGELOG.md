@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 收费站研究审计在存在多条分流路线时使用与被审计模型相同的策略及有限占用输入，消除不等条件比较造成的假差异；原数值、论文与历史审计回执保留。
+  Toll-study audits now match the model’s routing policy and storage inputs. A multiroute regression catches the former comparison mismatch; frozen outputs and historical audit evidence are preserved.
+
 - 修复独立审查发现的数值边界：GM(1,1)近零发展系数使用稳定差分；常量序列的后验比值不再伪造。猜想检查拒绝空采样与非有限结果，蒙特卡洛严格核对样本数，简单图工具拒绝静默覆盖重复边，CVaR保留失败状态。
   Numerical edge cases now fail explicitly: undefined conjecture evaluations, mismatched simulation outputs and duplicate graph edges. Grey-model response differences remain stable near zero, and infeasible portfolio solves retain their solver status.
 

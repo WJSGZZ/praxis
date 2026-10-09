@@ -56,8 +56,14 @@ def free_travel(design, cfg):
     return travel
 
 
-def queue_inputs(model, counts, shares, cfg):
-    flows = np.array(model.routing(counts, shares, cfg)['type_lane_flow_vph'])
+def queue_inputs(model, counts, shares, cfg, *, slots=None, design=None):
+    # Compare event engines with the same effective routing policy. For balanced
+    # finite storage, occupancy is an input to routing as well as to the queue.
+    route = (model.operating_routing(counts, shares, cfg, cfg['heavy_vph'],
+                                    slots=slots, design=design)
+             if cfg.get('routing_strategy') == 'balanced'
+             else model.routing(counts, shares, cfg))
+    flows = np.array(route['type_lane_flow_vph'])
     types, groups, weights = [], [], []
     for g in range(len(counts)):
         # Matches the finite-model caller; old simulate uses a different global
@@ -136,7 +142,8 @@ def audit(result, model, finite):
     # must still cover recovery, entrance waiting and taper travel until exit.
     design = result['expansion']
     shares = cfg['payment_scenarios']['nominal']
-    types, groups, weights = queue_inputs(model, np.array(design['counts']), shares, cfg)
+    types, groups, weights = queue_inputs(model, np.array(design['counts']), shares, cfg,
+                                         slots=4, design=design)
     travel = free_travel(design, cfg)
     stream = model.arrival_stream(cfg['heavy_vph'], shares, cfg, cfg['seeds'][0])
     ready_order, admissions, actual_exits = [], {}, {}
@@ -206,7 +213,10 @@ def audit(result, model, finite):
         limits.append(dict(counts=counts.tolist(), scenario=scenario, seed=seed,
                            max_gap=max(abs(old[k] - large[k]) for k in fields),
                            blocked_s=large['total_booth_blocked_s']))
-        small = finite.run(stream, types, groups, weights, travel, model.headway(0, cfg), cfg['horizon_s'], 4)
+        small_types, small_groups, small_weights = queue_inputs(
+            model, counts, shares, cfg, slots=4, design=design)
+        small = finite.run(stream, small_types, small_groups, small_weights,
+                           travel, model.headway(0, cfg), cfg['horizon_s'], 4)
         bounded.append(small)
     add('same stream large K limit', all(x['max_gap'] < 1e-9 and x['blocked_s'] == 0 for x in limits),
         dict(cases=len(limits), max_abs_gap=max(x['max_gap'] for x in limits)))
