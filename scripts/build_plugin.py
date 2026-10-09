@@ -25,7 +25,7 @@ TREES = {
     'templates': {'.tex', '.jsonl', '.json'},
     'examples': {'.py'},
     'evals': {'.py', '.md', '.json'},
-    'demos/assets_src': {'.py', '.json', '.md'},
+    'demos/assets_src': {'.py', '.json', '.md', '.png'},
     'demos': {'.md'},
     'third_party': {'.json'},
     'third_party/licenses': None,

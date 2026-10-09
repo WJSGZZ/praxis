@@ -1,16 +1,18 @@
 <div align="center">
 
+<img src="demos/assets_src/praxis-logo.png" alt="Praxis：向未知延伸的开放曲线" width="160">
+
 # Praxis
 
 ### 让 AI Agent 成为你的数学建模伙伴。
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.3.0-3F6B6B?style=flat-square)](CHANGELOG.md)
-[![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-7A5C3E?style=flat-square)](https://agent-plugins.org/specification)
+[![Version](https://img.shields.io/badge/Version-0.3.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
-[![Paper](https://img.shields.io/badge/Paper-LaTeX-5B6B7F?style=flat-square)](templates/)
-[![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
+[![Paper](https://img.shields.io/badge/Paper-LaTeX-C8533B?style=flat-square)](templates/)
+[![License](https://img.shields.io/badge/License-MIT-302B31?style=flat-square)](LICENSE)
 
 **简体中文** · [English](README.en.md)
 
@@ -227,7 +229,7 @@ praxis-plugin/
 
 ## 可靠性
 
-- 280 余项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
+- 550 余项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
 - 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
 - 每个结论标明依据与适用条件；失败的运行保留，不改写。
 

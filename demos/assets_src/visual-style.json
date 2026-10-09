@@ -5,48 +5,15 @@
   ],
   "colors": {
     "background": "#F6F5F0",
-    "ink": "#1F262B",
+    "ink": "#302B31",
     "secondary": "#5E686E",
     "rule": "#D8D8D2",
-    "accent": "#166B5D",
-    "comparison": "#A5683E"
+    "accent": "#263B9B",
+    "comparison": "#C8533B"
   },
   "profiles": {
-    "contest": {
-      "fonts": {
-        "zh": {
-          "serif": "Songti SC",
-          "sans": "PingFang SC"
-        },
-        "en": {
-          "serif": "DejaVu Serif",
-          "sans": "DejaVu Sans"
-        }
-      }
-    },
+    "contest": {},
     "research": {
-      "fonts": {
-        "zh": {
-          "serif": {
-            "family": "Songti SC",
-            "postscript": "STSongti-SC-Regular"
-          },
-          "sans": {
-            "family": "PingFang SC",
-            "postscript": "PingFangSC-Regular"
-          }
-        },
-        "en": {
-          "serif": {
-            "family": "Baskerville",
-            "postscript": "Baskerville"
-          },
-          "sans": {
-            "family": "Helvetica Neue",
-            "postscript": "HelveticaNeue"
-          }
-        }
-      },
       "typography": {
         "title": 64,
         "subtitle": 23,
@@ -83,6 +50,24 @@
         "Exact named font faces; no synthetic weight, silent fallback, redistributed commercial font files or decoration standing in for evidence.",
         "No interpolation is implied by guide lines; mark their checkpoint meaning. Review original, 900px and 390px sizes."
       ]
+    }
+  },
+  "fonts": {
+    "chinese_serif": {
+      "family": "Songti SC",
+      "postscript": "STSongti-SC-Regular"
+    },
+    "chinese_sans": {
+      "family": "Hiragino Sans GB",
+      "postscript": "HiraginoSansGB-W3"
+    },
+    "latin_serif": {
+      "family": "Baskerville",
+      "postscript": "Baskerville"
+    },
+    "latin_sans": {
+      "family": "Helvetica Neue",
+      "postscript": "HelveticaNeue"
     }
   }
 }

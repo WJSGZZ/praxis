@@ -1,16 +1,18 @@
 <div align="center">
 
+<img src="demos/assets_src/praxis-logo.png" alt="Praxis: an open curve reaching beyond the known" width="160">
+
 # Praxis
 
 ### A modeling workflow your agent can put to work.
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Version](https://img.shields.io/badge/Version-0.3.0-3F6B6B?style=flat-square)](CHANGELOG.md)
-[![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-7A5C3E?style=flat-square)](https://agent-plugins.org/specification)
+[![Version](https://img.shields.io/badge/Version-0.3.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
-[![Paper](https://img.shields.io/badge/Paper-LaTeX-5B6B7F?style=flat-square)](templates/)
-[![License](https://img.shields.io/badge/License-MIT-526B55?style=flat-square)](LICENSE)
+[![Paper](https://img.shields.io/badge/Paper-LaTeX-C8533B?style=flat-square)](templates/)
+[![License](https://img.shields.io/badge/License-MIT-302B31?style=flat-square)](LICENSE)
 
 [简体中文](README.md) · **English**
 
@@ -228,7 +230,7 @@ The agent coordinates the work using deterministic scripts and your project's ru
 
 ## Reliability
 
-- 280+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
+- 550+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 
