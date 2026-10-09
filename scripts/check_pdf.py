@@ -80,7 +80,7 @@ def inspect_pdf(path, max_pages=None, max_bytes=None, forbidden=(), forbidden_fo
             if not text.strip():
                 warnings.append(f'Page {number}: no extracted text; image review required')
             pages.append({'page':number,'size_points':[float(page.mediabox.width),float(page.mediabox.height)],'text_characters':len(text),'text_backend':extracted[number - 1]['text_backend']})
-        searchable='\n'.join(texts)+json.dumps(metadata)
+        searchable='\n'.join(texts)+json.dumps(metadata, ensure_ascii=False)
         for term in forbidden:
             if term and term.casefold() in searchable.casefold():
                 errors.append(f'Configured forbidden term found: {term}')

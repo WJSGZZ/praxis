@@ -82,7 +82,19 @@
   "numerical_results_reused": true,
   "native_compiler": "passed",
   "system_xelatex": "passed",
-  "cross_platform_ci": "pending",
+  "cross_platform_ci": {
+   "status": "passed",
+   "source_commit": "8ab0c4a1d5e7a24987ab1abef9674e97dcc984d7",
+   "run": "https://github.com/WJSGZZ/praxis/actions/runs/37867826159",
+   "systems": [
+    "Windows 2025 Server x86_64",
+    "Ubuntu x86_64",
+    "macOS arm64"
+   ],
+   "compiler": "Tectonic 0.17.0",
+   "font_file_hashes_verified": true,
+   "all_four_documents_text_and_72dpi_page_rasters_equal": true
+  },
   "text_backend": "pdfium-standard-cjk-mapping"
  },
  "layout_revision_history": [

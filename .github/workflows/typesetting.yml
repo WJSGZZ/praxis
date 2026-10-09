@@ -33,3 +33,23 @@ jobs:
             .session/typesetting/*.txt
             .session/typesetting/*.log
           include-hidden-files: true
+
+  compare:
+    needs: typeset
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: typesetting-*
+          path: .session/platform-artifacts
+      - run: uv run --locked python .github/scripts/typesetting.py --compare .session/platform-artifacts
+        env:
+          PYTHONPATH: .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-platform-verification
+          path: .session/platform-artifacts/cross-platform-verification.json
+          include-hidden-files: true

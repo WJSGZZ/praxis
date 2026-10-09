@@ -90,8 +90,52 @@ def main(compiler=None):
     (OUT / 'verification.json').write_text(json.dumps({'platform': platform.platform(), 'compiler': 'Tectonic 0.17.0', 'checks': checks}, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
+def compare_artifacts(directory):
+    import re
+    import pypdfium2 as pdfium
+    folders = sorted(Path(directory).glob('typesetting-*'))
+    if len(folders) != 3:
+        raise ValueError('Expected actual artifacts from all three operating systems')
+    results = {}
+    reference = None
+    for folder in folders:
+        manifest = json.loads((folder / 'verification.json').read_text())
+        fingerprints = {}
+        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template'):
+            path = folder / (name + '.pdf')
+            if hashlib.sha256(path.read_bytes()).hexdigest() != manifest['checks'][name]['sha256']:
+                raise ValueError('Artifact differs from runner verification: ' + str(path))
+            pages = []
+            with pdfium.PdfDocument(str(path)) as document:
+                for page in document:
+                    textpage = page.get_textpage()
+                    try:
+                        text = re.sub(r'\s+', '', textpage.get_text_range())
+                        image = page.render(scale=1).to_pil()
+                        pages.append({'text_sha256': hashlib.sha256(text.encode()).hexdigest(),
+                                      'render_sha256_72dpi': hashlib.sha256(image.tobytes()).hexdigest(),
+                                      'image_size': list(image.size), 'image_mode': image.mode})
+                    finally:
+                        textpage.close()
+                        page.close()
+            fingerprints[name] = pages
+        results[folder.name] = {'platform': manifest['platform'], 'pages': fingerprints}
+        if reference is None:
+            reference = fingerprints
+        elif fingerprints != reference:
+            raise ValueError('Text or rendered layout differs across platforms: ' + folder.name)
+    output = Path(directory) / 'cross-platform-verification.json'
+    output.write_text(json.dumps({'all_three_match': True, 'scope': 'Page text (whitespace normalized) and PDFium rasters at 72 dpi; not mathematical or host-installation certification', 'results': results}, indent=2), encoding='utf-8')
+    print('PASS: three-platform text and page rasters agree')
+
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--compiler', help='Use an existing Tectonic 0.17.0 executable')
-    main(parser.parse_args().compiler)
+    parser.add_argument('--compare', type=Path, help='Compare artifacts from the three actual CI jobs')
+    args = parser.parse_args()
+    if args.compare:
+        compare_artifacts(args.compare)
+    else:
+        main(args.compiler)

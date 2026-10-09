@@ -22,3 +22,15 @@ def test_standard_cjk_mapping_is_readable_and_used_for_anonymity():
 def test_problem_intake_preserves_chinese_from_standard_collection(tmp_path):
     case = Path(init_case(tmp_path, 'cjk', FIXTURE)['case'])
     assert '数学建模与独立验证' in (case / 'planning/problem-extracted.txt').read_text()
+
+
+def test_chinese_identifying_metadata_is_not_hidden_by_json_escaping(tmp_path):
+    from pypdf import PdfWriter
+    writer = PdfWriter()
+    writer.add_blank_page(width=300, height=400)
+    writer.add_metadata({'/Author': '测试大学'})
+    path = tmp_path / 'metadata.pdf'
+    with path.open('wb') as stream:
+        writer.write(stream)
+    report = inspect_pdf(path, forbidden=['测试大学'])
+    assert report['errors'] == ['Configured forbidden term found: 测试大学']
