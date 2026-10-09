@@ -32,3 +32,15 @@ uv run --locked python -m scripts.build_plugin --host codex --output dist/codex/
 Keep the public repository useful to contributors: tests, CI and build scripts belong in version control alongside the modeling code. Local notes and user cases belong outside the distributable source, while generated files go into ignored output directories.
 
 Build each host package through `scripts.build_plugin`; do not zip an entire checkout. Export rules decide what ships, independently of Git's ignore rules. The commands above run checks and produce a Codex package in a fresh destination; the [English setup guide](references/installation.en.md) covers other agents. Verify the exported package, not just the source, and keep user problems and run evidence in their own workspace.
+
+## 维护边界与变更
+
+保持模块化单体：入口负责选择能力与协调；`modeling/` 负责有输入条件和保证范围的计算；pipeline负责执行快照与有效性；专业技能共用方法线；赛事适配负责当届交付；研究与评测保存证据。只在真实重复或职责冲突时拆模块，不为覆盖清单先拆目录。
+
+信息按种类归属：推理与变更影响以 `references/methods.md` 为准；数值执行契约以 `references/automation.md` 为准；具体题目的定义在其任务记录，当前有效结果指向实际运行，贡献另记事件；公开展示从有效证据生成。区分官方硬规则、数学／执行不变量、工作策略和风格默认，不把默认配色或章节习惯升级为官方要求。变更规则时在所属源替代旧规则或明确条件，其他入口引用，不在多处追加互相冲突的完整版。
+
+每次修改先定位共同根因与实际下游，再实施有限而完整的变更：核对调用方、返回状态、文档与生成索引、已接受结果和最终展示；测试包含独立答案和明确拒绝的坏输入。保存原审查意见，确认后才修；失败修复过程也保留，不能用最终测试通过抹掉它。跨模块且可能反复争论的决定在项目的唯一状态入口记录理由、替代方案与代价，普通润色不建额外决策文件。
+
+研究用途与完成方式分别标记。少量旗舰维护当前结论、复现与展示；普通研究归档固定源码、环境和论文版本，不因插件升级全部重排。确认受影响或主动迁移时才创建修订关系，保留历史成品。`research/` 不默认进入安装包；同题参考论文、购买资料和私人交互不自动公开。干净检出和独立目录保证版本清楚，不能据此声称答案或模型预训练已隔离。
+
+Treat a change as one complete correction: trace the cause through its callers, evidence and published claims, then test both a known valid case and the failure that exposed it. Keep the shared method and execution contracts authoritative. Frozen research archives retain their original environments; only affected or explicitly migrated artifacts need rebuilding. Repository cleanliness is version control evidence, not proof of an unseen or isolated evaluation.

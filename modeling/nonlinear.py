@@ -75,12 +75,18 @@ def knapsack(values: Sequence[float], weights: Sequence[int], capacity: int, *, 
 
 
 def min_cost_flow(edges: Sequence[Sequence[float]], demand: dict) -> dict:
-    """Minimum-cost flow. edges: [u, v, capacity, cost]; demand: {node: net demand} (negative for supply), summing to zero. Integer data give an integer flow."""
+    """Minimum-cost flow on a simple directed graph; duplicate endpoints are rejected.
+
+    edges: [u, v, capacity, cost]; demand: {node: net demand} (negative for supply), summing to zero. Integer data give an integer flow."""
     import networkx as nx
     g = nx.DiGraph()
     for node, d in demand.items():
         g.add_node(node, demand=d)
     for u, v, cap, cost in edges:
+        if g.has_edge(u, v):
+            raise ValueError('Parallel or duplicate edges are not supported; supply a simple graph')
+        if not np.isfinite([cap, cost]).all() or cap < 0:
+            raise ValueError('Finite edge costs and finite nonnegative capacities required')
         g.add_edge(u, v, capacity=cap, weight=cost)
     try:
         cost, flow = nx.network_simplex(g)

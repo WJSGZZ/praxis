@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修复独立审查发现的数值边界：GM(1,1)近零发展系数使用稳定差分；常量序列的后验比值不再伪造。猜想检查拒绝空采样与非有限结果，蒙特卡洛严格核对样本数，简单图工具拒绝静默覆盖重复边，CVaR保留失败状态。
+  Numerical edge cases now fail explicitly: undefined conjecture evaluations, mismatched simulation outputs and duplicate graph edges. Grey-model response differences remain stable near zero, and infeasible portfolio solves retain their solver status.
+
 - 正式论文同时固定 Tectonic 0.17.0 与完整 TeX 资源包，拒绝静默更换编译器；冻结校验同次构建记录、源码和 PDF 哈希。国赛、浴缸与收费站成品同步重排，数值模型不重算；跨系统检查涵盖六份文档并比较逐页文字及渲染。
   Canonical paper builds pin both the compiler and the full TeX bundle. Layout-gated snapshots require a matching build receipt; CI compares six documents across Windows, Linux and macOS.
 

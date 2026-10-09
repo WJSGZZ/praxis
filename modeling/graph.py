@@ -1,11 +1,22 @@
-"""Small network models: shortest path, maximum flow with a minimum cut, minimum spanning tree."""
+"""Simple graphs only; parallel/duplicate edges are rejected, never overwritten.
+
+Small network models: shortest path, maximum flow with a minimum cut, minimum spanning tree."""
 import networkx as nx
+import math
+
+
+def _simple_edge(g, u, v, value):
+    if not math.isfinite(value):
+        raise ValueError('Edge values must be finite')
+    if g.has_edge(u, v):
+        raise ValueError('Parallel or duplicate edges are not supported; supply a simple graph')
 
 
 def shortest_path(edges, source, target, *, directed=True):
     """edges: [[u, v, weight], ...]. Negative weights are rejected rather than silently mishandled."""
     g = nx.DiGraph() if directed else nx.Graph()
     for u, v, w in edges:
+        _simple_edge(g, u, v, w)
         if w < 0:
             raise ValueError('Negative edge weight: use a method that handles it explicitly')
         g.add_edge(u, v, weight=w)
@@ -19,6 +30,7 @@ def max_flow(edges, source, sink):
     """edges: [[u, v, capacity], ...] (directed). Returns the flow value and one minimum cut; they agree by max-flow min-cut."""
     g = nx.DiGraph()
     for u, v, cap in edges:
+        _simple_edge(g, u, v, cap)
         if cap < 0:
             raise ValueError('Negative capacity')
         g.add_edge(u, v, capacity=cap)
@@ -30,6 +42,7 @@ def max_flow(edges, source, sink):
 def minimum_spanning_tree(edges):
     g = nx.Graph()
     for u, v, w in edges:
+        _simple_edge(g, u, v, w)
         g.add_edge(u, v, weight=w)
     if not nx.is_connected(g):
         raise ValueError('Graph is not connected: no spanning tree')

@@ -89,6 +89,8 @@ def cvar_portfolio(returns, target: float, *, alpha: float = 0.95, long_only: bo
     Loss is the negative portfolio return; CVaR_alpha is the mean of the worst (1 - alpha) share of scenarios. The answer is
     conditional on the scenarios supplied; it is not a forecast."""
     R = np.asarray(returns, float)
+    if R.ndim != 2 or not all(R.shape) or not np.isfinite(R).all() or not np.isfinite(target):
+        raise ValueError('returns must be a nonempty finite scenario matrix and target finite')
     S, n = R.shape
     if not 0 < alpha < 1:
         raise ValueError('alpha must lie in (0, 1)')
@@ -99,10 +101,12 @@ def cvar_portfolio(returns, target: float, *, alpha: float = 0.95, long_only: bo
     A_eq = [np.r_[np.ones(n), 0, np.zeros(S)].tolist()]
     bounds = [(0, None) if long_only else (None, None)] * n + [(None, None)] + [(0, None)] * S
     r = optimize.solve_lp(c.tolist(), A_ub=A_ub.tolist(), b_ub=b_ub.tolist(), A_eq=A_eq, b_eq=[1.0], bounds=bounds)
+    if not r['success']:
+        return r
     w = np.array(r['x'][:n])
     losses = -(R @ w)
     k = max(1, int(math.ceil((1 - alpha) * S)))
-    return dict(weights=w.tolist(), cvar=float(r['objective']), var=float(r['x'][n]), expected_return=float(R.mean(axis=0) @ w),
+    return dict(success=True, status=r['status'], message=r['message'], certified=r['certified'], weights=w.tolist(), cvar=float(r['objective']), var=float(r['x'][n]), expected_return=float(R.mean(axis=0) @ w),
                 empirical_tail_mean=float(np.sort(losses)[::-1][:k].mean()))
 
 

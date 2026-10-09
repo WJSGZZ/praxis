@@ -93,14 +93,22 @@ def bootstrap_ci(data: Sequence[float], statistic: str = 'mean', *, n_resamples:
 
 
 def monte_carlo(model: Callable, distributions: dict, *, n: int = 20000, seed: int = 2027, threshold: float | None = None) -> dict:
-    """Propagate input distributions through model(dict of arrays) -> array. distributions: {name: {'dist': 'norm'|'uniform'|'lognorm'|'triang'|..., 'params': {...}}}
+    """Propagate inputs through model(dict of arrays) -> exactly n finite scalar outcomes.
+
+    distributions: {name: {'dist': 'norm'|'uniform'|'lognorm'|'triang'|..., 'params': {...}}}
     (scipy.stats names and keywords: norm loc/scale, uniform loc/scale, expon scale, triang c/loc/scale, ...).
 
     Reports the mean with its Monte Carlo standard error, quantiles, optional exceedance probability with an interval, and
     whether the estimate has settled (second half of the sample against the first)."""
+    if isinstance(n, bool) or not isinstance(n, (int, np.integer)) or n < 2:
+        raise ValueError('n must be an integer of at least two')
+    if threshold is not None and not np.isfinite(threshold):
+        raise ValueError('threshold must be finite')
     rng = np.random.default_rng(seed)
     sample = {k: getattr(stats, d['dist'])(**d.get('params', {})).rvs(size=n, random_state=rng) for k, d in distributions.items()}
     y = np.asarray(model(sample), float)
+    if y.shape != (n,) or not np.isfinite(y).all():
+        raise ValueError('model must return exactly n finite scalar outcomes')
     mean, se = y.mean(), y.std(ddof=1) / np.sqrt(n)
     h = n // 2
     out = dict(n=n, mean=float(mean), mc_standard_error=float(se), sd=float(y.std(ddof=1)), quantiles={q: float(np.quantile(y, q)) for q in (.025, .05, .5, .95, .975)},

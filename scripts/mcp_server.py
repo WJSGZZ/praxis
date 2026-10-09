@@ -159,17 +159,29 @@ def _route_graph(a):
 
 def _conjecture(a):
     names, bounds = a['names'], a['bounds']
+    count = a.get('points', 5000)
+    tol = a.get('tolerance', 1e-9)
+    box = np.asarray(bounds, float)
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+        raise ValueError('points must be a positive integer')
+    if not np.isfinite(tol) or tol < 0:
+        raise ValueError('tolerance must be finite and nonnegative')
+    if box.shape != (len(names), 2) or not len(names) or not np.isfinite(box).all() or (box[:, 0] > box[:, 1]).any():
+        raise ValueError('bounds must match names and form a finite ordered box')
     left, right = _scalar(a['lhs'], names), _scalar(a['rhs'], names)
     rng = np.random.default_rng(a.get('seed', 2027))
     lo, hi = np.asarray(bounds, float).T
     worst, where = 0.0, None
-    for _ in range(a.get('points', 5000)):
+    for _ in range(count):
         x = lo + (hi - lo) * rng.random(len(lo))
         u, v = left(x), right(x)
+        if not np.isfinite([u, v]).all():
+            raise ValueError('Conjecture evaluations must be finite real scalars')
         gap = abs(u - v) if a['relation'] == '==' else (u - v if a['relation'] == '<=' else v - u)
+        if not np.isfinite(gap):
+            raise ValueError('Conjecture comparison exceeds finite numeric range')
         if gap > worst:
             worst, where = gap, x.tolist()
-    tol = a.get('tolerance', 1e-9)
     return dict(holds=worst <= tol, proved=worst > tol, worst_violation=worst, at=where, precision='double',
                 note='Double precision; use modeling.experiment.test_conjecture for high precision.' if worst <= tol else 'Violation found.')
 
@@ -284,13 +296,13 @@ TOOLS = dict([
           {'expression': {'type': 'string', 'description': 'e.g. "2*a + b*b"; functions: exp log sqrt sin cos tan abs minimum maximum'},
            'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}},
           ['expression', 'names', 'bounds'], _sobol),
-    _tool('shortest_path', 'Dijkstra shortest path; edges [[u, v, weight]], non-negative weights.',
+    _tool('shortest_path', 'Dijkstra shortest path of a simple graph (no duplicate edges); edges [[u, v, weight]], non-negative weights.',
           {'edges': EDGES, 'source': {}, 'target': {}, 'directed': {'type': 'boolean'}}, ['edges', 'source', 'target'],
           lambda a: graph.shortest_path(a['edges'], a['source'], a['target'], directed=a.get('directed', True))),
-    _tool('max_flow', 'Maximum flow and a minimum cut; edges [[u, v, capacity]].',
+    _tool('max_flow', 'Maximum flow and a minimum cut of a simple directed graph (no duplicate edges); edges [[u, v, capacity]].',
           {'edges': EDGES, 'source': {}, 'sink': {}}, ['edges', 'source', 'sink'],
           lambda a: graph.max_flow(a['edges'], a['source'], a['sink'])),
-    _tool('minimum_spanning_tree', 'Minimum spanning tree of a connected undirected graph; edges [[u, v, weight]].',
+    _tool('minimum_spanning_tree', 'Minimum spanning tree of a connected simple undirected graph (no duplicate edges); edges [[u, v, weight]].',
           {'edges': EDGES}, ['edges'], lambda a: graph.minimum_spanning_tree(a['edges'])),
     _tool('queue_mmc', 'M/M/c steady-state queue: utilization, Erlang C, mean waits and lengths.',
           {'arrival_rate': _num(), 'service_rate': _num(), 'servers': {'type': 'integer'}}, ['arrival_rate', 'service_rate', 'servers'],
@@ -302,7 +314,7 @@ TOOLS = dict([
     _tool('sir_fit', 'Fit SIR beta and gamma to daily infected counts; reports whether the data can separate them.',
           {'infected': SERIES, 'population': _num()}, ['infected', 'population'],
           lambda a: epidemic.fit_sir(a['infected'], a['population'])),
-    _tool('gm11_forecast', 'Grey GM(1,1) forecast of a short positive series with the posterior-error grade. Compare with backtest_baselines first.',
+    _tool('gm11_forecast', 'Grey GM(1,1) forecast of a short finite positive series; posterior diagnostics are null for constant input. Compare with backtest_baselines first.',
           {'series': SERIES, 'horizon': {'type': 'integer'}}, ['series'], lambda a: forecast.gm11(a['series'], a.get('horizon', 3))),
     _tool('backtest_baselines', 'Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines.',
           {'series': SERIES, 'horizon': {'type': 'integer'}, 'min_train': {'type': 'integer'}, 'season': {'type': 'integer'}}, ['series', 'horizon'],
@@ -390,7 +402,7 @@ TOOLS = dict([
     _tool('knapsack', 'Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1).',
           {'values': SERIES, 'weights': {'type': 'array', 'items': {'type': 'integer'}}, 'capacity': {'type': 'integer'}, 'copies': {'type': 'array', 'items': {'type': 'integer'}}}, ['values', 'weights', 'capacity'],
           lambda a: nonlinear.knapsack(a['values'], a['weights'], a['capacity'], copies=a.get('copies'))),
-    _tool('min_cost_flow', 'Minimum-cost flow; edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero. Integer data give an integer flow.',
+    _tool('min_cost_flow', 'Minimum-cost flow on a simple directed graph (no duplicate edges); edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero. Integer data give an integer flow.',
           {'edges': MATRIX, 'demand': {'type': 'object'}}, ['edges', 'demand'], lambda a: nonlinear.min_cost_flow(a['edges'], a['demand'])),
     _tool('robust_lp', 'LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box. Compare the objective across gamma to see the price of robustness.',
           {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'delta': MATRIX, 'gamma': _num(), 'maximize': {'type': 'boolean'}}, ['c', 'A_ub', 'b_ub', 'delta', 'gamma'],

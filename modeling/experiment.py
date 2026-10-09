@@ -149,6 +149,13 @@ def test_conjecture(lhs: Callable, rhs: Callable, relation: str, bounds: Sequenc
     by the worst absolute difference, an inequality by the worst violation."""
     if relation not in ('==', '<=', '>='):
         raise ValueError("relation must be '==', '<=' or '>='")
+    if isinstance(points, bool) or not isinstance(points, (int, np.integer)) or points < 1:
+        raise ValueError('points must be a positive integer')
+    if not mp.isfinite(tolerance) or tolerance < 0:
+        raise ValueError('tolerance must be finite and nonnegative')
+    box = np.asarray(bounds, float)
+    if box.ndim != 2 or box.shape[1] != 2 or not len(box) or not np.isfinite(box).all() or (box[:, 0] > box[:, 1]).any():
+        raise ValueError('bounds must be a nonempty finite ordered box')
     rng = np.random.default_rng(seed)
     old = mp.mp.dps
     mp.mp.dps = dps
@@ -157,6 +164,8 @@ def test_conjecture(lhs: Callable, rhs: Callable, relation: str, bounds: Sequenc
         for _ in range(points):
             x = [mp.mpf(float(rng.uniform(lo, hi))) for lo, hi in bounds]
             a, b = lhs(*x), rhs(*x)
+            if not mp.isfinite(a) or not mp.isfinite(b) or mp.im(a) != 0 or mp.im(b) != 0:
+                raise ValueError('Conjecture evaluations must be finite real scalars')
             gap = abs(a - b) if relation == '==' else (a - b if relation == '<=' else b - a)
             if gap > worst:
                 worst, where = gap, [float(v) for v in x]

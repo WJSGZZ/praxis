@@ -16,13 +16,13 @@
 | `entropy_weights` | matrix*, directions | Entropy weights from a decision matrix (rows alternatives, columns criteria); a dispersion measure, not importance |
 | `evaluate_alternatives` | matrix*, weights*, directions*, alternatives, criteria, trials, weight_sigma, seed | TOPSIS ranking with min-max normalisation and rank stability under perturbed weights |
 | `sobol_sensitivity` | expression*, names*, bounds*, n, seed | Sobol indices for a scalar arithmetic expression over independent uniform inputs |
-| `shortest_path` | edges*, source*, target*, directed | Dijkstra shortest path; edges [[u, v, weight]], non-negative weights |
-| `max_flow` | edges*, source*, sink* | Maximum flow and a minimum cut; edges [[u, v, capacity]] |
-| `minimum_spanning_tree` | edges* | Minimum spanning tree of a connected undirected graph; edges [[u, v, weight]] |
+| `shortest_path` | edges*, source*, target*, directed | Dijkstra shortest path of a simple graph (no duplicate edges); edges [[u, v, weight]], non-negative weights |
+| `max_flow` | edges*, source*, sink* | Maximum flow and a minimum cut of a simple directed graph (no duplicate edges); edges [[u, v, capacity]] |
+| `minimum_spanning_tree` | edges* | Minimum spanning tree of a connected simple undirected graph (no duplicate edges); edges [[u, v, weight]] |
 | `queue_mmc` | arrival_rate*, service_rate*, servers* | M/M/c steady-state queue: utilization, Erlang C, mean waits and lengths |
 | `sir_simulate` | beta*, gamma*, population*, infected0*, days* | SIR epidemic model; daily S, I, R and R0 |
 | `sir_fit` | infected*, population* | Fit SIR beta and gamma to daily infected counts; reports whether the data can separate them |
-| `gm11_forecast` | series*, horizon | Grey GM(1,1) forecast of a short positive series with the posterior-error grade |
+| `gm11_forecast` | series*, horizon | Grey GM(1,1) forecast of a short finite positive series; posterior diagnostics are null for constant input |
 | `backtest_baselines` | series*, horizon*, min_train, season | Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines |
 | `probe_structure` | property*, expression*, names*, bounds*, variable, permutation, rhs | Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs |
 | `dimensional_analysis` | matrix*, names* | Dimensionless groups (Buckingham Pi) from a dimension matrix: rows are base dimensions, columns are variables |
@@ -49,7 +49,7 @@
 | `markov_absorption` | matrix*, absorbing* | Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states |
 | `minimize_nlp` | objective*, names*, bounds*, constraints, starts, seed, maximize | Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0) |
 | `knapsack` | values*, weights*, capacity*, copies | Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1) |
-| `min_cost_flow` | edges*, demand* | Minimum-cost flow; edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero |
+| `min_cost_flow` | edges*, demand* | Minimum-cost flow on a simple directed graph (no duplicate edges); edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero |
 | `robust_lp` | c*, A_ub*, b_ub*, delta*, gamma*, maximize | LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box |
 | `solve_mdp` | P*, R*, horizon, discount, terminal, maximize | Finite-state decision process: P[action][state][next state], R[state][action] |
 | `hypothesis_test` | kind*, a, b, groups, table, alpha | Test with effect size and assumption flags |

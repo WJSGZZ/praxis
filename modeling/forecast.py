@@ -7,22 +7,30 @@ def gm11(series, horizon=3):
     """Grey GM(1,1) on a short positive series, with the usual posterior-error screen.
 
     A small C (posterior ratio) and large P are conventional screening values; a good fit on a
-    handful of points does not show that a trend continues. Compare it with a baseline first."""
+    handful of points does not show that a trend continues. Compare it with a baseline first.
+    C/P are undefined for constant input and returned as None, with grade not_applicable."""
     x = np.asarray(series, float)
-    if len(x) < 4 or (x <= 0).any():
+    if x.ndim != 1 or len(x) < 4 or not np.isfinite(x).all() or (x <= 0).any():
         raise ValueError('GM(1,1) needs at least 4 strictly positive values')
+    if isinstance(horizon, bool) or not isinstance(horizon, (int, np.integer)) or horizon < 1:
+        raise ValueError('horizon must be a positive integer')
     x1 = np.cumsum(x)
     z = (x1[1:] + x1[:-1]) / 2
     a, b = np.linalg.lstsq(np.column_stack([-z, np.ones(len(z))]), x[1:], rcond=None)[0]
     k = np.arange(len(x) + horizon)
-    x1hat = (x[0] - b / a) * np.exp(-a * k) + b / a
-    xhat = np.r_[x1hat[0], np.diff(x1hat)]
+    # Difference the response analytically: subtracting two b/a-sized values
+    # destroys precision for a near zero (including constant input).
+    ratio = -np.expm1(-a) / a if a != 0 else 1.0
+    with np.errstate(over='ignore', invalid='ignore'):
+        xhat = np.r_[x[0], (b-a*x[0])*np.exp(-a*(k[1:]-1))*ratio]
+    if not np.isfinite(xhat).all():
+        raise ValueError('GM(1,1) response exceeds finite numeric range')
     resid = x - xhat[:len(x)]
-    c = float(resid.std() / x.std()) if x.std() > 0 else float('inf')
-    p = float(np.mean(np.abs(resid - resid.mean()) < .6745 * x.std()))
+    c = float(resid.std() / x.std()) if x.std() > 0 else None
+    p = float(np.mean(np.abs(resid - resid.mean()) < .6745 * x.std())) if x.std() > 0 else None
     return dict(development_coefficient=float(a), grey_input=float(b), fitted=xhat[:len(x)].tolist(), forecast=xhat[len(x):].tolist(),
                 posterior_ratio_c=c, small_error_probability_p=p,
-                grade='good' if c < .35 and p > .95 else 'ok' if c < .5 and p > .8 else 'marginal' if c < .65 and p > .7 else 'poor',
+                grade='not_applicable' if c is None else 'good' if c < .35 and p > .95 else 'ok' if c < .5 and p > .8 else 'marginal' if c < .65 and p > .7 else 'poor',
                 mean_abs_error=float(np.abs(resid).mean()))
 
 
