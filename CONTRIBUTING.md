@@ -27,6 +27,8 @@ uv run --locked python -m scripts.build_plugin --host codex --output dist/codex/
 
 输出目录须尚不存在；其他宿主见[安装指南](references/installation.md)。发布包由 `scripts/build_plugin.py` 的资源选择规则生成，不是对仓库或工作区整体压缩。测试和CI留在源码仓库，用户工作数据留在用户工作区。修改打包规则时，检查必要资源、排除边界、相对链接、最终哈希和实际工具启动。
 
+需要隔离测试临时目录时，用源码根目录内的新路径，例如 `pytest --basetemp=.session/check-transport`。部分集成测试主动检查案例必须留在所选工作区；把 `--basetemp` 移到工作区外会触发该保护，不能通过放宽路径边界来修复测试环境。
+
 发布前按改动运行 `scripts.release_check` 和相关长检查，核对案例记录未漂移。提交推送、版本发布与商店上架分别处理，不由一次本地导出自动触发。 美赛排版 CI 按 `scripts/contest_rules.py` 的解答页数边界验收，AI 使用报告单独计页，不把历史案例的 PDF 总页数设为硬规则；三系统成品仍逐页比较文字与栅格。
 
 ## Working on the source

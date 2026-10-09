@@ -1,0 +1,113 @@
+{
+  "source_commit": "2bb41fb277ff8c9698a431bac6aa22fd38a9efe4",
+  "working_tree_clean": true,
+  "p": {
+    "L": 1.5,
+    "V": 0.16425000000000003,
+    "C": 686565.0000000001,
+    "Ha": 37.141000000000005,
+    "Hb": 28.749999999999993,
+    "Ta": 22.0,
+    "Tb": 34.0,
+    "Tin": 50.0,
+    "T0": 40.0,
+    "horizon": 1800.0,
+    "floor": 39.0,
+    "ceiling": 41.0,
+    "span": 1.5,
+    "jet_m": 0.15,
+    "rho_cp": 4180000.0
+  },
+  "diffusivities": [
+    0.0003,
+    0.001,
+    0.003
+  ],
+  "profiles": [
+    "uniform",
+    "localized_body"
+  ],
+  "cells": [
+    40,
+    80,
+    160
+  ],
+  "starts_s": [
+    0,
+    120,
+    240,
+    360,
+    480,
+    600,
+    720,
+    840,
+    960,
+    1080,
+    1200
+  ],
+  "rates_lpm": [
+    0.0,
+    0.2,
+    0.4,
+    0.6000000000000001,
+    0.8,
+    1.0,
+    1.2000000000000002,
+    1.4000000000000001,
+    1.6,
+    1.8,
+    2.0,
+    2.2,
+    2.4000000000000004,
+    2.6,
+    2.8000000000000003,
+    3.0
+  ],
+  "floor_target_c": 39.03,
+  "sample_s": 5,
+  "producer_seconds": 90,
+  "checker_seconds": 90,
+  "compute_total_seconds": 300,
+  "policies": {
+    "original_constant": [
+      [
+        1800.0,
+        0.8047484179843053
+      ]
+    ],
+    "original_schedule": [
+      [
+        300.0,
+        4.640828274781057e-12
+      ],
+      [
+        300.0,
+        1.6681071924566935
+      ],
+      [
+        300.0,
+        1.3434400561814637
+      ],
+      [
+        300.0,
+        1.2838715974496353
+      ],
+      [
+        300.0,
+        1.0704249482457578e-12
+      ],
+      [
+        300.0,
+        1.0663853482944511e-12
+      ]
+    ]
+  },
+  "inputs_sha256": {
+    "packages/praxis/demos/mcm-2016-a/reproduce/reference/results.json": "b30b158686f029640df0b975739c3d9b2c14dfeb507d762e1999df694940da28",
+    "packages/praxis/demos/mcm-2016-a/reproduce/reference/mesh_check.json": "6e9b53f1b83317fa65b6e6d0aa8ce4713f8460e4e281f17e8e566348de650241"
+  },
+  "source_sha256": {
+    "model.py": "2f3efabdd5055117942f3f2e5799eb83c4605e400c643812157b4cf25bc96dcc",
+    "design.md": "c24ae7f826414b1c33347992fab8cf272c79981e4f7a54972da8e31a684eb66c"
+  }
+}

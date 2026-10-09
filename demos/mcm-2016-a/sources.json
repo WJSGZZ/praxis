@@ -145,6 +145,20 @@
       "url": "https://nhigham.com/2022/01/18/what-is-the-logarithmic-norm/",
       "read": "Explanation including Theorems3 and6, 10 October2026",
       "use": "Standard infinity logarithmic norm and contraction bound in Section11.3; new bath application is not claimed as a new general theorem."
+    },
+    {
+      "id": "danckwerts-heat-inflow",
+      "author": "COMSOL",
+      "title": "Theory for the Inflow Boundary Condition",
+      "edition": "COMSOL 6.3",
+      "url": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.009.html",
+      "read": "Complete short official theory page, 10 October 2026",
+      "use": "Enthalpy-flux/Danckwerts boundary for the separate axial-dispersion comparison. COMSOL was not run."
+    },
+    {
+      "id": "axial-transport-closure-comparison",
+      "path": "reproduce/reference/transport/manifest.json",
+      "use": "Matched totals, independently assembled one-dimensional conservative flux model; 36 unchanged-policy replays, six finite-family searches and 24 independent analytic/flux checks. Synthetic conditional model study, not physical data."
     }
   ]
 }

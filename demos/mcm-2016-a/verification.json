@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
-  "bytes": 173474,
+  "sha256": "3acca2241ea294d1349303b93787664e1ed141ee90c078a926da330008ad5a8a",
+  "bytes": 173864,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,9 +37,9 @@
    25,
    26
   ],
-  "visual_review_note": "All26 pages rendered/contact reviewed; readable1/2/21/22/24/26 plus independent reviewer readable1/9/10/12/13/20/21/22/23/26. Final full text reread against original problem. Shared typography unchanged; native actual saved source compilation succeeded. Zero out-of-page nonspace characters; all extracted fonts have embedded programs.",
+  "visual_review_note": "All26 text pages and all-page contacts reviewed; parent and author-external AI readable1/4-8/10-12/20-24/26 including all5 figures. Final targeted1/22 corrections recompiled and viewed. Zero out-of-page nonspace characters; generic font check embedded programs. Shared typography unchanged; native actual saved source compile success.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "57f8766b5e61ab71fb6a0d4dffc7e921"
+  "md5": "500826300a735c625dfd68df3db4f1ac"
  },
  "model_checks": {
   "total": 17,
@@ -763,18 +763,18 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
+  "version_sha256": "3acca2241ea294d1349303b93787664e1ed141ee90c078a926da330008ad5a8a",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external same-family AI freshly reread original problem and all26 current PDF pages; all-page contacts and10 full-size pages including all5 figures. New proof, source/archive identities and readonly6-object/102-case audit checked. Prior independent RHS and scalar results reused, no expensive thermal/optimization rerun. Existing same-question O/commentary comparison, nonblind and uncalibrated.",
+  "review_scope": "Author-external same-family AI reread complete original problem/all26 PDF text pages, all-page contacts and15 readable pages including all5 figures; scientific supplement separately reviewed. Final two wording/notation corrections have their own check, not a new full audit. Same-question prior solution exposure; nonblind and uncalibrated.",
   "basis": [
-   "Complete original requirements, conservative spatial model, proved mixed benchmark and independent numerical validation.",
-   "Transport changes timing; motion trades mixing against surface loss; structural ambiguity and matched trial costs connect observations to actions.",
-   "Exact-remainder proof establishes narrow continuous static-parameter neighborhoods for two fixed realized schedules, distinct from controller-wide guarantees.",
-   "Finite-bank feedback, retained-tail argument, completed-service command cap and explicit refusal boundaries are stated with their conditions."
+   "Complete task coverage, proved mixed benchmark and conservative spatial model with independent numerical checks.",
+   "Matched trial costs, structural ambiguity and bounded reading-dependent actions form a coherent decision argument.",
+   "A distinct axial closure confirms remote cooling and mixing-dependent timing; negative outlet excess enthalpy corrects assumed short-circuit causation.",
+   "Uniform-loss maximum-principle argument explains the outlet sign; narrow fixed-action parameter boxes and feedback guarantees retain explicit scope."
   ],
-  "main_gap": "The prescribed flow path, effective mixing closure and homogenized body still carry the strongest transport-to-action claims. Narrow fixed-action boxes do not validate these mechanisms or every feedback branch.",
-  "highest_value_next_action": "Challenge remote cooling, timing and heat short circuit using a transport mechanism independent of the present assembly closure; compare action conclusions under matched conditions rather than increasing same-matrix counts.",
-  "strength_note": "Fresh whole-paper review: strong F center, adjacent F-O reference; O competitiveness has substantive support, but O is not established."
+  "main_gap": "Mechanism findings are still dispersed across timing, mixing, observation and guide sections. A compact, observable strategy criterion linking waiting, distribution limits and certificate reassessment is missing; physical assumptions remain conditional.",
+  "highest_value_next_action": "Condense existing transport, storage and observation evidence into a conditional strategy rule distinguishing admissible waiting, distribution-limited conditions and certificate reassessment. Use existing cold-end/outlet diagnostics and timescales, without invented thresholds or another model bank.",
+  "strength_note": "New whole-paper review supports strong F center/F-O reference; mathematical interpretation improved, but O is not established."
  },
  "feedback_revision": {
   "previous_pdf": {
@@ -1076,5 +1076,104 @@
   },
   "out_of_page_characters": 0,
   "embedded_fonts_checked": true
+ },
+ "transport_revision": {
+  "date": "2026-10-10",
+  "previous_pdf": {
+   "sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
+   "bytes": 173474,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All26 pages rendered/contact reviewed; readable1/2/21/22/24/26 plus independent reviewer readable1/9/10/12/13/20/21/22/23/26. Final full text reread against original problem. Shared typography unchanged; native actual saved source compilation succeeded. Zero out-of-page nonspace characters; all extracted fonts have embedded programs.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "57f8766b5e61ab71fb6a0d4dffc7e921"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "530b834256f4bb7f6f68aa39c4a892c9c82679d83e4e51063247b028ff364fe0",
+   "checked_on": "2026-10-10",
+   "review_scope": "Author-external same-family AI freshly reread original problem and all26 current PDF pages; all-page contacts and10 full-size pages including all5 figures. New proof, source/archive identities and readonly6-object/102-case audit checked. Prior independent RHS and scalar results reused, no expensive thermal/optimization rerun. Existing same-question O/commentary comparison, nonblind and uncalibrated.",
+   "basis": [
+    "Complete original requirements, conservative spatial model, proved mixed benchmark and independent numerical validation.",
+    "Transport changes timing; motion trades mixing against surface loss; structural ambiguity and matched trial costs connect observations to actions.",
+    "Exact-remainder proof establishes narrow continuous static-parameter neighborhoods for two fixed realized schedules, distinct from controller-wide guarantees.",
+    "Finite-bank feedback, retained-tail argument, completed-service command cap and explicit refusal boundaries are stated with their conditions."
+   ],
+   "main_gap": "The prescribed flow path, effective mixing closure and homogenized body still carry the strongest transport-to-action claims. Narrow fixed-action boxes do not validate these mechanisms or every feedback branch.",
+   "highest_value_next_action": "Challenge remote cooling, timing and heat short circuit using a transport mechanism independent of the present assembly closure; compare action conclusions under matched conditions rather than increasing same-matrix counts.",
+   "strength_note": "Fresh whole-paper review: strong F center, adjacent F-O reference; O competitiveness has substantive support, but O is not established."
+  },
+  "pdf_sha256": "3acca2241ea294d1349303b93787664e1ed141ee90c078a926da330008ad5a8a",
+  "tex_sha256": "4ec746b739c5d567b0aa37c195baa54f9d85f84d25833d0a38abccd828de9a02",
+  "generator_sha256": "29be35e13dabc5f9431922be1228763d584efaeab43494fb373c67d1cebf90f8",
+  "archive": "reproduce/reference/transport/manifest.json",
+  "archive_sha256": "9ffbc3be53e22e9bf64a0eba07dbd56a57c40d21876f02bcb59eb73d9934bfbc",
+  "replays": 36,
+  "search_groups": 6,
+  "selected_candidates": 4,
+  "failed_search_groups": 2,
+  "checks": 24,
+  "producer_elapsed_s": 0.2892556250153575,
+  "checker_elapsed_s": 11.499881916010054,
+  "figures": 5,
+  "tables": 15,
+  "equations": 24,
+  "native_compiler": "success",
+  "scope": "Matched total quantities, two reduced axial loss profiles, finite first-crossing search and sampled grid/time refinements. Analytic continuum and independent flux checks verify implementation, not physical validation/global optimum or PDE-wide feasibility. Baseline optimization and earlier 102 parameter-box checks reused unchanged.",
+  "original_excess_overflow_energy_j": -31510.8168277805,
+  "matched_axial_excess_j": -26275.133244343924,
+  "rejected_candidates": "Actual29/27page PDFs and source retained privately; repeated prose compressed, typography unchanged.",
+  "out_of_page_characters": 0,
+  "embedded_fonts_checked": true,
+  "preview_binding": {
+   "pdf_sha256": "3acca2241ea294d1349303b93787664e1ed141ee90c078a926da330008ad5a8a",
+   "scale": 1.6,
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "sha256": "08d5d289d4bce2030e2e28863ea01aaa37a893017f23f61cd977d0950138fcef"
+    },
+    "report-proof.png": {
+     "page": 7,
+     "sha256": "89ea2b3ffc3b19b6405a5eb78d21f55a97f02bb86bd0ab7288a67cf2e8c9eb88"
+    }
+   }
+  }
  }
 }

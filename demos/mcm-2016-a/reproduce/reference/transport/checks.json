@@ -1,0 +1,285 @@
+{
+  "status": "completed",
+  "elapsed_s": 11.499881916010054,
+  "source_sha256": {
+    "design.json": "9bf39080b6761383e3496061e471bf88ab1e63749d7d52cc913f2588382c775e",
+    "design.md": "c24ae7f826414b1c33347992fab8cf272c79981e4f7a54972da8e31a684eb66c",
+    "model.py": "2f3efabdd5055117942f3f2e5799eb83c4605e400c643812157b4cf25bc96dcc",
+    "run.py": "88f6e6f2eda302502bfe1e72aa4436d461e029a02909998b53eadf268e098002",
+    "results.json": "513a1c6af1fe532e5114aea1ec459840dbbdec4baeebc7b1d33fc6756ce955de",
+    "check.py": "5272746eab838d207efdc79f0e0f2ca415dcab7e2ba1c236163688aade5d9c14"
+  },
+  "records": [
+    {
+      "check": "no_flow_analytic",
+      "cells": 40,
+      "D": 0.0003,
+      "error_c": 8.455458555545192e-13
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 40,
+      "D": 0.001,
+      "error_c": 6.686207143502543e-12
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 40,
+      "D": 0.003,
+      "error_c": 3.232258904972696e-11
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 80,
+      "D": 0.0003,
+      "error_c": 5.8477667153056245e-12
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 80,
+      "D": 0.001,
+      "error_c": 3.4866332043748116e-11
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 80,
+      "D": 0.003,
+      "error_c": 1.4766499134566402e-10
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 160,
+      "D": 0.0003,
+      "error_c": 2.3874235921539366e-11
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 160,
+      "D": 0.001,
+      "error_c": 1.8242474197904812e-10
+    },
+    {
+      "check": "no_flow_analytic",
+      "cells": 160,
+      "D": 0.003,
+      "error_c": 1.3997691894473974e-11
+    },
+    {
+      "check": "steady_continuum_refinement",
+      "D": 0.0003,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.015621384509252323,
+        0.007858882161862368,
+        0.003941577455833567
+      ]
+    },
+    {
+      "check": "transient_continuum_refinement",
+      "D": 0.0003,
+      "t_s": 600.0,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.006458810548359395,
+        0.003262405999954865,
+        0.001639731419338375
+      ],
+      "series_quadrature_difference_c": 2.1316282072803006e-14
+    },
+    {
+      "check": "transient_continuum_refinement",
+      "D": 0.0003,
+      "t_s": 1800.0,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.010261153358456454,
+        0.005194597858036332,
+        0.002613381563108419
+      ],
+      "series_quadrature_difference_c": 2.1316282072803006e-14
+    },
+    {
+      "check": "steady_continuum_refinement",
+      "D": 0.001,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.001924429666502192,
+        0.000949890297547995,
+        0.0004718656811633082
+      ]
+    },
+    {
+      "check": "transient_continuum_refinement",
+      "D": 0.001,
+      "t_s": 600.0,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.0011194152504643284,
+        0.0005602265634365722,
+        0.0002802423153056566
+      ],
+      "series_quadrature_difference_c": 1.4210854715202004e-14
+    },
+    {
+      "check": "transient_continuum_refinement",
+      "D": 0.001,
+      "t_s": 1800.0,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.0013714466119125746,
+        0.0006906437116285247,
+        0.00034655042784237367
+      ],
+      "series_quadrature_difference_c": 1.4210854715202004e-14
+    },
+    {
+      "check": "steady_continuum_refinement",
+      "D": 0.003,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.000255755507133415,
+        0.00012056921043068769,
+        5.8459550004386074e-05
+      ]
+    },
+    {
+      "check": "transient_continuum_refinement",
+      "D": 0.003,
+      "t_s": 600.0,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.0001543824630942936,
+        7.762213266460094e-05,
+        3.891849348036658e-05
+      ],
+      "series_quadrature_difference_c": 1.4210854715202004e-14
+    },
+    {
+      "check": "transient_continuum_refinement",
+      "D": 0.003,
+      "t_s": 1800.0,
+      "cells": [
+        40,
+        80,
+        160
+      ],
+      "max_error_c": [
+        0.00017177383879385388,
+        8.510968341823855e-05,
+        4.236072251018186e-05
+      ],
+      "series_quadrature_difference_c": 1.4210854715202004e-14
+    },
+    {
+      "check": "independent_flux_RK45",
+      "label": "selected_delayed_constant",
+      "profile": "uniform",
+      "D": 0.001,
+      "cells": 160,
+      "max_temperature_difference_c": 2.613348755176048e-07,
+      "max_instant_energy_residual_w": 1.9042545318370685e-12,
+      "trapezoid_step_s": 0.5,
+      "integrated_energy_error_j": 0.001187471381854266,
+      "excess_overflow_energy_j": -23350.992718253336,
+      "interpretation": "negative means outlet cooler than contemporaneous mean; not measured heat or a comparison of optimized controls"
+    },
+    {
+      "check": "independent_flux_RK45",
+      "label": "selected_delayed_constant",
+      "profile": "uniform",
+      "D": 0.003,
+      "cells": 160,
+      "max_temperature_difference_c": 1.3329668746564494e-07,
+      "max_instant_energy_residual_w": 6.252776074688882e-12,
+      "trapezoid_step_s": 0.5,
+      "integrated_energy_error_j": 0.0016259708208963275,
+      "excess_overflow_energy_j": -9305.193022890628,
+      "interpretation": "negative means outlet cooler than contemporaneous mean; not measured heat or a comparison of optimized controls"
+    },
+    {
+      "check": "independent_flux_RK45",
+      "label": "selected_delayed_constant",
+      "profile": "localized_body",
+      "D": 0.001,
+      "cells": 160,
+      "max_temperature_difference_c": 1.967878873188056e-07,
+      "max_instant_energy_residual_w": 8.526512829121202e-13,
+      "trapezoid_step_s": 0.5,
+      "integrated_energy_error_j": 0.001422308327164501,
+      "excess_overflow_energy_j": -23434.50783513678,
+      "interpretation": "negative means outlet cooler than contemporaneous mean; not measured heat or a comparison of optimized controls"
+    },
+    {
+      "check": "independent_flux_RK45",
+      "label": "selected_delayed_constant",
+      "profile": "localized_body",
+      "D": 0.003,
+      "cells": 160,
+      "max_temperature_difference_c": 1.4811272563974853e-07,
+      "max_instant_energy_residual_w": 1.2789769243681803e-12,
+      "trapezoid_step_s": 0.5,
+      "integrated_energy_error_j": 0.0021266359835863113,
+      "excess_overflow_energy_j": -9341.870446361547,
+      "interpretation": "negative means outlet cooler than contemporaneous mean; not measured heat or a comparison of optimized controls"
+    },
+    {
+      "check": "independent_flux_RK45",
+      "label": "original_constant",
+      "profile": "uniform",
+      "D": 0.0003,
+      "cells": 160,
+      "max_temperature_difference_c": 2.4031395184920257e-07,
+      "max_instant_energy_residual_w": 1.1652900866465643e-12,
+      "trapezoid_step_s": 0.5,
+      "integrated_energy_error_j": 0.001243297301698476,
+      "excess_overflow_energy_j": -56462.5265123203,
+      "interpretation": "negative means outlet cooler than contemporaneous mean; not measured heat or a comparison of optimized controls"
+    },
+    {
+      "check": "independent_flux_RK45",
+      "label": "original_schedule",
+      "profile": "uniform",
+      "D": 0.0003,
+      "cells": 160,
+      "max_temperature_difference_c": 3.29435003720846e-07,
+      "max_instant_energy_residual_w": 1.6200374375330284e-12,
+      "trapezoid_step_s": 0.5,
+      "integrated_energy_error_j": 0.002002362802159041,
+      "excess_overflow_energy_j": -56319.49812892324,
+      "interpretation": "negative means outlet cooler than contemporaneous mean; not measured heat or a comparison of optimized controls"
+    }
+  ],
+  "scope": "Continuum analytic checks and independent flux RK45. Sampled reduced counterfactual; not physical validation, continuous feasibility or global optimality."
+}
