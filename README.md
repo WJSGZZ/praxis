@@ -63,7 +63,7 @@
 </tr>
 </table>
 
-研究案例另行归档：[多米诺铺法数](demos/domino-research/README.md)展示猜想与证明；[收费站汇合](https://github.com/WJSGZZ/praxis/tree/main/research/merge-after-toll)用完整英文报告说明，为什么扩建窗口可能反而加重排队，附原稿、反例、检查与复现。
+**[更多案例 →](demos/README.md)** 从组合计数与开放数学探索，到有完整证据的决策研究。
 
 如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 
@@ -135,6 +135,8 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 社会与现实问题、研究、课程和比赛共用建模核心。参赛时，再分别核验该届赛事与学校／赛区要求，配置人数、交付语言、格式、附件、AI 披露和截止时间。
 
+规则按“赛事—赛项—届次”查询[赛事档案](evals/competitions.json)，包括国赛 2026 的 AI 使用细则和研究生赛 2026 的格式、提交及答辩要求；具体交付时再按该届规则检查。
+
 开始时先确认交付目标（竞赛有截止、先做透再收敛、研究、教学）：内部按科研标准做透并设停止规则，再把证据收敛成评委读得懂的论文，做法见[深度工作与竞赛收敛](references/convergence.md)；交稿前有[独立评审协议](references/review-protocol.md)。
 
 单人限时任务默认只给用户一个当前事项，边取得结果边写报告；多人任务按能力和依赖安排主责与复核。通用项目不套用赛事规则。
@@ -146,7 +148,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | 类别 | 工具 |
 |---|---|
 | 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
-| 非线性与稳健优化 | `minimize_nlp`（多起点，列出各局部最优）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（精确逆向递推或值迭代） |
+| 非线性与稳健优化 | `minimize_nlp`（多起点，区分收敛候选与失败可行点）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（精确逆向递推或值迭代） |
 | 回归、检验与统计 | `ols_report`（置信区间与诊断）、`compare_models`（对基线的交叉验证比较）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |

@@ -23,17 +23,24 @@ def validate_candidates(extended):
     p = extended['parameters']
     control = extended['control']
     candidates = [('best', control['best'])] + [
-        (f'buffer_price[{i}]', candidate) for i, candidate in enumerate(control['buffer_price']) if candidate]
+        (f'buffer_price[{i}]', candidate) for i, candidate in enumerate(control['buffer_price'])]
     networks = {grid: model.network(p, grid) for grid in GRIDS}
     diagnostics = []
     for source, candidate in candidates:
-        flows = candidate['flow_lpm']
-        duration = p['horizon']/len(flows)
-        water = float(np.sum(flows)*duration/60)
-        record = dict(source=source, segments=len(flows), segment_s=duration,
-                      flow_lpm=flows, water_l=water, archived_water_l=candidate['water_l'],
-                      buffer_c=candidate.get('buffer_c'))
+        record = dict(source=source, segments=None, segment_s=None,
+                      flow_lpm=None, water_l=None, archived_water_l=None,
+                      buffer_c=candidate.get('buffer_c') if isinstance(candidate, dict) else None,
+                      accepted=False, meshes=[])
         try:
+            if not isinstance(candidate, dict) or candidate.get('flow_lpm') is None or candidate.get('water_l') is None:
+                record['error'] = dict(type='no_candidate', message='Archived candidate has no flow or water result')
+                diagnostics.append(record)
+                continue
+            flows = candidate['flow_lpm']
+            duration = p['horizon']/len(flows)
+            water = float(np.sum(flows)*duration/60)
+            record.update(segments=len(flows), segment_s=duration,
+                          flow_lpm=flows, water_l=water, archived_water_l=candidate['water_l'])
             meshes = [replay_schedule(p, networks[grid], flows, grid) for grid in GRIDS]
             accounting = bool(np.isfinite(water) and abs(water-candidate['water_l']) < 1e-7
                 and candidate.get('segments', len(flows)) == len(flows)

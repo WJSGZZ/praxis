@@ -15,3 +15,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/build_report.py --run demos/mc
 需要 Tectonic 0.17.0 在 PATH 中；资源包 URL 和 SHA256 见 `templates/typesetting-runtime.json`，构建器核验后才编译，生成源码和 PDF 对应的 `.build.json`；构建器输出到自身目录的 `paper/`（`main.tex` 与编译日志）和 `submission/`，不会覆盖上级 `deliverables/` 中的最终 PDF。重建只保证重新排版，仍须重新检查每页。
 
 The calculation is portable Python. Report builds require Tectonic 0.17.0 with the resource bundle pinned in `templates/typesetting-runtime.json`; a build receipt binds the source and PDF: figures are generated as pgfplots/TikZ source by `scripts/texplot.py`, and the fonts come with the TeX distribution. Rebuilding is optional and does not change the archived deliverable. Render and inspect any rebuilt PDF before treating it as a final document.
+
+历史 `reference/mesh_check.json` 仍绑定原验证器，精确源码保留为 `reference/mesh-validator-335052c.py`。当前 `run_mesh_check.py` 另修复了空候选恢复；本次只在短合成案例验证新分支，没有重跑原全时域三网格验收。报告重建可引用哈希匹配的历史验证器及未变的物理源码，不将旧结果认证为新版验证器运行；新验收须生成自己的新收据。
+
+The archived mesh receipt keeps its original validator, preserved byte-for-byte as `reference/mesh-validator-335052c.py`. The current validator adds failed-candidate recovery, checked on short synthetic cases only. Report reconstruction can use the hash-matched historical source and unchanged physical code; it does not claim a new full-horizon validation.

@@ -1,0 +1,17 @@
+{
+  "runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+  },
+  "layout": {
+    "profile": "praxis-mcm-v1",
+    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+  },
+  "source_name": "paper.tex",
+  "tex_sha256": "14204bdf7e55cb4db560ab9e7b7be6b5910d64a35ae1c39f410daec6a68e5c21",
+  "pdf_sha256": "13b6a2233261719ed5becb43b401e8cce68f494d19c307cd47a4ca6988502c26",
+  "visual_review_required": true
+}

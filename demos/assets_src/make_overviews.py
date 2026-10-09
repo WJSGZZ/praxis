@@ -18,10 +18,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-BG, INK, GREY, RULE = "#F6F5F0", "#1F262B", "#5E686E", "#D8D8D2"
-TEAL, CLAY = "#166B5D", "#A5683E"
-FONT = {"zh": {"serif": "Songti SC", "sans": "PingFang SC"}, "en": {"serif": "DejaVu Serif", "sans": "DejaVu Sans"}}
-W, H = 1920, 1080
+STYLE = json.loads((Path(__file__).parent / "visual-style.json").read_text())
+COLOURS = STYLE["colors"]
+BG, INK, GREY, RULE = (COLOURS[k] for k in ("background", "ink", "secondary", "rule"))
+TEAL, CLAY = COLOURS["accent"], COLOURS["comparison"]
+FONT = STYLE["profiles"]["contest"]["fonts"]
+W, H = STYLE["canvas"]
 
 
 class Canvas:

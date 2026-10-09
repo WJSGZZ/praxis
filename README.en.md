@@ -63,7 +63,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 </table>
 
-Explore two research archives as well: [domino tilings](demos/domino-research/README.en.md) develops and proves a conjecture; [Merge After Toll](https://github.com/WJSGZZ/praxis/tree/main/research/merge-after-toll) follows a complete English study from its first draft to a counterintuitive result—additional booths can worsen waiting when downstream space is limited. Drafts, checks and reproduction code accompany the report.
+**[Browse all cases →](demos/README.en.md)** Explore mathematical research and decision studies, with papers, code, and checks.
 
 Explore either case or bring your own problem. **Star Praxis** if you would like to follow its development.
 
@@ -136,6 +136,8 @@ All seven share the [methodology](references/methods.md) and one task record; se
 
 Real-world and social questions, research, coursework, and competitions use the same modeling core. For a competition, verify the applicable edition and institutional rules, then configure team eligibility, report language, formats, attachments, AI disclosure, and deadlines.
 
+The [edition registry](evals/competitions.json) separates contest rules by event and year. It includes CUMCM’s 2026 AI policy and the 2026 graduate contest’s paper format, submission windows, and defense requirements, so delivery checks start from the relevant edition.
+
 Tell Praxis the target up front: a contest with a deadline, a contest worked through in depth first, research, or teaching. It does the work to research standard, with a stopping rule, then condenses the evidence into a paper a judge can read quickly; see [deep work and contest convergence](references/convergence.md). Before a paper goes out, independent reviewer roles try to break it ([review protocol](references/review-protocol.md)).
 
 For solo work under time pressure, Praxis defaults to one current user action and develops the report as results become available. Team tasks are assigned around skills and dependencies. Competition requirements are not applied to unrelated projects.
@@ -147,7 +149,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Group | Tools |
 |---|---|
 | Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `knapsack` (exact), `shortest_path`, `max_flow` (with the minimum cut), `min_cost_flow`, `minimum_spanning_tree` |
-| Nonlinear and robust optimisation | `minimize_nlp` (multi-start, lists every local optimum), `robust_lp` (budgeted robustness with its price), `solve_mdp` (exact backward induction or value iteration) |
+| Nonlinear and robust optimisation | `minimize_nlp` (multi-start, distinguishes converged candidates from failed feasible points), `robust_lp` (budgeted robustness with its price), `solve_mdp` (exact backward induction or value iteration) |
 | Regression, tests and statistics | `ols_report` (intervals and diagnostics), `compare_models` (cross-validated against a baseline), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_ode` (re-run at tighter tolerance), `solve_layered_diffusion` with the independent `layered_diffusion_laplace`, `grid_convergence_index`, `solve_diffusion` (finite volumes with an energy account) |

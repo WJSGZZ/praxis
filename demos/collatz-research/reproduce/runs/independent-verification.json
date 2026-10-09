@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "cap": 1024,
+  "H": 72058,
+  "crossing_lengths": 647,
+  "maximum_offset_method": "independent max-plus state dynamic program",
+  "count_method": "independent binomial first-passage renewal",
+  "finite_domain": [
+    2,
+    72058
+  ],
+  "finite_failures": [],
+  "tau_above_cap": [],
+  "mutations": [
+    {
+      "name": "wrong_offset",
+      "rejected": true
+    },
+    {
+      "name": "wrong_threshold",
+      "rejected": true
+    },
+    {
+      "name": "missing_crossing",
+      "rejected": true
+    },
+    {
+      "name": "wrong_density",
+      "rejected": true
+    },
+    {
+      "name": "finite_domain_shortened",
+      "rejected": true
+    },
+    {
+      "name": "wrong_tau_histogram",
+      "rejected": true
+    }
+  ],
+  "seconds": 0.6386013750015991
+}

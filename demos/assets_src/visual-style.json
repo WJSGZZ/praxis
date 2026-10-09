@@ -1,0 +1,88 @@
+{
+  "canvas": [
+    1920,
+    1080
+  ],
+  "colors": {
+    "background": "#F6F5F0",
+    "ink": "#1F262B",
+    "secondary": "#5E686E",
+    "rule": "#D8D8D2",
+    "accent": "#166B5D",
+    "comparison": "#A5683E"
+  },
+  "profiles": {
+    "contest": {
+      "fonts": {
+        "zh": {
+          "serif": "Songti SC",
+          "sans": "PingFang SC"
+        },
+        "en": {
+          "serif": "DejaVu Serif",
+          "sans": "DejaVu Sans"
+        }
+      }
+    },
+    "research": {
+      "fonts": {
+        "zh": {
+          "serif": {
+            "family": "Songti SC",
+            "postscript": "STSongti-SC-Regular"
+          },
+          "sans": {
+            "family": "PingFang SC",
+            "postscript": "PingFangSC-Regular"
+          }
+        },
+        "en": {
+          "serif": {
+            "family": "Baskerville",
+            "postscript": "Baskerville"
+          },
+          "sans": {
+            "family": "Helvetica Neue",
+            "postscript": "HelveticaNeue"
+          }
+        }
+      },
+      "typography": {
+        "title": 64,
+        "subtitle": 23,
+        "label": 24,
+        "value": 58,
+        "explanation": 21,
+        "axis": 17,
+        "footer": 25,
+        "folio": 18
+      },
+      "layout": {
+        "margin": 125,
+        "header_y": 82,
+        "rule_y": 134,
+        "title_y": 225,
+        "subtitle_y": 301,
+        "chart": [
+          182,
+          1095,
+          412,
+          793
+        ],
+        "divider_x": 1174,
+        "facts_x": 1230,
+        "axis_label_y": 874,
+        "footer_rule_y": 914,
+        "claim_y": 964,
+        "condition_y": 1012
+      },
+      "rules": [
+        "One central mathematical question; no claim of originality or journal standing from appearance.",
+        "Use one chart and at most two prominent evidence facts. Page count belongs in the folio, not as a hero metric.",
+        "Titles and prose are independently composed in each language. Data, scope and conditions agree.",
+        "Exact named font faces; no synthetic weight, silent fallback, redistributed commercial font files or decoration standing in for evidence.",
+        "No interpolation is implied by guide lines; mark their checkpoint meaning. Review original, 900px and 390px sizes."
+      ]
+    }
+  }
+}

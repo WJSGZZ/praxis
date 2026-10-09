@@ -20,8 +20,11 @@ BUNDLE 指 `praxis` 技能目录。按当前请求读 [writing.md](../../referen
 - 排版：模板组件按需选用：不强制子标题、目录、符号表、算法框或通用章节清单；只锁定实际使用组件的样式。必需提交结构以当届规则为准，不能为了模板凑空章节。沿用用户当前源文件与宿主可用编译器。新国赛论文复用 `templates/cumcm-paper.tex`／`templates/cumcm-style.tex`（ctex），交付前用同一检查器加 `--contest cumcm`；新美赛论文必须复用 `templates/mcm-paper.tex` 或 `scripts.paper_template.preamble/summary_header`，版式权威源为 `templates/mcm-style.tex`。新题只换内容／队号／题号，不自行另写字体、页边距、行距和页眉；正式交付前运行 `python -m scripts.paper_template main.tex`。有明确赛事差异或用户指定才显式调整版式版本；图表工具见 visualization.md。编译成功后仍须导出 PDF 逐页查看，不能以编译日志代替视觉审查。
 - 来源与披露：参考文献不可省略——外部的参数、公式、方法、数据都在使用处标号并在文末列全；有 DOI 的条目运行 `scripts/check_references.py` 核对（它只证明记录存在、题名年份相符，不证明该文献支持这个论断）。需付费的文献请使用者通过学校图书馆或知网取得全文再引用，没读过的不引。真实使用的来源在使用处引用；AI 使用按实际写，不用程序日志冒充完整对话。同题资料按 [learning-loop.md](../../references/learning-loop.md) 的学习／封存／正式赛事用途处理，保持真实暴露记录，不将对照后的开发案例称盲测。
 - 一致性：报告数字与有效运行逐项对应；缺证据返回 praxis-verify 或 praxis-compute，不在写作中补造依据或把条件结论写成事实。
+- 执笔与贡献：助手负责整合成稿，按 [contributions.md](../../references/contributions.md) 从真实事件说明人的判断和AI承担的实际工作。发现关键人工判断／核验缺口时交 dialogue 组织共同研究，缺科学证据交上游检查；不以签字、复述或补聊天次数替代。后来新增贡献注明阶段，不改写旧稿来源。
 - 比赛或团队交付：按 [context-and-team.md](../../references/context-and-team.md) 接续实际赛事／届次和规范，不能用模板或通用摘要替代当届官方文件。规则检查见 [contest-playbook.md](../../references/contest-playbook.md)；PDF 预检、检查数核对与冻结的执行契约见 [automation.md](../../references/automation.md)。最终 PDF 逐页核查后再冻结；正式编译走 `scripts.paper_template <源文件> --contest mcm|cumcm --compile --output-directory <新目录>`，固定编译器与资源包；最终 PDF 通过 `scripts.freeze_pdf <PDF> <新快照> --tex <源文件> --contest mcm|cumcm --build-receipt <同次编译的.build.json>` 冻结；模板失败先回修，不能省略参数改用通用快照绕过。冻结前确认本次编译产物与源文件对应，并逐页验收。预检不等于合规认证。
 
 ## 交接
 
 写作中发现的论证缺口，写回对应任务 ID。最终交付沿用用户已有文件与规范；公开、上传或提交需要明确授权。
+
+目标阶段需要答辩时，从当前有效论文整理讲述提纲、关键主张的页码／图号／运行证据、局限、备选与真实贡献说明，交 [praxis-dialogue](../praxis-dialogue/SKILL.md) 按 [defense-coaching.md](../../references/defense-coaching.md) 训练选手。讲稿与问答不添加论文之外的未验证优势；论文改后同步核对受影响材料，材料完成不等于选手已会答辩。

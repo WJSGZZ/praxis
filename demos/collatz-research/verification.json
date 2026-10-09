@@ -1,0 +1,134 @@
+{
+  "status": "passed",
+  "mathematical_scope": {
+    "map": "Shortcut Collatz: n/2 for even n; (3n+1)/2 for odd n.",
+    "tau": "First step at which the parity coefficient 3^q/2^k is below one.",
+    "sigma": "First step at which the trajectory is strictly below its starting integer.",
+    "conditional_theorem": "Every n>1 with coefficient stopping time tau(n)<=1024 has actual first descent sigma(n)=tau(n). No assertion for tau>1024 or infinite.",
+    "starting_integer_size_limit": null,
+    "depth_cap": 1024,
+    "feasible_first_crossing_depths": 647,
+    "exception_scan_bound": 72058,
+    "bound_attained_at": {
+      "k": 485,
+      "q": 306
+    },
+    "analytic_results_in_manuscript": [
+      "Unique sharp first-crossing affine-offset envelope and finite exception reduction.",
+      "Normalized envelope limit 1/(6 ln 2).",
+      "The sufficient envelope scan bound is unbounded as depth increases.",
+      "Every fixed depth leaves some integers unclassified."
+    ],
+    "uncovered_natural_density": {
+      "numerator": 5185176573806010999709642175255509690936458378011272499485441334158823698019925189128541404085995590831039635926738279813142672467072669100751877193355185325215411715197953899984099529560138097601130543602176918048748102277271671963085038824428751435426672411602271263899476518983421372533,
+      "denominator": 44942328371557897693232629769725618340449424473557664318357520289433168951375240783177119330601884005280028469967848339414697442203604155623211857659868531094441973356216371319075554900311523529863270738021251442209537670585615720368478277635206809290837627671146574559986811484619929076208839082406056034304,
+      "approximate": 1.1537400846119692e-19,
+      "meaning": "Density of integers unclassified at the fixed depth; not a divergence probability."
+    }
+  },
+  "finite_scan": {
+    "domain": [
+      2,
+      72058
+    ],
+    "initial_values": 72057,
+    "cap": 1024,
+    "failures": [],
+    "tau_above_cap": [],
+    "max_tau": 135,
+    "maximizers": [
+      35655
+    ],
+    "iterations": 250238
+  },
+  "independent_computational_check": {
+    "status": "passed",
+    "cap": 1024,
+    "H": 72058,
+    "crossing_lengths": 647,
+    "maximum_offset_method": "independent max-plus state dynamic program",
+    "count_method": "independent binomial first-passage renewal",
+    "finite_domain": [
+      2,
+      72058
+    ],
+    "finite_failures": [],
+    "tau_above_cap": [],
+    "mutations": [
+      {
+        "name": "wrong_offset",
+        "rejected": true
+      },
+      {
+        "name": "wrong_threshold",
+        "rejected": true
+      },
+      {
+        "name": "missing_crossing",
+        "rejected": true
+      },
+      {
+        "name": "wrong_density",
+        "rejected": true
+      },
+      {
+        "name": "finite_domain_shortened",
+        "rejected": true
+      },
+      {
+        "name": "wrong_tau_histogram",
+        "rejected": true
+      }
+    ]
+  },
+  "manuscript_review": {
+    "reviewer_type": "Another AI role, independent of the author role.",
+    "reported_verdict": "No blocking mathematical, numerical-consistency, or scope issue found in the full manuscript review.",
+    "human_peer_review": false,
+    "formal_proof_assistant_verification": false,
+    "originality_certified": false,
+    "reviewed_manuscript_sha256": "59bf2a9ed8b4302a104e196b4576f698fa1960e23c948e02deebce17023a0c6a",
+    "reviewed_certificate_sha256": "14bfcc8af3782eb7f33cfcb362b6ae5e43d51a5dc5d90fe1fd183508eea45800",
+    "scope": "Original six-page manuscript. The original reviewed hash below is retained and is not rebound to the revised source."
+  },
+  "pdf": {
+    "path": "deliverables/note.pdf",
+    "pages": 7,
+    "byte_identical_to_current_workspace_manuscript_pdf": true,
+    "byte_identical_to_original_six_page_pdf": false
+  },
+  "replay_check": {
+    "verify_and_analyze_run_in_temporary_copy": true,
+    "independent_check_matches_except_elapsed_seconds": true,
+    "analysis_byte_identical": true,
+    "reference_files_unchanged": true,
+    "certificate_regenerated_during_this_check": false
+  },
+  "sha256": {
+    "deliverables/note.pdf": "03d9bf41641a6c3ae5807b7fae7f36e5fc8be03be793e79cd1a972f92287f44b",
+    "reproduce/paper/main.tex": "119df1fbeb76204c6651a9475d5ef09c50ea64fcf7ebe47a5546c18609c2816c",
+    "reproduce/code/certify.py": "f465274de2ff34312436d8944cde0e98ec21a5522c930e276b915e5ba9a56a55",
+    "reproduce/code/verify.py": "666ea6def89ca8eef0a0f39dbff5e5640efbcb3ce12c23c3165b812a59418910",
+    "reproduce/code/analyze.py": "ada42cb06dcd84aeeecd97ac0c41d28130fa26ab82c4e2572d29a7cbd86f66c3",
+    "reproduce/runs/certificate.json": "14bfcc8af3782eb7f33cfcb362b6ae5e43d51a5dc5d90fe1fd183508eea45800",
+    "reproduce/runs/independent-verification.json": "3a608f73eb1edda3724c6010cdb7c45c58f0af4361b119d86dd605cbe8da067a",
+    "reproduce/runs/analysis.json": "853bf13725fb0b2979fbfcc3673e64aea3094e2db68683f7fe1b03b9502962eb"
+  },
+  "presentation_revision": {
+    "date": "2026-10-09",
+    "baseline_manuscript_sha256": "59bf2a9ed8b4302a104e196b4576f698fa1960e23c948e02deebce17023a0c6a",
+    "baseline_pdf_sha256": "753ea901b70daad9326767eda1db7eb791dd3d20a790b34e0f7bbd1bedf4567e",
+    "current_manuscript_sha256": "119df1fbeb76204c6651a9475d5ef09c50ea64fcf7ebe47a5546c18609c2816c",
+    "added_content_review": {
+      "status": "passed",
+      "scope": "Independent exact enumeration of all 256 depth-8 residues and source-level verification of both figure datasets and meanings. Not a repeated full-paper proof audit.",
+      "human_peer_review": false
+    },
+    "visual_review": {
+      "pages": 7,
+      "scope": "Every rendered page; legends, data/axes, captions, side-by-side panel layout, page breaks."
+    },
+    "mathematical_certificate_changed": false,
+    "top_journal_suitability": "not established"
+  }
+}

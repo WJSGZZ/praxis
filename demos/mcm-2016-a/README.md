@@ -2,7 +2,7 @@
 
 **2016 MCM A《A Hot Bath》：从平均水温走到空间差异、策略比较，再到能不能照着做。**
 
-[English](README.en.md) · [完整英文论文](deliverables/7391856.pdf) · [复现源码](reproduce/) · [返回 Praxis](../../README.md)
+[English](README.en.md) · [完整英文论文](deliverables/7391856.pdf) · [复现源码](reproduce/) · [返回 Praxis](../../README.md) · [案例总览](../README.md)
 
 [![美赛案例：空间水温与三种补水量证据](assets/overview-zh.png)](deliverables/7391856.pdf)
 
@@ -36,7 +36,7 @@
 ## 证据与验证
 
 - **平均值不足以决定策略。** 理想模型中可以先等水变凉；空间模型的已接受恒定流量候选则从一开始补水。留余量的六段方案进一步节水约 11%，但只对当前情景成立。
-- **更少的水不一定是更好的答案。** 19.35 L 的十二段候选在最细网格上温差达到 1.524°C，超过 1.5°C，已被拒绝。选用 21.48 L 的六段方案：前三套网格的最大温差分别约为 1.400、1.395、1.416°C，独立连续时间检查也通过。
+- **更少的水不一定是更好的答案。** 19.35 L 的十二段候选在最细网格上温差达到 1.531°C，超过 1.5°C，已被拒绝。选用 21.48 L 的六段方案：前三套网格的最大温差分别约为 1.400、1.395、1.416°C，独立连续时间检查也通过。
 - **证明与候选分开。** 理想模型有最优性证明；空间结果是经过检查的候选，不是全局最优。恒定流量比能量下界多 8.7 L，带余量方案多 6.1 L。
 - **每个推荐都检查自己的证据。** 17 项基准检查核对独立 RHS、能量、解析极限、几何与情景；分段方案另外在每次流量切换处重启独立 RK45，并按每段导数界检查采样点之间的温度，不能借基准检查代替。
 - **数值余量不等于使用可靠性。** 留 0.1°C 余量比无余量六段候选多用约 10% 的水（19.50 → 21.48 L）；在指定的每段独立 10% 随机误差模型下，200 次试验中约 74% 不越界。这不足以支持通用手动操作建议，实际使用还需要标定和温度反馈。
@@ -65,7 +65,7 @@
 
 ```bash
 uv sync --locked
-uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # 基准、18 个情景、细网格与 17 项检查，约一分钟
+uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # 基准、18 个情景、细网格与 18 项复现检查，约一分钟
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # 分段优化、范围分析、执行容差，约 20 分钟
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选筛选、三网格独立连续时间检查
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # 原方案的结构对照，不重优化

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-09",
+  "kind": "frontmatter-only revision",
+  "pages": 17,
+  "changed_pixel_pages": [
+    1
+  ],
+  "scientific_tex_unchanged": true,
+  "visible_page_numbers_continuous": true,
+  "summary_team_occurrences": 1,
+  "contents_page": 2,
+  "body_start": 3,
+  "pdf_sha256": "13b6a2233261719ed5becb43b401e8cce68f494d19c307cd47a4ca6988502c26",
+  "tex_sha256": "14204bdf7e55cb4db560ab9e7b7be6b5910d64a35ae1c39f410daec6a68e5c21",
+  "prior_pdf_sha256": "b4af76593482526a381ed058da0e3b44959e11c2b3e93cefbfd9ec188c01aafb",
+  "prior_tex_sha256": "387faaacaf7ad11730746ec5d1f63053a31ad7220f9858e12f62a8a0946c331e",
+  "numerical_rerun": false,
+  "native_compiler": "success",
+  "visual_review": "Current summary, contents and body start viewed. Pages 2\u201317 are pixel-identical to the saved previous current PDF; prior full-page review is inherited, not repeated.",
+  "historical_reviews_rebound": false
+}

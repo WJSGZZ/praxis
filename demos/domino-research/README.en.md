@@ -2,7 +2,7 @@
 
 **How Praxis works when no answer key exists: guess a pattern, hold terms out, hunt for counterexamples, prove it twice, and label how sure each claim is.**
 
-[中文](README.md) · [Research note (PDF)](deliverables/note.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md)
+[中文](README.md) · [Research note (PDF)](deliverables/note.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
 
 ## What the problem asks
 
@@ -14,7 +14,7 @@ In how many ways can a 3×2n rectangle be tiled with 1×2 dominoes? Call the cou
 |---|---|---|
 | a(n) = 4a(n−1) − a(n−2), a(0)=1, a(1)=3 | **Proved, twice and independently** | a decomposition by the leftmost column; an order bound from the transfer matrix plus a check of eight equations |
 | a(n) = ((3+√3)/6)(2+√3)ⁿ + ((3−√3)/6)(2−√3)ⁿ, ratio → 2+√3 | Proved | follows from the recurrence |
-| First 17 terms 1, 3, 11, 41, 153, … , 1117014753 | Checked to n=16 | backtracking, transfer matrix and recurrences agree (all three for n≤5, the last two to n=16) |
+| First 17 terms 1, 3, 11, 41, 153, … , 1117014753 | Checked to n=16 | All three agree through n=5; transfer matrix and recurrences agree through n=16 (the abstract derives these ranges from archived arrays) |
 | No polynomial formula of degree ≤ 8 | Proved | the growth is exponential |
 
 ## How it is done
@@ -30,22 +30,22 @@ In how many ways can a 3×2n rectangle be tiled with 1×2 dominoes? Call the cou
 - the three methods agree wherever they can be compared;
 - the recurrence holds on four held-out terms and for n≤60, and is proved by two independent arguments;
 - the finite-check proof rests on "order at most 8", which comes from the 8×8 transfer matrix (Cayley–Hamilton), not from the data;
-- every claim carries a rung of the confidence ladder; a proof without machine verification is not called a theorem.
+- every claim carries a rung of the confidence ladder; independent numerical checks are distinguished from proof-assistant verification.
 
 ## Two pages of the note
 
 <table>
 <tr>
 <td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-page1.png" alt="Note page 1: result, three counts, guess and hold-out" width="100%"></a></td>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-proofs.png" alt="Note page 3: finite-check proof, confidence record, routes" width="100%"></a></td>
+<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-proofs.png" alt="Page 2: the local board decomposition and forced dominoes" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>Result and discovery</strong><br>The theorem, three ways of counting, the guess and its hold-out test.</td>
-<td><strong>Proof and confidence record</strong><br>The finite-check proof, the evidence level of each claim, the routes recorded.</td>
+<td><strong>See the decomposition</strong><br>Each forced boundary configuration leaves the board counted by its label.</td>
 </tr>
 </table>
 
-**[Read the complete 4-page research note →](deliverables/note.pdf)** Typeset with XeLaTeX; the figure is drawn by pgfplots from the archived numbers.
+**[Read the complete 4-page research note →](deliverables/note.pdf)** Typeset with the pinned Tectonic 0.17.0 runtime; the figure is drawn by pgfplots from the archived numbers.
 
 ## Run it yourself
 
@@ -56,7 +56,7 @@ uv sync --locked
 uv run --locked python demos/domino-research/reproduce/explore.py   # recomputes every number in seconds; writes reproduce/reproduced/
 ```
 
-To retypeset the note you need XeLaTeX: `uv run --locked python demos/domino-research/reproduce/build_note.py`.
+To retypeset the note you need Tectonic 0.17.0 and the pinned resource bundle: `uv run --locked python demos/domino-research/reproduce/build_note.py`.
 
 ## File map
 

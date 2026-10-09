@@ -2,7 +2,7 @@
 
 **2016 MCM Problem A, "A Hot Bath": from mean water temperature to spatial differences, strategy comparison, and whether anyone can follow the answer.**
 
-[中文](README.md) · [Full paper (PDF, English)](deliverables/7391856.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md)
+[中文](README.md) · [Full paper (PDF, English)](deliverables/7391856.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
 
 [![MCM case: spatial water temperature and three water budgets](assets/overview-en.png)](deliverables/7391856.pdf)
 
@@ -36,7 +36,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 ## Evidence
 
 - **The mean does not determine the strategy.** Waiting is optimal in the ideal mixed model; the accepted constant-flow spatial policy starts immediately. A buffered six-stage schedule saves another 11% in the baseline scenario.
-- **A smaller number can fail the problem.** The 19.35 L, twelve-stage candidate reaches a 1.524°C spread on the finest mesh and is rejected. The selected 21.48 L policy produces sampled spreads of 1.400, 1.395 and 1.416°C on three meshes, with independent continuous-time bounds also passing.
+- **A smaller number can fail the problem.** The 19.35 L, twelve-stage candidate reaches a 1.531°C spread on the finest mesh and is rejected. The selected 21.48 L policy produces sampled spreads of 1.400, 1.395 and 1.416°C on three meshes, with independent continuous-time bounds also passing.
 - **Bounds and policies answer different questions.** The mixed optimum is proved. The spatial policies are verified candidates, without a global optimality claim. Their gaps above the energy bound are 8.7 L for constant flow and 6.1 L for the buffered schedule.
 - **Checks follow the policy being recommended.** Seventeen baseline checks cover a separate RHS, energy, analytical limits, geometry and scenario replay. Scheduled flow has its own three-grid RK45 replay, restarted at each switch, and segment-specific derivative bounds between samples.
 - **Numerical slack is not operational reliability.** A 0.1°C margin costs about 10% more water than the unbuffered six-stage candidate (19.50 → 21.48 L). Under the stated independent 10% segment-error model, about 74% of 200 draws stay within the limits. That supports a margin comparison, not a general manual faucet prescription; calibration and temperature feedback are still needed.
@@ -65,7 +65,7 @@ From the Praxis repository root:
 
 ```bash
 uv sync --locked
-uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # baseline, 18 scenarios, fine grid, 17 checks; about a minute
+uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py        # baseline, 18 scenarios, fine grid, 18 reproduction checks; about a minute
 uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # schedules, range analysis, execution tolerance; about 20 minutes
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # candidate selection and three-grid continuous-time checks
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # replay stored policies; no optimization

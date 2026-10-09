@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "6a3ec0fe20b4325d176c358ff04a3a845b4454be1cd5024c6730013c13f8f828",
-  "bytes": 164353,
+  "sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
+  "bytes": 164359,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -36,8 +36,8 @@
    24,
    25
   ],
-  "visual_review_note": "All 25 final pages rendered and contact sheets reviewed on 9 October; schedule arithmetic (page 12), structural comparison (page 20), one-page user guide (page 22), and one-page AI disclosure (page 25) inspected at full size. No clipping or overflow observed. AI layout review; existing page 21 bottom whitespace retained.",
-  "typesetting": "XeLaTeX (TeX Live 2026): newtxtext/newtxmath, pgfplots/TikZ figures from the archived numerical record, booktabs tables, automatic cross-references; compile log without missing glyphs"
+  "visual_review_note": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+  "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded"
  },
  "model_checks": {
   "total": 17,
@@ -87,10 +87,10 @@
  ],
  "template_review": {
   "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
-  "checked_on": "2026-10-07",
+  "checked_on": "2026-10-09",
   "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
   "year_handling": "Year omitted for historical demo: official current sample comment says 2027 but visible heading says 2026",
-  "numbering": "Every page includes control number and Page x of total, including summary; explicit current rule preferred over empty-header sample",
+  "numbering": "Summary page: team once in the official three-column structure, Page 1 of total integrated in the centre column, no duplicate running header. Contents/body keep Team/Page running headers and continuous numbering. This reconciles current prose requirements with the official sample empty summary header; it does not copy the sample counter reset.",
   "not_identical_to_official_tex": true,
   "team_control_number": "7391856",
   "example_only": true
@@ -159,12 +159,19 @@
    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
   },
-  "pdf_sha256": "6a3ec0fe20b4325d176c358ff04a3a845b4454be1cd5024c6730013c13f8f828",
-  "tex_sha256": "880960ba64ff6744505744ec9f3b320264d114ec57ef4821ae04b4f8eea89605",
+  "pdf_sha256": "6750b8bc6e0f20b504dbdc9ab869fd1c004c791803f736dc4be64cab9d86a0ce",
+  "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
   "numerical_rerun": false,
   "scientific_tex_unchanged": true,
   "pages_rendered": 25,
-  "canonical_build_verified": true
+  "canonical_build_verified": true,
+  "revision": "Integrated summary metadata, shared isolated contents component, and continuous page numbering",
+  "changed_pixel_pages": [
+   1
+  ],
+  "native_compiler": "success",
+  "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+  "historical_mathematical_review_rebound": false
  },
  "layout_revision_history": [
   {
@@ -178,6 +185,26 @@
    "pages_rendered": 25,
    "native_compiler": "success",
    "plot_revision": "No silent decimation; rebuilt with archived numerical evidence, all pages pixel-identical to the layout revision"
+  },
+  {
+   "date": "2026-10-09",
+   "profile": {
+    "profile": "praxis-mcm-v1",
+    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+   },
+   "runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+   },
+   "pdf_sha256": "6a3ec0fe20b4325d176c358ff04a3a845b4454be1cd5024c6730013c13f8f828",
+   "tex_sha256": "880960ba64ff6744505744ec9f3b320264d114ec57ef4821ae04b4f8eea89605",
+   "numerical_rerun": false,
+   "scientific_tex_unchanged": true,
+   "pages_rendered": 25,
+   "canonical_build_verified": true
   }
  ]
 }

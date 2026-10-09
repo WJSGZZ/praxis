@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.paper_template import check, preamble, summary_header
+from scripts.paper_template import check, preamble, summary_header, table_of_contents
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -116,6 +116,17 @@ def test_optional_components_and_archived_chinese_source():
         check(archive.read('paper/main.tex').decode(), 'cumcm')
 
 
+def test_optional_contents_separates_summary_and_body():
+    check(paper().replace('Body.', table_of_contents() + r'\section{One argument}Body.'))
+    check(paper())  # Neither contents nor subsections are compulsory.
+    for bad in (r'\clearpage\tableofcontents\section{Body}',
+                r'\tableofcontents\clearpage',
+                '\\clearpage\\tableofcontents% \\clearpage\nBody.'):
+        with pytest.raises(ValueError, match='Contents must'):
+            check(paper().replace('Body.', bad))
+    check(paper().replace('Body.', r'\clearpage\renewcommand{\contentsname}{Contents}\tableofcontents\clearpage'))
+
+
 @pytest.mark.parametrize('override', [r'\setcounter{tocdepth}{3}', r'\renewcommand{\familydefault}{\sfdefault}'])
 def test_rejects_hierarchy_and_font_default_changes(override):
     with pytest.raises(ValueError, match='override'):
@@ -165,3 +176,52 @@ def test_build_receipt_cannot_silently_be_ignored(tmp_path):
     with pytest.raises(ValueError, match='require TeX'):
         freeze(tmp_path/'missing.pdf', tmp_path/'final.pdf', build_receipt=tmp_path/'receipt.json')
     assert not (tmp_path/'final.pdf').exists()
+
+
+@pytest.mark.parametrize('contest', ['mcm', 'cumcm'])
+@pytest.mark.parametrize('override', [
+    r'\pagenumbering{roman}', r'\pagenumbering { arabic }',
+    r'\setcounter{page}{0}', r'\setcounter { page } { 7 }',
+    r'\addtocounter {page}{-1}', r'\renewcommand{\thepage}{\Roman{page}}',
+    r'\renewcommand * { \thepage } {hidden}', r'\def \thepage {hidden}',
+    r'\let\thepage\relax',
+])
+def test_page_numbering_cannot_be_overridden_outside_shared_block(contest, override):
+    source = paper() if contest == 'mcm' else preamble(None, '中文', 'cumcm') + r'内容\end{document}'
+    with pytest.raises(ValueError, match='page numbering'):
+        check(source.replace(r'\end{document}', override + r'\end{document}'), contest)
+
+
+def test_existing_mcm_generated_sources_and_chinese_skeleton_pass_new_frontmatter_gate():
+    check((ROOT/'templates/mcm-paper.tex').read_text())
+    check((ROOT/'research/merge-after-toll/paper/paper.tex').read_text())
+    check((ROOT/'templates/cumcm-paper.tex').read_text(), 'cumcm')
+    # Bath has a source generator rather than a checked-in generated paper.
+    generator = (ROOT/'demos/mcm-2016-a/reproduce/build_report.py').read_text()
+    assert "tex.append(summary_header('A'))" in generator
+    assert 'tex.append(table_of_contents())' in generator
+
+
+def test_summary_integrates_metadata_without_duplicate_running_header():
+    header = summary_header('C')
+    assert header.startswith(r'\thispagestyle{empty}')
+    assert r'Page \thepage{} of \pageref{LastPage}' in header
+    assert 'Team Control Number' in header
+    check(paper())
+    # Historical papers retain the former component; it does not reset pages.
+    check(paper().replace(summary_header('B'), summary_header('B', legacy=True)))
+    for altered in [paper().replace('Summary Sheet', 'Summary'),
+                    paper().replace('Body.', summary_header('A') + 'Body.'),
+                    paper().replace('Body.', r'\thispagestyle{empty}Body.'),
+                    paper().replace(summary_header('B'), r'\clearpage' + summary_header('B'))]:
+        with pytest.raises(ValueError):
+            check(altered)
+
+
+def test_contents_precedes_body_and_is_not_duplicated():
+    for body in [r'\section{Introduction}Text.' + table_of_contents(),
+                 table_of_contents() + table_of_contents()]:
+        with pytest.raises(ValueError, match='Contents'):
+            check(paper().replace('Body.', body))
+    hook = r'\pretocmd{\section}{\Needspace{5\baselineskip}}{}{}'
+    check(paper().replace(r'\begin{document}', r'\begin{document}' + hook))

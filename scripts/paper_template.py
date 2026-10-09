@@ -41,16 +41,34 @@ def preamble(team, title, contest='mcm'):
             style_block(contest) + r'\begin{document}' + '\n')
 
 
-def summary_header(problem):
+def summary_header(problem, *, legacy=False):
+    """Summary metadata, without a duplicate running team header by default.
+
+    The team number and continuous page number stay at the top of page one.
+    ``legacy`` reproduces the earlier valid component for fixed archives;
+    new generators use the integrated component. Neither resets the counter.
+    """
     if problem not in 'ABCDEF' or len(problem) != 1:
         raise ValueError('Choose an MCM/ICM problem letter A–F')
-    return (r'\thispagestyle{fancy}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
+    style = 'fancy' if legacy else 'empty'
+    middle = (r'\textbf{Summary Sheet}' if legacy else
+              r'\shortstack{\textbf{Summary Sheet}\\Page \thepage{} of \pageref{LastPage}}')
+    return (r'\thispagestyle{' + style + r'}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
             r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\' + '\n' +
-            r'{\Large\textbf{' + problem + r'}}&\textbf{Summary Sheet}&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
+            r'{\Large\textbf{' + problem + r'}}&' + middle + r'&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
+
+
+def table_of_contents():
+    """Optional MCM contents, isolated from the summary and scientific body."""
+    return r'\clearpage\tableofcontents\clearpage' + '\n'
 
 
 def check(text, contest='mcm'):
-    """Reject missing/modified styles and direct layout overrides, not scientific content."""
+    """Reject missing/modified styles and explicit layout/page-counter overrides.
+
+    This static gate detects direct commands, not arbitrary TeX macro expansion.
+    Actual rendered pagination still requires PDF inspection.
+    """
     block = style_block(contest)
     begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v{VERSIONS[contest]}\n'
     end = f'% END PRAXIS {contest.upper()} STYLE\n'
@@ -58,6 +76,29 @@ def check(text, contest='mcm'):
         raise ValueError('Paper layout differs from the shared source; regenerate with scripts.paper_template')
     rest = text.replace(block, '')
     rest = re.sub(r'(?<!\\)%[^\n]*', '', rest)
+    numbering_override = (
+        r'\\pagenumbering\b|'
+        r'\\(?:setcounter|addtocounter)\s*\{\s*page\s*\}|'
+        r'\\(?:renewcommand|newcommand|providecommand)\s*\*?\s*'
+        r'(?:\{\s*\\thepage\s*\}|\\thepage\b)|'
+        r'\\(?:def|gdef|edef|xdef|let)\s*\\thepage\b')
+    if re.search(numbering_override, rest):
+        raise ValueError('Direct page numbering override outside the shared style')
+    if contest == 'mcm':
+        # Only this exact shared component may suppress the running header.
+        # Accept the former component so historical papers remain reproducible.
+        headers = [summary_header(letter, legacy=legacy)
+                   for letter in 'ABCDEF' for legacy in (False, True)]
+        occurrences = sum(rest.count(header) for header in headers)
+        if occurrences != 1:
+            raise ValueError('Require exactly one shared summary-page header')
+        used = next(header for header in headers if header in rest)
+        document_start = rest.find(r'\begin{document}')
+        prefix = rest[document_start + len(r'\begin{document}'):rest.index(used)]
+        if document_start < 0 or re.search(r'\\(?:clearpage|newpage|pagebreak|tableofcontents)\b', prefix):
+            raise ValueError('Summary metadata must start on the first document page')
+        for header in headers:
+            rest = rest.replace(header, '')
     # Hanging references locally disable paragraph indentation; this does not
     # replace the document paragraph style.
     rest = re.sub(r'(\\begingroup\\small(?:\\sloppy)?(?:\\raggedright)?)\\setlength\{\\parindent\}\{0pt\}', r'\1', rest)
@@ -72,10 +113,20 @@ def check(text, contest='mcm'):
                   r'\\usepackage(?:\[[^\]]*\])?\{[^}]*\b(?:geometry|fontspec|newtxtext|newtxmath|times|mathptmx)[^}]*\}')
     if re.search(prohibited, rest):
         raise ValueError('Direct layout override outside the shared style')
-    if contest == 'mcm' and (r'\thispagestyle{fancy}' not in rest or 'Summary Sheet' not in rest):
-        raise ValueError('Missing shared summary-page header')
     if contest == 'cumcm' and r'\tableofcontents' in rest:
         raise ValueError('CUMCM papers must not have a table of contents')
+    if contest == 'mcm':
+        if len(re.findall(r'\\tableofcontents\b', rest)) > 1:
+            raise ValueError('Contents may appear at most once')
+        for toc in re.finditer(r'\\tableofcontents\b', rest):
+            if not re.match(r'\s*\\clearpage\b', rest[toc.end():]):
+                raise ValueError('Contents must end with an explicit clearpage before the body')
+            before = rest[:toc.start()]
+            body_prefix = before[before.find(r'\begin{document}') + len(r'\begin{document}'):]
+            if re.search(r'\\section\s*(?:\[[^\]]*\]\s*)?\{', body_prefix):
+                raise ValueError('Contents must precede the numbered scientific sections')
+            if not re.search(r'\\clearpage\s*(?:\\renewcommand\{\\contentsname\}\{[^{}]*\}\s*)?$', before):
+                raise ValueError('Contents must begin on a separate page with clearpage')
     return {'profile': f'praxis-{contest}-v{VERSIONS[contest]}', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
 
 

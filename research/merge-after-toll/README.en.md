@@ -47,9 +47,11 @@ uv run --locked python research/merge-after-toll/paper/build_report.py \
 
 The last command generates editable LaTeX from the frozen results. To compile it, use Tectonic 0.17.0 through `uv run --locked python -m scripts.paper_template research/merge-after-toll/paper/paper.tex --contest mcm --compile --output-directory outputs/toll-build-001` from the repository root. This pins the complete TeX bundle and records source/PDF hashes; review every page before freezing a new deliverable.
 
+The summary now carries its page number within the official three-column metadata block, with the team number shown once. All 17 pages remain continuously numbered; scientific text and pages 2–17 are unchanged. The [frontmatter revision](reviews/frontmatter-revision.json) records this update separately from the historical full-paper review.
+
 ## Read the evidence
 
-[paper/](paper/) holds the final report and generator; [baseline/](baseline/) preserves the earlier manuscript and source. The current model and rejected route are in [code/](code/). Numerical outputs and [reviewer-authored audit results](reference/independent-audit.json) are in [reference/](reference/); [reviews/](reviews/) records reading feedback and assessment scope. The[manifest](manifest.json) binds source fingerprints, environment, inputs, timing, exposure, receipts and file hashes. Internal diagnostics do not establish an award tier.
+[paper/](paper/) holds the final report and generator; [baseline/](baseline/) preserves the earlier manuscript and source. The current model and rejected route are in [code/](code/). Numerical outputs and [reviewer-authored audit results](reference/independent-audit.json) are in [reference/](reference/); [reviews/](reviews/) records reading feedback and assessment scope. The [manifest](manifest.json) binds source fingerprints, environment, inputs, timing, exposure, receipts and file hashes. Internal diagnostics do not establish an award tier.
 
 ## Sources, rights and limits
 

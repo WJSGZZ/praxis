@@ -31,6 +31,13 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
     assert (bath / 'assets/overview-zh.png').is_file()
     assert (bath / 'reproduce/reference/trajectory.npz').is_file()
     assert not (bath / 'reproduce/reproduced').exists()
+    # Rendering sources must retain their configuration after relocation.
+    graphics = output / 'skills/praxis/demos/assets_src'
+    assert json.loads((graphics/'visual-style.json').read_text())['canvas'] == [1920,1080]
+    loaded = subprocess.run([sys.executable, '-c',
+        'import sys; sys.path.insert(0, sys.argv[1]); import make_overviews; assert make_overviews.W == 1920',
+        str(graphics)], cwd=tmp_path, capture_output=True, text=True)
+    assert loaded.returncode == 0, loaded.stderr
     problem = tmp_path / 'synthetic.md'
     problem.write_text('Synthetic packaging check only.')
     workspace = tmp_path / 'workspace'
@@ -73,7 +80,11 @@ FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-explore', 
 
 def _links(text):
     import re
-    return [m for m in re.findall(r'\]\(([^)#]+)(?:#[^)]*)?\)', text) if '://' not in m]
+    from urllib.parse import urlsplit
+    destinations = re.findall(r'\]\(([^)#]+)(?:#[^)]*)?\)', text)
+    destinations += re.findall(r'''(?:href|src)=["']([^"']+)["']''', text)
+    return [urlsplit(m).path for m in destinations
+            if urlsplit(m).path and not urlsplit(m).scheme and not urlsplit(m).netloc]
 
 
 def test_focused_skills_are_valid_and_links_resolve_in_repo_and_export(tmp_path):
@@ -101,6 +112,12 @@ def test_all_packaged_markdown_links_resolve_after_relocation(tmp_path):
     assert '](../praxis-model/SKILL.md)' in core.read_text()
     convergence = output / 'skills/praxis/references/convergence.md'
     assert '](../../praxis-dialogue/SKILL.md)' in convergence.read_text()
+    # The gallery remains usable without the source checkout or private archives.
+    for relative in ('demos/README.md', 'demos/README.en.md',
+                     'demos/collatz-research/deliverables/note.pdf',
+                     'demos/collatz-research/reproduce/code/verify.py',
+                     'demos/collatz-research/reproduce/paper/main.tex'):
+        assert (output / 'skills/praxis' / relative).is_file()
 
 
 def test_link_relocation_preserves_anchors_titles_and_external_urls():
@@ -231,6 +248,12 @@ def test_host_exports_launch_from_an_unrelated_directory(tmp_path, host, variabl
     assert not reply['result']['isError']
     answer = json.loads(reply['result']['content'][0]['text'])
     assert answer['objective'] == pytest.approx(10) and answer['x'] == pytest.approx([2, 2])
+    # Each launcher has now been checked with its own real dependency environment.
+    # Retain failures for diagnosis, but do not leave five large successful
+    # environments in pytest's retained temporary directories after every run.
+    environment = output / 'skills' / 'praxis' / '.venv'
+    if environment.is_dir():
+        shutil.rmtree(environment)
 
 
 def test_unknown_host_does_not_create_an_output(tmp_path):
@@ -250,7 +273,9 @@ def test_export_excludes_private_and_development_only_files(tmp_path):
         shutil.copyfile(path, target)
     excluded = ['.local/notes.md', 'outputs/internal.json', 'cases/private/raw.csv',
                 'dist/old-package/plugin.json', 'build/cache.txt', 'tests/maintainer_only.py',
-                '.github/workflows/test.yml', 'CONTRIBUTING.md']
+                '.github/workflows/test.yml', 'CONTRIBUTING.md',
+                'demos/unpublished-research/private.pdf',
+                'demos/collatz-research/initial/private.pdf']
     for name in excluded:
         target = source / name
         target.parent.mkdir(parents=True, exist_ok=True)

@@ -2,7 +2,7 @@
 
 **没有标准答案时怎样工作：猜规律、留出检验、找反例、用两种方法各证明一次，并给每条结论标明把握。**
 
-[English](README.en.md) · [研究笔记（PDF，英文）](deliverables/note.pdf) · [复现代码](reproduce/) · [返回 Praxis](../../README.md)
+[English](README.en.md) · [研究笔记（PDF，英文）](deliverables/note.pdf) · [复现代码](reproduce/) · [返回 Praxis](../../README.md) · [案例总览](../README.md)
 
 ## 这道题问什么
 
@@ -14,7 +14,7 @@
 |---|---|---|
 | a(n) = 4a(n−1) − a(n−2)，a(0)=1，a(1)=3 | **已证明（两种独立证明）** | 按最左列分类的构造证明；转移矩阵阶数上界加 8 条方程的有限核对 |
 | 通项 ((3+√3)/6)(2+√3)ⁿ + ((3−√3)/6)(2−√3)ⁿ，比值趋于 2+√3 | 已证明 | 由递推推出 |
-| 前 17 项 1, 3, 11, 41, 153, … , 1117014753 | 已检验到 n=16 | 回溯、转移矩阵、递推三种算法一致（n≤5 三者，n≤16 后两者） |
+| 前 17 项 1, 3, 11, 41, 153, … , 1117014753 | 已检验到 n=16 | 三种算法共同核对到 n=5；转移矩阵与递推核对到 n=16（摘要范围从归档数组生成） |
 | 不存在次数 ≤ 8 的多项式公式 | 已证明 | 增长是指数的 |
 
 ## 怎样做
@@ -30,22 +30,22 @@
 - 三种算法在能互相比较的范围内完全一致；
 - 递推在留出的 4 项和 n≤60 上成立，并被两种独立的证明各自证明；
 - 有限核对的结论依赖“阶数不超过 8”这一前提，它来自 8×8 转移矩阵（Cayley–Hamilton），不是靠数据猜出来的；
-- 每个结论按把握阶梯标注：已检验到 N、已证明（有限核对）、已证明；没有机器验证的证明不称“定理”。
+- 每个结论按把握阶梯标注：已检验到 N、已证明（有限核对）、已证明；独立计数与有限核对不等于证明助手形式化认证。
 
 ## 翻页看笔记
 
 <table>
 <tr>
 <td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-page1.png" alt="笔记第 1 页：结论、三种算法与猜测检验" width="100%"></a></td>
-<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-proofs.png" alt="笔记第 3 页：有限核对证明、把握记录与路线" width="100%"></a></td>
+<td width="50%"><a href="deliverables/note.pdf"><img src="assets/note-proofs.png" alt="笔记第 2 页：棋盘拆分、强制骨牌与递推证明" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>结论与发现过程</strong><br>结果、三种计数方法、猜测与留出检验。</td>
-<td><strong>证明与把握记录</strong><br>有限核对的证明、每条结论的依据等级、记录下的路线。</td>
+<td><strong>构造与递推</strong><br>画出穷尽的边界情形，检查残余棋盘对应的计数。</td>
 </tr>
 </table>
 
-**[阅读完整 4 页研究笔记 →](deliverables/note.pdf)** 用 XeLaTeX 排版，图由 pgfplots 从归档数值直接绘制。
+**[阅读完整 4 页研究笔记 →](deliverables/note.pdf)** 用固定 Tectonic 0.17.0 资源环境排版，图由 pgfplots 从归档数值直接绘制。
 
 ## 自己跑一次
 
@@ -56,7 +56,7 @@ uv sync --locked
 uv run --locked python demos/domino-research/reproduce/explore.py   # 重算全部数字，几秒钟；写入 reproduce/reproduced/
 ```
 
-重新排版笔记需要 XeLaTeX：`uv run --locked python demos/domino-research/reproduce/build_note.py`。
+重新排版笔记需要 Tectonic 0.17.0 与固定资源包：`uv run --locked python demos/domino-research/reproduce/build_note.py`。
 
 ## 文件地图
 

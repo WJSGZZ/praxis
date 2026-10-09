@@ -7,7 +7,7 @@
 | 结构 | 状态 | 起点 | 没有现成工具时的后备 |
 |---|---|---|---|
 | 线性、整数规划 | 工具 | `solve_lp`（对偶与影子价格）、`solve_milp`（界与间隙） | — |
-| 非线性规划 | 工具 | `minimize_nlp`（多起点，列出各局部最优） | 凸性用 `probe_structure` 判断，凸才可称全局 |
+| 非线性规划 | 工具 | `minimize_nlp`（多起点，列出各局部最优） | `probe_structure` 只搜索凸性反例；数值未发现反例不证明凸性。全局最优须另有凸性推导及满足其前提的最优性证书，或有效全局界，见 [structure-discovery.md](structure-discovery.md) |
 | 不确定系数下的稳健决策 | 工具 | `robust_lp`（预算型）、`sobol_sensitivity` | 随机规划：情景展开成大规模 LP |
 | 背包、指派、旅行商、匹配 | 工具 | `knapsack`、`solve_assignment`、`solve_tsp`（带下界） | 更大规模调度、装箱：OR-Tools CP-SAT／MILP 建模并报告间隙 |
 | 车辆路径、作业车间调度、设施选址 | 库 | MILP 建模或 OR-Tools | 先用小规模精确解校验启发式，报告与下界的差距 |
