@@ -56,6 +56,8 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **Make the next action depend on the readings.** The same 1,465-model bank and 26.09 L backup yield complete nominal services of 23.59 L with zero reading noise and 23.16 L with one bounded random sequence, retaining 114 and one model respectively. Eighteen independent three-grid sampled replays check six realized feedback schedules. Two changes imposed at minute ten empty the compatibility set one minute later: those partial services demonstrate detection, not water savings or safe recovery. The third-use crossover above compares fixed candidates; it has not been established between feedback and pulse strategies.
 
+Table 8 compares the three policies on one finite ambiguity set: 130, 174 and 178 of 178 models meet the five-second sampled limits. Commanded and delivered water are reported separately. Forty sampled structural replays of the new policy add a limited transfer check; they do not extend its continuous certificate to those alternative structures.
+
 ## Two pages of the paper
 
 **Turn ambiguous measurements into a decision.** A synthetic two-probe pulse leaves 178 compatible models in a 2,835-point parameter grid. Four of those models fail sampled checks of the original schedule. A replacement uses **23.48 L commanded** and passes 534 conditional envelope checks across three specified meshes. That coverage costs 9.33% more commanded water, plus a separate **6 L** calibration pulse and unmodeled reset costs. These are finite-set numerical results, not an empirical confidence region or a real-bath reliability guarantee; the complete record is `reference/calibration-study.json`.
@@ -75,11 +77,15 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **[Read the complete 26-page paper →](deliverables/7391856.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-five pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
 
+## A neighborhood, rather than two isolated successes
+
+The [continuous-parameter supplement](reproduce/reference/continuous-transfer.md) keeps the realized commands fixed and controls the exact remainder around four-parameter neighborhoods. Both routes qualify on three meshes; 102 independently integrated corners and centers challenge the implementation. Stricter common reserves do not all qualify, and feedback branch selection is outside this certificate. The current PDF has not incorporated this supplement, so its version-bound award assessment is unchanged.
+
 ## Assessment
 
 **Target: Outstanding Winner. Current reference: strong Finalist, with an adjacent F–O range; O is not established.** The author-external AI review combines earlier whole-paper understanding with actual checks of this revision. It is non-blind and uncalibrated. The mixed-model proof, independent checks and common-reserve comparison support a decision chain from structural ambiguity to trial costs and observed actions. The revised argument connects temperature tolerance, transport and available information, and proves a 26.09 L command cap for completed services. With a shared delivery multiplier α, the corresponding actual-water bound is α×26.09 L.
 
-Transfer now has concrete positive and refusal cases: the unchanged controller completes two off-grid conditions and rejects four changed-physics conditions excluded from design and screening. This strengthens the decision boundary, but establishes neither a continuous parameter neighbourhood nor a recovery policy. A fresh review of that increment retains the strong-F reference. The next useful advance is a checkable perturbation bound for a continuous neighbourhood around accepted conditions, rather than more same-scope pass counts. The water cap and fixed-candidate payback result still do not prove optimal feedback.
+Transfer now has concrete positive and refusal cases: the unchanged controller completes two off-grid conditions and rejects four changed-physics conditions excluded from design and screening. This strengthens the decision boundary, but establishes neither a continuous parameter neighbourhood nor a recovery policy. A fresh review of that increment retains the strong-F reference. The new supplement adds narrow neighborhoods for fixed commands; incorporating that argument into the manuscript and extending coverage to feedback branches remain separate tasks. The water cap and fixed-candidate payback result still do not prove optimal feedback.
 
 The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
 
@@ -144,5 +150,3 @@ The submission folder holds a single English PDF, as the MCM requires; `7391856`
 - Model, code, paper and original figures are under the repository's MIT license; outside materials keep their own rights. The case tests a thermal network and a delivery process under stated conditions; it is not certification of measured accuracy.
 
 If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.
-
-Table 8 now compares the three policies on one finite ambiguity set: 130, 174 and 178 of 178 models meet the five-second sampled limits. Commanded and delivered water are reported separately. Forty sampled structural replays of the new policy add a limited transfer check; they do not extend its continuous certificate to those alternative structures.

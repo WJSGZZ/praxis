@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "base_commit": "5d21d4686b725610c1f62fd9658de8a9b3d13e8e",
+  "archive_sha256": "96bd9db297262bdaceab7ed2a27fd9038a9da9dd54b00422a7d6aac3be162c4e",
+  "members": {
+    "design.json": "578b203339fa72e902443c6cc56c99ef0eec322581adf834e6f2e5ee038e26a2",
+    "derive.py": "6be0d12ef33c4ed3e09c6c672a11b050b58a268cd4bceae072bcc4312ea756a1",
+    "proof.md": "321e66e9587181b53a1129dda03cabb61e29400ef0e89390e675d8f01b6f1fbe",
+    "results.json": "5a236f295e40bbc539a923b4be599600662ba6b5b49ccc53e0f00a664f7ce675",
+    "frozen/common_reserve.py": "2c7ad0e36494cf61b02879f4bbe3158ad1e2634dc2dbcb511e328e4fa3134445",
+    "frozen/code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+    "frozen/transfer-results.json": "653d00925c1c569381c2b803e5bea9e88c87b34b19f982d3ce97ae6a43c6e373",
+    "frozen/check_structure.py": "138019ded773f2cc4ad24cd38105a405362cf75b69da8db1f495fd2d0f8232e6",
+    "structured/design.json": "05b3a78c2aa5495f083656581ee04974baf384f8baf0af0dccb0734be21d45ad",
+    "structured/derive.py": "877d7b5e63f6b5b322b835638178958c75a070a818da38e6a30143af78eaf327",
+    "structured/proof.md": "7b88a71dd9d4ba569b4fd0f5c42174ca6423f01bfed9fef9658a727de163354e",
+    "structured/results.json": "33d44d8984e5f836f7af48b69789c484926b3b57fcdc8963d7d0ae26414a8f73",
+    "structured/check.py": "53cc3dd5f7ddb062da7a414e003c20400da2c2df2ebd6185768585c7a32f3737",
+    "structured/check-results.json": "8e4c9179fd26387736fe03e42befa27b3202dd5721431b1ea1b61e37965d6d46"
+  },
+  "scope": "Fixed realized actions, conditional floating-point continuum boxes; finite corners challenge implementation, not prove coverage. Original failed bound retained. No feedback branch, empirical or novelty guarantee."
+}

@@ -110,3 +110,35 @@ def test_transfer_semantics_reject_rebound_corrupt_receipts(tmp_path,defect):
     m['members']={k:hashlib.sha256(v).hexdigest() for k,v in blobs.items()}
     (ref/'feedback-transfer.json').write_text(json.dumps(m))
     with pytest.raises(ValueError):module.transfer_values(tmp_path)
+
+
+def test_continuum_archive_retains_failed_bound_and_frozen_action_scope():
+    r=module.continuous_values(HERE)
+    assert r['scale']==.25 and len(r['checks'])==102
+    assert all(not s['physical_passed'] for row in r['previous']['rows'] for s in row['scales'])
+    assert any(not next(s for s in row['scales'] if s['scale']==.25)['reserve_passed'] for row in r['rows'])
+
+
+@pytest.mark.parametrize('defect',['missing_corner','changed_parameter','water_units','false_pass'])
+def test_continuum_rejects_semantically_rebound_archive(tmp_path,defect):
+    import hashlib
+    import numpy as np
+    ref=tmp_path/'reference';ref.mkdir()
+    m=json.loads((HERE/'reference/continuous-transfer.json').read_text())
+    with np.load(HERE/'reference/continuous-transfer.npz',allow_pickle=False) as z:
+        blobs={k:bytes(z[k]) for k in z.files}
+    check=json.loads(blobs['structured/check-results.json'])
+    if defect=='missing_corner':check['rows'].pop()
+    elif defect=='changed_parameter':check['rows'][0]['parameters']['D']+=1e-7
+    elif defect=='water_units':check['rows'][0]['result']['water_l']=22.59338886521566
+    else:
+        run=json.loads(blobs['structured/results.json']);run['rows'][0]['scales'][0]['physical_passed']=True
+        blobs['structured/results.json']=json.dumps(run).encode()
+        check['source_sha256']['structured/results.json']=hashlib.sha256(blobs['structured/results.json']).hexdigest()
+    blobs['structured/check-results.json']=json.dumps(check).encode()
+    archive=ref/'continuous-transfer.npz'
+    np.savez_compressed(archive,**{k:np.frombuffer(v,dtype=np.uint8) for k,v in blobs.items()})
+    m['archive_sha256']=hashlib.sha256(archive.read_bytes()).hexdigest()
+    m['members']={k:hashlib.sha256(v).hexdigest() for k,v in blobs.items()}
+    (ref/'continuous-transfer.json').write_text(json.dumps(m))
+    with pytest.raises(ValueError):module.continuous_values(tmp_path)

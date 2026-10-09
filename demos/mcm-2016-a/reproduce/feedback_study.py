@@ -272,3 +272,67 @@ def transfer_values(root=ROOT):
                 r['reserve_numeric_envelope_passed'] == (low >= 39.13 and high <= 40.9 and span <= 1.4) and
                 r['reserve_numeric_envelope_passed'], 'Transfer envelope flags differ from bounds')
     return dict(manifest=manifest,design=design,completed=complete,refused=refused,checks=check['rows'])
+
+
+def continuous_values(root=ROOT):
+    """Audit fixed-action parameter-box evidence; no numerical recomputation."""
+    root = Path(root)
+    manifest = json.loads((root/'reference/continuous-transfer.json').read_text())
+    archive = root/'reference/continuous-transfer.npz'
+    require(hashlib.sha256(archive.read_bytes()).hexdigest() == manifest['archive_sha256'], 'Changed continuum archive')
+    with np.load(archive, allow_pickle=False) as z:
+        require(set(z.files) == set(manifest['members']), 'Changed continuum members')
+        blobs = {k:bytes(z[k]) for k in z.files}
+    require(all(hashlib.sha256(blobs[k]).hexdigest() == h for k,h in manifest['members'].items()), 'Changed continuum bytes')
+    design = json.loads(blobs['structured/design.json'])
+    run = json.loads(blobs['structured/results.json'])
+    prior = json.loads(blobs['results.json'])
+    check = json.loads(blobs['structured/check-results.json'])
+    require(run['status'] == prior['status'] == check['status'] == 'completed' and run['design'] == design,
+            'Incomplete continuum experiment')
+    require(run['source_sha256'] == hashlib.sha256(blobs['structured/derive.py']).hexdigest() and
+            prior['source_sha256'] == hashlib.sha256(blobs['derive.py']).hexdigest() and
+            design['previous_result_sha256'] == hashlib.sha256(blobs['results.json']).hexdigest(), 'Changed continuum producer')
+    require(all(hashlib.sha256(blobs[k]).hexdigest() == h for k,h in design['source_sha256'].items()), 'Changed continuum dependency')
+    for k,h in check['source_sha256'].items():
+        require(hashlib.sha256(blobs[k]).hexdigest() == h, 'Changed continuum checker dependency')
+    require(design['parameters'] == ['D','h_surface','h_body','flow_multiplier'] and
+            design['scales'] == [1,.5,.25,.1] and design['base_halfwidths'] == [2.5e-5,.625,1.25,.0125] and
+            design['sample_s'] == .5, 'Changed predeclared box')
+    expected = {(c,tuple(g)) for c in design['cases'] for g in design['grids']}
+    keys = [(r['case'],tuple(r['grid'])) for r in run['rows']]
+    require(len(keys) == 6 and len(set(keys)) == 6 and set(keys) == expected, 'Missing continuum objects')
+    frozen = {r['case']:r for r in json.loads(blobs['frozen/transfer-results.json'])['results']}
+    indexed = dict(zip(keys,run['rows']))
+    for row in run['rows']:
+        original = frozen[row['case']]
+        require(row['flows'] == original['flows'] and row['parameters'] == original['parameters'] and row['route'] == original['route'], 'Changed frozen actions or truth')
+        require([s['scale'] for s in row['scales']] == design['scales'], 'Changed continuum scale coverage')
+        for s in row['scales']:
+            require(s['halfwidths'] == {k:w*s['scale'] for k,w in zip(design['parameters'],design['base_halfwidths'])}, 'Changed continuum halfwidths')
+            low,high,span = s['temperature_bounds_c']
+            require(all(number(v) for v in (low,high,span)) and low <= high and span >= 0 and
+                    s['physical_passed'] == (low>=39 and high<=41 and span<=1.5) and
+                    s['reserve_passed'] == (low>=39.13 and high<=40.9 and span<=1.4), 'Continuum flags differ from bounds')
+            q = sum(row['flows']);alpha = row['parameters']['flow_multiplier'];width = s['halfwidths']['flow_multiplier']
+            require(abs(s['command_l']-q)<1e-9 and np.allclose(s['actual_l_range'],[q*(alpha-width),q*(alpha+width)],atol=1e-9,rtol=0), 'Changed continuum water units')
+    qualified = [s for s in design['scales'] if all(next(x for x in r['scales'] if x['scale']==s)['physical_passed'] for r in run['rows'])]
+    chosen = max(qualified) if qualified else min(design['scales'])
+    require(check['selected_scale'] == chosen, 'Checker selected another scale')
+    from itertools import product
+    points = set(product((-1,1),repeat=4)) | {(0,0,0,0)}
+    identities = [(r['case'],tuple(r['grid']),tuple(r['point'])) for r in check['rows']]
+    require(len(identities)==102 and len(set(identities))==102 and set(identities)=={(c,g,p) for c,g in expected for p in points}, 'Missing independent corners')
+    for row in check['rows']:
+        source = indexed[(row['case'],tuple(row['grid']))]
+        s = next(x for x in source['scales'] if x['scale']==chosen)
+        p = dict(source['parameters'])
+        for k,z in zip(design['parameters'],row['point']):p[k] += z*s['halfwidths'][k]
+        require(row['parameters'] == p and row['certificate_bounds_c'] == s['temperature_bounds_c'], 'Changed checked corner')
+        actual = row['result'];lo,hi,sp = row['certificate_bounds_c']
+        require(actual['sample_s']==.5 and actual['route']==source['route'] and actual['body_capacity_j_per_k'] is None and
+                actual['min_temp']>=lo-2e-6 and actual['max_temp']<=hi+2e-6 and actual['max_span']<=sp+4e-6 and
+                actual['instantaneous_balance_residual_w']<1e-6 and actual['integrated_balance_residual_j']<.1 and
+                abs(actual['water_l']-sum(source['flows'])*p['flow_multiplier'])<1e-9, 'Independent continuum challenge failed')
+    require(run['cumulative_producer_s']<=design['producer_budget_s'] and check['elapsed_s']<=design['independent_check_budget_s'], 'Continuum budget exceeded')
+    return dict(manifest=manifest,rows=run['rows'],scale=chosen,checks=check['rows'],previous=prior)
