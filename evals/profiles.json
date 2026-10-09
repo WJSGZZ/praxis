@@ -35,9 +35,9 @@
   ],
   "criteria_source": "全国大学生数学建模竞赛章程（四条评阅标准）",
   "rules": "scripts/contest_rules.py --contest cumcm",
-  "rules_source": "论文格式规范（2019、2021、2023、2024 年修订稿，本地合集内）",
+  "rules_source": "Official CUMCM 2026 paper-format specification and AI-use trial policy, checked 2026-10-09; exact coverage in competitions.json",
   "source": "criteria and rules: official documents; weights: ours",
-  "checked": "2026-10-08",
+  "checked": "2026-10-09",
   "note": "附录缺少或不能运行的源程序可能被取消评奖资格，因此 V1 不只是加分项。",
   "rules_source_sha256": {
    "format2019.doc": "dd37ed2ab451daa4dca981298e6e54266e6eca9660a5a09fba11b11d51f12e74",
@@ -45,7 +45,8 @@
    "format2023.doc": "1d5c03591148d155bb1d5bb0a305661bfaff29c3102595446cfcc06ceb4e82ec",
    "format2024.doc": "ec699bbe89e25cad16ca907b305c6cc76112ec04083cfe56ca65fd7a26fbaafe"
   },
-  "rules_source_note": "SHA-256 of the format specification files the rules were read from (user-supplied copies of the official documents); a rule not tied to a source file is not a hard constraint."
+  "rules_source_note": "The SHA-256 entries below preserve historical user-supplied format copies (2019–2024); they do not bind the active 2026 rules. Current edition sources and AI responsibilities are owned by competitions.json; numerical weights are ours, not calibrated.",
+  "rules_source_url": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html"
  },
  "mcm": {
   "title": "美国大学生数学建模竞赛（MCM/ICM）",

@@ -167,5 +167,40 @@
   "section": "STSongti-SC-Regular",
   "body": "PingFangSC-Regular",
   "metric": "PingFangSC-Regular"
+ },
+ "investment_comparison_revision": {
+  "date": "2026-10-09",
+  "baseline_deliverables": {
+   "paper.pdf": {
+    "bytes": 387549,
+    "md5": "f50dd3305e069be8d0c4e7b85bc00ec5",
+    "sha256": "129a80f82bfdd6fd3befe3a5161e47a5f4851a4c1b3b6bf1061581928f13ba04"
+   },
+   "supporting_materials.zip": {
+    "bytes": 296484,
+    "md5": "0ac5a3279484abf02e781b4027e60bc4",
+    "sha256": "792bd99442e27da63dde793d3aeae7b6e23ec7d9039182f0228b30f8e91ba4c7"
+   }
+  },
+  "current_deliverables": {
+   "paper.pdf": {
+    "bytes": 392095,
+    "md5": "add3fa2f360754819504b8714ad0c2c1",
+    "sha256": "891605ab2225dbf01d31233de582e28dfcff3100a7c4ff58c23156b6dff8102f"
+   },
+   "supporting_materials.zip": {
+    "bytes": 306783,
+    "md5": "0c5a81a359471fafcb140f9091cf57a7",
+    "sha256": "d9404206023f34dc12c9be46ab1bbd3dab4b1e64b32ff7fef0a0b2d2fcbcf7fb"
+   }
+  },
+  "source": "supporting_materials.zip: paper/main.tex, build_paper.py, check_robustness.py, check_alternatives.py",
+  "scope": "Fee-perturbed comparison is reduced to the risk cap and actual fee-inclusive budget. Raw overshoot is diagnostic. Independent-risk allocation is analytic in the checked fee/budget regime. Main MILP, inputs and frontiers unchanged.",
+  "first_failure": "The first supplemental replay had a syntax error; it was corrected before numerical execution. The failure is retained in the local revision record.",
+  "report_pages": 23,
+  "all_pages_rendered_and_contact_reviewed": true,
+  "ai_detail_pages": 1,
+  "human_review": false,
+  "support_readme": "Regenerated from the archived build_paper.py README string; pinned compiler/font guidance now matches the existing generator. Mathematical inputs and PDF unchanged."
  }
 }

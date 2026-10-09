@@ -1,8 +1,9 @@
 """Check a PDF against the hard format rules of a contest: page limits, first page, table of contents, page marks, body font size, margins.
 
-    uv run --locked python -m scripts.contest_rules paper.pdf --contest mcm|cumcm [--forbidden "University of ..."]
+    uv run --locked python -m scripts.contest_rules paper.pdf --contest mcm|cumcm|graduate [--edition 2026] [--forbidden "University of ..."]
 
 The mechanical MCM rules were rechecked against COMAP 2027 instructions on 2026-10-08; CUMCM uses the official 2026 paper-format revision, rechecked on 2026-10-09.
+Graduate checks are a deliberately limited subset of the official 2026 format, and require --edition 2026.
 They change: compare with the current official documents before relying on a pass. A pass means the PDF meets these mechanical rules;
 it says nothing about the content."""
 import argparse
@@ -48,7 +49,7 @@ def unreferenced_floats(records):
     return sorted(f'{k[0]} {k[1]}' for k in captions if mentions.get(k, 0) < 2)
 
 
-def evaluate(records, contest, *, margins=None, forbidden=()):
+def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
     """Apply the rules to page records; returns errors (rule broken), warnings (probably broken or not checkable) and facts."""
     errors, warnings, facts = [], [], {}
     n = len(records)
@@ -123,8 +124,26 @@ def evaluate(records, contest, *, margins=None, forbidden=()):
                 errors.append(f'ink closer than 2.5 cm to the side edge on pages {small[:10]}')
         sizes = [r['body_size'] for r in records[1:before_appendix] if r['body_size']]
         facts['body_font_pt'] = collections.Counter(sizes).most_common(1)[0][0] if sizes else None
+    elif contest == 'graduate':
+        if edition != '2026':
+            raise ValueError('graduate format checks require the exact supported edition 2026')
+        first = records[0]['text'] if records else ''
+        if not re.search(r'摘\s*要', first):
+            errors.append('page 1 must start the abstract with the paper title')
+        if not any('关键词' in r['text'] for r in records[:2]):
+            warnings.append('keywords not found in the first two pages; check the abstract (usually at most two pages, a guideline rather than a hard limit)')
+        for i, r in enumerate(records):
+            if not r['lines'] or not re.fullmatch(r'\s*%d\s*' % (i + 1), r['lines'][-1]):
+                warnings.append(f'page {i + 1}: bottom page-number text is not {i + 1}; check continuous Arabic numbers starting at the abstract')
+        sizes = [r['body_size'] for r in records[1:] if r.get('body_size')]
+        size = collections.Counter(sizes).most_common(1)[0][0] if sizes else None
+        if size is not None and abs(size - 12.0) > .35:
+            warnings.append(f'dominant text is about {size} pt; verify Chinese prose against 小四号 (12 pt). This statistic also includes equations and cannot certify Chinese-only typography.')
+        facts.update(total_pages=n, format_edition=edition, body_font_pt=size,
+                     page_limit=None, ai_policy_status='unconfirmed')
+        warnings.append('Not checked mechanically: 宋体/黑体 font families, title/heading size and centering, single spacing, absence of running headers, complete anonymity and citation format; review actual PDF and official standard document.')
     else:
-        raise ValueError('contest must be mcm or cumcm')
+        raise ValueError('contest must be mcm, cumcm or graduate')
     loose = unreferenced_floats(records)
     if loose:
         warnings.append('figures or tables never referred to in the text: ' + ', '.join(loose))
@@ -135,14 +154,17 @@ def evaluate(records, contest, *, margins=None, forbidden=()):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('path', type=Path)
-    parser.add_argument('--contest', required=True, choices=['mcm', 'cumcm'])
+    parser.add_argument('--contest', required=True, choices=['mcm', 'cumcm', 'graduate'])
+    parser.add_argument('--edition', help='required for graduate; currently only 2026 is checked')
     parser.add_argument('--forbidden', action='append', default=[], help='text that must not appear (school, names, region)')
     args = parser.parse_args()
     margins = None
     if args.contest == 'cumcm':
         from scripts.check_pdf import margin_report
         margins = margin_report(args.path)
-    report = evaluate(extract(args.path), args.contest, margins=margins, forbidden=args.forbidden)
+    if args.contest == 'graduate' and args.edition != '2026':
+        parser.error('graduate checks require --edition 2026; unknown editions do not inherit rules')
+    report = evaluate(extract(args.path), args.contest, margins=margins, forbidden=args.forbidden, edition=args.edition)
     print(json.dumps(report, ensure_ascii=False, indent=1))
     return 0 if report['passed'] else 1
 

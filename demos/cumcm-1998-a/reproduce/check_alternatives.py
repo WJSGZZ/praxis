@@ -2,7 +2,6 @@
 import csv,importlib.util,json
 from pathlib import Path
 import numpy as np
-from scipy.optimize import minimize
 base=Path(__file__).resolve().parent;ref=base/'reference'
 spec=importlib.util.spec_from_file_location('model',base/'code/model.py');model=importlib.util.module_from_spec(spec);spec.loader.exec_module(model)
 rec=json.loads((ref/'recommendation.json').read_text());M=1e6
@@ -28,14 +27,16 @@ def equal_weight(data,cap):
     x=np.zeros(len(r));x[ok]=t;return x
 def std_risk(data,cap):
     r,q,p,u=data.T.copy();r/=100;q/=100;p/=100;n=len(r);g=(r-p-.05*(1+p))
-    f=lambda z:-(g@z)
-    cons=[{'type':'ineq','fun':lambda z:1-np.sum((1+p)*z)},{'type':'ineq','fun':lambda z:cap**2-np.sum((q*z)**2)}]
-    best=None
-    for s in range(5):
-        z0=np.random.default_rng(s).uniform(0,1/n,n)
-        res=minimize(f,z0,constraints=cons,bounds=[(0,1)]*n,method='SLSQP',options={'maxiter':500})
-        if res.success and (best is None or res.fun<best.fun):best=res
-    z=np.maximum(best.x,0)*M;z[z<1e-3]=0;return z
+    # Cauchy-Schwarz gives the exact relaxed optimum when cash is slack and
+    # every active purchase is above its fee threshold. Check those premises.
+    v=np.maximum(g,0)/q;length=np.linalg.norm(v)
+    z=np.zeros(n) if length==0 else cap*v/(q*length)
+    x=z*M;active=x>1e-7
+    fees=np.where(active,p*np.maximum(x,u),0)
+    if (x[active]<u[active]).any() or x.sum()+fees.sum()>M+1e-6:
+        raise ValueError('Analytic independent-risk allocation is outside its fee/budget regime')
+    return x
+
 out={'groups':{}}
 for key,name in [('four','assets4.csv'),('fifteen','assets15.csv')]:
     data=load(name);g=rec['groups'][key];cap=g['knee_risk'];x0=np.array(g['investments_yuan']);q=data[:,1]/100

@@ -51,8 +51,18 @@
           "p95": 0.09660032177109527
         },
         "kept_plan_return_shortfall": {
-          "median": -0.00014054450422387732,
-          "p95": 0.0027072781209085245
+          "median": 0.0073964110892622975,
+          "p95": 0.012913382384236642
+        },
+        "kept_plan_execution": {
+          "rule": "Keep proportions; reduce to perturbed risk cap, then reduce to budget with actual minimum fees. Unadjusted risk overshoot is a diagnostic, not an executed plan.",
+          "raw_over_budget_count": 106,
+          "raw_max_overspend_yuan": 2116.9229949931614,
+          "share_risk_reduced": 0.925,
+          "share_budget_reduced_after_risk": 0.06,
+          "maximum_spent_yuan": 1000000.0,
+          "maximum_risk": 0.006000000000000001,
+          "minimum_return_shortfall": 0.00022949605274008578
         }
       }
     },
@@ -105,8 +115,18 @@
           "p95": 0.09849594257670719
         },
         "kept_plan_return_shortfall": {
-          "median": 0.0004633040747669126,
-          "p95": 0.0026034229193560585
+          "median": 0.01889786052544498,
+          "p95": 0.02479088340357371
+        },
+        "kept_plan_execution": {
+          "rule": "Keep proportions; reduce to perturbed risk cap, then reduce to budget with actual minimum fees. Unadjusted risk overshoot is a diagnostic, not an executed plan.",
+          "raw_over_budget_count": 95,
+          "raw_max_overspend_yuan": 1756.1954398435773,
+          "share_risk_reduced": 0.99,
+          "share_budget_reduced_after_risk": 0.01,
+          "maximum_spent_yuan": 1000000.0,
+          "maximum_risk": 0.08000000000000002,
+          "minimum_return_shortfall": 0.00124623573687338
         }
       }
     }

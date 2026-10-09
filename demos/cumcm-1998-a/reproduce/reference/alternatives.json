@@ -51,9 +51,9 @@
       ],
       "independent_risk_reading": {
         "cap": 0.006,
-        "net_return": 0.13367037848671734,
+        "net_return": 0.13366994274408214,
         "knee_plan_std_risk": 0.011877814594583487,
-        "std_plan_max_item_risk": 0.0039890298499872376,
+        "std_plan_max_item_risk": 0.003987094876117805,
         "overlap_assets": 4,
         "std_plan_assets": 4,
         "knee_plan_assets": 4
@@ -140,9 +140,9 @@
       ],
       "independent_risk_reading": {
         "cap": 0.08,
-        "net_return": 0.17405491122035102,
+        "net_return": 0.17405426993747528,
         "knee_plan_std_risk": 0.1898067695795158,
-        "std_plan_max_item_risk": 0.03704829560398061,
+        "std_plan_max_item_risk": 0.037086994283379804,
         "overlap_assets": 6,
         "std_plan_assets": 12,
         "knee_plan_assets": 6

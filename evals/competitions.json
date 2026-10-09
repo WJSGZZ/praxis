@@ -14,7 +14,7 @@
       "language": "Chinese",
       "participation": null,
       "deliverables": "Electronic paper PDF or Word <=20MB, abstract first without pledge/numbering pages; supporting ZIP/RAR <=20MB; body <=30 pages excluding abstract/appendix; no contents.",
-      "ai": "2026 rules refer to the separate AI-use policy; detailed policy must be checked",
+      "ai": "Optional AI use; the team must lead core modeling and analysis and manually review and verify AI contributions. Include AI工具使用声明 before references (used or unused). If used, support must contain AI工具使用详情.pdf with tool/model, purpose, prompting/process, adoption and manual changes/verification (language polishing excepted).",
       "award_system": null,
       "sources": [
         {
@@ -26,10 +26,22 @@
           "url": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html",
           "checked": "2026-10-09",
           "scope": "2026 paper-format specification: body <=30 pages, dedicated abstract, no contents, appendix, anonymity, PDF/support <=20MB"
+        },
+        {
+          "url": "https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html",
+          "checked": "2026-10-09",
+          "scope": "2026 AI-use trial policy; effective 2026-09-01, clauses 1–6"
         }
       ],
       "checker": "scripts/contest_rules.py --contest cumcm",
-      "limits": "Mechanical checker covers a subset; historical demo does not validate this edition end to end."
+      "limits": "Mechanical checker covers a subset; historical demo does not validate this edition end to end.",
+      "ai_requirements": {
+        "team_led_core": true,
+        "manual_review": true,
+        "declaration_heading": "AI工具使用声明",
+        "declaration_before": "references",
+        "details_file_if_used": "AI工具使用详情.pdf"
+      }
     },
     {
       "contest": "mcm",
@@ -99,22 +111,68 @@
     },
     {
       "contest": "graduate",
-      "event": null,
-      "edition": null,
-      "title": "研究生数学建模竞赛",
+      "event": "main",
+      "edition": "2026",
+      "title": "“华为杯”第二十三届中国研究生数学建模竞赛",
       "status": {
-        "rules": "unconfirmed",
+        "rules": "partial",
         "workflow": "not_validated",
         "awards": "uncalibrated"
       },
-      "language": null,
-      "participation": null,
-      "deliverables": null,
+      "language": "Chinese",
+      "participation": "Three graduate students; cross-institution teams only when all members are 2026 incoming graduate students; see invitation for eligibility.",
+      "deliverables": [
+        "PDF paper using official standard document; PDF MD5 submitted separately before paper upload",
+        "Result files and program source when required by the chosen problem"
+      ],
       "ai": null,
-      "award_system": null,
-      "sources": [],
-      "checker": null,
-      "limits": "Candidate requested by users; event, edition and official sources must be resolved before use."
+      "award_system": [
+        "一等奖",
+        "二等奖",
+        "三等奖",
+        "企业专项奖",
+        "数模之星冠军",
+        "数模之星亚军",
+        "数模之星季军",
+        "数模之星提名"
+      ],
+      "sources": [
+        {
+          "url": "https://cpipc.acge.org.cn/cw/contestNews/detail/4/2c9080189dcfa24e019dddacc24a1314?page=0",
+          "checked": "2026-10-09",
+          "scope": "2026 official invitation: participation, submission windows and award/defense system"
+        },
+        {
+          "url": "https://cpipc.acge.org.cn/sysFile/downFile.do?fileId=97a93e3a9e074738aea95eea986508f2",
+          "checked": "2026-10-09",
+          "scope": "Official 2026-09-16 paper-format DOCX, entire document XML text read; title, abstract, typography, page marks, anonymity and citations",
+          "sha256": "46d2e2a87e90608ace764203d5326d7c7e41f01a5eb79986724a6f159fd70e16"
+        }
+      ],
+      "checker": "scripts/contest_rules.py --contest graduate --edition 2026",
+      "limits": "Invitation and format are checked, AI-specific policy is unconfirmed. Checker covers abstract, page-number text and measured body size only; font family, title/heading typography, no-header rule, anonymity and actual submission require review. No end-to-end validation or award calibration.",
+      "format": {
+        "title": "三号黑体，居中",
+        "level_one_heading": "四号黑体，居中",
+        "other_chinese": "小四号宋体，单倍行距",
+        "header": "none",
+        "page_number": "bottom centre, Arabic, continuous from abstract page 1",
+        "abstract": "usually at most two pages; title/abstract/keywords, no English translation required",
+        "contents": "not specified in the checked format document",
+        "page_limit": null
+      },
+      "submission": {
+        "timezone": "Asia/Shanghai",
+        "md5_window": [
+          "2026-09-26T12:00:00+08:00",
+          "2026-09-27T12:00:00+08:00"
+        ],
+        "pdf_window": [
+          "2026-09-27T14:00:00+08:00",
+          "2026-09-29T00:00:00+08:00"
+        ]
+      },
+      "defense": "At least 12 first-prize teams selected for 数模之星 defense; the top three defense teams receive champion/runner-up/third-place, remaining finalists receive nomination."
     },
     {
       "contest": "mathorcup",

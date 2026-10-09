@@ -2,7 +2,7 @@
 
 **1998 CUMCM Problem A: a portfolio problem with minimum transaction fees, taken from model and proof through robustness checks to a paper others can verify.**
 
-[中文](README.md) · [Full paper (PDF, Chinese)](deliverables/paper.pdf) · [Supporting archive (ZIP)](deliverables/supporting_materials.zip) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md)
+[中文](README.md) · [Full paper (PDF, Chinese)](deliverables/paper.pdf) · [Supporting archive (ZIP)](deliverables/supporting_materials.zip) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
 
 ![Risk–return curves for the two asset sets, with representative portfolios](assets/risk-return.png)
 
@@ -29,10 +29,12 @@ Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divide
 4. **Capital scale.** A sufficient condition: once capital covers every active threshold, the original problem attains the relaxed bound. At the representative caps this is **CNY 339 and CNY 2,602**. It is sufficient, not necessary.
 5. **Recommendation and robustness.** The knee is the recommendation without preferences; then test whether it can be executed as written and whether it survives data error.
 
+For perturbed inputs, the original allocation proportions are reduced to satisfy both the new risk cap and the fee-inclusive budget before comparing returns. Raw overshoots remain diagnostic. The independent-risk comparison uses a closed-form allocation with its fee and budget premises checked.
+
 ## Evidence
 
 - **12 model checks** cover constraints, fees, boundaries and parameter scenarios, plus 4 capital-threshold checks and 2 knee checks. They are different kinds of check, not 12 independent algorithms.
-- **The recommended plan uses the whole risk cap, so following it loosely breaks the cap.** With ±5% error on each amount, about nine in ten random trials exceed the cap (median overshoot 2–3%). With ±10% error on every data field the same assets are chosen in over 99.5% of trials. The margin to keep is therefore on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
+- **The recommended plan uses the whole risk cap, so following it loosely breaks the cap.** With ±5% error on each amount, about nine in ten random trials exceed the cap (median overshoot 2–3%). With ±10% perturbations to returns, risk-loss rates and transaction-fee rates (minimum-fee thresholds fixed), the same assets are chosen in at least 99.5% of trials. The margin to keep is therefore on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
 - **How far simple rules go.** At CNY 1,000,000, greedy by the per-budget gain from the paper's Proposition 2, buying each asset up to its risk allowance, matches the integer optimum in all six cases tested: the minimum fee is inactive at this scale, and the integer model matters at small budgets. Ranking by return over risk loses up to 4.3 points; equal weights reach only 11.8% and 22.0%.
 - **Every chosen asset matters.** Removing any one lowers net return noticeably.
 - **The risk definition changes the answer.** Reading risk as a standard deviation with independent returns, the same caps give net returns of only 13.4% and 17.4%, and the stated max-loss knee portfolios carry several times the cap under that reading. The paper answers as stated and flags this as something to confirm with the decision maker.
