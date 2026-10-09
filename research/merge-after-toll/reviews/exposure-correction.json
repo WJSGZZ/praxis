@@ -1,0 +1,15 @@
+{
+  "recorded_date": "2026-10-09",
+  "type": "exposure erratum; no mathematical revision",
+  "problem": "2017 MCM B",
+  "confirmed_project_history": {
+    "date": "2026-10-07",
+    "same_problem_paper": "56731",
+    "scope": "Full text and figure/layout contact-sheet reading, recorded before this research episode.",
+    "source_record": "Private project learning log, third batch; original paper not redistributed."
+  },
+  "correction": "Earlier archive exposure metadata stated no same-problem submitted solutions read without distinguishing the current episode from prior project learning. Prior project exposure is confirmed; it cannot be erased by a new role or an episode-specific statement.",
+  "execution_episode": "The original episode record reports no new same-problem paper or judges commentary read. Complete raw transcripts are unavailable, so the historical context actually received by each role cannot be reconstructed.",
+  "classification": "Development research with known project-level same-problem exposure; not an unseen or isolated blind evaluation.",
+  "artifacts": "Historical baseline and final PDFs, generators, numerical results and reviews retain their original bytes. This erratum supplements their process disclosure; it does not rerun or newly certify mathematical results."
+}

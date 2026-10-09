@@ -114,11 +114,14 @@
   ],
   "exposure": {
     "official_problem_read": true,
-    "same_problem_submitted_solutions_read": false,
+    "same_problem_submitted_solutions_read": true,
     "judges_commentary_read": false,
     "pretraining": "unknown",
     "isolated_blind_test": false,
-    "training_holdout_role": "development; not retained as unexposed holdout"
+    "training_holdout_role": "development; not retained as unexposed holdout",
+    "same_problem_submitted_solutions_read_scope": "Project-level prior reading confirmed; execution episode reports no new reading.",
+    "correction": "reviews/exposure-correction.json",
+    "per_role_historical_context": "Not reconstructable from incomplete raw transcripts."
   },
   "participation": {
     "case_human_modeling_or_verification": "none recorded",
@@ -650,8 +653,8 @@
   "reproduction": "uv run --locked python research/merge-after-toll/reproduce.py --output .session/merge-replay",
   "default_plugin_bundle": false,
   "files_sha256": {
-    "README.en.md": "03821acf482ce3287f06faf57a0e3c999246f8b33fd3f2ff5df5fdccd1f662a1",
-    "README.md": "6e10c5b35666484af4821315637a26594b0257d4adc951e69bf8d685fac7d362",
+    "README.en.md": "73e7c1888d2ab96a05fcfa6894c8fd6cc88134cc184432740a04a80dae60158a",
+    "README.md": "5436a23e3a0ce0c29cb04207841e051bd9aeaef50159665128474c39a85db109",
     "audit.py": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
     "baseline/code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
     "baseline/code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
@@ -683,8 +686,9 @@
     "reviews/final-review.json": "464200d4dce5eb24e50444ee908f7e068f6f534656e777c111730f640c9cf7ec",
     "reviews/layout-revision.json": "3d842dcda598d413c47a4049c8e564ecd332360a0da7863e933f9ff0b055a199",
     "reviews/metering-equivalence.md": "02b5703b34b59afb91e84c89217d0171f557dee922e14a8a3c37ec9e23755336",
-    "reviews/study.md": "9e8364a295ecf7ab88987fa3e98de1c78f6c85dceb96dccd8a9bcb14916eac14",
-    "reviews/user-assessment.json": "08dcbbf9699f9c6a0166e6b059b18e048ed3b8e1a443a57f4bb818f64dbe08dd"
+    "reviews/study.md": "c154372cc3aa8c46bd3867fa99c8cd3bf948151c0ae17ed2cf03450277d73bfc",
+    "reviews/user-assessment.json": "08dcbbf9699f9c6a0166e6b059b18e048ed3b8e1a443a57f4bb818f64dbe08dd",
+    "reviews/exposure-correction.json": "5a8d0ed0473a90b7b16f60f47c5abc027cc26d8df09003e6374f1aabd11261b9"
   },
   "layout_revision": {
     "previous_archive_commit": "5b18d15a370ac71d1f680a1e451285c5de20abd9",

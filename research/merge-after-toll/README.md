@@ -65,7 +65,7 @@ uv run --locked python research/merge-after-toll/paper/build_report.py \
 
 题目来自[COMAP官方题面](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2017/problems/2017_MCM_Problem_B.pdf)。归档不复制题面PDF或购买资料。通用参考是FHWA的[模型标定指导](https://ops.fhwa.dot.gov/trafficanalysistools/tat_vol3/sect5.htm)、[历史收费后区域指导](https://mutcd.fhwa.dot.gov/rpt/tcstoll/chapter642.htm)和[窗口布置指导](https://mutcd.fhwa.dot.gov/rpt/tcstoll/chapter224.htm)；历史指南不代表现行所有规范。
 
-本轮没有读取同题解答或评委评论，预训练接触未知。另一Agent角色可见作者代码后进行审计，不是隔离盲评，也不是人工核验。没有使用者参与本题建模或核验的记录；开发者的产品要求与本题贡献分开。完整原始模型对话无法从摘要重建。
+[资料暴露勘误（2026-10-09）](reviews/exposure-correction.json)：项目在此次研究前已全文读过同题论文56731。原记录仅报告本轮未新增读取，遗漏了项目历史，现已更正；各角色的完整历史上下文无法重建，预训练接触未知。原首稿、终稿和数值保持不变，此例属于已接触同题材料的开发研究。另一Agent角色可见作者代码后进行审计，不是隔离盲评，也不是人工核验。没有使用者参与本题建模或核验的记录；开发者的产品要求与本题贡献分开。完整原始模型对话无法从摘要重建。
 
 原创代码、说明与论文按仓库MIT许可提供；第三方题面与文献权利归原权利人。研究归档不随默认插件安装包分发，也不随每次技能调用加载。缺少实测服务、驾驶行为、几何储车映射、重车与制动数据，当前结论适合条件分析与方法检验。
 
