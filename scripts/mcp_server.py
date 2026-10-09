@@ -168,6 +168,8 @@ def _conjecture(a):
         raise ValueError('tolerance must be finite and nonnegative')
     if box.shape != (len(names), 2) or not len(names) or not np.isfinite(box).all() or (box[:, 0] > box[:, 1]).any():
         raise ValueError('bounds must match names and form a finite ordered box')
+    if a['relation'] not in ('==', '<=', '>='):
+        raise ValueError("relation must be '==', '<=' or '>='")
     left, right = _scalar(a['lhs'], names), _scalar(a['rhs'], names)
     rng = np.random.default_rng(a.get('seed', 2027))
     lo, hi = np.asarray(bounds, float).T
@@ -327,7 +329,7 @@ TOOLS = dict([
     _tool('dimensional_analysis', 'Dimensionless groups (Buckingham Pi) from a dimension matrix: rows are base dimensions, columns are variables.',
           {'matrix': MATRIX, 'names': {'type': 'array', 'items': {'type': 'string'}}}, ['matrix', 'names'],
           lambda a: structure.buckingham_pi(a['matrix'], a['names'])),
-    _tool('check_total_unimodularity', 'Is a constraint matrix totally unimodular (integral LP vertices)? Exact for incidence-type matrices and small matrices.',
+    _tool('check_total_unimodularity', 'Is a constraint matrix totally unimodular (integral LP vertices require integral right-hand sides and finite bounds)? Exact for incidence-type matrices and small matrices.',
           {'matrix': MATRIX}, ['matrix'], lambda a: structure.is_network_matrix(a['matrix'])),
     _tool('route_graph', 'Keep the record of routes tried on a problem. Pass the current graph (or a question to start) and a list of operations: add_structure, add_assumption, add_path, attack, kill, keep_result, merge, choose. Returns the graph, record problems and a readable trace.',
           {'graph': {'type': 'object'}, 'lessons_path': {'type': 'string', 'description': 'lessons file (see lesson_add): when a new record is started, related earlier lessons are returned as related_lessons'}, 'graph_file': {'type': 'string', 'description': 'JSON file that keeps the record between calls: read if present, rewritten afterwards'}, 'question': {'type': 'string'}, 'mode': {'type': 'string', 'enum': ['exploratory', 'standard']}, 'operations': {'type': 'array', 'items': {'type': 'object'}}}, ['operations'],
@@ -396,7 +398,7 @@ TOOLS = dict([
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
           {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
-    _tool('minimize_nlp', 'Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0). Reports the best local optimum, every distinct optimum with how many starts reached it, active constraints. Local unless the problem is convex.',
+    _tool('minimize_nlp', 'Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0). Reports converged feasible candidates, failed feasible incumbents, solver statuses and active constraints; no optimality certificate.',
           {'objective': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'constraints': {'type': 'array', 'items': {'type': 'object'}}, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'maximize': {'type': 'boolean'}},
           ['objective', 'names', 'bounds'], _nlp),
     _tool('knapsack', 'Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1).',
@@ -500,7 +502,7 @@ def _json(value):
         if isinstance(o, np.ndarray):
             return o.tolist()
         raise TypeError(f'Not serialisable: {type(o).__name__}')
-    return json.dumps(value, ensure_ascii=False, default=default)
+    return json.dumps(value, ensure_ascii=False, default=default, allow_nan=False)
 
 
 def call(name, arguments):
@@ -517,6 +519,8 @@ def call(name, arguments):
 
 
 def handle(message):
+    if not isinstance(message, dict):
+        return dict(jsonrpc='2.0', id=None, error=dict(code=-32600, message='Request must be a JSON object'))
     method, identifier = message.get('method'), message.get('id')
     if identifier is None:
         return None  # notifications such as notifications/initialized need no reply

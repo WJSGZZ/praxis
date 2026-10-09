@@ -49,11 +49,21 @@ def sobol_sensitivity(model, names, bounds, *, n=2048, seed=2027, max_evaluation
 def sobol_convergence(model, names, bounds, *, n=1024, seed=2027, max_evaluations=400_000):
     """Sobol indices at base sample sizes n and 2n, and the largest change in S1 and ST between them.
 
+    max_evaluations limits the combined coarse and fine stages, checked before any model call.
     Indices that move by more than their bootstrap half-width when n doubles have not converged; report them as such, or enlarge n."""
+    names = list(names)
+    if type(n) is not int or n < 64 or n & (n - 1):
+        raise ValueError('n must be a power of two >=64')
+    if type(max_evaluations) is not int or max_evaluations < 1:
+        raise ValueError('max_evaluations must be a positive integer')
+    total = 3 * n * (len(names) + 2)
+    if total > max_evaluations:
+        raise ValueError(f'Requires {total} total model evaluations; budget is {max_evaluations}')
     a = sobol_sensitivity(model, names, bounds, n=n, seed=seed, max_evaluations=max_evaluations)
-    b = sobol_sensitivity(model, names, bounds, n=2 * n, seed=seed, max_evaluations=max_evaluations)
+    b = sobol_sensitivity(model, names, bounds, n=2 * n, seed=seed, max_evaluations=max_evaluations-a['evaluations'])
     shifts = [dict(name=p['name'], S1_change=abs(p['S1'] - q['S1']), ST_change=abs(p['ST'] - q['ST']), S1_conf=q['S1_conf'], ST_conf=q['ST_conf'])
               for p, q in zip(a['parameters'], b['parameters'])]
     converged = all(s['S1_change'] <= max(s['S1_conf'], 0.02) and s['ST_change'] <= max(s['ST_conf'], 0.02) for s in shifts)
     return dict(n=n, coarse=a, fine=b, changes=shifts, converged=bool(converged),
+                total_evaluations=a['evaluations']+b['evaluations'],
                 note='Converged means no index moved by more than its confidence half-width (or 0.02) when n doubled; it does not make the input ranges right.')

@@ -163,9 +163,21 @@ def figure_env(axes_tex: str, caption: str, *, placement: str = "htbp", label: s
 def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[str], xlabel: str, *, width=r"0.66\linewidth",
                height="5.4cm", xmax: float | None = None, xmin: float | None = None, unit: str = "L", decimals: int = 2) -> str:
     """Horizontal bar chart with value labels; labels are listed top to bottom. Negative values are drawn to the left of zero (tornado style)."""
+    labels, values, colors = list(labels), list(values), list(colors)
     n = len(labels)
+    if not n or len(values) != n or len(colors) != n:
+        raise ValueError("hbar labels, values and colors must have the same nonzero length")
+    if not all(math.isfinite(float(v)) for v in values):
+        raise ValueError("non-finite value in hbar data")
+    if any(not isinstance(c, str) or not c.strip() for c in colors):
+        raise ValueError("hbar colors must be nonempty strings")
+    for bound in (xmin, xmax):
+        if bound is not None and not math.isfinite(float(bound)):
+            raise ValueError("hbar bounds must be finite")
     top = xmax if xmax is not None else max(max(values), 0) * 1.3
     bottom = xmin if xmin is not None else min(min(values), 0) * 1.3
+    if top < bottom:
+        raise ValueError("hbar xmax must not be below xmin")
     span = top - bottom
     step = 5 if span > 12 else 1 if span > 4 else (0.5 if span > 1.5 else 0.1)
     first = math.ceil(bottom / step) * step
@@ -191,7 +203,21 @@ def heatmap_panels(cubes: Sequence[Sequence[Sequence[float]]], titles: Sequence[
                    extent: tuple[float, float], vmin: float, vmax: float, *, cbar_label: str = "",
                    xticks: Sequence[float] = (), yticks: Sequence[float] = ()) -> str:
     """Several matrix plots in one row sharing a colour scale. Each cube[i][j] is the value at x-index i, y-index j."""
+    cubes = [[list(row) for row in cube] for cube in cubes]
+    titles = list(titles)
+    if not cubes or len(titles) != len(cubes) or not cubes[0] or not cubes[0][0]:
+        raise ValueError("heatmap needs nonempty panels and one title per panel")
     nx, ny = len(cubes[0]), len(cubes[0][0])
+    if any(len(cube) != nx or any(len(row) != ny for row in cube) for cube in cubes):
+        raise ValueError("heatmap panels must be rectangular and share the same shape")
+    if not all(math.isfinite(float(v)) for cube in cubes for row in cube for v in row):
+        raise ValueError("non-finite value in heatmap data")
+    if len(extent) != 2 or any(not math.isfinite(float(v)) or v <= 0 for v in extent):
+        raise ValueError("heatmap extent must contain two finite positive lengths")
+    if not math.isfinite(float(vmin)) or not math.isfinite(float(vmax)) or vmin > vmax:
+        raise ValueError("heatmap color limits must be finite and ordered")
+    if any(not math.isfinite(float(v)) for v in [*xticks, *yticks]):
+        raise ValueError("heatmap ticks must be finite")
     xs = [(i + 0.5) * extent[0] / nx for i in range(nx)]
     ys = [(j + 0.5) * extent[1] / ny for j in range(ny)]
     out = [r"\begin{groupplot}[group style={group name=G,group size=%d by 1,horizontal sep=0.9cm,y descriptions at=edge left},"

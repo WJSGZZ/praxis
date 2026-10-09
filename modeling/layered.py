@@ -21,11 +21,13 @@ def _check(layers):
     if not layers:
         raise ValueError('At least one layer is required')
     for layer in layers:
-        if min(layer['thickness'], layer['k'], layer['rho_c']) <= 0:
+        if not np.isfinite([layer['thickness'], layer['k'], layer['rho_c']]).all() or min(layer['thickness'], layer['k'], layer['rho_c']) <= 0:
             raise ValueError('Thickness, conductivity and heat capacity must be positive')
 
 
 def _bc(spec, name):
+    if not spec or not np.isfinite(spec[1:]).all():
+        raise ValueError(f'{name} boundary values must be finite')
     if spec[0] == 'robin' and len(spec) == 3 and spec[1] > 0:
         return 'robin', float(spec[1]), float(spec[2])
     if spec[0] == 'dirichlet' and len(spec) == 2:
@@ -43,6 +45,10 @@ def solve_layered(layers: Sequence[dict], *, t_end: float, t_initial: float, lef
     _check(layers)
     lbc, rbc = _bc(left, 'left'), _bc(right, 'right')
     counts = [cells_per_layer] * len(layers) if isinstance(cells_per_layer, int) else list(cells_per_layer)
+    if len(counts) != len(layers) or any(isinstance(c, bool) or not isinstance(c, (int, np.integer)) or c <= 0 for c in counts):
+        raise ValueError('One positive integer cell count per layer is required')
+    if not np.isfinite([t_end, t_initial, rtol, atol]).all() or t_end <= 0 or min(rtol, atol) <= 0:
+        raise ValueError('Finite initial temperature, positive duration and tolerances required')
     dx, k, rc = [], [], []
     for layer, n in zip(layers, counts):
         dx += [layer['thickness'] / n] * n
@@ -62,8 +68,10 @@ def solve_layered(layers: Sequence[dict], *, t_end: float, t_initial: float, lef
     A = diags([lower, main, upper], [-1, 0, 1], format='csc')
     forcing = np.zeros(n)
     forcing[0] = gl * lbc[2] / (rc[0] * dx[0])
-    forcing[-1] = gr * rbc[2] / (rc[-1] * dx[-1])
+    forcing[-1] += gr * rbc[2] / (rc[-1] * dx[-1])
     grid = np.linspace(0.0, t_end, 61) if times is None else np.asarray(times, float)
+    if grid.ndim != 1 or not len(grid) or not np.isfinite(grid).all() or grid[0] < 0 or grid[-1] <= 0 or (np.diff(grid) <= 0).any() or not np.isclose(grid[-1], t_end):
+        raise ValueError('times must increase within [0, t_end] and end at t_end')
     sol = solve_ivp(lambda t, T: A @ T + forcing, (0.0, float(grid[-1])), np.full(n, float(t_initial)), method='Radau', jac=A, t_eval=grid, rtol=rtol, atol=atol)
     if not sol.success:
         raise RuntimeError(sol.message)

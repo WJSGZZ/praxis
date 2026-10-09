@@ -41,12 +41,20 @@ def reject_nonfinite(value):
     raise ValueError(f'Non-finite JSON number: {value}')
 
 
+def finite_json_float(value):
+    import math
+    number = float(value)
+    if not math.isfinite(number):
+        reject_nonfinite(value)
+    return number
+
+
 def read_json(path):
-    return json.loads(path.read_text(encoding='utf-8'), parse_constant=reject_nonfinite)
+    return json.loads(path.read_text(encoding='utf-8'), parse_constant=reject_nonfinite, parse_float=finite_json_float)
 
 
 def save(path, value):
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False), encoding='utf-8')
 
 
 def under_project(path):
@@ -229,7 +237,7 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
                or not c['name'].strip() or not isinstance(c.get('evidence'), str) or not c['evidence'].strip()
                for c in checks):
             raise ValueError('Checks must individually pass with names and concrete evidence')
-        if input_changes(case, config) or source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes:
+        if read_json(case / 'case.json')['inputs'] != receipt['inputs'] or input_changes(case, config) or source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes:
             raise ValueError('Inputs or reviewed code changed during execution')
         receipt['outputs'] = {}
         for path in (list(out.rglob('*')) + [attempt / 'checks.json']
@@ -284,6 +292,13 @@ def status(case):
               'paper_ready': False, 'human_verification': config['human_verification']}
     for path, receipt in runs:
         stale = list(changes)
+        # Compare the run's immutable intake with the currently registered version.
+        if not receipt.get('inputs'):
+            stale.append('run input binding missing; validity unknown')
+        elif receipt['inputs'] != config['inputs']:
+            stale.append('registered input version changed')
+        if receipt.get('dependencies') != dependency_snapshot():
+            stale.append('project dependency file set changed or binding missing')
         for relative, checksum in receipt.get('code', {}).items():
             source = (case / relative).resolve()
             if not source.is_relative_to(case) or not source.is_file() or digest(source) != checksum:

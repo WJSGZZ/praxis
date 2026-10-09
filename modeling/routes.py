@@ -97,6 +97,19 @@ def kill(g, key, reason):
     p['status'], p['reason'] = 'killed', reason
 
 
+def reopen(g, key, reason, evidence):
+    """Explicitly reconsider an eliminated route; retain history and require a fresh attack."""
+    p = _need(g, 'paths', key)
+    if p['status'] not in ('killed', 'merged'):
+        raise ValueError('Only a killed or merged route can be reopened')
+    if not reason.strip() or not evidence.strip():
+        raise ValueError('Reopening requires a reason and new evidence')
+    p.setdefault('reopen_history', []).append(dict(previous_status=p['status'],
+        previous_reason=p['reason'], reason=reason, evidence=evidence, after_attack_count=len(g['attacks'])))
+    p['status'], p['reason'] = 'open', reason
+    p['reopened_after_attack_count'] = len(g['attacks'])
+
+
 def keep_result(g, key, statement, *, status='checked', source_path=None, reusable_in=()):
     """A partial result worth keeping even if its route dies (a bound, an identity, a failed approach's lesson)."""
     _fresh(g, 'partial_results', key)
@@ -136,13 +149,16 @@ def choose(g, key, why):
 def check_choice(g, key):
     p = _need(g, 'paths', key)
     issues = []
+    if p['status'] in ('killed', 'merged'):
+        issues.append(f"route is {p['status']}; explicitly reopen before choosing")
+    current_attacks = g['attacks'][p.get('reopened_after_attack_count', 0):]
     others = [k for k in g['paths'] if k != key]
     need = 1 if g.get('mode') == 'standard' else 2
     if len(others) < need:
         issues.append(f'fewer than {need} alternative route{"s" if need > 1 else ""} {"was" if need == 1 else "were"} considered')
-    if not any(a['path'] == key and a['outcome'] == 'survived' for a in g['attacks']):
+    if not any(a['path'] == key and a['outcome'] == 'survived' for a in current_attacks):
         issues.append('no attack on this route has been survived')
-    if any(a['path'] == key and a['outcome'] == 'killed' for a in g['attacks']):
+    if any(a['path'] == key and a['outcome'] == 'killed' for a in current_attacks):
         issues.append('an attack killed this route')
     for a in p['assumptions']:
         if not g['assumptions'][a]['if_false'].strip():
@@ -177,7 +193,7 @@ def apply(graph: dict | None, operations: list[dict[str, Any]], *, question: str
     """Apply operations [{"op": "add_path", ...}, ...] to a copy of the graph; the first call may pass question instead of a graph."""
     g = copy.deepcopy(graph) if graph else new_graph(question or '', mode)
     table = dict(add_structure=add_structure, add_assumption=add_assumption, add_path=add_path, attack=attack, kill=kill,
-                 keep_result=keep_result, merge=merge, choose=choose)
+                 keep_result=keep_result, merge=merge, choose=choose, reopen=reopen)
     for number, step in enumerate(operations, 1):
         step = dict(step)
         name = step.pop('op', None)
@@ -210,6 +226,8 @@ def trace_markdown(g) -> str:
         for a in g['attacks']:
             if a['path'] == k:
                 out.append(f'- 攻击〔{a["outcome"]}〕：{a["claim"]}；方法：{a["method"]}' + (f'；证据：{a["evidence"]}' if a['evidence'] else ''))
+        for event in p.get('reopen_history', []):
+            out.append(f"- 重开〔原 {event['previous_status']}〕：{event['previous_reason']}；原因：{event['reason']}；证据：{event['evidence']}")
         if p['reason']:
             out.append(f'- 结论：{p["reason"]}')
         if p['note']:

@@ -94,6 +94,31 @@ def dimension_scores(item: dict) -> dict:
     return out
 
 
+def review_coverage(item: dict) -> dict:
+    """Keep explicit review scope separate from legacy scoring defaults."""
+    checklist = item.get('checklist', {})
+    unreviewed, not_applicable, unknown = [], [], []
+    reviewed = 0
+    for dim, items in checklist.items():
+        for key, entry in items.items():
+            detail = {'item': f'{dim}/{key}', 'reason': entry.get('reason'),
+                      'evidence': entry.get('evidence')}
+            if 'reviewed' not in entry:
+                unknown.append({**detail, 'reason': 'Review status not recorded in legacy checklist'})
+            elif entry['reviewed'] is False:
+                unreviewed.append(detail)
+            else:
+                reviewed += 1
+            if entry['met'] is None:
+                not_applicable.append(detail)
+    return {'status': 'unknown' if not checklist or unknown else 'partial' if unreviewed else 'recorded',
+            'reviewed_item_count': reviewed if checklist else None,
+            'unreviewed_items': unreviewed, 'not_applicable_items': not_applicable,
+            'unknown_items': unknown,
+            'note': 'Checklist review coverage; supported critical claims do not imply other items were reviewed.'
+                    if checklist else 'Item-level review coverage was not recorded; do not infer completeness.'}
+
+
 def review_record(item: dict) -> dict:
     """Validate declarations and retain their scope; never infer mathematical truth."""
     issues = item.get('issues', [])
@@ -133,6 +158,7 @@ def review_record(item: dict) -> dict:
                 score_source=('checklist' if item.get('schema_version', 1) == 2 else 'legacy_checklist')
                              if 'checklist' in item else 'legacy_direct',
                 validity_status=status, critical_claims=claims, issues=issues,
+                coverage_summary=review_coverage(item),
                 overall_note=item.get('overall_note'),
                 unreviewed_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
                                   for key, entry in items.items() if entry.get('reviewed', True) is False],
@@ -252,6 +278,15 @@ def user_view(report: dict, contest: str | None = None) -> dict:
                 'validity_status': record['validity_status'],
                 'critical_claims': record.get('critical_claims', []), 'issues': record.get('issues', []),
                 'award_assessment': assessment, 'overall_note': record.get('overall_note'),
+                'unreviewed_items': record.get('unreviewed_items', []),
+                'not_applicable_items': record.get('not_applicable_items', []),
+                'coverage_summary': record.get('coverage_summary') or {
+                    'status': 'unknown', 'reviewed_item_count': None,
+                    'unreviewed_items': [{'item': key, 'reason': 'Reason unavailable in legacy report'}
+                                         for key in record.get('unreviewed_items', [])],
+                    'not_applicable_items': [{'item': key, 'reason': 'Reason unavailable in legacy report'}
+                                             for key in record.get('not_applicable_items', [])],
+                    'unknown_items': [], 'note': 'Full item-level coverage unavailable in legacy report.'},
             })
         if not has_attached_awards:
             # Old aggregate reports lack the association: do not guess by array position.

@@ -27,14 +27,20 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     n, k = X.shape
     if n <= k + 2:
         raise ValueError('Need more observations than parameters (n > k + 2)')
-    labels = list(names) if names else [f'x{i + 1}' for i in range(k)]
+    if names is not None and len(names) != k:
+        raise ValueError('names must contain exactly one label per input column')
+    labels = list(names) if names is not None else [f'x{i + 1}' for i in range(k)]
     design = sm.add_constant(X, has_constant='add') if add_constant else X
     cols = (['const'] if add_constant else []) + labels
     fit = sm.OLS(y, design).fit()
     ci = fit.conf_int(alpha)
     resid = fit.resid
     jb_p = float(jarque_bera(resid)[1])
-    bp_p = float(het_breuschpagan(resid, design)[1])
+    has_intercept = bool(np.any((np.ptp(design, axis=0) == 0) & (design[0] != 0)))
+    bp_applicable = design.shape[1] >= 2 and has_intercept
+    bp_p = float(het_breuschpagan(resid, design)[1]) if bp_applicable else None
+    bp_status = dict(status='computed') if bp_applicable else dict(
+        status='not_applicable', reason='Breusch-Pagan requires at least two design columns including a nonzero constant; fitted model was not changed')
     dw = float(durbin_watson(resid))
     vif = [float(variance_inflation_factor(design, i)) for i in range(design.shape[1])] if design.shape[1] > 1 else []
     vif = {c: v for c, v in zip(cols, vif) if c != 'const'} if vif else {}
@@ -43,7 +49,7 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     flags = []
     if jb_p < alpha:
         flags.append(f'residuals are not normal (Jarque-Bera p={jb_p:.3g}): intervals and p-values are approximate')
-    if bp_p < alpha:
+    if bp_p is not None and bp_p < alpha:
         flags.append(f'heteroscedasticity (Breusch-Pagan p={bp_p:.3g}): use robust standard errors or transform')
     if dw < 1.5 or dw > 2.5:
         flags.append(f'residual autocorrelation (Durbin-Watson {dw:.2f}): errors are not independent if rows are ordered in time')
@@ -55,7 +61,7 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     return dict(n=n, parameters=design.shape[1], r2=float(fit.rsquared), adj_r2=float(fit.rsquared_adj), rmse=float(np.sqrt(np.mean(resid ** 2))),
                 coefficients=[dict(name=c, estimate=float(b), std_error=float(s), p_value=float(p), ci_low=float(lo), ci_high=float(hi))
                               for c, b, s, p, (lo, hi) in zip(cols, fit.params, fit.bse, fit.pvalues, ci)],
-                diagnostics=dict(jarque_bera_p=jb_p, breusch_pagan_p=bp_p, durbin_watson=dw, vif=vif, condition_number=float(np.linalg.cond(design)),
+                diagnostics=dict(jarque_bera_p=jb_p, breusch_pagan_p=bp_p, breusch_pagan=bp_status, durbin_watson=dw, vif=vif, condition_number=float(np.linalg.cond(design)),
                                  influential_rows=influential[:20]),
                 flags=flags)
 

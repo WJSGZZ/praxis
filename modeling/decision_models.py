@@ -8,13 +8,14 @@ import numpy as np
 from scipy.stats import norm
 
 from modeling import optimize
+from modeling.contracts import stochastic_matrix
 
 
 def markov_stationary(P) -> dict:
     """Stationary distribution of an irreducible finite chain: solve pi P = pi, sum pi = 1. Reports irreducibility and the residual."""
     P = np.asarray(P, float)
     n = P.shape[0]
-    if P.ndim != 2 or P.shape[1] != n or (P < -1e-12).any() or not np.allclose(P.sum(axis=1), 1, atol=1e-9):
+    if P.ndim != 2 or P.shape[1] != n or not np.isfinite(P).all() or (P < -1e-12).any() or not np.allclose(P.sum(axis=1), 1, atol=1e-9):
         raise ValueError('P must be a square row-stochastic matrix')
     reach = np.linalg.matrix_power((P > 0).astype(float) + np.eye(n), n) > 0
     irreducible = bool(reach.all())
@@ -27,16 +28,24 @@ def markov_stationary(P) -> dict:
 
 def markov_absorption(P, absorbing) -> dict:
     """Absorption probabilities and expected steps to absorption from each transient state (fundamental matrix N = (I - Q)^-1)."""
-    P = np.asarray(P, float)
+    P = stochastic_matrix(P)
     n = P.shape[0]
-    absorbing = sorted(set(int(i) for i in absorbing))
+    if not absorbing or any(isinstance(i, bool) or not isinstance(i, (int, np.integer)) or not 0 <= i < n for i in absorbing):
+        raise ValueError('absorbing must contain valid integer state indices')
+    absorbing = sorted(set(absorbing))
     for i in absorbing:
         if not np.isclose(P[i, i], 1.0):
             raise ValueError(f'State {i} is not absorbing (P[i,i] must be 1)')
     transient = [i for i in range(n) if i not in absorbing]
     Q, R = P[np.ix_(transient, transient)], P[np.ix_(transient, absorbing)]
-    N = np.linalg.inv(np.eye(len(transient)) - Q)
-    return dict(transient=transient, absorbing=absorbing, expected_steps=(N @ np.ones(len(transient))).tolist(), absorption_probabilities=(N @ R).tolist())
+    # Every state must have a positive-probability path to the declared absorbing set.
+    reachable = set(absorbing)
+    for _ in range(n):
+        reachable.update(i for i in range(n) if any(P[i, j] > 0 for j in reachable))
+    if len(reachable) != n:
+        return dict(transient=transient, absorbing=absorbing, fully_absorbing=False, expected_steps=None, absorption_probabilities=None, note='A closed class cannot reach the declared absorbing states')
+    N = np.linalg.solve(np.eye(len(transient)) - Q, np.eye(len(transient)))
+    return dict(transient=transient, absorbing=absorbing, fully_absorbing=True, expected_steps=(N @ np.ones(len(transient))).tolist(), absorption_probabilities=(N @ R).tolist())
 
 
 def matrix_game(payoff) -> dict:

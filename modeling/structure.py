@@ -9,10 +9,28 @@ from typing import Callable, Sequence
 
 import numpy as np
 import sympy as sp
+from modeling.contracts import finite_real
+
+
+def _finite_function(f):
+    return lambda x: finite_real(f(x))
+
+
+def _finite_array(value):
+    raw = np.asarray(value)
+    if np.iscomplexobj(raw):
+        raise ValueError('Probe comparison must be real')
+    a = np.asarray(raw, float)
+    if not np.isfinite(a).all():
+        raise ValueError('Probe comparison must be finite')
+    return a
 
 
 def _points(bounds, n, rng):
-    lo, hi = np.asarray(bounds, float).T
+    box = np.asarray(bounds, float)
+    if box.ndim != 2 or box.shape[1] != 2 or not len(box) or isinstance(n, bool) or not isinstance(n, (int, np.integer)) or n < 1:
+        raise ValueError('A nonempty box and positive integer trials are required')
+    lo, hi = box.T
     if (lo >= hi).any() or not np.isfinite(lo).all() or not np.isfinite(hi).all():
         raise ValueError('Each bound needs finite lower < upper')
     return lo + (hi - lo) * rng.random((n, len(lo)))
@@ -22,13 +40,16 @@ def check_convexity(f: Callable, bounds: Sequence[Sequence[float]], *, trials: i
     """Random midpoint/chord test of f(x) on a box. A violation proves the function is NOT convex on the box.
 
     Convex if f(t x + (1-t) y) <= t f(x) + (1-t) f(y) for all pairs; here only sampled pairs are tried."""
+    f = _finite_function(f)
+    if finite_real(tol, 'tol') < 0:
+        raise ValueError('tol must be nonnegative')
     rng = np.random.default_rng(seed)
     x, y = _points(bounds, trials, rng), _points(bounds, trials, rng)
     t = rng.random(trials)
     fx = np.array([f(p) for p in x], float)
     fy = np.array([f(p) for p in y], float)
     fm = np.array([f(a * p + (1 - a) * q) for a, p, q in zip(t, x, y)], float)
-    excess = fm - (t * fx + (1 - t) * fy)
+    excess = _finite_array(fm - (t * fx + (1 - t) * fy))
     worst = int(np.argmax(excess))
     scale = max(1.0, float(np.abs(fx).max()))
     if excess[worst] > tol * scale:
@@ -42,6 +63,7 @@ def check_convexity(f: Callable, bounds: Sequence[Sequence[float]], *, trials: i
 
 def check_monotone(f: Callable, bounds: Sequence[Sequence[float]], variable: int, *, trials: int = 2000, seed: int = 2027) -> dict:
     """Is f nondecreasing/nonincreasing in one variable, others fixed at random points?"""
+    f = _finite_function(f)
     rng = np.random.default_rng(seed)
     base = _points(bounds, trials, rng)
     lo, hi = bounds[variable]
@@ -49,7 +71,7 @@ def check_monotone(f: Callable, bounds: Sequence[Sequence[float]], variable: int
     a = lo + (hi - lo) * rng.random(trials)
     b = lo + (hi - lo) * rng.random(trials)
     base[:, variable], up[:, variable] = np.minimum(a, b), np.maximum(a, b)
-    d = np.array([f(q) - f(p) for p, q in zip(base, up)], float)
+    d = _finite_array([f(q) - f(p) for p, q in zip(base, up)])
     inc, dec = bool((d >= -1e-12).all()), bool((d <= 1e-12).all())
     if inc and dec:
         kind = 'constant'
@@ -74,9 +96,12 @@ def check_symmetry(f: Callable, bounds: Sequence[Sequence[float]], permutation: 
         raise ValueError('permutation must rearrange 0..n-1')
     if any(bounds[i] != bounds[j] for i, j in enumerate(perm)):
         raise ValueError('Bounds must be identical for variables exchanged by the permutation')
+    f = _finite_function(f)
+    if finite_real(tol, 'tol') < 0:
+        raise ValueError('tol must be nonnegative')
     rng = np.random.default_rng(seed)
     x = _points(bounds, trials, rng)
-    d = np.array([f(p) - f(p[perm]) for p in x], float)
+    d = _finite_array([f(p) - f(p[perm]) for p in x])
     worst = int(np.argmax(np.abs(d)))
     scale = max(1.0, float(np.abs([f(p) for p in x[:50]]).max()))
     if abs(d[worst]) > tol * scale:
@@ -86,8 +111,9 @@ def check_symmetry(f: Callable, bounds: Sequence[Sequence[float]], permutation: 
 
 def scaling_exponents(f: Callable, point: Sequence[float], *, step: float = 1e-4) -> dict:
     """Local elasticity d log f / d log x_i at a positive point. Constant exponents across points suggest a power law."""
+    f = _finite_function(f)
     x = np.asarray(point, float)
-    if (x <= 0).any():
+    if not np.isfinite(x).all() or finite_real(step, 'step') <= 0 or (x <= 0).any():
         raise ValueError('Elasticity needs positive coordinates')
     f0 = float(f(x))
     if f0 <= 0:
@@ -98,11 +124,14 @@ def scaling_exponents(f: Callable, point: Sequence[float], *, step: float = 1e-4
         up[i] *= np.exp(step)
         dn[i] *= np.exp(-step)
         out.append((np.log(float(f(up))) - np.log(float(f(dn)))) / (2 * step))
-    return dict(exponents=[float(v) for v in out], f=f0)
+    return dict(exponents=_finite_array(out).tolist(), f=f0)
 
 
 def check_power_law(f: Callable, bounds: Sequence[Sequence[float]], *, trials: int = 50, tol: float = 1e-5, seed: int = 2027) -> dict:
     """Does f(x) = C * prod x_i^a_i hold? Exponents must be the same at every sampled point."""
+    f = _finite_function(f)
+    if finite_real(tol, 'tol') < 0:
+        raise ValueError('tol must be nonnegative')
     rng = np.random.default_rng(seed)
     pts = _points(bounds, trials, rng)
     if (pts <= 0).any():
@@ -121,9 +150,12 @@ def check_invariant(rhs: Callable, invariant: Callable, bounds: Sequence[Sequenc
     """For dx/dt = rhs(x), is g(x) conserved? Test dg/dt = grad g . rhs ~ 0 at random states (central differences).
 
     The rate is judged relative to |grad g| |rhs|, so the verdict does not depend on the units of g."""
+    if finite_real(tol, 'tol') < 0:
+        raise ValueError('tol must be nonnegative')
     rng = np.random.default_rng(seed)
     x = _points(bounds, trials, rng)
     n = x.shape[1]
+    invariant = _finite_function(invariant)
     rel, raw = [], []
     for p in x:
         grad = np.empty(n)
@@ -132,10 +164,13 @@ def check_invariant(rhs: Callable, invariant: Callable, bounds: Sequence[Sequenc
             up[i] += step
             dn[i] -= step
             grad[i] = (invariant(up) - invariant(dn)) / (2 * step)
-        v = np.asarray(rhs(p), float)
-        rate = float(grad @ v)
+        v = _finite_array(rhs(p))
+        if v.shape != p.shape:
+            raise ValueError('rhs must have one finite component per state')
+        grad = _finite_array(grad)
+        rate = finite_real(grad @ v)
         raw.append(rate)
-        rel.append(abs(rate) / (np.linalg.norm(grad) * np.linalg.norm(v) + 1e-300))
+        rel.append(finite_real(abs(rate) / (np.linalg.norm(grad) * np.linalg.norm(v) + 1e-300)))
     worst = int(np.argmax(rel))
     if rel[worst] <= tol:
         return dict(conserved=True, proved=False, max_relative_rate=float(rel[worst]), trials=int(trials),

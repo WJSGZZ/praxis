@@ -26,7 +26,7 @@
 | `backtest_baselines` | series*, horizon*, min_train, season | Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines |
 | `probe_structure` | property*, expression*, names*, bounds*, variable, permutation, rhs | Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs |
 | `dimensional_analysis` | matrix*, names* | Dimensionless groups (Buckingham Pi) from a dimension matrix: rows are base dimensions, columns are variables |
-| `check_total_unimodularity` | matrix* | Is a constraint matrix totally unimodular (integral LP vertices)? Exact for incidence-type matrices and small matrices |
+| `check_total_unimodularity` | matrix* | Is a constraint matrix totally unimodular (integral LP vertices require integral right-hand sides and finite bounds)? Exact for incidence-type matrices and small matrices |
 | `route_graph` | graph, lessons_path, graph_file, question, mode, operations* | Keep the record of routes tried on a problem |
 | `route_to_lesson` | graph*, problem*, principle*, verified_by, tags | Draft a lesson from a finished route record (one chosen route); you supply the transferable principle |
 | `test_conjecture` | lhs*, rhs*, relation*, names*, bounds*, points, tolerance | Test lhs (==, <=, >=) rhs for random points in a box (double precision) |
