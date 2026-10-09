@@ -94,3 +94,17 @@ git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
 ```
 
 Claude Code 可改为 `~/.claude/skills/praxis`；其他发现目录见 [兼容说明](agent-compatibility.md)。这是一种技能安装方式，需要计算时通过终端执行同一套脚本。同一宿主不要同时启用同名插件与技能副本。
+
+## 新电脑上的论文排版
+
+数学计算与 MCP 不要求安装 TeX。需要生成正式 PDF 时，安装 [Tectonic 0.17.0 官方二进制](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0)，选择与系统和架构匹配的版本；Windows 使用 `tectonic.exe`，macOS／Linux 使用 `tectonic`。将它加入 PATH，或给编译命令传入 `--compiler "实际可执行文件路径"`。先用 `tectonic --version` 确认版本，不能用另一版本成功运行替代核验。
+
+在仓库根目录编译；从安装包使用时进入其 `skills/praxis` 目录，论文与输出仍放在用户工作区。以下相对路径按实际位置替换，输出目录必须尚不存在：
+
+```bash
+uv run --locked python -m scripts.paper_template main.tex --contest cumcm --compile --output-directory outputs/build-001
+```
+
+美赛改为 `--contest mcm`。Windows 可追加 `--compiler "C:/Tools/tectonic/tectonic.exe"`，其他系统同样支持显式路径。首次运行需联网获取固定 TeX 资源；中文字体随资源提供，无需复制 Mac 系统字体。版本、资源包与字体哈希不符时停止，不自动更换排版环境。输出包含 PDF、日志和 `.build.json`；逐页检查后，按[写作流程](writing.md)携带构建记录冻结最终文件。
+
+`portable-typesetting` 在 Windows、Linux、macOS 的干净 CI 环境编译文档并比较版面，可用于没有相应电脑时核查排版链。它不代表每一种 Agent 宿主都已完成桌面安装实测。

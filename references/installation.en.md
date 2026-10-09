@@ -94,3 +94,17 @@ git clone https://github.com/WJSGZZ/praxis.git ~/.agents/skills/praxis
 ```
 
 For Claude Code, use `~/.claude/skills/praxis`. Other discovery paths are in [host compatibility](agent-compatibility.md). Computation remains available through terminal scripts. Avoid enabling a standalone copy alongside the plugin in the same host.
+
+## Typesetting on a new machine
+
+The mathematical tools and MCP server run without TeX. For a final paper build, obtain the binary for your OS and architecture from the [official Tectonic 0.17.0 release](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0). Put `tectonic` on PATH (`tectonic.exe` on Windows), or supply its location with `--compiler`. Check `tectonic --version` before building.
+
+Run the following from the repository root, or from `skills/praxis` in an exported plugin. Adjust the source and output paths to your own workspace; the destination must be new:
+
+```bash
+uv run --locked python -m scripts.paper_template main.tex --contest cumcm --compile --output-directory outputs/build-001
+```
+
+Use `--contest mcm` for an MCM paper. An explicit Windows path can be passed as `--compiler "C:/Tools/tectonic/tectonic.exe"`; the same option accepts macOS and Linux paths. The first build needs network access to fetch the pinned TeX resources, including Chinese fonts. Compiler, bundle or font mismatches stop the build rather than selecting a substitute. Keep the PDF, log and `.build.json` together, inspect every page, then follow the [writing workflow](writing.md) to freeze a final copy.
+
+The `portable-typesetting` workflow runs on clean Windows, Linux and macOS hosts and compares page layouts. This checks the typesetting pipeline even without owning all three systems; it does not certify installation inside every agent application.
