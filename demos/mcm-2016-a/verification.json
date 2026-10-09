@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
-  "bytes": 164924,
+  "sha256": "b1a8527d021844e43291877eeed28ccb74ad34f70a3eb5512f675abfb2e6df9e",
+  "bytes": 167251,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -36,9 +36,9 @@
    24,
    25
   ],
-  "visual_review_note": "Every current page rendered/contact-reviewed; proof and frontier pages additionally inspected at full size.",
+  "visual_review_note": "All pages contact-reviewed for the control revision; final table callout page inspected after the delivery-binding correction.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "f8e16648c0e8db6a062b724bb5406dda"
+  "md5": "d90cb1afcb825278a7dd9729ad282a8c"
  },
  "model_checks": {
   "total": 17,
@@ -342,21 +342,60 @@
  },
  "control_study_revision": {
   "date": "2026-10-09",
-  "pdf_sha256": "5beb92779de6b8412a09dc8d159af97cb2c1b0d369df50b00936c3ab5343170a",
+  "pdf_sha256": "b1a8527d021844e43291877eeed28ccb74ad34f70a3eb5512f675abfb2e6df9e",
   "previous_pdf_sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
   "study_sha256": "57947a76f51cf5cb447470c28d1247b6846182936b9bd13416e9945a50ad749d",
-  "tex_sha256": "dc16b7df612bf5954470f2742c76d4ed7896eb29d8a1bfe595b1ddb4591b3a50",
+  "tex_sha256": "bf644fd821843c2d85074467d6f83b751c0812807200f84bd76b7851baee8f5c",
   "total_pages": 25,
   "solution_pages": 24,
   "ai_report_pages": 1,
   "all_pages_contact_reviewed": true,
   "changed_scientific_pages_viewed_full_size": true,
-  "native_compiler": "success",
+  "native_compiler": "success on actual generated paper.tex; earlier main.tex compilation checked historical source and is not evidence for this revision",
   "associated_tests_passed": 73,
   "original_baseline_optimization_rerun": false,
   "new_conditional_optimization": true,
   "scope": "Two known-D candidates, independently replayed on three grids with conditional floating-point continuous envelopes; nine fixed-probe diagnostic scenarios. No calibrated physical feedback policy or global optimality claim.",
   "scientific_review": "Author-external AI review of the preceding candidate; numeric claims unchanged, reviewer wording corrections integrated. Historical full-paper reviews are not rebound to this PDF.",
-  "visual_note": "Page 11 retains the existing figure/table layout with lower blank space; no clipping detected in whole-document contact review."
+  "visual_note": "Page 11 retains the existing figure/table layout with lower blank space; no clipping detected in whole-document contact review.",
+  "pre_delivery_binding_correction": {
+   "sha256": "5fbc155aadf43584f102cf5c4f3754acc9f58a274d575252e80f83748ff127cd",
+   "bytes": 164924,
+   "pages_total": 25,
+   "solution_pages": 24,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "visual_review_note": "Every current page rendered/contact-reviewed; proof and frontier pages additionally inspected at full size.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "f8e16648c0e8db6a062b724bb5406dda"
+  },
+  "source_path": "reproduce/paper/paper.tex"
  }
 }

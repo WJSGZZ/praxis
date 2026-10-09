@@ -86,7 +86,7 @@ def tx(s,math=True):
         elif tok=='<br/>':out.append(r'\\ ')
         elif tok.startswith('<font') or tok=='</font>':pass
         else:out.append(plain(tok) if math else plain_nomath(tok))
-    return re.sub(r'@(fig|tab):([\w]+)@',r'\\ref{\1:\2}',''.join(out))
+    return re.sub(r'@(fig|tab):([\w-]+)@',r'\\ref{\1:\2}',''.join(out))
 def para(s,kind='body'):
     if kind=='title':tex.append(r'\begin{center}{\LARGE\bfseries '+tx(s)+r'}\end{center}'+'\n')
     elif kind=='heading':
@@ -344,7 +344,7 @@ if rob:
     r10=rob['random_error']['0.10']
     rob_text=f' With the 0.1°C buffer, {r10["share_within_limits"]:.0%} of 200 draws with independent Gaussian multiplier standard deviation 0.1 stay within the limits.'
 para(f'The price of a margin is measured on a 6-segment version. Requiring all three limits to hold with a buffer b gives {pw[0.]:.2f} L at b = 0, {money_text(0.1)} at 0.1°C, {money_text(0.2)} at 0.2°C and {money_text(0.3)} at 0.3°C.'+rob_text+f' The {ctl["buffer_c"]:g}°C policy is selected here for its independently checked numerical margin. Its {rv["tap_error_share"]:.0%} acceptance under the stated random error model does not make it a reliable manual prescription; a real bath needs temperature feedback and separate calibration.')
-para('<b>Mixing changes the action, not just the error bar.</b> We re-optimize six five-minute rates at two nearby, known diffusivities, targeting a 0.1°C design buffer plus 0.03°C floor reserve under the same physical limits. Two starts and a 2 L/min bound define this finite local search; the baseline search allows 3 L/min, so these results are conditional candidates, not a controlled comparison of minimum water use. Independent continuous-time envelopes accept both schedules on all three grids; neither is globally optimal or physically calibrated.')
+para('<b>Mixing changes the action, not just the error bar.</b> Table @tab:mixing-control@ compares the accepted candidates. We re-optimize six five-minute rates at two nearby, known diffusivities, targeting a 0.1°C design buffer plus 0.03°C floor reserve under the same physical limits. Two starts and a 2 L/min bound define this finite local search; the baseline search allows 3 L/min, so these results are conditional candidates, not a controlled comparison of minimum water use. Independent continuous-time envelopes accept both schedules on all three grids; neither is globally optimal or physically calibrated.')
 mixing_rows=[['D (m²/s)','Water (L)','First 5 min','Finest span bound (°C)']]
 for row in CS['conditional_schedules']:
     chosen=row['chosen'];finest=row['independent'][-1]
