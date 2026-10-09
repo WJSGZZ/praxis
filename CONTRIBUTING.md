@@ -41,6 +41,10 @@ Build each host package through `scripts.build_plugin`; do not zip an entire che
 
 每次修改先定位共同根因与实际下游，再实施有限而完整的变更：核对调用方、返回状态、文档与生成索引、已接受结果和最终展示；测试包含独立答案和明确拒绝的坏输入。保存原审查意见，确认后才修；失败修复过程也保留，不能用最终测试通过抹掉它。跨模块且可能反复争论的决定在项目的唯一状态入口记录理由、替代方案与代价，普通润色不建额外决策文件。
 
+一次委托按本轮目标及完成条件连续执行全部已授权、具备条件的改进，包含关联修复、产物同步、必要验证和接续记录；不在计划写好、单个批次或局部测试通过时提前结束，也不要求使用者反复提醒继续。执行中发现的同根因或必要下游缺陷纳入本轮，新的无关方向留待另行排序。只有实际预算、权限、必要输入、真人／宿主条件或使用者暂停才能留下未完成项；记录条件、证据、已完成部分和恢复动作，继续完成不依赖它的事项。收尾逐项说明已验证、已实现待验证和等待条件，不以删除失败、降低阈值或缩小原目标凑完成。
+
 研究用途与完成方式分别标记。少量旗舰维护当前结论、复现与展示；普通研究归档固定源码、环境和论文版本，不因插件升级全部重排。确认受影响或主动迁移时才创建修订关系，保留历史成品。`research/` 不默认进入安装包；同题参考论文、购买资料和私人交互不自动公开。干净检出和独立目录保证版本清楚，不能据此声称答案或模型预训练已隔离。
 
 Treat a change as one complete correction: trace the cause through its callers, evidence and published claims, then test both a known valid case and the failure that exposed it. Keep the shared method and execution contracts authoritative. Frozen research archives retain their original environments; only affected or explicitly migrated artifacts need rebuilding. Repository cleanliness is version control evidence, not proof of an unseen or isolated evaluation.
+
+Finish the agreed round through implementation, affected artifacts, necessary verification and handoff. Keep progressing through authorized work that can run; a plan, one completed batch or a backlog entry is not the round's completion. Resolve related defects without expanding into unrelated work. Carry unfinished items only for an actual budget, permission, input, participant or environment dependency, or a user pause; preserve evidence and the exact action needed to resume.
