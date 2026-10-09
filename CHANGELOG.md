@@ -5,6 +5,10 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 科研绘图不再默认步长抽稀长序列，避免漏掉窄峰；检查全部点的非有限值，明确点数上限超出时拒绝静默删点。图形按论证需要选择，不把配图或子标题设为模板必填项。
+
+- 美赛报告共用单一版式源与摘要页生成器；新增模板漂移检查，收费站终稿与浴缸旗舰统一排版，数学内容不变。冻结入口增加版式门禁与源文件哈希；组件是否选用独立于样式约束，目录两级统一引线。国赛2026正文上限修正为30页（摘要与附录不计）。
+
 - 修复 ODE 容差比较的物理时间对齐，以及反例缩减的最终浮点停滞、异常误判和预算耗尽语义；评审视图保留逐评委证据关联，奖项标签按具体赛事届次校验。同秒运行改按收据时间排序，最新失败不被旧成功掩盖。
   ODE tolerance checks now compare solutions at matching physical times. Counterexample shrinking makes strict floating-point progress and distinguishes evaluation failures from counterexamples. Review evidence stays linked to its reviewer and edition-specific award labels are checked. Timestamp ordering prevents an older success from hiding a later failed run.
 - 自主研究沿原任务与证据链推进，运行中的进度与计算定义分开保存。新增收费站汇合研究归档，包含完整英文原稿／修订稿、兼容流量证书、有限占用反例、失败候选与复现入口；它是一次开发研究，不计作隔离盲测或奖项校准。

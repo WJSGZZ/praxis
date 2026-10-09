@@ -1,42 +1,36 @@
 % 中文论文骨架（XeLaTeX 或 tectonic，需要 ctex 宏包）。编译两次：xelatex main.tex（或 tectonic main.tex）
-% 全国赛论文格式规范（2019、2021、2023 年修订稿一致）：A4、四边页边距不少于 2.5 厘米、页脚居中的阿拉伯页码（从摘要页起）、
-% 摘要页含标题和关键词且不超过一页、正文不要目录并尽量控制在 20 页以内、附录页数不限且含支撑材料文件清单和完整可运行源程序
+% 全国赛论文格式规范（2026年修订稿，2026-10-09核对）：A4、四边页边距不少于 2.5 厘米、页脚居中的阿拉伯页码（从摘要页起）、
+% 摘要页含标题和关键词且不超过一页、正文不要目录、不超过30页（摘要单页、附录不计入正文）、附录页数不限且含支撑材料文件清单和完整可运行源程序
 % （没有程序要写明“本论文没有用到程序”）、论文中不得出现身份、学校和赛区信息。字体与字号不做统一要求。
 % 编译后检查：uv run --locked python -m scripts.contest_rules main.pdf --contest cumcm --forbidden 学校名。以当年官方文件为准。
-\documentclass[a4paper,12pt]{ctexart}
+\newcommand{\PraxisTitle}{论文题目}
+% BEGIN PRAXIS CUMCM STYLE v1
+% Praxis CUMCM house style v1; content and contest rules are separate.
+\documentclass[a4paper,12pt,fontset=none]{ctexart}
 \usepackage[top=2.54cm,bottom=2.54cm,left=2.8cm,right=2.8cm]{geometry}
+\setCJKmainfont[BoldFont={Songti SC Bold}]{Songti SC}
+\setCJKsansfont{Heiti SC}
+\setCJKmonofont{Songti SC}
 \usepackage{amsmath,amssymb}
 \usepackage{newtxtext,newtxmath}
-\usepackage{booktabs,graphicx,xcolor,caption,needspace,fvextra,array}
-\usepackage[hidelinks,pdfauthor={}]{hyperref}
-\urlstyle{same}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.17}
-\usepgfplotslibrary{fillbetween,groupplots}
-\usetikzlibrary{arrows.meta,positioning,calc}
-\definecolor{main}{HTML}{0072B2}
-\definecolor{accent}{HTML}{D55E00}
-\definecolor{muted}{HTML}{7A7F85}
-\definecolor{light}{HTML}{B8BDC2}
-\definecolor{oigreen}{HTML}{009E73}
-\definecolor{oiorange}{HTML}{E69F00}
-\definecolor{oisky}{HTML}{56B4E9}
-\definecolor{oiyellow}{HTML}{F0E442}
-\definecolor{teal}{HTML}{17766E}
-\definecolor{clay}{HTML}{9E6440}
-\definecolor{slate}{HTML}{5D696E}
-\definecolor{sand}{HTML}{AAA69B}
+\usepackage{booktabs,graphicx,xcolor,pgfplots,caption,needspace,fvextra,array,tabularx}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}\Urlmuskip=0mu plus 1mu
 \renewcommand{\CJKttdefault}{\CJKrmdefault}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{groupplots}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{main}{HTML}{0072B2}\definecolor{accent}{HTML}{D55E00}
 \linespread{1.3}
 \setlength{\parskip}{0pt}
 \ctexset{section={format=\bfseries\zihao{4}\centering,name={,},number=\arabic{section},aftername=\quad,beforeskip=2.4ex plus .4ex,afterskip=1.6ex},
  subsection={format=\bfseries\zihao{-4}\raggedright,name={,},number=\arabic{section}.\arabic{subsection},aftername=\quad,beforeskip=1.8ex plus .3ex,afterskip=1ex}}
-\DeclareCaptionLabelFormat{hei}{{\bfseries #1\,#2}}
-\captionsetup{labelformat=hei,labelsep=quad,font=small,justification=centering}
+\DeclareCaptionLabelFormat{heiti}{{\bfseries #1\,#2}}
+\captionsetup{labelformat=heiti,labelsep=quad,font=small,justification=centering}
 \captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
+\setlength{\abovedisplayskip}{8pt}\setlength{\belowdisplayskip}{8pt}
 \pagestyle{plain}
-% float pages start at the top instead of centring their content vertically
-\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{10pt plus 1fil}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
+% END PRAXIS CUMCM STYLE
 \begin{document}
 \begin{center}{\bfseries\zihao{3} 论文题目：写出结论，而不是只写主题}\end{center}
 \section*{摘\hspace{1em}要}

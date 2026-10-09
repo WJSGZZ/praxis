@@ -2,7 +2,7 @@
 
     uv run --locked python -m scripts.contest_rules paper.pdf --contest mcm|cumcm [--forbidden "University of ..."]
 
-The mechanical MCM rules were rechecked against COMAP 2027 instructions on 2026-10-08 and in the CUMCM paper-format specification (2019, 2021, 2023 revisions).
+The mechanical MCM rules were rechecked against COMAP 2027 instructions on 2026-10-08; CUMCM uses the official 2026 paper-format revision, rechecked on 2026-10-09.
 They change: compare with the current official documents before relying on a pass. A pass means the PDF meets these mechanical rules;
 it says nothing about the content."""
 import argparse
@@ -15,7 +15,7 @@ from pathlib import Path
 from pypdf import PdfReader
 
 MCM_PAGE_LIMIT = 25
-CUMCM_BODY_PAGES = 20
+CUMCM_BODY_PAGES = 30
 MIN_BODY_PT = 11.5            # 12 pt LaTeX body text measures about 11.96
 MIN_MARGIN_PT = 2.5 / 2.54 * 72 - 3
 
@@ -103,10 +103,14 @@ def evaluate(records, contest, *, margins=None, forbidden=()):
             errors.append(f'a table of contents on page {toc}; the specification says not to include one')
         # an appendix heading is a short line that starts with 附录 and has no sentence punctuation; a line that merely begins with the word is body text
         appendix = next((i for i, r in enumerate(records) if i > 0 and any(re.match(r'\s*附\s*录', line) and len(line) <= 30 and not re.search(r'[。，；,.;]', line) for line in r['lines'])), None)
-        body = appendix if appendix is not None else n
-        facts.update(total_pages=n, body_pages=body, appendix_from_page=None if appendix is None else appendix + 1)
+        before_appendix = appendix if appendix is not None else n
+        body = max(0, before_appendix - 1)  # Abstract is a separate dedicated page.
+        facts.update(total_pages=n, body_pages=body, abstract_pages=1 if n else 0,
+                     pages_before_appendix=before_appendix,
+                     body_page_limit=CUMCM_BODY_PAGES, format_edition='2026',
+                     appendix_from_page=None if appendix is None else appendix + 1)
         if body > CUMCM_BODY_PAGES:
-            warnings.append(f'the body (before the appendix) has {body} pages; the specification asks for about 20 at most')
+            errors.append(f'the body has {body} pages; the 2026 specification permits at most 30, excluding the abstract and appendix')
         if appendix is None:
             errors.append('no appendix found: the specification requires the file list and the complete runnable source code')
         else:
@@ -124,7 +128,7 @@ def evaluate(records, contest, *, margins=None, forbidden=()):
             small = [p['page'] for p in margins['pages'] if not p.get('blank') and min(p['left_pt'], p['right_pt']) < MIN_MARGIN_PT]
             if small:
                 errors.append(f'ink closer than 2.5 cm to the side edge on pages {small[:10]}')
-        sizes = [r['body_size'] for r in records[:body] if r['body_size']]
+        sizes = [r['body_size'] for r in records[1:before_appendix] if r['body_size']]
         facts['body_font_pt'] = collections.Counter(sizes).most_common(1)[0][0] if sizes else None
     else:
         raise ValueError('contest must be mcm or cumcm')

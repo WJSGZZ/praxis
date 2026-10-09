@@ -26,11 +26,24 @@ def test_rejects_non_finite_and_mismatched_data():
         texplot.Axis().stairs([1, 2], [0, 1])
 
 
-def test_long_series_is_thinned_but_keeps_endpoints():
+def test_long_series_preserves_narrow_peak_and_all_points():
     n = 5000
-    coords = texplot._coords(range(n), [float(i) for i in range(n)], limit=700)
-    pts = coords.split(" ")
-    assert len(pts) <= 702 and pts[0] == "(0,0)" and pts[-1] == "(4999,4999)"
+    y = [0.] * n
+    y[3] = 100.  # The former stride of eight missed this peak.
+    pts = texplot._coords(range(n), y).split(" ")
+    assert len(pts) == n and pts[3] == "(3,100)"
+    assert pts[0] == "(0,0)" and pts[-1] == "(4999,0)"
+    with pytest.raises(ValueError, match='silent thinning'):
+        texplot._coords(range(n), y, limit=700)
+
+
+def test_plot_rejects_empty_series_and_invalid_unsampled_point():
+    with pytest.raises(ValueError, match='empty'):
+        texplot._coords([], [])
+    y = [0.] * 5000
+    y[3] = math.nan
+    with pytest.raises(ValueError, match='non-finite'):
+        texplot._coords(range(5000), y)
 
 
 def test_bar_chart_has_one_series_per_bar_with_labels():

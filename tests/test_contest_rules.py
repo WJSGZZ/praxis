@@ -58,7 +58,8 @@ def test_cumcm_rules():
     toc = cumcm_pages()
     toc[1] = page('目 录\n1 问题重述\n2')
     assert any('table of contents' in e for e in contest_rules.evaluate(toc, 'cumcm')['errors'])
-    assert contest_rules.evaluate(cumcm_pages(body=21), 'cumcm')['warnings']
+    assert contest_rules.evaluate(cumcm_pages(body=31), 'cumcm')['passed']  # 1 abstract + 30 body
+    assert any('at most 30' in e for e in contest_rules.evaluate(cumcm_pages(body=32), 'cumcm')['errors'])
     no_abstract = cumcm_pages()
     no_abstract[0] = page('问题重述\n1')
     assert contest_rules.evaluate(no_abstract, 'cumcm')['errors']
@@ -111,13 +112,13 @@ def test_a_body_line_that_starts_with_appendix_is_not_the_appendix_heading():
     pages = cumcm_pages(body=10, appendix=2)
     pages[4] = page('正文\n附录 B 中的程序按第 3 节的步骤逐项实现，相关说明见表 2，不再重复。\n6')
     r = contest_rules.evaluate(pages, 'cumcm')
-    assert r['facts']['body_pages'] == 10
+    assert r['facts']['body_pages'] == 9
 
 
 def test_a_short_body_line_with_punctuation_is_not_an_appendix_heading():
     pages = cumcm_pages(body=10, appendix=2)
     pages[4] = page('正文\n附录 B。\n6')
-    assert contest_rules.evaluate(pages, 'cumcm')['facts']['body_pages'] == 10
+    assert contest_rules.evaluate(pages, 'cumcm')['facts']['body_pages'] == 9
 
 
 def test_figures_and_tables_that_the_text_never_mentions_are_flagged():

@@ -1,27 +1,58 @@
+\newcommand{\PraxisTeam}{7391857}
+\newcommand{\PraxisTitle}{Paying for the Bottleneck: A Compatible-Flow Design for Toll-Plaza Merging}
+% BEGIN PRAXIS MCM STYLE v1
+% Praxis MCM house style v1. Layout source; assemble with scripts.paper_template.
 \documentclass[12pt,letterpaper]{article}
-\usepackage[margin=1in,headheight=15pt]{geometry}
-\usepackage{amsmath,amsthm}
+\usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
 \usepackage{newtxtext,newtxmath}
-\usepackage{booktabs,array,microtype,fancyhdr,caption,float}
-\usepackage{pgfplots}\pgfplotsset{compat=1.18}
+\usepackage{booktabs,array,graphicx,xcolor,caption,float,etoolbox,fvextra,fancyhdr,lastpage,titlesec,titletoc,needspace}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}\Urlmuskip=0mu plus 1mu
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{fillbetween,groupplots}
 \usetikzlibrary{arrows.meta,positioning,calc}
-\usepackage[hidelinks]{hyperref}
-\definecolor{main}{HTML}{0072B2}\definecolor{accent}{HTML}{D55E00}
-\definecolor{green}{HTML}{009E73}
-\pagestyle{fancy}\fancyhf{}\fancyhead[L]{Team 7391857}\fancyhead[R]{Merge After Toll}\fancyfoot[C]{\thepage}
-\setlength{\emergencystretch}{2em}
-\setlength{\parindent}{1.2em}\setlength{\parskip}{3pt}
-\captionsetup{font=small,labelfont=bf}
-\newtheorem{proposition}{Proposition}
+\definecolor{main}{HTML}{0072B2}
+\definecolor{accent}{HTML}{D55E00}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{light}{HTML}{B8BDC2}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oisky}{HTML}{56B4E9}
+\definecolor{oiyellow}{HTML}{F0E442}
+\definecolor{teal}{HTML}{17766E}
+\definecolor{clay}{HTML}{9E6440}
+\definecolor{slate}{HTML}{5D696E}
+\definecolor{sand}{HTML}{AAA69B}
+\linespread{1.12}
+\setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{16pt plus 3pt}{8pt}
+\titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
+\setcounter{tocdepth}{2}
+\setlength{\emergencystretch}{3em}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{Team \# \PraxisTeam}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
+\AtBeginEnvironment{thebibliography}{\small}
+% Two visible levels; both use aligned dot leaders, with hierarchy by weight/indent.
+\titlecontents{section}[1.8em]{\addvspace{5pt}\bfseries}{\contentslabel{1.8em}}{}{\titlerule*[.6pc]{.}\contentspage}
+\titlecontents{subsection}[4.1em]{}{\contentslabel{2.3em}}{}{\titlerule*[.6pc]{.}\contentspage}
+% END PRAXIS MCM STYLE
 \begin{document}
-\thispagestyle{empty}
-\noindent\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcr}
-Problem Chosen & 2017 MCM & Team Control Number\\
-\Large B & \Large Summary Sheet & \Large 7391857
-\end{tabular*}
-\vspace{1.0em}
-\begin{center}{\LARGE\bfseries Paying for the Bottleneck:\\[4pt] A Compatible-Flow Design for Toll-Plaza Merging}\end{center}
 
+\definecolor{green}{HTML}{009E73}\newtheorem{proposition}{Proposition}
+\thispagestyle{fancy}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}
+\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\
+{\Large\textbf{B}}&\textbf{Summary Sheet}&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}
+
+\begin{center}{\LARGE\bfseries Paying for the Bottleneck:\\[4pt] A Compatible-Flow Design for Toll-Plaza Merging}\end{center}
+\begin{center}{\Large\bfseries Summary}\end{center}
 A wider toll barrier does not guarantee a faster exit. Drivers require compatible payment facilities, and the resulting streams must share a smaller set of travel lanes. We model these two constraints together, then size a smooth, order-preserving fan-in and examine finite queues.
 
 The worked case has 8 booths and 3 outgoing lanes. Pooling booth capacities gives an upper bound of 5,400 vehicles/hour, yet the initial arrangement sustains at most 3,000 arriving vehicles/hour at the nominal payment composition. A payment-to-exit flow network exposes this gap. Its minimum-cut formula gives an exact capacity threshold within the model; an independently implemented maximum-flow calculation checks the threshold and a linear program supplies the routing rates.

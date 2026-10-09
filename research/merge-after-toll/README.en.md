@@ -6,6 +6,8 @@ More tollbooths can increase service capacity and still make vehicles wait longe
 
 The archive records **one autonomous AI development study**. Its purpose is research; the two flagship contest demonstrations retain their separate roles. Iterative development is not presented as a blind capability evaluation.
 
+The final manuscript now uses the same `praxis-mcm-v1` layout as the original MCM flagship. The scientific text and numerical results are unchanged; the historical first draft retains its original layout. The [layout revision](reviews/layout-revision.json) links the earlier semantic review to this typesetting update.
+
 ## Findings
 
 | Result | Conditions and evidence |

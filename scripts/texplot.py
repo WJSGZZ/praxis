@@ -47,15 +47,20 @@ def _fmt(v: float) -> str:
     return "%.6g" % v
 
 
-def _coords(x: Iterable[float], y: Iterable[float], limit: int = 700) -> str:
+def _coords(x: Iterable[float], y: Iterable[float], limit: int | None = None) -> str:
+    """Serialize every point; size limits must never silently remove evidence."""
     xs, ys = list(x), list(y)
     if len(xs) != len(ys):
         raise ValueError("x and y differ in length")
-    step = max(1, math.ceil(len(xs) / limit))
-    idx = list(range(0, len(xs), step))
-    if idx[-1] != len(xs) - 1:
-        idx.append(len(xs) - 1)
-    return " ".join("(%s,%s)" % (_fmt(xs[i]), _fmt(ys[i])) for i in idx)
+    if not xs:
+        raise ValueError("plotted series is empty")
+    # Validate the entire input, including points that an old stride skipped.
+    coords = [(float(a), float(b)) for a, b in zip(xs, ys)]
+    if not all(math.isfinite(a) and math.isfinite(b) for a, b in coords):
+        raise ValueError("non-finite value in plotted data")
+    if limit is not None and (limit < 1 or len(coords) > limit):
+        raise ValueError("point limit exceeded; explicitly prepare and document aggregation instead of silent thinning")
+    return " ".join("(%s,%s)" % (_fmt(a), _fmt(b)) for a, b in coords)
 
 
 class Axis:

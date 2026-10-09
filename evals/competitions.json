@@ -13,7 +13,7 @@
       },
       "language": "Chinese",
       "participation": null,
-      "deliverables": null,
+      "deliverables": "Electronic paper PDF or Word <=20MB, abstract first without pledge/numbering pages; supporting ZIP/RAR <=20MB; body <=30 pages excluding abstract/appendix; no contents.",
       "ai": "2026 rules refer to the separate AI-use policy; detailed policy must be checked",
       "award_system": null,
       "sources": [
@@ -21,6 +21,11 @@
           "url": "https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html",
           "checked": "2026-10-08",
           "scope": "2026 participation rules only; not full paper-format and AI policy"
+        },
+        {
+          "url": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html",
+          "checked": "2026-10-09",
+          "scope": "2026 paper-format specification: body <=30 pages, dedicated abstract, no contents, appendix, anonymity, PDF/support <=20MB"
         }
       ],
       "checker": "scripts/contest_rules.py --contest cumcm",

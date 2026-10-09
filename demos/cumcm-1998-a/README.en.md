@@ -52,6 +52,8 @@ Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divide
 
 **[Read the complete 23-page paper →](deliverables/paper.pdf)** Typeset with XeLaTeX: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
 
+Rebuilding the manuscript requires Songti SC and Heiti SC; the verified typesetting environment is XeLaTeX on macOS. Numerical reproduction runs separately and needs neither LaTeX nor the paper fonts.
+
 ## Run it yourself
 
 From the Praxis repository root:

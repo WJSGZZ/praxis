@@ -1,0 +1,18 @@
+{
+  "kind": "layout-only revision",
+  "previous_commit": "5b18d15a370ac71d1f680a1e451285c5de20abd9",
+  "previous_tex_sha256": "31ae42188a7d7e4d8190194c8fb3c0871306d5ec6ff8317b1ec5888b6f13ac79",
+  "current_tex_sha256": "387faaacaf7ad11730746ec5d1f63053a31ad7220f9858e12f62a8a0946c331e",
+  "current_pdf_sha256": "6714cd581a9d903fd4f3235ae7a0ec7bf4ba24418b6af6e506f48d92993741cd",
+  "profile": {
+    "profile": "praxis-mcm-v1",
+    "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+  },
+  "scientific_content": "The entire TeX suffix from the first summary paragraph through end-document is byte-identical to the prior manuscript. Only preamble, summary header and Summary label changed.",
+  "body_sha256": "a2a55147567de36b8f5f13160a3bfb2a774a5e72f8b88364aa262695076e3d18",
+  "semantic_review_scope": "reviews/final-review.json remains the full semantic review of the previous source hash. Identical scientific content is transferred by the byte comparison above, not by a fabricated new independent review.",
+  "visual_review": "All 17 pages rendered and inspected; shared contents leaders and small bibliography checked at full size. Native compiler succeeded; two-pass XeLaTeX has no overfull boxes or unresolved references.",
+  "numerical_rerun": false,
+  "numerical_reference_sha256": "304e7affc3110f6d655903060a3d33c10fe6ea39512a3764dfb33e975578c04c",
+  "baseline_manuscript": "Unchanged historical first draft, intentionally not silently restyled"
+}

@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "1db7efba26f3774b7096097bf19a56a221e185566ee6e86b9119fab2213bf0c3",
-  "bytes": 159401,
+  "sha256": "a46acfabbcb6af23c3bd3692f7b5eedaa2bac6ac41fb28eac6dd0bd74e6c3ebd",
+  "bytes": 162195,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -145,5 +145,17 @@
   "targeted_tests": 9,
   "builtin_compiler": "success",
   "remaining_manual_scope": "Assumption rationale and fixed search-design descriptions still require semantic review when model or experiment design changes; generated values do not automate scientific interpretation."
+ },
+ "layout_revision": {
+  "date": "2026-10-09",
+  "profile": {
+   "profile": "praxis-mcm-v1",
+   "style_sha256": "e2bd467d663ed28aa22ad22f107d300c0258ddb5ae98baf602baae4bd2568909"
+  },
+  "pdf_sha256": "a46acfabbcb6af23c3bd3692f7b5eedaa2bac6ac41fb28eac6dd0bd74e6c3ebd",
+  "numerical_rerun": false,
+  "pages_rendered": 25,
+  "native_compiler": "success",
+  "plot_revision": "No silent decimation; rebuilt with archived numerical evidence, all pages pixel-identical to the layout revision"
  }
 }

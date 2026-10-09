@@ -650,8 +650,8 @@
   "reproduction": "uv run --locked python research/merge-after-toll/reproduce.py --output .session/merge-replay",
   "default_plugin_bundle": false,
   "files_sha256": {
-    "README.en.md": "358b34b992139550aea7c4fd39bac8489e2a86846daddd446becb25de9c56c0c",
-    "README.md": "a1cd9a9b7cd8c14ee3cbb4472bb149880352f0b3d38e1d9118dacf8df4b0d1cb",
+    "README.en.md": "27d9fb0cc9523a2515552ddf4cb9636b3e788a6c038fa110cc0ddf195830683e",
+    "README.md": "18ed5e128f172cd2509d09387594c4777959b05b2e6d85fbe4c2822f7c479de8",
     "audit.py": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
     "baseline/code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
     "baseline/code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
@@ -665,10 +665,11 @@
     "code/finite_queue.py": "9e40a5d086934a41b4f81c0a97339af49acc3f11116873f3a4357ffb90746e74",
     "code/model.py": "bf1d37656479f085f660278db22a8597fc7646af067445d489349a136b4d3949",
     "code/validate.py": "12e5d033f23dab2574f9eaaf5cbb64b4d15177d8fc151243abfd8bcef29bf3bc",
-    "paper/build-input.json": "0d801db9d4566e6aa77fae1a68ae18ee5d343f6be24c813a4066fa40a3934ab2",
-    "paper/build_report.py": "32709cde3ccdf05bae3c3d46a51f38ad101ddd058399e1f5cdb512985f181968",
-    "paper/paper.pdf": "31cd94ac2f8203ab1b37d8f5051b7544102f95753e6273e879b3b37e1099c6c1",
-    "paper/paper.tex": "31ae42188a7d7e4d8190194c8fb3c0871306d5ec6ff8317b1ec5888b6f13ac79",
+    "paper/build-input.json": "fc7f378584d30d292e6df7ee7caf81bc16f882bc35f1f3257eca8e9b43a19631",
+    "paper/build_report.py": "32ba857b5580192845ffc870bf34598fb47c6a70480b750befad0c68cfda1129",
+    "paper/layout-profile.json": "7933cfa06f10a2cda69a7cea12eddc6d9ee9c2e26c4663dd6584be37fe91c4a1",
+    "paper/paper.pdf": "6714cd581a9d903fd4f3235ae7a0ec7bf4ba24418b6af6e506f48d92993741cd",
+    "paper/paper.tex": "387faaacaf7ad11730746ec5d1f63053a31ad7220f9858e12f62a8a0946c331e",
     "reference/accepted-checks.json": "b8411f618a296fd65ea855e734c55d4492d1ddc4f7fc7455028d7ba5b08e9dbd",
     "reference/accepted.json": "304e7affc3110f6d655903060a3d33c10fe6ea39512a3764dfb33e975578c04c",
     "reference/baseline-checks.json": "08f39ca1158aee99f64bd6550556c33c67059fc39ce9d8b50652f433fd058a87",
@@ -680,8 +681,20 @@
     "reproduce.py": "ff1306d50fa00c8b7b19f7eec149ec37b5bd67ae48eb13ae8bf8a236fcee9415",
     "reviews/english-review.md": "fed5be14124084a662a7765e45c735e7d2b22ae857046ceecef46bc7c14e4d8a",
     "reviews/final-review.json": "464200d4dce5eb24e50444ee908f7e068f6f534656e777c111730f640c9cf7ec",
+    "reviews/layout-revision.json": "c829731eb389c0b830b4710ee22da274c0ade0e21c798f7a6df973a3882282d1",
     "reviews/metering-equivalence.md": "02b5703b34b59afb91e84c89217d0171f557dee922e14a8a3c37ec9e23755336",
     "reviews/study.md": "9e8364a295ecf7ab88987fa3e98de1c78f6c85dceb96dccd8a9bcb14916eac14",
     "reviews/user-assessment.json": "08dcbbf9699f9c6a0166e6b059b18e048ed3b8e1a443a57f4bb818f64dbe08dd"
+  },
+  "layout_revision": {
+    "previous_archive_commit": "5b18d15a370ac71d1f680a1e451285c5de20abd9",
+    "record": "reviews/layout-revision.json",
+    "revised_utc": "2026-10-09T00:09:02.351744+00:00",
+    "scientific_content_unchanged": true,
+    "numerical_rerun": false,
+    "profile": "praxis-mcm-v1",
+    "template_sha256": "418b7f89b9fb5feaa6b8045087ef3d7e91d324525938c1b2560241d25c3b5ffc",
+    "assembler_sha256": "34b204ec1a44b93b377bde80f1be7a6eaaf5c650ffc273e1292bbf6263f5b837",
+    "charts_preamble_source_sha256": "fe9e81f419cee393d59ad1167fc05f90fdd4f702be7d00c07e7ab4caeac4f9d1"
   }
 }

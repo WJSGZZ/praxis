@@ -30,6 +30,7 @@ ROOT.joinpath('submission').mkdir(exist_ok=True)
 sys.path.insert(0,str(ROOT.parents[2]))
 import subprocess,shutil
 from scripts import texplot
+from scripts.paper_template import preamble, summary_header, check as check_layout
 escape=lambda s:s
 tex=[];eqcount=0;tabcount=0;SEC=[0]
 CAPS=['Where each requirement is answered','Modeling options compared','Baseline inputs','Coefficient anchors and the values used','Symbols',
@@ -127,33 +128,13 @@ def figure(name,caption,height=None):
     if name in introductions: para(introductions[name])
     m=re.match(r'^Figure (\d+)\. (.*)$',caption,re.S);assert m,caption
     tex.append(texplot.figure_env(FIG[name],tx(m.group(2)),label='fig:'+name.replace('.png','')))
-PREAMBLE=r'''\documentclass[12pt,letterpaper]{article}
-\usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
-\usepackage{amsmath,amssymb}
-\usepackage{newtxtext,newtxmath}
-\usepackage{booktabs,array,graphicx,xcolor,caption,fvextra,fancyhdr,lastpage,titlesec,needspace}
-\usepackage[hidelinks,pdfauthor={},pdftitle={A Hot Bath: Conserving Water Without Losing Uniformity}]{hyperref}
-\urlstyle{same}\Urlmuskip=0mu plus 1mu
-'''+texplot.PREAMBLE+r'''
-\linespread{1.12}
-\setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
-\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
-\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
-\titlespacing*{\section}{0pt}{16pt plus 3pt}{8pt}
-\titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
-\captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
-\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
-\setcounter{tocdepth}{2}
-\setlength{\emergencystretch}{3em}
-\pagestyle{fancy}\fancyhf{}
-\fancyhead[L]{Team \# 7391856}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
-\renewcommand{\headrulewidth}{0.4pt}
-\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
-\begin{document}
-'''
+PREAMBLE=preamble(TEAM_CONTROL_NUMBER, 'A Hot Bath: Conserving Water Without Losing Uniformity')
+
 def compile_pdf(stem,title):
     d=ROOT/'paper';d.mkdir(exist_ok=True)
-    (d/(stem+'.tex')).write_text(PREAMBLE+''.join(tex)+'\n\\end{document}\n')
+    source=PREAMBLE+''.join(tex)+'\n\\end{document}\n'
+    check_layout(source)
+    (d/(stem+'.tex')).write_text(source)
     xe=shutil.which('xelatex') or next(iter(sorted(Path.home().glob('texlive/*/bin/*/xelatex'))),None)
     if xe:
         for _ in range(3):res=subprocess.run([str(xe),'-interaction=nonstopmode','-halt-on-error',stem+'.tex'],cwd=d,capture_output=True,text=True)
@@ -204,9 +185,7 @@ FIG['frontier.png']=ax.tex()
 cube=T[-1].reshape(tuple(r['grid']))
 FIG['spatial.png']=texplot.heatmap_panels([cube[:,:,k].tolist() for k in range(3)],['Bottom layer','Middle layer','Top layer'],'Length (m)','Width (m)',(p['L'],p['W']),float(T[-1].min()),float(T[-1].max()),cbar_label='Final cell-average temperature ($^\\circ$C)',xticks=[0,.75,1.5],yticks=[0,.325,.65])
 
-tex.append(r'\thispagestyle{fancy}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}'+'\n'
- r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\'+'\n'
- r'{\Large\textbf{A}}&\textbf{Summary Sheet}&{\Large\textbf{'+TEAM_CONTROL_NUMBER+r'}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}'+'\n')
+tex.append(summary_header('A'))
 
 para('A Hot Bath: Conserving Water Without Losing Uniformity','title')
 para('Summary','heading')

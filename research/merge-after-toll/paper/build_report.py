@@ -4,7 +4,10 @@ No solver is invoked here. Numerical prose, tables and figures share that input.
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from scripts.paper_template import preamble, summary_header, check as check_layout
 import numpy as np
 from scipy.stats import t as student_t
 
@@ -14,6 +17,12 @@ def number(x, digits=0):
 
 
 def document(r, output):
+    profile = Path(__file__).with_name('layout-profile.json')
+    if profile.exists():
+        expected = json.loads(profile.read_text())['style_sha256']
+        current = check_layout(preamble('7391857', 'Layout check') + summary_header('B'))['style_sha256']
+        if current != expected:
+            raise ValueError('Frozen research layout differs; explicitly revise the layout profile before rebuilding')
     cfg=r['config']; improved=r['phase']=='improved'; b=r['baseline']
     pieces=[]
     def put(s): pieces.append(s+('\n\n' if not s.startswith('\\') and ' & ' not in s and not s.endswith('\\\\') else '\n'))
@@ -37,30 +46,11 @@ def document(r, output):
     expanded=r['expansion'] if improved else None
     nomcap=nominal.get('capacities_vph',{}).get('nominal',b['capacity_vph'])
     robustcap=min(robust['capacities_vph'].values()) if improved else b['capacity_vph']
-    put(r'''\documentclass[12pt,letterpaper]{article}
-\usepackage[margin=1in,headheight=15pt]{geometry}
-\usepackage{amsmath,amsthm}
-\usepackage{newtxtext,newtxmath}
-\usepackage{booktabs,array,microtype,fancyhdr,caption,float}
-\usepackage{pgfplots}\pgfplotsset{compat=1.18}
-\usetikzlibrary{arrows.meta,positioning,calc}
-\usepackage[hidelinks]{hyperref}
-\definecolor{main}{HTML}{0072B2}\definecolor{accent}{HTML}{D55E00}
-\definecolor{green}{HTML}{009E73}
-\pagestyle{fancy}\fancyhf{}\fancyhead[L]{Team 7391857}\fancyhead[R]{Merge After Toll}\fancyfoot[C]{\thepage}
-\setlength{\emergencystretch}{2em}
-\setlength{\parindent}{1.2em}\setlength{\parskip}{3pt}
-\captionsetup{font=small,labelfont=bf}
-\newtheorem{proposition}{Proposition}
-\begin{document}
-\thispagestyle{empty}
-\noindent\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcr}
-Problem Chosen & 2017 MCM & Team Control Number\\
-\Large B & \Large Summary Sheet & \Large 7391857
-\end{tabular*}
-\vspace{1.0em}
-\begin{center}{\LARGE\bfseries Paying for the Bottleneck:\\[4pt] A Compatible-Flow Design for Toll-Plaza Merging}\end{center}
-''')
+    put(preamble('7391857', 'Paying for the Bottleneck: A Compatible-Flow Design for Toll-Plaza Merging'))
+    put(r'\definecolor{green}{HTML}{009E73}\newtheorem{proposition}{Proposition}')
+    put(summary_header('B'))
+    put(r'\begin{center}{\LARGE\bfseries Paying for the Bottleneck:\\[4pt] A Compatible-Flow Design for Toll-Plaza Merging}\end{center}')
+    put(r'\begin{center}{\Large\bfseries Summary}\end{center}')
     if improved:
         sim=lambda policy,scenario='nominal',load='heavy': next(x for x in r['simulations'] if x['policy']==policy and x['scenario']==scenario and x['load']==load)
         put('A wider toll barrier does not guarantee a faster exit. Drivers require compatible payment facilities, and the resulting streams must share a smaller set of travel lanes. We model these two constraints together, then size a smooth, order-preserving fan-in and examine finite queues.')
@@ -285,12 +275,12 @@ Python and its scientific libraries performed layout enumeration, flow construct
 \end{document}
 ''')
     output.mkdir(parents=True,exist_ok=True)
-    tex=output/'paper.tex';tex.write_text(''.join(pieces))
+    tex=output/'paper.tex';source=''.join(pieces);check_layout(source);tex.write_text(source)
     return tex
 
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--results',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     r=json.loads(a.results.read_text());tex=document(r,a.output)
-    (a.output/'build-input.json').write_text(json.dumps({'results_sha256':hashlib.sha256(a.results.read_bytes()).hexdigest(),'builder_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'phase':r['phase']},indent=2))
+    (a.output/'build-input.json').write_text(json.dumps({'results_sha256':hashlib.sha256(a.results.read_bytes()).hexdigest(),'builder_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'phase':r['phase'],**check_layout(tex.read_text())},indent=2))
     print(tex)

@@ -1,17 +1,22 @@
-% English paper skeleton in the style of the Praxis MCM case (XeLaTeX or tectonic).
+% Generated standalone skeleton. Layout authority: templates/mcm-style.tex via scripts.paper_template.
+% Reuse this layout for MCM reports; metadata/content may change, style overrides must be reviewed.
+% Run: uv run --locked python -m scripts.paper_template main.tex
 % Compile twice:  xelatex main.tex   (or: tectonic main.tex)
-% Hard rules (COMAP 2026 instructions): the whole PDF is at most 25 pages, counting the summary sheet, contents, references, appendices and any code;
-% 12 pt body text; team control number and page number at the top of every page; no names or institutions. The Report on Use of AI follows the
-% solution, is not counted, and is required when AI tools were used (also cite them inline and in the references).
-% Check the compiled PDF: uv run --locked python -m scripts.contest_rules main.pdf --contest mcm --forbidden "University name"
-% This is NOT an official COMAP Summary Sheet: compare the first page with the current official sheet before submitting.
+% Layout profile is a project convention, not the official rules for any year.
+% Before formal submission verify the selected edition's Summary Sheet, page limit,
+% anonymity and AI disclosure requirements; do not inherit a historical edition.
+% Check layout: uv run --locked python -m scripts.paper_template main.tex
+\newcommand{\PraxisTeam}{0000000}
+\newcommand{\PraxisTitle}{Title: state the answer, not the topic}
+% BEGIN PRAXIS MCM STYLE v1
+% Praxis MCM house style v1. Layout source; assemble with scripts.paper_template.
 \documentclass[12pt,letterpaper]{article}
 \usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
-\usepackage{amsmath,amssymb}
+\usepackage{amsmath,amssymb,amsthm}
 \usepackage{newtxtext,newtxmath}
-\usepackage{booktabs,array,graphicx,xcolor,caption,fvextra,fancyhdr,lastpage,titlesec,needspace}
-\usepackage[hidelinks,pdfauthor={}]{hyperref}
-\urlstyle{same}
+\usepackage{booktabs,array,graphicx,xcolor,caption,float,etoolbox,fvextra,fancyhdr,lastpage,titlesec,titletoc,needspace}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}\Urlmuskip=0mu plus 1mu
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 \usepgfplotslibrary{fillbetween,groupplots}
@@ -32,17 +37,25 @@
 \setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
 \titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
 \titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{16pt plus 3pt}{8pt}
+\titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
 \captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
-\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
-\newcommand{\TeamNumber}{0000000}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
+\setcounter{tocdepth}{2}
+\setlength{\emergencystretch}{3em}
 \pagestyle{fancy}\fancyhf{}
-\fancyhead[L]{Team \# \TeamNumber}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
-% float pages start at the top instead of centring their content vertically
-\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{10pt plus 1fil}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
+\fancyhead[L]{Team \# \PraxisTeam}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
+\AtBeginEnvironment{thebibliography}{\small}
+% Two visible levels; both use aligned dot leaders, with hierarchy by weight/indent.
+\titlecontents{section}[1.8em]{\addvspace{5pt}\bfseries}{\contentslabel{1.8em}}{}{\titlerule*[.6pc]{.}\contentspage}
+\titlecontents{subsection}[4.1em]{}{\contentslabel{2.3em}}{}{\titlerule*[.6pc]{.}\contentspage}
+% END PRAXIS MCM STYLE
 \begin{document}
-\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}
+\thispagestyle{fancy}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}
 \textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\
-{\Large\textbf{?}}&\textbf{Summary Sheet}&{\Large\textbf{\TeamNumber}}\end{tabular*}\end{center}\hrule\vspace{10pt}
+{\Large\textbf{A}}&\textbf{Summary Sheet}&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}
 \begin{center}{\LARGE\bfseries Title: state the answer, not the topic}\end{center}
 \begin{center}{\Large\bfseries Summary}\end{center}
 Write this page last: the problem, the main model, quantitative results with units, validation, limits and the recommendation.\par

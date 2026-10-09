@@ -78,5 +78,21 @@
   "pdf_sha256": "ed5cb578395a29572d6387434bdcbf1e0a85d5a9292f263dbfcc211c5b24f762",
   "format_precheck_errors": [],
   "format_precheck_warnings": []
+ },
+ "layout_revision": {
+  "date": "2026-10-09",
+  "profile": {
+   "profile": "praxis-cumcm-v1",
+   "style_sha256": "fc3d63cdd97547cb70beef5a6cacc1a1bff5834a3b4d19ca2033a7a364c352cf"
+  },
+  "pdf_sha256": "cb60655cfe93e3f4501eb2c131b02d9df4bceb27cbac4b9ddff716ca5ac8b95e",
+  "numerical_rerun": false,
+  "pages_rendered": 23,
+  "native_compiler": "font access blocked; system XeLaTeX succeeded",
+  "archive_changed_members": [
+   "README.md",
+   "build_paper.py",
+   "paper/main.tex"
+  ]
  }
 }

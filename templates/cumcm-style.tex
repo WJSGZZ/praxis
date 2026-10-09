@@ -1,0 +1,25 @@
+% Praxis CUMCM house style v1; content and contest rules are separate.
+\documentclass[a4paper,12pt,fontset=none]{ctexart}
+\usepackage[top=2.54cm,bottom=2.54cm,left=2.8cm,right=2.8cm]{geometry}
+\setCJKmainfont[BoldFont={Songti SC Bold}]{Songti SC}
+\setCJKsansfont{Heiti SC}
+\setCJKmonofont{Songti SC}
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs,graphicx,xcolor,pgfplots,caption,needspace,fvextra,array,tabularx}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}\Urlmuskip=0mu plus 1mu
+\renewcommand{\CJKttdefault}{\CJKrmdefault}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{groupplots}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{main}{HTML}{0072B2}\definecolor{accent}{HTML}{D55E00}
+\linespread{1.3}
+\setlength{\parskip}{0pt}
+\ctexset{section={format=\bfseries\zihao{4}\centering,name={,},number=\arabic{section},aftername=\quad,beforeskip=2.4ex plus .4ex,afterskip=1.6ex},
+ subsection={format=\bfseries\zihao{-4}\raggedright,name={,},number=\arabic{section}.\arabic{subsection},aftername=\quad,beforeskip=1.8ex plus .3ex,afterskip=1ex}}
+\DeclareCaptionLabelFormat{heiti}{{\bfseries #1\,#2}}
+\captionsetup{labelformat=heiti,labelsep=quad,font=small,justification=centering}
+\captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=4pt}
+\setlength{\abovedisplayskip}{8pt}\setlength{\belowdisplayskip}{8pt}
+\pagestyle{plain}
