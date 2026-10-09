@@ -68,3 +68,51 @@ def test_archived_study_has_complete_bound_inputs_and_independent_coverage():
         assert row['upper_temperature_bound_c'] <= 41
         assert row['span_upper_bound_c'] <= 1.5
         assert row['water_l'] == pytest.approx(command * bank[row['model_index']]['parameters']['flow_multiplier'])
+
+
+def test_transfer_cannot_overwrite_or_publish_stale_inputs(tmp_path):
+    import shutil
+    entry = HERE / 'check_calibration_transfer.py'
+    output = tmp_path / 'receipt.json'
+    output.write_text('keep accepted evidence')
+    result = subprocess.run([sys.executable, str(entry), '--output', str(output)],
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode != 0 and output.read_text() == 'keep accepted evidence'
+    # Isolated caller with intentionally stale source binding, not a mutation
+    # of shared scientific inputs. It must fail before simulation/output.
+    local = tmp_path / 'reproduce'
+    (local / 'reference').mkdir(parents=True)
+    shutil.copytree(HERE / 'code', local / 'code')
+    shutil.copy(entry, local / entry.name)
+    shutil.copy(HERE / 'check_structure.py', local / 'check_structure.py')
+    shutil.copy(HERE / 'reference/results.json', local / 'reference/results.json')
+    data = json.loads((HERE / 'reference/calibration-study.json').read_text())
+    data['source_sha256'] = {'code/model.py': '0' * 64}
+    (local / 'reference/calibration-study.json').write_text(json.dumps(data))
+    output = tmp_path / 'stale.json'
+    result = subprocess.run([sys.executable, str(local / entry.name), '--output', str(output)],
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode != 0 and 'Stale calibration study' in result.stderr
+    assert not output.exists()
+
+
+def test_transfer_receipt_keeps_finite_scope_and_policy_accounting():
+    data = json.loads((HERE / 'reference/calibration-transfer.json').read_text())
+    bank = json.loads((HERE / 'reference/calibration-study.json').read_text())
+    for name, digest in data['source_sha256'].items():
+        assert hashlib.sha256((HERE / name).read_bytes()).hexdigest() == digest
+    assert [r['model_index'] for r in data['constant_rows']] == list(range(178))
+    # Known comparison is archived on the original bank; do not extrapolate
+    # this count to real-bath probability or cross-structure coverage.
+    assert sum(r['sampled_passed'] for r in data['constant_rows']) == 130
+    for row in data['constant_rows']:
+        assert row['water_l'] == pytest.approx(data['constant_command_l'] * bank['rows'][row['model_index']]['parameters']['flow_multiplier'])
+    pairs = {(r['model_index'], r['route'], r['body_capacity_j_per_k']) for r in data['structure_rows']}
+    assert len(pairs) == len(data['structure_rows']) == 40
+    assert pairs == {(i, route, cap) for i in data['selected_model_indices'] for route in ('surface', 'deep') for cap in (None, 253310.)}
+    command = 5 * sum(data['new_policy_flow_lpm'])
+    for row in data['structure_rows']:
+        assert row['water_l'] == pytest.approx(command * row['parameters']['flow_multiplier'])
+        assert row['sampled_passed']
+        assert row['instantaneous_balance_residual_w'] < 1e-6
+        assert row['integrated_balance_residual_j'] < .1

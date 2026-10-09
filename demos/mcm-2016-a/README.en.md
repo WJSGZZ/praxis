@@ -99,3 +99,5 @@ The submission folder holds a single English PDF, as the MCM requires; `7391856`
 - Model, code, paper and original figures are under the repository's MIT license; outside materials keep their own rights. The case tests a thermal network and a delivery process under stated conditions; it is not certification of measured accuracy.
 
 If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.
+
+Table 8 now compares the three policies on one finite ambiguity set: 130, 174 and 178 of 178 models meet the five-second sampled limits. Commanded and delivered water are reported separately. Forty sampled structural replays of the new policy add a limited transfer check; they do not extend its continuous certificate to those alternative structures.

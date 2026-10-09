@@ -27,3 +27,7 @@ The focused control study reuses the archived baseline and records fixed-probe d
 `study_calibration.py --output <new.json> --seconds 180` 完整复现合成脉冲、有限测量相容集、约束生成和三网格独立检查，本地实跑约103秒。逐点误差与恒定偏移分别进入筛选；原方案采样失败和新候选检查都保留。输出拒绝覆盖，预算为协作式检查；超时不产生已接受记录。两实验均从均匀40°C开始，另计6L脉冲、未知填充／复位成本；同设计目标不是全模型同余量保证。报告绑定该收据、物理源、验证器及原基线。
 
 The calibration study reconstructs a synthetic finite ambiguity set, optimizes a conditional candidate and checks every retained model on three meshes. Choose a fresh output path; cooperative budget checks do not enforce a system deadline. Calibration and control are separate trials with the same initial state. Report pulse costs and unknown reset costs separately; do not interpret finite-grid acceptance as identification, a confidence region or deployable feedback.
+
+`check_calibration_transfer.py --output <new.json>` 不重跑优化：以同一178模型、5秒采样比较归档恒流，并在十个搜索选定模型、四种结构中重放新方案（2／1秒采样和能量检查）。`reference/calibration-transfer.json` 绑定实际源码与输入，约7秒；不将这40个组合称为完整结构范围或连续保证。
+
+The frozen-policy transfer check keeps the ambiguity set and physical limits fixed. It adds a constant-policy comparison and sampled structural replays of the new policy, with no optimization. The ten selected models do not establish coverage of every compatible model under alternative structures.
