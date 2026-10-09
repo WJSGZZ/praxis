@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "status": "archived",
+  "base_commit": "5e99ebe2c5fc08a3ac6875047722bc26878c1d31",
+  "archive_sha256": "f1e92f3b32344ce9635af6b7f10df90cb17a478043bfd76a97ba9e175c995c95",
+  "members": {
+    "design.json": "6022a6651622cc0c4afc9cd87fd30a01f352b204a4ff27c0ba81aac401fa48aa",
+    "run.py": "f4a98210e96d123be4ae5c7b9623b064f65f7fc338719e768fc7b3b3eed7aac2",
+    "check.py": "7496143c71a07100980a62f1a2152a74f4fb24f7578cc6f5c701f1054f803179",
+    "results.json": "653d00925c1c569381c2b803e5bea9e88c87b34b19f982d3ce97ae6a43c6e373",
+    "check-results.json": "053f94f4006c652d7cf839656cfed47e24dc4d8ec10b64fc8b5f169f25d64961",
+    "frozen/common_reserve.py": "2c7ad0e36494cf61b02879f4bbe3158ad1e2634dc2dbcb511e328e4fa3134445",
+    "frozen/check_structure.py": "138019ded773f2cc4ad24cd38105a405362cf75b69da8db1f495fd2d0f8232e6",
+    "frozen/code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+    "frozen/reference/common-reserve.json": "688a21b03ec308c714bfbe50198bd2571d6b5cbc44fc29504fa5e2965a23487d",
+    "frozen/reference/common-reserve.npz": "7219bc19d42f4290c964426685a0d7cbb66c7e58442865555e26f9a417b910c4",
+    "frozen/reference/structure-decision.json": "48e79ada48c19ccafd36d7f71f595b0a80410af54a2c7c8d84f1e80b1069085c"
+  },
+  "scope": "Six predeclared synthetic off-bank truths, fixed controller; two completed trajectories and four observation refusals. Ten independent RHS/energy/conditional numerical-envelope replays. Partial service never counted as saving; no empirical or probabilistic guarantee. Same-problem exposed development study, not blind assessment.",
+  "interpretation": "Producer completed_model_conditional_service names a full trajectory with independent physical sample pass; does not extend finite-bank certificate to off-bank truth. Checked numerical envelopes are separately reported. Terminal stored interval emptiness only, no fresh full historical-prediction reconstruction."
+}

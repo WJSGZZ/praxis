@@ -79,7 +79,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **Target: Outstanding Winner. Current reference: strong Finalist, with an adjacent F–O range; O is not established.** The author-external AI review combines earlier whole-paper understanding with actual checks of this revision. It is non-blind and uncalibrated. The mixed-model proof, independent checks and common-reserve comparison support a decision chain from structural ambiguity to trial costs and observed actions. The revised argument connects temperature tolerance, transport and available information, and proves a 26.09 L command cap for completed services. With a shared delivery multiplier α, the corresponding actual-water bound is α×26.09 L.
 
-The previously fragmented policy choice is now clearer. The principal remaining gap is transfer: a finite static bank and two detected departures do not establish when service can be completed under broader physical conditions. The most useful next test would use conditions excluded from design and screening, checking both successful completion and refusal to reuse an invalid certificate. Neither the cap nor the fixed-candidate trial crossover proves optimal feedback.
+Transfer now has concrete positive and refusal cases: the unchanged controller completes two off-grid conditions and rejects four changed-physics conditions excluded from design and screening. This strengthens the decision boundary, but establishes neither a continuous parameter neighbourhood nor a recovery policy. A fresh review of that increment retains the strong-F reference. The next useful advance is a checkable perturbation bound for a continuous neighbourhood around accepted conditions, rather than more same-scope pass counts. The water cap and fixed-candidate payback result still do not prove optimal feedback.
 
 The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
 
@@ -108,6 +108,21 @@ uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode repla
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.
+
+## Where transfer succeeds—and reuse must stop
+
+The controller was held fixed for six synthetic conditions excluded from policy design and screening. Two off-grid parameter cases completed the full 30-minute service. Changes to contact storage, equal-volume dimensions, inlet temperature or surface loss instead emptied the observation-compatible set. Temperature checks still passed up to refusal: these are limits on certificate reuse, not thermal failures or complete services with impressive savings.
+
+| Condition | Full service | Delivered water or refusal time |
+|---|---|---|
+| Off-grid parameters, surface route | Yes | 22.88 L |
+| Off-grid parameters, deep route | Yes | 23.08 L |
+| Changed contact storage | No | Refusal at minute 28 |
+| Changed equal-volume dimensions | No | Refusal at minute 5 |
+| Inlet at 49°C | No | Refusal at minute 11 |
+| Surface loss outside prior | No | Refusal at minute 9 |
+
+The two complete action sequences pass independent RHS/energy and conditional numerical-envelope checks on three meshes; partial cases are checked only over their executed prefixes. These ten objects do not establish a continuous parameter neighbourhood or a real-world success probability. [Frozen inputs, sources and results](reproduce/reference/feedback-transfer.json); see [reproduction scope](reproduce/README.md#off-bank-transfer-boundaries).
 
 ## File map
 

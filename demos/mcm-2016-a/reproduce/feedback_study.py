@@ -177,3 +177,98 @@ def feedback_values(root=ROOT):
     require(mesh_count == 18, 'Missing realized-policy mesh checks')
     return dict(manifest=manifest, runs=runs, completed=completed, terminal=terminal,
                 backup_command_l=sum(backup), recorded_mesh_checks=mesh_count)
+
+
+def transfer_values(root=ROOT):
+    """Audit predeclared off-bank transfer archive; never rerun the search.
+
+    Checks source/receipt identity and declared coverage/arithmetic. Recorded
+    interval emptiness is not independent reconstruction of past predictions.
+    """
+    root = Path(root)
+    manifest = json.loads((root/'reference/feedback-transfer.json').read_text())
+    archive = root/'reference/feedback-transfer.npz'
+    require(hashlib.sha256(archive.read_bytes()).hexdigest() == manifest['archive_sha256'],
+            'Changed transfer archive')
+    with np.load(archive, allow_pickle=False) as z:
+        require(set(z.files) == set(manifest['members']), 'Changed transfer members')
+        blobs = {name: bytes(z[name]) for name in z.files}
+    require(all(hashlib.sha256(blobs[k]).hexdigest() == v for k,v in manifest['members'].items()),
+            'Changed transfer member bytes')
+    design = json.loads(blobs['design.json'])
+    run = json.loads(blobs['results.json'])
+    check = json.loads(blobs['check-results.json'])
+    require(run['status'] == check['status'] == 'completed' and run['design'] == design,
+            'Incomplete or changed transfer conditions')
+    require(run['source_sha256'] == hashlib.sha256(blobs['run.py']).hexdigest() and
+            check['source_sha256'] == hashlib.sha256(blobs['check.py']).hexdigest() and
+            check['producer_results_sha256'] == hashlib.sha256(blobs['results.json']).hexdigest(),
+            'Transfer producer/check identity differs')
+    require(all(hashlib.sha256(blobs['frozen/'+k]).hexdigest() == h
+                for k,h in design['source_snapshot'].items()), 'Transfer input snapshot differs')
+    require(all(hashlib.sha256((root/k).read_bytes()).hexdigest() == h
+                for k,h in design['source_snapshot'].items()), 'Current transfer dependencies differ')
+    require(0 < run['elapsed_s'] <= design['external_watchdog_s'] and
+            0 < check['elapsed_s'] <= design['reserve_checks_s'], 'Transfer budget exceeded')
+    cases = {x['case']:x for x in run['results']}
+    require(len(cases) == len(run['results']) == len(design['cases']) == 6,
+            'Missing or repeated transfer case')
+    complete, refused = {}, {}
+    backup = np.repeat(json.loads(blobs['frozen/reference/common-reserve.json'])['policies']['passive'],5)
+    for spec in design['cases']:
+        row = cases[spec['id']]
+        require(row['route'] == spec['route'] and row['body_capacity'] == spec['capacity'] and
+                all(row['parameters'][k] == v for k,v in spec['changes'].items()) and
+                row['truth_is_bank_member'] is False, 'Changed transfer truth')
+        require(len(row['flows']) == len(row['steps']), 'Missing transfer actions')
+        previous = set(range(1465))
+        for i,(q,step) in enumerate(zip(row['flows'],row['steps'])):
+            ids = set(step['model_ids'])
+            require(number(q) and q >= 0 and step['time_s'] == i*60 and
+                    step['flow_lpm'] == q and step['baseline_flow_lpm'] == backup[i] and len(ids) == step['retained_models'] and
+                    ids and ids <= previous and len(ids) == len(step['model_ids']) and
+                    any(abs(q-r*step['baseline_flow_lpm']) < 1e-12 for r in (0,.8,.9,1)),
+                    'Transfer action/identity differs')
+            previous = ids
+        actual = row['actual_independent_trace']
+        require(actual['recorded_until_s'] == 60*len(row['flows']) and
+                abs(actual['command_water_l']-sum(row['flows'])) < 1e-8,
+                'Transfer extent or command arithmetic differs')
+        if row['status'] == 'completed_model_conditional_service':
+            require(len(row['flows']) == 30 and actual['full_service'] is True and
+                    row['independent']['sampled_passed'] is True and
+                    abs(row['independent']['water_l']-sum(row['flows'])*row['parameters']['flow_multiplier']) < 1e-8,
+                    'Incomplete service called complete')
+            complete[row['case']] = row
+        else:
+            require(row['status'] == 'observations_inconsistent' and len(row['flows']) < 30 and
+                    actual['full_service'] is False and row['detected_s'] == 60*len(row['flows']),
+                    'Partial transfer service counted as complete')
+            terminal = row['terminal_observation']
+            lo,hi = (np.asarray(terminal[k],dtype=float) for k in ('bias_lo','bias_hi'))
+            require(terminal['model_ids_after'] == [] and set(terminal['model_ids_before']) == previous and
+                    lo.shape == hi.shape == (len(previous),2) and
+                    np.isfinite(lo).all() and np.isfinite(hi).all() and np.any(lo>hi,axis=1).all(),
+                    'Recorded terminal intervals not empty')
+            refused[row['case']] = row
+    expected = {(name,(8,4,3)) for name in cases} | {
+        (name,grid) for name in complete for grid in ((12,6,4),(16,8,6))}
+    keys = [(x['case'],tuple(x['grid'])) for x in check['rows']]
+    require(len(keys) == len(set(keys)) and set(keys) == expected and len(complete) == 2 and len(refused) == 4,
+            'Incomplete transfer replay coverage')
+    for r in check['rows']:
+        source = cases[r['case']]
+        require(r['actions'] == len(source['flows']) and r['covered_s'] == 60*r['actions'] and
+                r['complete_service'] == (source['case'] in complete) and r['sample_s'] == .5 and
+                abs(r['command_l']-sum(source['flows'])) < 1e-8 and
+                abs(r['actual_l']-r['command_l']*source['parameters']['flow_multiplier']) < 1e-8,
+                'Replay changed action extent or delivered water')
+        require(r['instantaneous_balance_residual_w'] < 1e-6 and
+                r['integrated_balance_residual_j'] < .1 and r['max_dynamic_row_sum'] <= 1e-12 and
+                r['min_offdiag'] >= 0, 'Transfer balance/contraction premise failed')
+        low,high,span = r['numeric_envelope_c']
+        require(all(number(v) for v in (low,high,span)) and low <= high and span >= 0 and
+                r['physical_numeric_envelope_passed'] == (low >= 39 and high <= 41 and span <= 1.5) and
+                r['reserve_numeric_envelope_passed'] == (low >= 39.13 and high <= 40.9 and span <= 1.4) and
+                r['reserve_numeric_envelope_passed'], 'Transfer envelope flags differ from bounds')
+    return dict(manifest=manifest,design=design,completed=complete,refused=refused,checks=check['rows'])

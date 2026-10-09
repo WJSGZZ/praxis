@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "d00c0dee309143b80c695608cf439e98b000babfb85884504089f93193f40da6",
-  "bytes": 171839,
+  "sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
+  "bytes": 171871,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -124,9 +124,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 652,
+  "passed": 658,
   "date": "2026-10-10",
-  "scope": "Final adopted d00c PDF/metadata and current case-assessment binding regression;652 passed,0 failures/0 skips,3 expected invalid-plot warnings,143.65s. Numerical searches unchanged."
+  "scope": "Final adopted c533 manuscript, archive and version-bound metadata;658 passed,0 failures/0 skips,3 expected invalid-plot warnings,147.84s. Original optimization and earlier numerical archives unchanged."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -227,7 +227,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -290,7 +290,7 @@
     1
    ],
    "native_compiler": "success",
-   "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+   "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
    "historical_mathematical_review_rebound": false
   }
  ],
@@ -335,7 +335,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -596,7 +596,7 @@
     25,
     26
    ],
-   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15\u201316 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
+   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15–16 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
    "md5": "ec4693d0583e779f872e1635912b0720"
   },
@@ -763,16 +763,17 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "d00c0dee309143b80c695608cf439e98b000babfb85884504089f93193f40da6",
+  "version_sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external same-family AI: prior full7349 reading and9177 correction; current0857 pp21/22/23 text,21/22 images and all-page contacts; finald00c p21 notation text/image correction. Independent exact sums and pointwise backup bound for9 completed records. Nonblind and uncalibrated; no new dynamics, optimization or full final-paper rereading.",
+  "review_scope": "Author-external same-family AI prior full7349 and d00c revision checks retained; current c533 pp22/26 text and images plus six-case tables checked against predeclared results. Independent Decimal check of66 stored terminal interval objects; ten independent RHS/energy/conditional envelopes. Nonblind, uncalibrated; no fresh complete-paper rereading, full historical-prediction reconstruction or physical validation.",
   "basis": [
    "Proved mixed benchmark and complete problem coverage with independent numerical checks.",
    "Common-reserve structural ambiguity, matched observation ablation and explicit empty-set faults connect assumptions to decisions.",
-   "Conditional retained-tail induction and command-water domination cap strengthen explanation; revised conclusion links temperature tolerance, transport and available information."
+   "Conditional retained-tail induction and command-water domination cap strengthen explanation; revised conclusion links temperature tolerance, transport and available information.",
+   "Two predeclared off-bank parameter cases complete30minutes; four changed-physics cases explicitly refuse certificate reuse before checked temperature failure. Complete and partial horizons are distinguished."
   ],
-  "main_gap": "Reliable transfer domain remains narrow: finite static bank and two fault refusals do not establish completion boundaries under broader physical conditions.",
-  "highest_value_next_action": "Use conditions excluded from design and screening to test when service completes and when the certificate must be rejected; do not merely add same-scope counts.",
+  "main_gap": "Two off-bank positive points and four refusal boundaries do not establish a quantitative continuous applicability neighbourhood or safe recovery after rejection.",
+  "highest_value_next_action": "Quantify a bounded continuous parameter neighbourhood around accepted conditions, with independently checkable perturbation bounds; keep changed-physics rejection separate from completion.",
   "strength_note": "Strong F center, nearer the F/O boundary in qualitative current-increment review; O not established."
  },
  "feedback_revision": {
@@ -911,5 +912,66 @@
   "current_award_review": "Author-external same-family AI: prior full7349 reading and9177 correction; current0857 pp21/22/23 text,21/22 images and all-page contacts; finald00c p21 notation text/image correction. Independent exact sums and pointwise backup bound for9 completed records. Nonblind and uncalibrated; no new dynamics, optimization or full final-paper rereading.",
   "conditional_cap": "Completed-service command J_cmd<=26.09L; for shared stable alpha>0, J_act=alpha*J_cmd<=alpha*26.09L; does not promise optimality or recovery.",
   "reviewer_independent_arithmetic": "All9 completed serialized trajectories satisfy pointwise and total backup bounds by exact Fraction arithmetic without tolerance; not a dynamics or roundoff proof."
+ },
+ "feedback_transfer_revision": {
+  "date": "2026-10-10",
+  "previous_pdf_sha256": "d00c0dee309143b80c695608cf439e98b000babfb85884504089f93193f40da6",
+  "pdf_sha256": "c533a62f3497544344e4c66dcf12ed2c77413c280f9d9066e570a134e7375470",
+  "tex_sha256": "e5cbababba444f44a169f6113e17df2040e5b40318926dba687e2170c7b99242",
+  "source_commit": "5e99ebe2c5fc08a3ac6875047722bc26878c1d31",
+  "archive": "reproduce/reference/feedback-transfer.json",
+  "complete_cases": 2,
+  "refused_cases": 4,
+  "independent_objects": 10,
+  "refusal_minutes": [
+   28,
+   5,
+   11,
+   9
+  ],
+  "command_l": [
+   22.59338886521566,
+   22.797394809762338
+  ],
+  "actual_l": [
+   22.87580622603085,
+   23.08236224488436
+  ],
+  "producer_elapsed_s": 445.33540054099285,
+  "check_elapsed_s": 4.024504666012945,
+  "scope": "Author-external same-family AI prior full7349 and d00c revision checks retained; current c533 pp22/26 text and images plus six-case tables checked against predeclared results. Independent Decimal check of66 stored terminal interval objects; ten independent RHS/energy/conditional envelopes. Nonblind, uncalibrated; no fresh complete-paper rereading, full historical-prediction reconstruction or physical validation.",
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "d00c0dee309143b80c695608cf439e98b000babfb85884504089f93193f40da6",
+   "checked_on": "2026-10-10",
+   "review_scope": "Author-external same-family AI: prior full7349 reading and9177 correction; current0857 pp21/22/23 text,21/22 images and all-page contacts; finald00c p21 notation text/image correction. Independent exact sums and pointwise backup bound for9 completed records. Nonblind and uncalibrated; no new dynamics, optimization or full final-paper rereading.",
+   "basis": [
+    "Proved mixed benchmark and complete problem coverage with independent numerical checks.",
+    "Common-reserve structural ambiguity, matched observation ablation and explicit empty-set faults connect assumptions to decisions.",
+    "Conditional retained-tail induction and command-water domination cap strengthen explanation; revised conclusion links temperature tolerance, transport and available information."
+   ],
+   "main_gap": "Reliable transfer domain remains narrow: finite static bank and two fault refusals do not establish completion boundaries under broader physical conditions.",
+   "highest_value_next_action": "Use conditions excluded from design and screening to test when service completes and when the certificate must be rejected; do not merely add same-scope counts.",
+   "strength_note": "Strong F center, nearer the F/O boundary in qualitative current-increment review; O not established."
+  },
+  "changed_pixel_pages": [
+   22,
+   26
+  ],
+  "embedded_fonts_checked": true,
+  "format_errors": [],
+  "known_format_warning": "Summary team-at-top heuristic false positive; official three-column team7391856 is visible.",
+  "review_status": "current increment reviewed; highest-award goal not achieved"
+ },
+ "previous_test_suite": {
+  "passed": 652,
+  "date": "2026-10-10",
+  "scope": "Final adopted d00c PDF/metadata and current case-assessment binding regression;652 passed,0 failures/0 skips,3 expected invalid-plot warnings,143.65s. Numerical searches unchanged."
  }
 }

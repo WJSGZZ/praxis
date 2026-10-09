@@ -71,3 +71,42 @@ def test_replay_refuses_overwrite_and_records_budget_stop(tmp_path,monkeypatch):
     with pytest.raises(TimeoutError):study_feedback.run(out,'audit',.5)
     r=json.loads(out.read_text())
     assert r['status']=='budget exhausted' and r['rows']==[]
+
+
+def test_offbank_transfer_preserves_completion_and_rejection_boundaries():
+    result = module.transfer_values(HERE)
+    assert len(result['completed']) == 2 and len(result['refused']) == 4
+    assert len(result['checks']) == 10
+    assert [row['detected_s'] for row in result['refused'].values()] == [1680,300,660,540]
+    assert all(not row['actual_independent_trace']['full_service']
+               for row in result['refused'].values())
+
+
+@pytest.mark.parametrize('defect',['partial_as_full','wrong_units','false_envelope','wrong_prefix','changed_backup'])
+def test_transfer_semantics_reject_rebound_corrupt_receipts(tmp_path,defect):
+    import hashlib
+    import shutil
+    import numpy as np
+    ref = tmp_path/'reference';ref.mkdir()
+    m = json.loads((HERE/'reference/feedback-transfer.json').read_text())
+    with np.load(HERE/'reference/feedback-transfer.npz',allow_pickle=False) as z:
+        blobs = {k:bytes(z[k]) for k in z.files}
+    design = json.loads(blobs['design.json'])
+    for name in design['source_snapshot']:
+        target=tmp_path/name;target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(HERE/name,target)
+    run=json.loads(blobs['results.json']);check=json.loads(blobs['check-results.json'])
+    if defect=='partial_as_full':run['results'][2]['status']='completed_model_conditional_service'
+    elif defect=='changed_backup':run['results'][0]['steps'][0]['baseline_flow_lpm']+=.1
+    elif defect=='wrong_units':check['rows'][0]['actual_l']=check['rows'][0]['command_l']
+    elif defect=='false_envelope':check['rows'][0]['numeric_envelope_c'][1]=42.
+    else:check['rows'][2]['covered_s']=1800
+    blobs['results.json']=json.dumps(run).encode()
+    check['producer_results_sha256']=hashlib.sha256(blobs['results.json']).hexdigest()
+    blobs['check-results.json']=json.dumps(check).encode()
+    archive=ref/'feedback-transfer.npz'
+    np.savez_compressed(archive,**{k:np.frombuffer(v,dtype=np.uint8) for k,v in blobs.items()})
+    m['archive_sha256']=hashlib.sha256(archive.read_bytes()).hexdigest()
+    m['members']={k:hashlib.sha256(v).hexdigest() for k,v in blobs.items()}
+    (ref/'feedback-transfer.json').write_text(json.dumps(m))
+    with pytest.raises(ValueError):module.transfer_values(tmp_path)

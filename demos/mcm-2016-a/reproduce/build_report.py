@@ -88,8 +88,9 @@ STRUCT_OBS=structure_observation_values(ROOT)
 STRUCT_DEC=structure_decision_values(ROOT)
 from common_reserve import common_reserve_values
 FAIR=common_reserve_values(ROOT)
-from feedback_study import feedback_values
+from feedback_study import feedback_values, transfer_values
 FB=feedback_values(ROOT)
+FT=transfer_values(ROOT)
 FBZERO=FB["completed"][("variants","zero_noise")]
 FBRANDOM=FB["completed"][("variants-resume","random_noise")]
 assert STRUCT_DEC["all_base_envelopes_passed"] and STRUCT_DEC["repair_sampled_passes"]==STRUCT_DEC["repair_checks"], "Revise structural decision interpretation"
@@ -525,11 +526,11 @@ tex.append(r'\FloatBarrier'+'\n')
 page('12. Conclusions and a policy with clear scope')
 para('<b>Choose tolerance, then check transport.</b> Figure @fig:frontier@ gives the price of maintaining warmth. Stored heat can postpone or eliminate inflow; the mixed optimum requires distributed heat. Weak mixing can require earlier replenishment. Geometry and body contact change demand; motion improves distribution but may increase loss, whereas foam changes loss. Two readings can miss a cold region.')
 para(f'The baseline constant rate is {b["flow_lpm"]:.3f} L/min, or {b["water_l"]:.2f} L over {rv["horizon_min"]:g} minutes; the {K}-stage schedule uses {ctl["water_l"]:.2f} L with a {ctl["buffer_c"]:g}°C design reserve and three-grid continuous checks. The floor covers every cell; ceiling/spread exclude the inlet zone. These are conditional candidates, not globally optimal faucet prescriptions.')
-para('<b>Match the policy to information.</b> The nominal schedule assumes the stated network and metering. Ambiguous transport or contact storage requires common reserves across compatible structures. The expanded bank covers three structures on a finite grid; continuous coverage, shell storage and real-bath accuracy remain untested. Cell averages do not establish hot-jet safety.')
+para(f'<b>Test transfer before reuse.</b> Six predeclared bank-external truths yield two complete off-grid services ({sum(FT["completed"]["offgrid_surface"]["flows"]):.2f}/{sum(FT["completed"]["offgrid_deep"]["flows"]):.2f} L commands), with three-grid conditional envelopes. Changing storage, dimensions, inlet temperature or loss empties the set at 28/5/11/9 minutes, before any checked temperature violation. Partial services are not savings; these tests establish neither continuous uncertainty coverage nor recovery. Cell averages do not establish hot-jet safety.')
 
 para(f'Structural ambiguity need not prevent a decision. With common reserves across the expanded bank, passive/pulse candidates use {FAIR["volumes"]["passive"]:.2f}/{FAIR["volumes"]["pulse"]:.2f} L. Between these fixed candidates, a reusable 6 L trial pays back from use {FAIR["crossover"]} with equal resets and unchanged conditions. Different observations or reset costs can reverse this conditional choice.')
 
-para(f'<b>Use feedback when measurements and computation support it.</b> Two probes and repeated whole-tail checks give a conditional {FB["backup_command_l"]:.2f} L command cap, with {sum(FBZERO["flows"]):.2f}/{sum(FBRANDOM["flows"]):.2f} L in the specified noise cases. This is a different policy family, so the fixed-candidate trial crossover does not transfer. Static parameters, uniform initial state, bounded errors and valid propagation are essential. An empty set invalidates reuse: fault recognition does not supply a recovery policy.')
+para(f'<b>Use feedback within its assumptions.</b> The {FB["backup_command_l"]:.2f} L command cap and {sum(FBZERO["flows"]):.2f}/{sum(FBRANDOM["flows"]):.2f} L noise cases require static parameters, uniform initial state, bounded errors and valid propagation. The fixed-candidate trial crossover does not apply to feedback. An empty set invalidates certificate reuse and supplies no recovery policy.')
 
 page('13. A warmer bath, with less replacement water',True)
 para('A guide for the person in the bathtub','heading')
@@ -577,7 +578,7 @@ para('The task was to produce a complete historical MCM case; no conversation wo
 para('Outputs, corrections and verification','heading')
 para('On 8 October, independent integration rejected the 19.35 L schedule and accepted a buffered alternative; later fixed-policy replays checked limited body storage and flow-path changes. On 9 October, the baseline values were bound to archived results without repeating that optimization. Earlier coefficient and inlet-zone corrections are recorded in the accompanying development history. References [1]–[4] were checked at the linked sources and [6] in its open manuscript; [5] and [8] were not opened, so their relations were checked indirectly. The AI produced the code, derivations, figures and report; all reported numerical results came from actual calculations.')
 para(f'Control studies compared known-mixing schedules, pulse/passive ambiguity sets, alternative structures and failed candidates. New common-reserve candidates covered {FAIR["objects"]} model-grid objects, with {FAIR["independent_cases"]} independent extremal replays; two reserve failures were retained and corrected. Archived producers retain their versions. Analytical diffusion and inlet-cascade tests verify discretization. Baseline optimization was reused, and all observations are synthetic.')
-para('A later finite-bank study used minute-by-minute bias intervals and a checked backup. Nine complete services include three no-observation controls; six feedback services have 18 three-grid sampled replays. Two shifts ended service at 660 s; separate reconstruction saved terminal readings and identities for independent interval arithmetic. Archived source versions preserve timeouts and distinguish complete subrows from partial fault service.')
+para('Finite-bank feedback yielded nine complete services, including three no-observation controls, with 18 sampled feedback replays. Two shifts stopped at 660 s with reconstructed terminal intervals. Six additional predeclared off-bank truths yielded two complete services and four refusals; ten independent conditional-envelope replays cover full trajectories or actual prefixes. An author-external AI checked recorded empty intervals, without reconstructing unrecorded historical predictions.')
 para('Record limitations','heading')
 para('The artifact retains the task description, tool identity, scope, code and numerical receipts, but lacks a full exported transcript and every intermediate AI output. These records do not substitute for human verification or physical bath experiments.')
 
