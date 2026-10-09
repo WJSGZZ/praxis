@@ -107,8 +107,37 @@
 
 ## 面向使用者的呈现
 
+完整竞赛作品的每次新评审都应提供所属赛事的 `award_estimate`，并解释原因；不能只给内部诊断分。无法核实奖项体系、未读完整作品或依据不足时，显式弃判断并说明所缺材料。数学局部审计不是整稿奖项评估，不为满足字段而虚构档次；旧意见只代表其原版本。
+
 顺序固定为：目标奖项 → 当前档次及相邻范围 → 具体依据 → 与更高档的主要差距 → 最值得实施的修改。目标未知用 `target:null` 表示，视图输出 `target_status:unset`；兼容旧输入 `"未设定"` 与 `"unset"`。不替用户决定目标。依据不足时暂不判断。当前档次不是获奖概率；相邻范围不是统计置信区间，不跨赛事合并。
 
 在原 award_estimate 内补 contest、event、edition、problem、version（可用稿件哈希）、scope（实际阅读与复算范围）、target、gaps、actions，保留 most_likely、range、basis、calibrated。未校准写false；写true还必须给 calibration_evidence，工具不能认证该依据。actions定位章节／结论、具体检查或修改及其价值，避免只说“创新不足”。无充分依据时most_likely为null、range为空，说明缺口。
 
 `python -m evals.aggregate --contest=mcm --view=user review.json` 生成奖项导向视图；`--view=internal` 查看诊断数值。旧记录仍归档，缺少范围信息时不补造档次；多评委意见分别保留，不投票抹平冲突。每项评阅通过 `review_id` 关联来源、评委、检查范围、`critical_claims`、根因 `issues` 和奖项意见；每条主张应写具体 `scope` 和 `actions`（适用时），其证据和修改建议不会被压成仅一个状态词。评委可用顶层 `reviewer` 标识自己，旧 `judge` 字段兼容读取；没有身份就保留空值，不猜测独立性。旧汇总若没有评阅—奖项关联，标为 `unavailable_in_legacy_report`，不按两个数组的下标硬配。视图还保留 `overall_note`，不把没有奖项判断的数学审计丢掉。评测与校准继续沿用 PROTOCOL.md，不增平行体系。
+
+## 数学研究作品的评价
+
+研究论文使用同一评测入口和关键主张／根因记录，提供 `research_assessment`；不填竞赛七维表、奖项或百分制。以高水平原创数学论文为目标时，先区分复现、讲解、开发研究与原创研究。正确的已知定理讲解可以很有价值，却不能由此判为原创论文；证明未发现错误也不等于期刊已认可。
+
+| 评价维度 | 需回答的问题 |
+|---|---|
+| `correctness` | 命题是否明确，前提是否足够，证明是否完整，计算证书是否表达了所声称的对象？核查范围与未核步骤分别写明。 |
+| `novelty` | 相对最接近的已知定理，究竟新增什么？区分新证明、新机制、新结果与工程实现。未知的新颖性不能凭“未找到”判定。 |
+| `significance` | 结果解决了什么数学问题，对领域认识有什么作用？有限计算覆盖更大不自动意味着更重要。 |
+| `method_depth` | 方法是否解释结构，能否超越本例，是否有真正的技术障碍或可迁移洞见？复杂度与篇幅不代替深度。 |
+| `exposition` | 定义、主结果、证明、图表和已有工作是否组织清楚，读者能否定位贡献和限制？不要求为了像论文而加图。 |
+| `reproducibility` | 证明与必要计算能否独立检查，代码、输入、环境、证书与失败是否可追溯？运行通过不替代证明正确。 |
+
+呈现顺序：目标标准 → 作品类型与当前质量判断 → 六项依据 → 距离目标的主要差距 → 最值得实施的修改。顶尖期刊没有通用的六维数字分数线；这里是审读框架，不是官方量表、录用预测或期刊认证。期刊指定后，再查它的具体范围和作者要求；格式与学术价值分开验收。
+
+`critical_claims`只列实际论文主张；论文已说明经典或新颖性未建立时，不把“它是原创突破”这一未提出的命题塞入主张表并宣布论文被反驳。原创性与重要性差距保留在研究维度，数学有效性另判。
+
+每条记录仍写 `schema_version:2`、`paper`、评委身份、至少一条 `critical_claims` 与 `issues`，并加 `research_assessment` 对象：
+
+- `problem`、`version`（实际稿件哈希）、`scope`（全文、证明或计算的真实检查范围）、`target_standard`、`overall_assessment`：非空文本。
+- `work_type`：`reproduction`、`expository_note`、`original_research` 或 `development_study`；这是研究形式，不是质量排名。
+- `criteria`：上表六项齐全，各含 `status:supported|refuted|unverified` 与非空 `evidence`，必要时 `issue_ids` 引用同记录根因。标签只覆盖证据中明确的判断，不认证整篇；“正确性有支持”和“新颖性被既有文献否定”可以同时成立。
+- `major_gaps`、`actions`：文本列表，指向具体结果、证明或文献差距及修改价值。
+- `novelty_search`：`completed` 布尔、`scope` 与 `sources` 文本列表。新颖性判为 `supported` 时须有真实完成的有范围检索及来源；字段校验不能认证检索充分或结论真新。
+
+`python -m evals.aggregate --view=user research-review.json` 输出研究导向视图。评委身份、来源、稿件版本、关键主张和根因保持关联；多个评委分别呈现，不投票制造“顶刊级”。同篇不可把竞赛与研究量表混算，历史稿不补造已完成审读。

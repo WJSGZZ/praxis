@@ -47,6 +47,21 @@ In how many ways can a 3×2n rectangle be tiled with 1×2 dominoes? Call the cou
 
 **[Read the complete 4-page research note →](deliverables/paper.pdf)** Built from the shared [AMS-style template](../../templates/research-paper.tex), using 11pt Latin Modern on A4 with 30mm margins. All four pages were inspected after the pinned Tectonic build. The plots draw directly from archived values.
 
+## Research assessment
+
+A full reading by an author-external AI role supports the arguments in this four-page note. **It is a clear reconstruction of a classical result, useful as a demonstration of proof and checking; it is not currently original research for a leading mathematics journal.** Correctness does not establish originality.
+
+| Criterion | Finding |
+|---|---|
+| Correctness | Both proofs, the closed form and the generating function are supported; the proved order bound justifies the all-size conclusion. |
+| Originality | The central count and recurrence are classical. |
+| Significance | Educational value is clear; there is no new theorem or major research consequence. |
+| Method | The link between finite states and a justified recurrence bound is reusable, unlike an order guessed only from data. |
+| Exposition | Tests, proofs and the known status of the result are distinguished. |
+| Verifiability | Independent small-board counts and eight difference equations agree; this is not formal certification. |
+
+The [version-bound review](evaluation.json) records checks and limits. A misleading ratio field was corrected to `ratio_a16_over_a15`; its value, the paper and the figures are unchanged, and the finding is retained. Any future original study needs a genuinely unresolved extension before further computation. [Annals](https://annals.math.princeton.edu/board) and [Inventiones](https://link.springer.com/journal/222/aims-and-scope) inform the research target; this is a non-blind, uncalibrated AI review, not a journal decision.
+
 ## Run it yourself
 
 From the Praxis repository root:

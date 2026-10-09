@@ -44,7 +44,7 @@ TREES = {
     'demos/mcm-2016-a/reproduce': {'.py', '.md'},
     'demos/mcm-2016-a/reproduce/code': {'.py'},
     'demos/mcm-2016-a/reproduce/reference': {'.npz', '.json', '.py'},
-    'demos/domino-research': {'.md'},
+    'demos/domino-research': {'.md', '.json'},
     'demos/domino-research/assets': {'.png'},
     'demos/domino-research/deliverables': {'.pdf'},
     'demos/domino-research/reproduce': {'.py'},

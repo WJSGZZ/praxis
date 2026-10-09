@@ -1,0 +1,283 @@
+[
+  {
+    "schema_version": 2,
+    "paper": "demos/collatz-research/deliverables/paper.pdf",
+    "reviewer": "Author-external AI review; non-blind; uncalibrated",
+    "scope": "Complete 7-page current PDF scientific reading, source/receipts, independent bounded checks; limits are recorded in each criterion",
+    "critical_claims": [
+      {
+        "id": "collatz-correctness",
+        "claim": "The stated sharp envelope, finite reduction, asymptotic limit and fixed-horizon obstruction follow from the supplied arguments; the numerical main theorem is supported by its bounded certificate",
+        "status": "supported",
+        "evidence": "PDF pp2–7; coordinatewise odd-position bound and nonnegative offset; integer floor includes equality; independent exhaustive parity words k≤14 and independently summed H1024=72058,647 depths; prior bounded full scan evidence"
+      }
+    ],
+    "issues": [],
+    "research_assessment": {
+      "problem": "Coefficient stopping time in shortcut Collatz map",
+      "version": "fc7e43090fb74cc50a42cd527ceedb14083b9239baeb532847cc19dcbade05eb",
+      "scope": "Current frozen 7-page public PDF; exact declared theorem scope only; not human peer review or formal certification",
+      "target_standard": "Substantive original mathematics of importance comparable to Annals/Inventiones; no acceptance probability or journal certification",
+      "work_type": "development_study",
+      "overall_assessment": "Verified synthesis and conditional computational note based on established parity-vector methods; mathematical originality not established. Current evidence does not support Annals/Inventiones-level original research suitability",
+      "criteria": {
+        "correctness": {
+          "claim": "The stated sharp envelope, finite reduction, asymptotic limit and fixed-horizon obstruction follow from the supplied arguments; the numerical main theorem is supported by its bounded certificate",
+          "status": "supported",
+          "evidence": "PDF pp2–7; coordinatewise odd-position bound and nonnegative offset; integer floor includes equality; independent exhaustive parity words k≤14 and independently summed H1024=72058,647 depths; prior bounded full scan evidence Limits: Complete 72057-trajectory scan and counting recurrence not newly recomputed; no formal proof assistant/runtime verification"
+        },
+        "novelty": {
+          "claim": "The manuscript establishes that its main finite-depth theorem or sharp envelope is an original mathematical result",
+          "status": "unverified",
+          "evidence": "PDF p7 expressly disclaims established envelope originality; cited Rozier–Terracol Theorem5.3 plus Corollary5.4 already imply CST equality at all first-crossing depths ≤301993, conditional on those published results Limits: No exhaustive priority search or full independent external proof audit; computationally self-contained derivation remains a legitimate different presentation"
+        },
+        "significance": {
+          "claim": "This manuscript establishes a major new advance on CST/Collatz of top mathematical research importance",
+          "status": "unverified",
+          "evidence": "Local infinite-domain conditional certificate is substantive; uniform envelope gives finite scan rather than 2^1024 tree; p6–7 prove this route cannot cover all depths by fixed scan; famous open problem does not itself confer importance on a bounded consequence Limits: No evidence of new frontier/novel theorem or novel application; not a claim that every bounded result lacks research value"
+        },
+        "method_depth": {
+          "claim": "The paper makes a reusable proof-to-finite-certificate pattern explicit",
+          "status": "supported",
+          "evidence": "Barrier constrains individual positions; positive weighted sum gives sharp envelope; affine failure inequality gives exact finite reduction; extremum/count computations use different recurrences Limits: Transfer to other open problems not demonstrated; no generic performance advantage established"
+        },
+        "exposition": {
+          "claim": "The manuscript clearly separates conditional mathematical theorem, finite numerical evidence, density and general-conjecture limitations",
+          "status": "supported",
+          "evidence": "Abstract/p1, small complete p3 example, separate scales p5, p6–7 scope; all7pages read and figures3/5 viewed individually Limits: Current p5 author-independent review is AI-role evidence; manuscript does not itself label AI there, public verification.json/README does"
+        },
+        "reproducibility": {
+          "claim": "Readers can inspect exact finite certificate and replay distinct checkers within the declared scope",
+          "status": "supported",
+          "evidence": "certify/verify/analyze full source read; exact arithmetic,647 depth rows,72057 domain, six negative controls and explicit ValueError acceptance; hashes in public verification.json match current PDF Limits: Not full software adversarial audit; historical six-page review binding is preserved rather than silently current-bound"
+        }
+      },
+      "major_gaps": [
+        "A precise, literature-backed mathematical contribution beyond known statements has not been identified; further depth or polished figures cannot fill that gap"
+      ],
+      "actions": [
+        "If research evaluation is resumed, first do a theorem-by-theorem prior-art comparison of the sharp envelope/reduction against established parity-vector literature; do not enlarge K or restart Collatz exploration now"
+      ],
+      "novelty_search": {
+        "completed": false,
+        "scope": "Read cited Rozier–Terracol definitions/Theorem5.3/Corollary5.4; enough to identify stronger stated coverage, not an exhaustive envelope priority search",
+        "sources": [
+          "https://arxiv.org/html/2502.00948v5"
+        ]
+      }
+    },
+    "review_evidence": {
+      "standards_sources": [
+        "https://annals.math.princeton.edu/board",
+        "https://link.springer.com/journal/222/aims-and-scope"
+      ],
+      "independent_checks": {
+        "collatz_exhaustive_words_depth_1_to_14": [
+          {
+            "k": 1,
+            "words": 1,
+            "max_offset": 0,
+            "unique_maximum": true,
+            "exception_floor": 0
+          },
+          {
+            "k": 2,
+            "words": 1,
+            "max_offset": 1,
+            "unique_maximum": true,
+            "exception_floor": 1
+          },
+          {
+            "k": 4,
+            "words": 1,
+            "max_offset": 5,
+            "unique_maximum": true,
+            "exception_floor": 0
+          },
+          {
+            "k": 5,
+            "words": 2,
+            "max_offset": 23,
+            "unique_maximum": true,
+            "exception_floor": 4
+          },
+          {
+            "k": 7,
+            "words": 3,
+            "max_offset": 85,
+            "unique_maximum": true,
+            "exception_floor": 1
+          },
+          {
+            "k": 8,
+            "words": 7,
+            "max_offset": 319,
+            "unique_maximum": true,
+            "exception_floor": 24
+          },
+          {
+            "k": 10,
+            "words": 12,
+            "max_offset": 1085,
+            "unique_maximum": true,
+            "exception_floor": 3
+          },
+          {
+            "k": 12,
+            "words": 30,
+            "max_offset": 3767,
+            "unique_maximum": true,
+            "exception_floor": 1
+          },
+          {
+            "k": 13,
+            "words": 85,
+            "max_offset": 13349,
+            "unique_maximum": true,
+            "exception_floor": 8
+          }
+        ],
+        "collatz_envelope_depth_1024": {
+          "H": 72058,
+          "attained_at": [
+            485,
+            306
+          ],
+          "feasible_depths": 647,
+          "method": "odd-position sum via integer power comparison; no production imports"
+        },
+        "collatz_small_scan": {
+          "domain": [
+            2,
+            108
+          ],
+          "cap": 32,
+          "endpoint_failures": [],
+          "scope": "does not re-run complete depth1024 finite scan"
+        },
+        "domino": {
+          "independent_matching_n0_to_5": [
+            1,
+            3,
+            11,
+            41,
+            153,
+            571
+          ],
+          "matrix_from_bit_rule": [
+            [
+              0,
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "a0_to_a9": [
+            1,
+            3,
+            11,
+            41,
+            153,
+            571,
+            2131,
+            7953,
+            29681,
+            110771
+          ],
+          "first_eight_Q_difference_terms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scope": "small grid matching and printed 8-state rule; all-n follows mathematical order bound, not finite search alone"
+        }
+      },
+      "not_checked": [
+        "Complete literature priority search",
+        "Human peer review or journal assessment",
+        "Full adversarial software audit"
+      ],
+      "note": "These are actual scoped AI-role judgments and bounded checks; not journal endorsement.",
+      "claim_selection_note": "Originality and journal significance are assessment criteria, not claims made by these manuscripts. They are excluded from mathematical validity aggregation; the raw reviewer opinion is retained in the local audit."
+    }
+  }
+]

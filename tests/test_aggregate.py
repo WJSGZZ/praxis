@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -9,6 +10,75 @@ def judge(paper, **scores):
     base = dict.fromkeys(ag.WEIGHTS, 2)
     base.update(scores)
     return dict(paper=paper, scores=base)
+
+
+def research_item():
+    return dict(schema_version=2, paper='research-note', reviewer='reviewer-1',
+        critical_claims=[dict(id='theorem', claim='2 + 2 = 4', status='supported',
+                             evidence='direct integer arithmetic')],
+        issues=[], research_assessment=dict(problem='arithmetic', version='sha256:example',
+            scope='one theorem and literature context', target_standard='original mathematics research',
+            work_type='expository_note', overall_assessment='Correct exposition of a known fact.',
+            criteria={k: dict(status='unverified' if k == 'novelty' else 'supported',
+                              evidence='No originality search.' if k == 'novelty' else 'Scoped review p1.')
+                      for k in ag.RESEARCH_CRITERIA},
+            major_gaps=['No new theorem.'], actions=['Identify a distinct new mathematical question.'],
+            novelty_search=dict(completed=False, scope='not performed', sources=[])))
+
+
+def test_research_view_keeps_evidence_and_does_not_convert_to_awards(tmp_path):
+    item = research_item()
+    path = tmp_path / 'review.json'
+    path.write_text(json.dumps([item]))
+    internal = ag.aggregate([path])
+    assert 'percent_mean' not in internal['research-note']
+    user = ag.user_view(internal)['research-note']
+    assert user['status'] == 'research_reviewer_assessments'
+    assert user['assessments'][0]['version'] == 'sha256:example'
+    assert user['assessments'][0]['review_id'] == user['reviews'][0]['review_id']
+    assert user['reviews'][0]['critical_claims'][0]['status'] == 'supported'
+    assert user['assessments'][0]['criteria']['novelty']['status'] == 'unverified'
+    assert 'award_estimates' not in internal['research-note']
+
+
+@pytest.mark.parametrize('mutation', [
+    lambda x: x.update(award_estimate={}),
+    lambda x: x.update(scores=dict.fromkeys(ag.WEIGHTS, 4)),
+    lambda x: x.update(schema_version=True),
+    lambda x: x['research_assessment']['criteria'].pop('significance'),
+    lambda x: x['research_assessment']['criteria']['novelty'].update(status='supported'),
+    lambda x: x['research_assessment']['criteria']['correctness'].update(evidence=''),
+    lambda x: x['research_assessment']['criteria']['correctness'].update(issue_ids=['missing']),
+    lambda x: x['research_assessment'].update(work_type='top_journal_accepted'),
+    lambda x: x['research_assessment']['novelty_search'].update(completed='true'),
+])
+def test_research_rejects_unsupported_declarations(mutation, tmp_path):
+    item = research_item()
+    mutation(item)
+    path = tmp_path / 'invalid.json'
+    path.write_text(json.dumps([item]))
+    with pytest.raises(ValueError):
+        ag.aggregate([path])
+
+
+def test_research_literature_and_root_issue_associations_are_preserved(tmp_path):
+    item = research_item()
+    item['issues'] = [dict(id='prior', description='Known result', evidence='prior theorem p2')]
+    assessment = item['research_assessment']
+    assessment['criteria']['novelty'].update(status='refuted', evidence='prior theorem p2', issue_ids=['prior'])
+    assessment['novelty_search'].update(completed=True, scope='specific theorem search', sources=['primary paper p2'])
+    path = tmp_path / 'known.json'
+    path.write_text(json.dumps([item]))
+    user = ag.user_view(ag.aggregate([path]))['research-note']
+    assert user['assessments'][0]['criteria']['novelty']['issue_ids'] == ['prior']
+    assert user['reviews'][0]['validity_status'] == 'supported'  # Known does not mean mathematically false.
+
+
+def test_one_paper_cannot_mix_competition_and_research_judgments(tmp_path):
+    path = tmp_path / 'mixed.json'
+    path.write_text(json.dumps([research_item(), judge('research-note')]))
+    with pytest.raises(ValueError, match='Cannot combine'):
+        ag.aggregate([path])
 
 
 def test_percent_and_spread(tmp_path):
@@ -198,3 +268,20 @@ def test_unknown_claim_does_not_become_supported_and_legacy_is_not_certified(tmp
     assert report['old']['percent_mean'] == 50
     assert report['old']['reviews'][0]['validity_status'] == 'not_assessed'
     assert report['old']['reviews'][0]['score_source'] == 'legacy_direct'
+
+
+def test_public_research_reviews_bind_actual_papers_and_keep_nonblind_status():
+    import hashlib
+    root = Path(__file__).resolve().parents[1]
+    files = [root / 'demos' / slug / 'evaluation.json'
+             for slug in ('collatz-research', 'domino-research')]
+    view = ag.user_view(ag.aggregate(files))
+    for path in files:
+        record = json.loads(path.read_text())[0]
+        assert record['research_assessment']['version'] == hashlib.sha256(
+            (root / record['paper']).read_bytes()).hexdigest()
+        assert 'non-blind' in record['reviewer']
+        assert view[record['paper']]['status'] == 'research_reviewer_assessments'
+        assert record['review_evidence']['independent_checks']
+        # A classic note does not assert novelty; lack of originality is not a false theorem.
+        assert view[record['paper']]['validity'] == ['supported']

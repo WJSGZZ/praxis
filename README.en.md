@@ -144,6 +144,8 @@ The [edition registry](evals/competitions.json) separates contest rules by event
 
 Tell Praxis the target up front: a contest with a deadline, a contest worked through in depth first, research, or teaching. It does the work to research standard, with a stopping rule, then condenses the evidence into a paper a judge can read quickly; see [deep work and contest convergence](references/convergence.md). Before a paper goes out, independent reviewer roles try to break it ([review protocol](references/review-protocol.md)).
 
+Reviews follow the kind of work being assessed. A contest report receives an edition-specific award estimate with reasons and priorities for revision. A mathematical study is assessed for correctness, originality, significance, method, exposition and verifiability. Each opinion identifies the manuscript version and what was checked; see the [review criteria](evals/judging.md). These are scoped judgments, not promises of an award or journal acceptance.
+
 For solo work under time pressure, Praxis defaults to one current user action and develops the report as results become available. Team tasks are assigned around skills and dependencies. Competition requirements are not applied to unrelated projects.
 
 ## Math tools

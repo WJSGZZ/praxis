@@ -15,6 +15,8 @@ CHECKLIST_IDS = {dim: [f'{prefix}{i}' for i in range(1, count + 1)] for dim, pre
     ('correctness', 'K', 5), ('robustness', 'R', 4), ('writing', 'W', 5), ('verifiability', 'V', 5))}
 PROFILES = json.loads(Path(__file__).with_name('profiles.json').read_text())
 CONTEST_WEIGHTS = {k: v['weights'] for k, v in PROFILES.items() if k != 'general'}
+RESEARCH_CRITERIA = ('correctness', 'novelty', 'significance', 'method_depth',
+                     'exposition', 'reproducibility')
 
 
 def _number(value, label: str, low: float, high: float) -> float:
@@ -146,6 +148,9 @@ def review_record(item: dict) -> dict:
         if claim.get('status') not in ('supported', 'refuted', 'unverified'):
             raise ValueError('Critical claim status must be supported, refuted or unverified')
     entries = [entry for dim in item.get('checklist', {}).values() for entry in dim.values()]
+    research = research_assessment(item) if 'research_assessment' in item else None
+    if research:
+        entries += list(research['criteria'].values())
     for entry in entries + claims:
         refs = entry.get('issue_ids', [])
         if not isinstance(refs, list) or any(not isinstance(ref, str) or ref not in issue_ids for ref in refs):
@@ -155,7 +160,8 @@ def review_record(item: dict) -> dict:
         status = ('refuted' if any(c['status'] == 'refuted' for c in claims)
                   else 'unverified' if any(c['status'] == 'unverified' for c in claims) else 'supported')
     return dict(schema_version=item.get('schema_version', 1),
-                score_source=('checklist' if item.get('schema_version', 1) == 2 else 'legacy_checklist')
+                score_source='qualitative_research' if research else
+                             ('checklist' if item.get('schema_version', 1) == 2 else 'legacy_checklist')
                              if 'checklist' in item else 'legacy_direct',
                 validity_status=status, critical_claims=claims, issues=issues,
                 coverage_summary=review_coverage(item),
@@ -164,6 +170,45 @@ def review_record(item: dict) -> dict:
                                   for key, entry in items.items() if entry.get('reviewed', True) is False],
                 not_applicable_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
                                       for key, entry in items.items() if entry['met'] is None])
+
+
+def research_assessment(item: dict) -> dict:
+    """Validate scoped research judgments, without a score or journal certification."""
+    if type(item.get('schema_version')) is not int or item['schema_version'] != 2:
+        raise ValueError('Research assessment requires schema_version 2')
+    if any(key in item for key in ('award_estimate', 'scores', 'checklist', 'adjust')):
+        raise ValueError('Research assessment cannot mix competition awards or diagnostics')
+    assessment = item['research_assessment']
+    if not isinstance(assessment, dict):
+        raise ValueError('research_assessment must be an object')
+    for field in ('problem', 'version', 'scope', 'target_standard', 'overall_assessment'):
+        _text(assessment.get(field), f'research {field}')
+    if assessment.get('work_type') not in ('reproduction', 'expository_note',
+                                           'original_research', 'development_study'):
+        raise ValueError('Unknown research work_type')
+    criteria = assessment.get('criteria')
+    if not isinstance(criteria, dict) or set(criteria) != set(RESEARCH_CRITERIA):
+        raise ValueError(f'Research criteria must be {RESEARCH_CRITERIA}')
+    for name, entry in criteria.items():
+        if not isinstance(entry, dict) or entry.get('status') not in ('supported', 'refuted', 'unverified'):
+            raise ValueError(f'Invalid research criterion status: {name}')
+        _text(entry.get('evidence'), f'research {name} evidence')
+    for field in ('major_gaps', 'actions'):
+        if not isinstance(assessment.get(field), list):
+            raise ValueError(f'research {field} needs a list')
+        for value in assessment[field]:
+            _text(value, f'research {field} item')
+    search = assessment.get('novelty_search')
+    if not isinstance(search, dict) or type(search.get('completed')) is not bool:
+        raise ValueError('research novelty_search needs explicit completed boolean')
+    _text(search.get('scope'), 'research novelty search scope')
+    if not isinstance(search.get('sources'), list):
+        raise ValueError('research novelty search sources needs a list')
+    for source in search['sources']:
+        _text(source, 'research novelty search source')
+    if criteria['novelty']['status'] == 'supported' and not (search['completed'] and search['sources']):
+        raise ValueError('Supported novelty requires a completed scoped literature search with sources')
+    return assessment
 
 
 def aggregate(files: list[Path], contest: str | None = None) -> dict:
@@ -175,9 +220,15 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
     dims: dict[str, dict[str, list[float]]] = {}
     basis: dict[str, dict[str, set]] = {}
     reviews: dict[str, list[dict]] = {}
+    kinds: dict[str, str] = {}
     for path in files:
         for source_index, item in enumerate(json.loads(Path(path).read_text())):
-            scores = dimension_scores(item)
+            is_research = 'research_assessment' in item
+            kind = 'research' if is_research else 'competition_diagnostic'
+            if item['paper'] in kinds and kinds[item['paper']] != kind:
+                raise ValueError('Cannot combine research and competition reviews for one paper')
+            kinds[item['paper']] = kind
+            scores = None if is_research else dimension_scores(item)
             record = review_record(item)
             record['source'] = str(path)
             record['source_record_index'] = source_index
@@ -186,9 +237,13 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
             record['scope'] = item.get('scope')
             if 'award_estimate' in item:
                 record['award_estimate'] = item['award_estimate']
+            if is_research:
+                record['research_assessment'] = research_assessment(item)
             reviews.setdefault(item['paper'], []).append(record)
             if 'award_estimate' in item:
                 awards.setdefault(item['paper'], []).append(item['award_estimate'])
+            if is_research:
+                continue
             for k, b in item.get('basis', {}).items():
                 basis.setdefault(item['paper'], {}).setdefault(b, set()).add(k)
             per_paper.setdefault(item['paper'], []).append(percent(scores, weights))
@@ -202,6 +257,11 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
                           basis={b: sorted(v) for b, v in basis.get(paper, {}).items()},
                           award_estimates=awards.get(paper, []), reviews=reviews[paper],
                           score_kind='uncalibrated_diagnostic', weights=weights)
+    for paper, records in reviews.items():
+        if kinds[paper] == 'research':
+            out[paper] = dict(judges=len(records), score_kind='qualitative_research',
+                              reviews=records,
+                              note='Scoped reviewer judgments; no numerical grade or journal acceptance estimate.')
     return out
 
 
@@ -263,6 +323,14 @@ def user_view(report: dict, contest: str | None = None) -> dict:
     """Award-first view, with each review's mathematical evidence kept associated."""
     out = {}
     for paper, result in report.items():
+        if result.get('score_kind') == 'qualitative_research':
+            records = result['reviews']
+            out[paper] = dict(status='research_reviewer_assessments',
+                assessments=[dict(r['research_assessment'], review_id=r['review_id'],
+                                  source=r.get('source'), reviewer=r.get('reviewer')) for r in records],
+                reviews=records, validity=[r['validity_status'] for r in records],
+                note='按研究价值、证明和表达评议；不是顶刊认证，不转成奖项、百分制或录用概率。')
+            continue
         assessments, reviews = [], []
         has_attached_awards = any('award_estimate' in r for r in result['reviews'])
         for index, record in enumerate(result['reviews'], 1):

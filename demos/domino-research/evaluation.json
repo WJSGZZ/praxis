@@ -1,0 +1,292 @@
+[
+  {
+    "schema_version": 2,
+    "paper": "demos/domino-research/deliverables/paper.pdf",
+    "reviewer": "Author-external AI review; non-blind; uncalibrated",
+    "scope": "Complete 4-page current PDF scientific reading, source/receipts, independent bounded checks; limits are recorded in each criterion",
+    "critical_claims": [
+      {
+        "id": "domino-correctness",
+        "claim": "The recurrence, closed form, generating function and all-size proof by eight-state order bound are mathematically justified",
+        "status": "supported",
+        "evidence": "PDF pp2–4; exhaustive local cases; monic P(E) annihilates a and d=Q(E)a by commuting polynomial shifts; first8d terms zero implies d identicallyzero; independent matching counts1,3,11,41,153,571 and matrix rule/eight equations checked"
+      }
+    ],
+    "issues": [
+      {
+        "id": "D-META-1",
+        "description": "Archived growth-rate ratio field names three indices but stores a single different ratio",
+        "evidence": "reference/results.json growth_rate.ratios_n_8_12_16 has one entry; explore.py uses if False else [transfer[16]/transfer[15]]; current PDF ratio figure is independently generated from all sixteen successive ratios",
+        "severity": "nonblocking",
+        "status": "resolved_after_review",
+        "resolution": "Metadata field renamed to scalar ratio_a16_over_a15; the value, counts, theorem and PDF are unchanged. The original review finding is retained."
+      }
+    ],
+    "research_assessment": {
+      "problem": "Domino tilings of a 3×2n rectangle",
+      "version": "c96af848f5df6fce306f86d7165ccb6708f0b6cff03cd092c9f77966b61f6834",
+      "scope": "Current frozen 4-page public PDF; exact declared theorem scope only; not human peer review or formal certification",
+      "target_standard": "Substantive original mathematics of importance comparable to Annals/Inventiones; no acceptance probability or journal certification",
+      "work_type": "expository_note",
+      "overall_assessment": "Correct expository reconstruction of a classical enumeration; useful proof/reproducibility workflow demonstration. As original research for Annals/Inventiones, the current work is unsuitable: its central result is explicitly classical, with no new theorem or research advance",
+      "criteria": {
+        "correctness": {
+          "claim": "The recurrence, closed form, generating function and all-size proof by eight-state order bound are mathematically justified",
+          "status": "supported",
+          "evidence": "PDF pp2–4; exhaustive local cases; monic P(E) annihilates a and d=Q(E)a by commuting polynomial shifts; first8d terms zero implies d identicallyzero; independent matching counts1,3,11,41,153,571 and matrix rule/eight equations checked Limits: Generic modeling.experiment implementation not read; all-n conclusion follows supplied mathematical argument rather than n≤60 alone"
+        },
+        "novelty": {
+          "claim": "The central recurrence/count is new mathematical research",
+          "status": "refuted",
+          "evidence": "PDF pp1/4 explicitly classical/no novelty; primary OEIS A001835 lists recurrence, matching board interpretation and shifted values Limits: No claim that this particular teaching arrangement is copied or that no conceivable extension could be novel"
+        },
+        "significance": {
+          "claim": "The current note supplies a major new contribution of top research-journal importance",
+          "status": "refuted",
+          "evidence": "Known fixedwidth3 enumeration and standard recurrence/transfer methods; no extension or new consequence; value is education and transparent proof technique Limits: This assessment is about original research value, not classroom quality"
+        },
+        "method_depth": {
+          "claim": "A justified finite-state dimension turns a finite recurrence check into an all-n proof, and this pattern can be reused",
+          "status": "supported",
+          "evidence": "PDF p3 Cayley–Hamilton for T², monic recurrence inheritance; p4 comparison with geometric decomposition; finite matrix-derived bound is a key premise Limits: A merely fitted order bound would not suffice; no empirical unseen-problem transfer measured"
+        },
+        "exposition": {
+          "claim": "Finite checks, all-size proofs and classical status are distinguished clearly",
+          "status": "supported",
+          "evidence": "Abstract, p3 confidence table, p4 scope; local forced domino picture p2 inspected; both proof arguments read Limits: Four-page educational scale; only OEIS cited, not a research literature treatment"
+        },
+        "reproducibility": {
+          "claim": "Archived count ranges and source enable inspectable reconstruction of the stated finite checks",
+          "status": "supported",
+          "evidence": "explore.py and build_note.py read completely; reference counts matching ranges; build uses arrays to derive overlap5 and16; independent matching/matrix recomputation agrees Limits: Minor metadata error: growth_rate.ratios_n_8_12_16 contains only a16/a15 because source if False branch, not three named ratios; public PDF uses valid16-point ratio data so theorem/figure unaffected; explore uses assert for some comparison gates and is not a certified checker"
+        }
+      },
+      "major_gaps": [
+        "No original research question or new theorem; more verification or better formatting cannot make a known reconstruction top-journal research"
+      ],
+      "actions": [
+        "Keep this as the frozen expository/workflow example; for a future original research submission, choose a genuinely unresolved extension and establish its relation to the existing fixed-width tiling literature before computing"
+      ],
+      "novelty_search": {
+        "completed": true,
+        "scope": "Bounded verification of central classical count against OEIS, not exhaustive proof-priority search",
+        "sources": [
+          "https://oeis.org/A001835"
+        ]
+      }
+    },
+    "review_evidence": {
+      "standards_sources": [
+        "https://annals.math.princeton.edu/board",
+        "https://link.springer.com/journal/222/aims-and-scope"
+      ],
+      "independent_checks": {
+        "collatz_exhaustive_words_depth_1_to_14": [
+          {
+            "k": 1,
+            "words": 1,
+            "max_offset": 0,
+            "unique_maximum": true,
+            "exception_floor": 0
+          },
+          {
+            "k": 2,
+            "words": 1,
+            "max_offset": 1,
+            "unique_maximum": true,
+            "exception_floor": 1
+          },
+          {
+            "k": 4,
+            "words": 1,
+            "max_offset": 5,
+            "unique_maximum": true,
+            "exception_floor": 0
+          },
+          {
+            "k": 5,
+            "words": 2,
+            "max_offset": 23,
+            "unique_maximum": true,
+            "exception_floor": 4
+          },
+          {
+            "k": 7,
+            "words": 3,
+            "max_offset": 85,
+            "unique_maximum": true,
+            "exception_floor": 1
+          },
+          {
+            "k": 8,
+            "words": 7,
+            "max_offset": 319,
+            "unique_maximum": true,
+            "exception_floor": 24
+          },
+          {
+            "k": 10,
+            "words": 12,
+            "max_offset": 1085,
+            "unique_maximum": true,
+            "exception_floor": 3
+          },
+          {
+            "k": 12,
+            "words": 30,
+            "max_offset": 3767,
+            "unique_maximum": true,
+            "exception_floor": 1
+          },
+          {
+            "k": 13,
+            "words": 85,
+            "max_offset": 13349,
+            "unique_maximum": true,
+            "exception_floor": 8
+          }
+        ],
+        "collatz_envelope_depth_1024": {
+          "H": 72058,
+          "attained_at": [
+            485,
+            306
+          ],
+          "feasible_depths": 647,
+          "method": "odd-position sum via integer power comparison; no production imports"
+        },
+        "collatz_small_scan": {
+          "domain": [
+            2,
+            108
+          ],
+          "cap": 32,
+          "endpoint_failures": [],
+          "scope": "does not re-run complete depth1024 finite scan"
+        },
+        "domino": {
+          "independent_matching_n0_to_5": [
+            1,
+            3,
+            11,
+            41,
+            153,
+            571
+          ],
+          "matrix_from_bit_rule": [
+            [
+              0,
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "a0_to_a9": [
+            1,
+            3,
+            11,
+            41,
+            153,
+            571,
+            2131,
+            7953,
+            29681,
+            110771
+          ],
+          "first_eight_Q_difference_terms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scope": "small grid matching and printed 8-state rule; all-n follows mathematical order bound, not finite search alone"
+        }
+      },
+      "not_checked": [
+        "Complete literature priority search",
+        "Human peer review or journal assessment",
+        "Full adversarial software audit"
+      ],
+      "note": "These are actual scoped AI-role judgments and bounded checks; not journal endorsement.",
+      "claim_selection_note": "Originality and journal significance are assessment criteria, not claims made by these manuscripts. They are excluded from mathematical validity aggregation; the raw reviewer opinion is retained in the local audit."
+    }
+  }
+]

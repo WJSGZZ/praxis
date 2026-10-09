@@ -114,9 +114,7 @@
  "closed_form_matches_n0_to_60": true,
  "growth_rate": {
   "limit_of_ratio": 3.732050807568877,
-  "ratios_n_8_12_16": [
-   3.732050807568877
-  ]
+  "ratio_a16_over_a15": 3.732050807568877
  },
  "route_issues": [],
  "lesson": {

@@ -48,6 +48,21 @@ A separate AI reviewer checked the six-page baseline and key numerical evidence,
 
 **[Read the seven-page paper →](deliverables/paper.pdf)** Uses the shared [AMS-style research template](../../templates/research-paper.tex): amsart, 11pt Latin Modern, A4 and 30mm margins. Every page was visually inspected. Two figures explain the first-crossing construction and distinguish the scan bound from the remaining residue density.
 
+## Research assessment
+
+An author-external AI role read the current seven-page paper and performed bounded independent checks. **The work is a substantive computational synthesis; original mathematical contribution and major research significance remain unestablished.** The supplied arguments, method, exposition and inspectable evidence are supported within the stated review scope. The cited Rozier–Terracol Theorem 5.3 and Corollary 5.4 state stronger coverage, so depth 1024 is not a new verification record.
+
+| Criterion | Finding |
+|---|---|
+| Correctness | The envelope, reduction and limitations have argument and bounded-check support; the full scan was not rerun in this review. |
+| Originality | Unestablished; a theorem-level comparison with the closest literature is needed. |
+| Significance | A self-contained certificate has methodological value, but a major new advance has not been demonstrated. |
+| Method | Structural bounds reduce the problem to finite checks with distinct recurrences; transfer to other problems is untested. |
+| Exposition | Conditional statements, density and uncovered cases are distinguished. |
+| Verifiability | Exact certificates and source can be inspected; no proof-assistant certification is claimed. |
+
+The priority is a bounded prior-art study, rather than a larger search. The [version-bound review](evaluation.json) retains evidence and limits. [Annals](https://annals.math.princeton.edu/board) and [Inventiones](https://link.springer.com/journal/222/aims-and-scope) provide the reference for importance and originality; this non-blind, uncalibrated AI assessment is neither journal endorsement nor an acceptance prediction.
+
 ## Reproduce it
 
 Run from the repository root. Make a working copy first; `copytree` refuses an existing target:

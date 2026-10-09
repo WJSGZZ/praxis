@@ -127,7 +127,7 @@ def main() -> dict:
     s = sp.sqrt(3)
     closed = lambda n: sp.simplify(((3 + s) * (2 + s) ** n + (3 - s) * (2 - s) ** n) / 6)
     out['closed_form_matches_n0_to_60'] = all(closed(n) == big[n] for n in range(0, 61))
-    out['growth_rate'] = dict(limit_of_ratio=float(2 + s), ratios_n_8_12_16=[big[n + 1] / big[n] for n in (8, 12, 16)] if False else [transfer[16] / transfer[15]])
+    out['growth_rate'] = dict(limit_of_ratio=float(2 + s), ratio_a16_over_a15=transfer[16] / transfer[15])
     # 6. route record and lesson
     ops = [
         dict(op='add_structure', key='transfer', text='the count is u^T M^n v for an 8x8 integer matrix M (column profiles)', evidence='derived'),

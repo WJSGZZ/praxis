@@ -21,6 +21,10 @@ def test_the_case_recomputes_its_archived_numbers_and_proofs_hold():
     assert out['finite_check']['proof_by_finite_check'] and out['finite_check']['equations_needed'] == 8
     assert out['counterexample_search_n2_to_60']['proved_for_domain'] and out['closed_form_matches_n0_to_60']
     assert out['route_issues'] == []
+    # Closed recurrence supplies independent integer terms a15 and a16.
+    assert out['growth_rate']['ratio_a16_over_a15'] == 1117014753 / 299303201
+    assert out['growth_rate'] == archived['growth_rate']
+    assert 'ratios_n_8_12_16' not in out['growth_rate']
 
 
 def test_case_pages_state_the_archived_terms():
