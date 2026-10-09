@@ -2,9 +2,9 @@ name: portable-typesetting
 on:
   push:
     branches: [main]
-    paths: ['templates/**', 'scripts/paper_template.py', 'scripts/pdf_text.py', 'scripts/check_pdf.py', 'scripts/freeze_pdf.py', 'demos/mcm-2016-a/reproduce/build_report.py', 'research/merge-after-toll/paper/paper.tex', 'scripts/contest_rules.py', 'demos/cumcm-1998-a/deliverables/**', '.github/scripts/typesetting.py', '.github/workflows/typesetting.yml']
+    paths: ['.gitattributes', 'templates/**', 'scripts/paper_template.py', 'scripts/pdf_text.py', 'scripts/check_pdf.py', 'scripts/freeze_pdf.py', 'demos/mcm-2016-a/reproduce/build_report.py', 'research/merge-after-toll/paper/paper.tex', 'scripts/contest_rules.py', 'demos/cumcm-1998-a/deliverables/**', '.github/scripts/typesetting.py', '.github/workflows/typesetting.yml']
   pull_request:
-    paths: ['templates/**', 'scripts/paper_template.py', 'scripts/pdf_text.py', 'scripts/check_pdf.py', 'scripts/freeze_pdf.py', 'demos/mcm-2016-a/reproduce/build_report.py', 'research/merge-after-toll/paper/paper.tex', 'scripts/contest_rules.py', 'demos/cumcm-1998-a/deliverables/**', '.github/scripts/typesetting.py', '.github/workflows/typesetting.yml']
+    paths: ['.gitattributes', 'templates/**', 'scripts/paper_template.py', 'scripts/pdf_text.py', 'scripts/check_pdf.py', 'scripts/freeze_pdf.py', 'demos/mcm-2016-a/reproduce/build_report.py', 'research/merge-after-toll/paper/paper.tex', 'scripts/contest_rules.py', 'demos/cumcm-1998-a/deliverables/**', '.github/scripts/typesetting.py', '.github/workflows/typesetting.yml']
   workflow_dispatch:
 permissions:
   contents: read

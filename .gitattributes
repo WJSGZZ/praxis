@@ -1,4 +1,11 @@
+# Numerical provenance hashes bind source bytes. Keep text identical on all hosts.
+* text=auto eol=lf
 *.pdf binary
 *.png binary
+*.jpg binary
+*.jpeg binary
 *.zip binary
-*.csv text eol=lf
+*.npz binary
+*.npy binary
+*.otf binary
+*.ttf binary
