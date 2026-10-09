@@ -52,6 +52,21 @@ def install():
     return target
 
 
+def check_mcm_pagination(records):
+    """Check the current contest boundary, not a historic demo's total length.
+
+    Cross-platform comparison below still detects layout differences. The AI
+    report must be present in these AI-assisted demos and stays outside the
+    solution-page limit, whose sole authority is contest_rules.evaluate.
+    """
+    rules = evaluate(records, 'mcm')
+    if rules['errors']:
+        raise ValueError(rules['errors'])
+    if rules['facts']['ai_report_from_page'] is None:
+        raise ValueError('AI-assisted demo is missing its AI-use report')
+    return rules
+
+
 def main(compiler=None):
     OUT.mkdir(parents=True, exist_ok=False)
     executable = Path(compiler).resolve() if compiler else install()
@@ -103,10 +118,7 @@ def main(compiler=None):
                 raise ValueError('Unexpected pagination')
             report['contest_rules'] = rules
         if name in {'bath', 'toll'}:
-            rules = evaluate(extract(pdf), 'mcm')
-            if rules['errors']: raise ValueError(rules['errors'])
-            if report['total_pages'] != (25 if name == 'bath' else 17):
-                raise ValueError('Unexpected MCM pagination')
+            rules = check_mcm_pagination(extract(pdf))
             report['contest_rules'] = rules
         if contest == 'research':
             if not any('LMRoman' in f['face'] for f in report['fonts']):

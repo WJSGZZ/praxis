@@ -186,3 +186,13 @@ def test_demo_delivery_metadata_matches_actual_pdf_and_archive_bytes():
             pdf = directory / 'deliverables/7391856.pdf'
             assert len(PdfReader(pdf).pages) == verification['pdf']['pages_total']
             assert hashlib.sha256(pdf.read_bytes()).hexdigest() == verification['pdf']['sha256']
+
+
+def test_mcm_ai_tools_heading_and_contents_use_the_same_page_boundary():
+    pages = mcm_pages(26, ai_from=25)
+    pages[-1] = page('Team # 1234567 Page 26 of 26\nReport on Use of AI Tools\nactual disclosure')
+    pages[1] = page('Team # 1234567 Page 2 of 26\nContents\nReport on Use of AI Tools 26')
+    rules = contest_rules.evaluate(pages, 'mcm')
+    assert not rules['errors']
+    assert rules['facts']['counted_pages'] == 25
+    assert rules['facts']['ai_report_from_page'] == 26

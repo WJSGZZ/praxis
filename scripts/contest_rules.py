@@ -59,7 +59,7 @@ def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
             errors.append(f'identifying text found: {item!r}')
     if contest == 'mcm':
         # a heading is a line that is only the title (a contents entry ends with a page number or dots)
-        ai_page = next((i for i, r in enumerate(records) if any(re.fullmatch(r'(?:\d+\s+)?Report on Use of AI\s*', line, re.I) for line in r['lines'])), None)
+        ai_page = next((i for i, r in enumerate(records) if any(re.fullmatch(r'(?:\d+\s+)?Report on Use of AI(?: Tools)?\s*', line, re.I) for line in r['lines'])), None)
         counted = ai_page if ai_page is not None else n
         facts.update(total_pages=n, counted_pages=counted, ai_report_from_page=None if ai_page is None else ai_page + 1)
         if counted > MCM_PAGE_LIMIT:
