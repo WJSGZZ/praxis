@@ -194,6 +194,8 @@ The agent writes and reviews the case's `model.py` and `validate.py`, then execu
 
 See the [Execution contract](references/automation.md) for the complete interface.
 
+For troubleshooting after delivery, [run feedback](references/feedback.md) preserves the stages, reviews, revisions and stopping reason you actually record. Select the files to include in a local sharing copy; folders and ZIPs use the same read-only checks. Nothing is uploaded automatically. Unavailable model identity, costs and chat history remain unknown, and a readable feedback package does not certify the underlying research.
+
 </details>
 
 <details>

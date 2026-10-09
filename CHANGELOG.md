@@ -5,6 +5,15 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 新增可选本地运行反馈：实际来源与阶段事件、未知身份和缺日志、失败与停止状态保持可见；显式文件清单、分享副本、双重哈希及目录／ZIP共层检查。拒绝越界、符号链接、异常压缩、非有限元数据及早于开始的结束时间；不自动上传，不以反馈包代替研究验收。
+  Optional run feedback now records sourced metadata, actual events and stopping states, with explicit file selection and separate original/share hashes. The same read-only checks handle folders and ZIPs; unsafe paths, malformed archives, non-finite metadata and inconsistent end times are rejected. Export does not upload files or certify a study.
+
+- 概率与干预解释增加针对性核验：准确率不代替个体概率，重采样区间明确估计对象，预测覆盖检查关键群体；双重差分检查真实对照与变量可区分性，平衡图不替代识别。
+  Targeted statistical guidance separates classification accuracy from event probabilities, checks the target of resampling intervals and subgroup coverage, and verifies that treatment and time can be distinguished before a difference-in-differences interpretation.
+
+- 返工与回收建模明确保留持久质量及检测信息，核对完整履约计费、失败终止与可用反馈，避免将拆解旧件反复当作新件抽样。这是带条件的方法改进，不新增必选算法或宣称通用最优。
+  Repair and reuse guidance now distinguishes persistent faults from fresh draws and preserves valid inspection information. Fulfillment costs and termination must be checked before comparing recovery policies; the guidance does not prescribe a universal optimum.
+
 - 收费站研究审计在存在多条分流路线时使用与被审计模型相同的策略及有限占用输入，消除不等条件比较造成的假差异；原数值、论文与历史审计回执保留。
   Toll-study audits now match the model’s routing policy and storage inputs. A multiroute regression catches the former comparison mismatch; frozen outputs and historical audit evidence are preserved.
 

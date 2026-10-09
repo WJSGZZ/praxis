@@ -193,6 +193,8 @@ WORKSPACE="/absolute/path/to/your/project"
 
 完整接口见 [执行契约](references/automation.md)。
 
+交付后如需复盘问题，可使用[运行反馈](references/feedback.md)：记录实际阶段、评审、修订和停止原因，按明确清单生成本地分享副本。目录与 ZIP 共用只读检查，不自动上传；模型身份、费用和聊天记录拿不到时保留未知。反馈包帮助定位问题，不能代替研究正确性或完整交付的验收。
+
 </details>
 
 <details>

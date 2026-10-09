@@ -32,6 +32,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 - 参数能否被观测区分、尺度、优化保证、概率区间或干预结论需要判断时，读 [references/mathematical-reasoning.md](references/mathematical-reasoning.md) 的对应条件分支；不增加全题必经阶段。
 - 只有会改变答案的定义歧义，才读 [references/definition-review.md](references/definition-review.md) 的区分例子。
 - 文件接收、模型执行、过期核查与数值任务证据索引，读 [references/automation.md](references/automation.md)。这些脚本服务于主线，不能代替题意判断或证明模型适用。
+- 需要记录运行问题或准备自愿反馈时，读 [references/feedback.md](references/feedback.md)。先完成当前交付，再按明确清单生成本地分享副本；未知模型、缺少日志与失败记录保持可见。
 - 国赛、美赛、研究生赛这类限时开放题，读题分类与常见丢分点见 [references/contest-playbook.md](references/contest-playbook.md)。
 - 工具总表（名称、字段、用途，自动生成）见 [references/tool-index.md](references/tool-index.md)。
 - 交付目标先从用户请求与项目状态接续；只有未知目标会改变当前工作时才问。需要完整报告、篇幅取舍或限时收敛时，读 [references/convergence.md](references/convergence.md)；停止深挖的判断统一见 methods.md。
