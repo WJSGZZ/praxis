@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "policies": {
+    "pulse": [
+      1.1264058561084207,
+      1.318678641876511,
+      1.149624330456487,
+      1.1306616857293126,
+      0.0,
+      0.0
+    ],
+    "passive": [
+      1.3036635481616214,
+      1.0537529777740253,
+      1.011696870285111,
+      0.9883724402845409,
+      0.8601381452260239,
+      1.3500311978076743e-13
+    ]
+  },
+  "grids": [
+    [
+      8,
+      4,
+      3
+    ],
+    [
+      12,
+      6,
+      4
+    ],
+    [
+      16,
+      8,
+      6
+    ]
+  ],
+  "physical_limits": {
+    "floor": 39,
+    "ceiling": 41,
+    "span": 1.5
+  },
+  "common_reserve": {
+    "floor": 39.13,
+    "ceiling": 40.9,
+    "span": 1.4
+  },
+  "inputs": {
+    "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+    "check_structure.py": "138019ded773f2cc4ad24cd38105a405362cf75b69da8db1f495fd2d0f8232e6",
+    "reference/structure-decision.json": "48e79ada48c19ccafd36d7f71f595b0a80410af54a2c7c8d84f1e80b1069085c"
+  },
+  "producer_sources": {
+    "reference/common-reserve-batch-original.py": "5f3561214a2d831d622349feb06c81509fa629af8282c2e625f18951b7d40208",
+    "reference/common-reserve-qualifier-original.py": "e0b7c7bff7a21da3be84111b5b4ef6a32d894886a5e08b6246e7ac6ced412411"
+  },
+  "archive_sha256": "7219bc19d42f4290c964426685a0d7cbb66c7e58442865555e26f9a417b910c4",
+  "independent_sha256": "29cd53a06f88780b4f5d0968d5cad31d656896832074d409ffffb04da3a59b6e",
+  "original_qualification_receipt_sha256": "e431e99d7f08bc65bf54c509eac337893ee751e5d9771f645a4e4827aad2829e",
+  "base_commit": "776e4dcba3bce8ea3d313fd58bea05b427067a9e",
+  "environment": {
+    "python": "3.12.0 (v3.12.0:0fb18b02c8, Oct  2 2023, 09:45:56) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "scipy": "1.18.1"
+  },
+  "coverage": {
+    "groups": 18,
+    "unique_objects": 5796,
+    "reused_objects": 1530,
+    "new_objects": 4266
+  },
+  "computation": {
+    "optimizer_cumulative_s": 130.81796533400484,
+    "qualification_cumulative_s": 568.5820352500159
+  },
+  "rejected_candidates": [
+    {
+      "identity": {
+        "structure": "surface_fixed",
+        "design": "passive",
+        "grid": [
+          8,
+          4,
+          3
+        ],
+        "prior_index": 205
+      },
+      "actual": {
+        "route": "surface",
+        "body_capacity_j_per_k": null,
+        "water_l": 24.672102983620952,
+        "min_temp": 39.12902300542907,
+        "max_temp": 40.699977077417344,
+        "max_span": 1.243925980678199,
+        "sampled_passed": true,
+        "final_body_temp_c": 34.0,
+        "instantaneous_balance_residual_w": 1.234923274751054e-10,
+        "integrated_balance_residual_j": 2.2177118808031082e-08,
+        "sample_s": 0.0625,
+        "path": [
+          8,
+          20,
+          32,
+          44,
+          56,
+          68,
+          80,
+          92
+        ]
+      },
+      "min_temp_delta": 9.308109838457312e-13,
+      "scope": "Independent RK45 confirms a common-reserve floor failure of this rejected candidate, while physical limits pass.",
+      "flow_lpm": [
+        1.303663548172443,
+        1.053752977779433,
+        1.0116968702942182,
+        0.9883724402976127,
+        0.8366411073735847,
+        2.9097229635707873e-12
+      ]
+    },
+    {
+      "actual": {
+        "route": "surface",
+        "body_capacity_j_per_k": null,
+        "water_l": 22.377549419106856,
+        "min_temp": 39.12985085610799,
+        "max_temp": 40.75967991295753,
+        "max_span": 1.2593934178904576,
+        "sampled_passed": true,
+        "final_body_temp_c": 34.0,
+        "instantaneous_balance_residual_w": 2.0895640773233026e-10,
+        "integrated_balance_residual_j": 8.649658411741257e-08,
+        "sample_s": 0.0625,
+        "path": [
+          8,
+          20,
+          32,
+          44,
+          56,
+          68,
+          80,
+          92
+        ]
+      },
+      "min_temp_delta": 5.826450433232822e-13,
+      "identity": {
+        "structure": "surface_fixed",
+        "design": "pulse",
+        "prior_index": 935,
+        "grid": [
+          8,
+          4,
+          3
+        ]
+      },
+      "flow_lpm": [
+        1.103368211811814,
+        1.3289224338632488,
+        1.1485568986437917,
+        1.130215491282253,
+        1.705302565824166e-13,
+        1.660893644839219e-13
+      ],
+      "scope": "Independent RK45 confirms a common-reserve floor failure of this rejected candidate, while physical limits pass."
+    }
+  ],
+  "scope": "Specified finite banks only; floating-point affine propagation with contraction/chord bounds and adaptive unresolved intervals to0.0625s; no interval-roundoff proof, continuous-parameter coverage or empirical validation.",
+  "archive_note": "Lossless numeric/group record export from the original completed receipt; only max_refinement_depth renamed refinement_depth_cap. Frozen producers retain their actual byte hashes. The portable replay is a subsequent relocation with guards, not the producer of the archived full run.",
+  "reuse_provenance": {
+    "predecessor_receipt_sha256": "7dc7b7e1581dff5ccb7d08a61f25d8313c653291ab1dbc0107fff309d134b276",
+    "design": "passive",
+    "policy": [
+      1.3036635481616214,
+      1.0537529777740253,
+      1.011696870285111,
+      0.9883724402845409,
+      0.8601381452260239,
+      1.3500311978076743e-13
+    ],
+    "groups": [
+      [
+        "surface_fixed",
+        "passive",
+        [
+          8,
+          4,
+          3
+        ]
+      ],
+      [
+        "surface_fixed",
+        "passive",
+        [
+          12,
+          6,
+          4
+        ]
+      ],
+      [
+        "surface_fixed",
+        "passive",
+        [
+          16,
+          8,
+          6
+        ]
+      ]
+    ],
+    "records_sha256": "0e17eb35ec984daa2c1000e46a93f269a008724f6636f8a22c234d3a36c86cee",
+    "shared_inputs": {
+      "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+      "check_structure.py": "138019ded773f2cc4ad24cd38105a405362cf75b69da8db1f495fd2d0f8232e6",
+      "reference/structure-decision.json": "48e79ada48c19ccafd36d7f71f595b0a80410af54a2c7c8d84f1e80b1069085c"
+    },
+    "producer_sources": {
+      "reference/common-reserve-batch-original.py": "5f3561214a2d831d622349feb06c81509fa629af8282c2e625f18951b7d40208",
+      "reference/common-reserve-qualifier-original.py": "e0b7c7bff7a21da3be84111b5b4ef6a32d894886a5e08b6246e7ac6ced412411"
+    },
+    "scope": "Same exact policy and shared physical inputs/producers; 1530 accepted predecessor records reused, 4266 computed anew."
+  }
+}

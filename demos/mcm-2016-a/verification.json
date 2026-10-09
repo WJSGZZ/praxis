@@ -1,10 +1,10 @@
 {
  "schema": 1,
- "checked_on": "2026-10-09",
+ "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "2b7c9736d1d55c25a2803057b8fc4da982bf13362c7b298dcef0abee00b1ee5c",
-  "bytes": 171718,
+  "sha256": "ef703ecb8b2fe09914933d5fd2711e55920d00a5f1c2f11eec833e563d7c1f82",
+  "bytes": 172312,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,9 +37,9 @@
    25,
    26
   ],
-  "visual_review_note": "All26pages contact-reviewed;1/22/23/26 read at1050px. Final precision correction changes only22 by all26 pixel comparison; final22 reread/viewed. Native saved actual source compile success, zero out-of-page characters.",
+  "visual_review_note": "All26 final pages rendered/contact-reviewed; changed1/16/21/22/24/26 read at actual readable size. Same-scale comparison to full-reviewed candidate; zero out-of-page nonspace characters. Native final saved source compilation succeeded.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "739acaea43ba7a5cfe2f92383f4dacc8"
+  "md5": "a44e740225d16a05586ada83587c999c"
  },
  "model_checks": {
   "total": 17,
@@ -227,7 +227,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -290,7 +290,7 @@
     1
    ],
    "native_compiler": "success",
-   "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+   "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
    "historical_mathematical_review_rebound": false
   }
  ],
@@ -335,7 +335,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -596,7 +596,7 @@
     25,
     26
    ],
-   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15\u201316 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
+   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15–16 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
    "md5": "ec4693d0583e779f872e1635912b0720"
   },
@@ -729,5 +729,44 @@
   "repair_selected_passes": 51,
   "repair_scope": "Original-candidate extrema reused; not all fine-bank or fine-continuous certification. Unequal design reserves, not optimization. Originalcost7uses separate from repaircandidate10uses.",
   "review": "Author-external entire26page a218 text review, final2b7c page22 and all-page text comparison; author all26 pixel comparison and actual final22 viewing. Nonblind uncalibrated F center/M-F reference unchanged. Scientific/public-private evidence review completed."
+ },
+ "common_reserve_revision": {
+  "previous_pdf_sha256": "2b7c9736d1d55c25a2803057b8fc4da982bf13362c7b298dcef0abee00b1ee5c",
+  "generator_sha256": "5e655add997cc204c434529d399920eba63352597d8bd3053fd54e7eeccfe15a",
+  "tex_sha256": "10b71d9e97606016b13435e182857fd5717d1b2f370a457a8443972be31c1f8d",
+  "archive": "reproduce/reference/common-reserve.json",
+  "portable_replay_receipt": "reproduce/reference/common-reserve-portable-check.json",
+  "model_grid_objects": 5796,
+  "reused_unchanged_objects": 1530,
+  "new_objects": 4266,
+  "independent_extrema": 54,
+  "portable_elapsed_s": 29.206428958990728,
+  "max_archive_sample_delta": 4.199307568342192e-12,
+  "command_water_l": [
+   26.088119908657287,
+   23.626852570853657
+  ],
+  "cost_scope": "One reusable6L trial, stable positive delivery multiplier and equal total reset costs; pulse cheaper from use3. Finite model banks and conditional floating-point envelopes, not continuous parameter/global optimum or real bath certification.",
+  "failures_preserved": 2,
+  "publication_review": "Author-external AI full26page candidate review plus final correction check; nonblind and uncalibrated. Final binding recorded separately, no human mathematical review."
+ },
+ "current_award_assessment": {
+  "target": "Outstanding Winner",
+  "reference_center": "Finalist",
+  "adjacent_reference_range": [
+   "Finalist",
+   "Outstanding Winner"
+  ],
+  "outstanding_established": false,
+  "version_sha256": "ef703ecb8b2fe09914933d5fd2711e55920d00a5f1c2f11eec833e563d7c1f82",
+  "checked_on": "2026-10-10",
+  "review_scope": "Author-external AI complete26page candidate review; subsequent targeted precision/scope correction check. Author reviewed final full text and all final rendered pages. Nonblind, no award-boundary calibration or probability.",
+  "basis": [
+   "Complete problem coverage with a proved mixed benchmark and spatial energy bounds.",
+   "Same observations retain structural ambiguity; common-reserve candidate policies pass5796 finite three-grid envelopes and54 extremal independent checks.",
+   "Trial/reuse/reset assumptions explicitly connect candidate water costs to a conditional decision."
+  ],
+  "main_gap": "A user can follow conditional numerical schedules, but observation-triggered changes and detection of invalid reused conditions are not yet independently demonstrated.",
+  "highest_value_next_action": "Validate a simple observation-triggered action and failure-detection rule under equal service/error conditions."
  }
 }

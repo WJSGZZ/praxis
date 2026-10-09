@@ -49,3 +49,14 @@ The alternative-observation run took 7.19 seconds for screening and 55.31 second
 `study_structure_inference.py --output <new.json> --seconds 150` 检查试验未激发的机制与结构拟合歧义：两端点、深层流路／有限接触节点、被动／脉冲观测，共八组原结构筛选与六次既有策略重放。实际公开源约7.62秒，与先前私有候选的数值记录完全一致；没有重新优化。矩阵传播与独立RK45只比较四项轨迹摘要，采样通过不等于连续保证，更不是针对新相容集重新推断策略。`reference/structure-inference.json`绑定执行源及输入；报告消费前另检查覆盖、策略、结构、水量和物理条件。超时／异常保留部分记录并以失败退出，已有输出拒绝覆盖。
 
 `study_structure_decision.py --output <new.json> --seconds 180` 在同一名义读数上筛选三结构，再重放原候选及被动流量乘0.99的有限修复。实际便携源57.75秒完成，保留两个细网格41°C反例；1932项全基础网格包络与每候选51项独立采样重放分开记录。修复沿用原候选的17个极端身份，未重新选择修复后的最坏成员，不认证全细网格银行，也不称优化或相同设计储备比较。`reference/structure-decision.json`绑定源、输入、参数、倍率、网格、费用与失败；consumer拒绝删覆盖或重标失败。该检查无需重新优化基准。
+
+
+## Common-reserve structural comparison
+
+`reference/common-reserve.json` 与压缩 `.npz` 保存同一读数、三结构、三网格的全部 5,796 个对象；独立抽查另存 `common-reserve-independent.json`。压缩导出保持原数值，只将容易误解的深度字段改为 `refinement_depth_cap`；这是最大允许细分深度，不代表每个对象都细分四层。原计算源按字节保留为 `reference/common-reserve-*-original.py`，只供核查，不作为可直接运行的便携入口。它们的真实哈希与后来的 `common_reserve.py` 分开。
+
+The archived run qualifies two fixed six-stage candidates at identical extra reserves, not a global optimum. All 5,796 identities are checked against the exact compatible-bank Cartesian products; the 1,530 reused records retain their predecessor-policy, shared-input and record bindings. Independent checks cover 54 extremal identities, not the entire bank. Two rejected common-floor candidates remain in the manifest. A 2e-6°C temperature allowance is assumed; these are conditional floating-point bounds, not interval arithmetic or a real-bath guarantee.
+
+Use `study_common_reserve.py --mode audit --output <new.json>` for the fast archive/identity/arithmetic audit; this does not recompute temperatures. `--mode replay-extrema --seconds 180` replays all 54 archived extrema with the relocated sparse code and a fresh independent RK45 right-hand side. `--mode qualify --seconds 900` optionally recomputes every bank/grid for the archived policies without repeating optimization. Each mode rejects existing output, preserves partial failures, checks sources for changes and uses a cumulative cooperative deadline between numerical calls. A failed new run never substitutes an old success. The full qualification mode does not itself add an all-bank independent integrator run.
+
+The cost identity is `alpha * (n * (26.088119908657287 - 23.626852570853657) - 6) + R0 - R1`. A third-use crossover requires one reusable pulse, stable positive shared delivery bias, matching total reset costs and unchanged initial/model/measurement conditions. Recalibration for every use, changing observations or unequal resets changes the comparison. The earlier original-structure seventh-use and selected-repair tenth-use records retain their scopes.

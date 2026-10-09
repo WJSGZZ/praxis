@@ -52,7 +52,7 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **Ask what the experiment can actually reveal.** With no inlet flow, the inlet route and delivery multiplier disappear from the equations. Denser passive readings cannot recover them. Eight synthetic traces from alternative flow paths or contact storage still fit the original model within its error bounds. Six existing endpoint-policy replays remain feasible at the sampled times. The useful distinction is between identifying a mechanism and testing a decision: neither substitutes for the other. These fixed-policy diagnostics do not infer new policies or certify the changed compatibility sets.
 
-**Carry structural ambiguity into the decision check.** The same nominal readings admit 1,465 passive and 467 pulse structure–parameter pairs. Both frozen candidates pass all 1,932 base-grid envelopes, yet replaying 17 original-candidate extrema on three meshes reveals two ceiling violations above 41°C. A 1% reduction in passive commands passes the base envelopes and the same 51 sampled checks; its equal-reset candidate-cost crossover moves to use ten. The repaired candidates have unequal design reserves. This limited comparison neither replaces the seven-use result above nor certifies the full expanded bank on finer meshes.
+**A decision that survives structural ambiguity.** The same nominal readings retain 1,465 passive and 467 pulse-compatible structure–parameter pairs. Base-grid success hid two refined-mesh ceiling failures, and a small flow reduction did not create a like-for-like reserve comparison. New candidates meet the same 39.13°C floor, 40.9°C outside-zone ceiling and 1.4°C spread targets in **5,796 model–grid envelopes**, with independent integration and energy checks of 54 extremal cases. They command **26.09 L** after passive observation or **23.63 L** after a pulse. A single reusable 6 L test pays back from the **third** use when delivery bias stays positive and fixed and total reset costs match. The earlier seventh-use result applies to the original structure and different candidates. Neither crossover is an empirical savings claim or a global optimum.
 
 ## Two pages of the paper
 
@@ -73,6 +73,12 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 **[Read the complete 26-page paper →](deliverables/7391856.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-five pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
 
+## Assessment
+
+**Target: Outstanding Winner. Current reference: Finalist, with an adjacent F–O range; O is not established.** The review is non-blind, conducted by an AI reviewer separate from the author, and has no calibrated award boundaries. Strengths include the proved mixed benchmark, conservation and independent checks, and a common-reserve decision that carries observational ambiguity into candidate costs. The clearest remaining weakness is operational: a reader still lacks a validated, simple way to change actions from observations and detect when earlier conditions no longer apply.
+
+The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
+
 ## Run it yourself
 
 From the Praxis repository root:
@@ -91,6 +97,8 @@ uv run --locked python demos/mcm-2016-a/reproduce/screen_observations.py --outpu
 uv run --locked python demos/mcm-2016-a/reproduce/study_observation_control.py --input demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --output demos/mcm-2016-a/reproduce/reproduced/observation-control.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py --output demos/mcm-2016-a/reproduce/reproduced/structure-inference.json --seconds 150
 uv run --locked python demos/mcm-2016-a/reproduce/study_structure_decision.py --output demos/mcm-2016-a/reproduce/reproduced/structure-decision.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode audit --output demos/mcm-2016-a/reproduce/reproduced/common-reserve-audit.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode replay-extrema --seconds 180 --output demos/mcm-2016-a/reproduce/reproduced/common-reserve-extrema.json
 ```
 
 The baseline entry point refuses an existing `reproduce/reproduced/` directory. The extension and acceptance scripts write their own results there; archived evidence and the final PDF remain untouched. The 18 reproduction checks must not be written back as the paper's 17 model checks. Rebuilding the PDF requires Tectonic 0.17.0 and the pinned resource bundle; see the [build notes](reproduce/README.md). The numerical reproduction needs neither a TeX engine nor an AI service.

@@ -1,5 +1,5 @@
 {
-  "checked_on": "2026-10-09",
+  "checked_on": "2026-10-10",
   "sources": [
     {
       "id": "problem",
@@ -82,14 +82,14 @@
       "id": "comparative-44845",
       "team": "44845",
       "title": "2016 MCM A Outstanding paper, University of Colorado Boulder",
-      "read": "Full text, physical/printed pages 1–44; all-page layout overview and readable pages 12, 26, 37, 39; implementation source and all references not independently verified",
+      "read": "Full text, physical/printed pages 1\u201344; all-page layout overview and readable pages 12, 26, 37, 39; implementation source and all references not independently verified",
       "use": "heat redistribution and feedback as mechanisms to test; original privately held, not redistributed; not all derivations independently verified"
     },
     {
       "id": "comparative-54164",
       "team": "54164",
       "title": "2016 MCM A Outstanding paper, Adlai E. Stevenson High School",
-      "read": "Full text, physical pages 1–44 (printed 1–42 follows two front pages); all-page overview and readable physical pages 11, 14, 17, 40; raw experiments not independently verified",
+      "read": "Full text, physical pages 1\u201344 (printed 1\u201342 follows two front pages); all-page overview and readable physical pages 11, 14, 17, 40; raw experiments not independently verified",
       "use": "limited comparison; original privately held, not redistributed; experiments not independently verified"
     },
     {
@@ -116,6 +116,18 @@
       "url": "https://pages.nist.gov/fipy/en/3.99/numerical/index.html",
       "read": "numerical method overview, 9 October 2026",
       "use": "Finite-volume transport methodology only; FiPy not installed or executed."
+    },
+    {
+      "id": "synthetic-common-reserve-comparison",
+      "path": "reproduce/reference/common-reserve.json",
+      "archive": "reproduce/reference/common-reserve.npz",
+      "use": "Same nominal synthetic readings and three retained structural hypotheses; all5796 canonical model-grid envelopes and54 independent extrema, two failed reserve candidates retained. Not physical data or global optimality.",
+      "generator": "reproduce/study_common_reserve.py",
+      "original_producers": [
+        "reproduce/reference/common-reserve-batch-original.py",
+        "reproduce/reference/common-reserve-qualifier-original.py"
+      ],
+      "scope": "Original frozen full run and subsequent guarded portable implementation are different source versions. Audit does not compute; extremal mode replays54; optional qualify mode reruns the finite bank."
     }
   ]
 }
