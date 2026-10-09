@@ -150,3 +150,39 @@ def test_demo_figures_and_tables_have_reader_callouts():
     assert 'References and reproducible algorithm' not in guide[0]['text']
     with ZipFile(ROOT / 'demos/cumcm-1998-a/deliverables/supporting_materials.zip') as archive:
         assert not any(Path(name).suffix in {'.aux', '.out', '.log'} for name in archive.namelist())
+
+
+def test_current_cumcm_page_rule_is_consistent_across_entry_points():
+    import json
+    import re
+    assert contest_rules.CUMCM_BODY_PAGES == 30
+    for name in ('references/contest-playbook.md', 'templates/cumcm-paper.tex'):
+        text = (ROOT / name).read_text()
+        assert re.search(r'正文[^\n|]*30\s*页', text)
+        assert not re.search(r'正文[^\n|]*20\s*页', text)
+    record = next(r for r in json.loads((ROOT / 'evals/competitions.json').read_text())['records']
+                  if r['contest'] == 'cumcm' and r['edition'] == '2026')
+    assert 'body <=30 pages excluding abstract/appendix' in record['deliverables']
+    # Neither abstract nor even a long appendix consumes the body allowance.
+    result = contest_rules.evaluate(cumcm_pages(body=31, appendix=40), 'cumcm')
+    assert result['passed'] and result['facts']['body_pages'] == 30
+
+
+def test_demo_delivery_metadata_matches_actual_pdf_and_archive_bytes():
+    import hashlib
+    import json
+    from pypdf import PdfReader
+    for name in ('cumcm-1998-a', 'mcm-2016-a'):
+        directory = ROOT / 'demos' / name
+        verification = json.loads((directory / 'verification.json').read_text())
+        if name.startswith('cumcm'):
+            manifest = json.loads((directory / 'manifest.json').read_text())
+            for filename, declared in manifest.items():
+                raw = (directory / 'deliverables' / filename).read_bytes()
+                assert len(raw) == declared['bytes']
+                assert hashlib.sha256(raw).hexdigest() == declared['sha256']
+            assert len(PdfReader(directory / 'deliverables/paper.pdf').pages) == verification['report_pages']
+        else:
+            pdf = directory / 'deliverables/7391856.pdf'
+            assert len(PdfReader(pdf).pages) == verification['pdf']['pages_total']
+            assert hashlib.sha256(pdf.read_bytes()).hexdigest() == verification['pdf']['sha256']
