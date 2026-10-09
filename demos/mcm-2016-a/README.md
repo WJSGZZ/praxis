@@ -46,6 +46,8 @@
 
 - **混合条件会改变候选时序。** 在已知混合系数与准确供水条件下，两份六段候选分别用 27.00 L 和 20.30 L，三网格条件连续核验通过；它们不是跨情景全局最优比较。固定两探头在九个情景中漏掉两个采样违例，说明有限测温不能直接替整缸水背书。完整流量、失败尝试与检查收据见 `reference/control-study.json`。
 
+**从测量歧义走到策略。** 合成双探头脉冲观测在 2,835 个参数组合中留下 178 个相容模型；原六段方案有四个模型采样越界。新开环候选指令用水 **23.48 L**，三个指定网格的 534 项条件数值包络全部通过。代价是比名义方案多约 9.33% 的指令用水，并另需 **6 L** 标定脉冲及未计的复位成本；有限相容集不是实测置信区间或现实可靠性保证。完整条件与流量见 `reference/calibration-study.json`。
+
 ## 翻两页报告
 
 <table>
@@ -72,6 +74,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py    # 分段优
 uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py   # 候选筛选、三网格独立连续时间检查
 uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json  # 原方案的结构对照，不重优化
 uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demos/mcm-2016-a/reproduce/reproduced/control-study.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_calibration.py --output demos/mcm-2016-a/reproduce/reproduced/calibration-study.json --seconds 180
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。

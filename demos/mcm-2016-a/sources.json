@@ -91,6 +91,13 @@
       "title": "2016 MCM A Outstanding paper, Adlai E. Stevenson High School",
       "read": "summary and title page only",
       "use": "limited comparison; original privately held, not redistributed; experiments not independently verified"
+    },
+    {
+      "id": "synthetic-calibration-study",
+      "path": "reproduce/reference/calibration-study.json",
+      "use": "Original synthetic finite-grid measurement ambiguity and conditional control study, independently replayed in portable source. No purchased data, physical temperature measurements or borrowed result.",
+      "generator": "reproduce/study_calibration.py",
+      "sha256": "aa007c17bb525b9e6776c48f09e42722a718a2bfeffb6ce362b30de80b864337"
     }
   ]
 }

@@ -3,8 +3,8 @@
  "checked_on": "2026-10-09",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "b1a8527d021844e43291877eeed28ccb74ad34f70a3eb5512f675abfb2e6df9e",
-  "bytes": 167251,
+  "sha256": "d84b990d82f1fabca034d160f9db0d5dab0dffb506482efc0630ffc05d7a7856",
+  "bytes": 166425,
   "pages_total": 25,
   "solution_pages": 24,
   "ai_pages": 1,
@@ -36,9 +36,9 @@
    24,
    25
   ],
-  "visual_review_note": "All pages contact-reviewed for the control revision; final table callout page inspected after the delivery-binding correction.",
+  "visual_review_note": "All 25 pages rendered/contact-reviewed; final summary, proof, measurement section, conclusions and user guide viewed at readable size. No out-of-page text in pdfplumber character bounds check.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "d90cb1afcb825278a7dd9729ad282a8c"
+  "md5": "1c1e0fcc257851f47bff3d690634ee3b"
  },
  "model_checks": {
   "total": 17,
@@ -226,7 +226,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -289,7 +289,7 @@
     1
    ],
    "native_compiler": "success",
-   "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+   "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
    "historical_mathematical_review_rebound": false
   }
  ],
@@ -334,7 +334,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -397,5 +397,60 @@
    "md5": "f8e16648c0e8db6a062b724bb5406dda"
   },
   "source_path": "reproduce/paper/paper.tex"
+ },
+ "measurement_revision": {
+  "date": "2026-10-09",
+  "previous_pdf": {
+   "sha256": "b1a8527d021844e43291877eeed28ccb74ad34f70a3eb5512f675abfb2e6df9e",
+   "bytes": 167251,
+   "pages_total": 25,
+   "solution_pages": 24,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "visual_review_note": "All pages contact-reviewed for the control revision; final table callout page inspected after the delivery-binding correction.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "d90cb1afcb825278a7dd9729ad282a8c"
+  },
+  "pdf_sha256": "d84b990d82f1fabca034d160f9db0d5dab0dffb506482efc0630ffc05d7a7856",
+  "tex_sha256": "2cafac325ba1de246d0bcd2520c5dd848fdfe4704ac08ea214d304714a18c2b1",
+  "source_path": "reproduce/paper/paper.tex",
+  "study_sha256": "aa007c17bb525b9e6776c48f09e42722a718a2bfeffb6ce362b30de80b864337",
+  "scope": "Synthetic finite measurement-compatible set; 178 models, 534 conditional three-grid envelopes. 23.481409 L commanded, calibration pulse 6 L, reset costs unmodeled. No probability, continuous parameter guarantee, physical calibration or all-model .1 C margin.",
+  "portable_study_elapsed_s": 102.69109945899982,
+  "original_baseline_optimization_rerun": false,
+  "native_compiler": "success on actual generated paper.tex",
+  "figures": 5,
+  "tables": 14,
+  "equations": 18,
+  "visual_review": "Whole-document contact review plus readable final modified pages and refreshed previews.",
+  "scientific_review": "Author-external AI reviewed complete candidate text and archive. Clarified discrete observation times and guide calibration costs afterward; no new human verification.",
+  "tests": "566 final-artifact tests passed; 3 intentional plot warnings"
  }
 }

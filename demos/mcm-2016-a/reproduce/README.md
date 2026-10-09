@@ -4,7 +4,7 @@
 
 `reference/` 保留报告使用的实际数值、17 项检查、完整基准温度轨迹，以及分段流量优化与范围分析的 `extended.json`（由 `run_extended.py` 生成，约 20 分钟，另有 2 项检查）、候选验收 `mesh_check.json`（由 `run_mesh_check.py` 生成，读取 `extended.json`，保留失败候选并按三套网格独立积分与连续时间包络选择可行方案）。复现另加一个水量对照，所以复现入口共有 18 项；两种数量分别表述。`check_structure.py`重放归档恒流与六段方案，比较有限接触热容量和替代流路；`reference/structure.json`包含四结构、两方案、输入及源码哈希、能量平衡与时间步长检查。它只检查一个空间网格上的采样可行性，不重复优化，也不替代原网络三网格连续验收。基准恒流检查已加密至半秒包络，物理阈值容差为零。
 
-报告用 Tectonic 0.17.0 与固定 v33 资源包排版（Times 系 newtxtext/newtxmath，随 TeX 发行版提供，不依赖某个系统的字体）；线图、柱状图、热图和流程图由 `scripts/texplot.py` 从归档数值直接生成 pgfplots／TikZ 源码，公式、表格和交叉引用都由 LaTeX 处理。
+报告用 Tectonic 0.17.0 与固定 v33 资源包排版（Times 系 newtxtext/newtxmath，随 TeX 发行版提供，不依赖某个系统的字体）；线图、热图和散点图由 `scripts/texplot.py` 从归档数值直接生成 pgfplots／TikZ 源码，公式、表格和交叉引用都由 LaTeX 处理。
 
 可选重建 PDF（只在已有计算目录中进行）：
 
@@ -23,3 +23,7 @@ The archived mesh receipt keeps its original validator, preserved byte-for-byte 
 `study_control.py --output <new.json> --seconds 180` 在归档基线之外重算有限测温与已知混合系数的条件策略；`reference/control-study.json` 保存九情景探头诊断、两候选的完整流量、优化尝试和三网格条件连续核验。拒绝覆盖输出；时间边界在计算节点检查，不是操作系统强制超时。它不重跑原基线优化，也不提供真实参数辨识、噪声传感或人工执行保证。报告构建器核对该收据的源码哈希与基线流量。
 
 The focused control study reuses the archived baseline and records fixed-probe diagnostics plus independently replayed schedules at two known mixing coefficients. Choose a new output path. Its cooperative time checks do not provide an operating-system deadline; the study does not establish parameter identification or a deployable feedback controller.
+
+`study_calibration.py --output <new.json> --seconds 180` 完整复现合成脉冲、有限测量相容集、约束生成和三网格独立检查，本地实跑约103秒。逐点误差与恒定偏移分别进入筛选；原方案采样失败和新候选检查都保留。输出拒绝覆盖，预算为协作式检查；超时不产生已接受记录。两实验均从均匀40°C开始，另计6L脉冲、未知填充／复位成本；同设计目标不是全模型同余量保证。报告绑定该收据、物理源、验证器及原基线。
+
+The calibration study reconstructs a synthetic finite ambiguity set, optimizes a conditional candidate and checks every retained model on three meshes. Choose a fresh output path; cooperative budget checks do not enforce a system deadline. Calibration and control are separate trials with the same initial state. Report pulse costs and unknown reset costs separately; do not interpret finite-grid acceptance as identification, a confidence region or deployable feedback.
