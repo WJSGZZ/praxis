@@ -1,0 +1,1466 @@
+{
+  "status": "completed",
+  "elapsed_s": 7.192742041006568,
+  "time_budget_s": 120.0,
+  "base_commit": "9ca3f21",
+  "workspace_state": "Base plus hash-bound new observation study, not clean HEAD-only identity",
+  "research_source_sha256": "75cf75310ecd7ed678dbf06e4968ceca844f198f7df067eaddf7efb65ca3ee76",
+  "input_sha256": {
+    "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+    "study_calibration.py": "333aab33ad87d737ce1e6bf319ea622e902d6a3c922cd8ce15af0891643c546e",
+    "reference/calibration-study.json": "aa007c17bb525b9e6776c48f09e42722a718a2bfeffb6ce362b30de80b864337",
+    "reference/information-value.json": "978db06b858ca8759aebf2f7093965fcafca650b53a9b3cf716405888ad811dc"
+  },
+  "truths": {
+    "strong_mixing_low_loss": {
+      "D": 0.00115,
+      "h_surface": 20.0,
+      "h_body": 15.0,
+      "flow_multiplier": 1.0
+    },
+    "weak_mixing_high_loss": {
+      "D": 0.00085,
+      "h_surface": 30.0,
+      "h_body": 35.0,
+      "flow_multiplier": 1.0
+    }
+  },
+  "designs": {
+    "passive": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "pulse": [
+      0.0,
+      0.0,
+      1.2,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "probes": [
+    89,
+    6
+  ],
+  "reading_bound_c": 0.02,
+  "constant_bias_bound_c": 0.02,
+  "policies": {
+    "passive_candidate": [
+      1.4192524025147917,
+      1.0839229079413046,
+      1.0552038456474697,
+      1.044907744386868,
+      0.2749622171255959,
+      1.0480505352455096e-13
+    ],
+    "pulse_candidate": [
+      0.8928200511128481,
+      1.47378575349868,
+      1.1792677768530708,
+      1.1504082762097207,
+      0.0,
+      0.0
+    ]
+  },
+  "results": [
+    {
+      "truth": "strong_mixing_low_loss",
+      "design": "passive",
+      "compatible_models": 60,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        405,
+        406,
+        407,
+        408,
+        409,
+        810,
+        811,
+        812,
+        813,
+        814,
+        815,
+        816,
+        817,
+        818,
+        819,
+        1215,
+        1216,
+        1217,
+        1218,
+        1219,
+        1220,
+        1221,
+        1222,
+        1223,
+        1224,
+        1620,
+        1621,
+        1622,
+        1623,
+        1624,
+        1625,
+        1626,
+        1627,
+        1628,
+        1629,
+        2025,
+        2026,
+        2027,
+        2028,
+        2029,
+        2030,
+        2031,
+        2032,
+        2033,
+        2034,
+        2430,
+        2431,
+        2432,
+        2433,
+        2434,
+        2435,
+        2436,
+        2437,
+        2438,
+        2439
+      ],
+      "policies": {
+        "passive_candidate": {
+          "command_l": 24.391245588080675,
+          "sampled_passed": 54,
+          "sampled_failed": 6,
+          "min_slack_c": -0.10008426550270144,
+          "failed_parameters": [
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            }
+          ]
+        },
+        "pulse_candidate": {
+          "command_l": 23.4814092883716,
+          "sampled_passed": 36,
+          "sampled_failed": 24,
+          "min_slack_c": -0.2127724167754934,
+          "failed_parameters": [
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.001,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.001,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.001,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.001,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 20.0,
+              "h_body": 15.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 20.0,
+              "h_body": 17.5,
+              "flow_multiplier": 1.05
+            }
+          ]
+        }
+      }
+    },
+    {
+      "truth": "strong_mixing_low_loss",
+      "design": "pulse",
+      "compatible_models": 14,
+      "indices": [
+        1216,
+        1620,
+        1621,
+        1622,
+        2025,
+        2026,
+        2027,
+        2028,
+        2032,
+        2431,
+        2432,
+        2433,
+        2437,
+        2438
+      ],
+      "policies": {
+        "passive_candidate": {
+          "command_l": 24.391245588080675,
+          "sampled_passed": 14,
+          "sampled_failed": 0,
+          "min_slack_c": 0.11625296002401342,
+          "failed_parameters": []
+        },
+        "pulse_candidate": {
+          "command_l": 23.4814092883716,
+          "sampled_passed": 14,
+          "sampled_failed": 0,
+          "min_slack_c": 0.017912565582868467,
+          "failed_parameters": []
+        }
+      }
+    },
+    {
+      "truth": "weak_mixing_high_loss",
+      "design": "passive",
+      "compatible_models": 70,
+      "indices": [
+        395,
+        396,
+        397,
+        398,
+        399,
+        400,
+        401,
+        402,
+        403,
+        404,
+        800,
+        801,
+        802,
+        803,
+        804,
+        805,
+        806,
+        807,
+        808,
+        809,
+        1205,
+        1206,
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1610,
+        1611,
+        1612,
+        1613,
+        1614,
+        1615,
+        1616,
+        1617,
+        1618,
+        1619,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2420,
+        2421,
+        2422,
+        2423,
+        2424,
+        2425,
+        2426,
+        2427,
+        2428,
+        2429,
+        2825,
+        2826,
+        2827,
+        2828,
+        2829,
+        2830,
+        2831,
+        2832,
+        2833,
+        2834
+      ],
+      "policies": {
+        "passive_candidate": {
+          "command_l": 24.391245588080675,
+          "sampled_passed": 2,
+          "sampled_failed": 68,
+          "min_slack_c": -0.21710454132202983,
+          "failed_parameters": [
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            }
+          ]
+        },
+        "pulse_candidate": {
+          "command_l": 23.4814092883716,
+          "sampled_passed": 0,
+          "sampled_failed": 70,
+          "min_slack_c": -0.23028763012354148,
+          "failed_parameters": [
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.001,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00105,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0010999999999999998,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.95
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00115,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            }
+          ]
+        }
+      }
+    },
+    {
+      "truth": "weak_mixing_high_loss",
+      "design": "pulse",
+      "compatible_models": 11,
+      "indices": [
+        396,
+        397,
+        401,
+        402,
+        403,
+        802,
+        807,
+        808,
+        809,
+        1213,
+        1214
+      ],
+      "policies": {
+        "passive_candidate": {
+          "command_l": 24.391245588080675,
+          "sampled_passed": 0,
+          "sampled_failed": 11,
+          "min_slack_c": -0.18717486491668467,
+          "failed_parameters": [
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            }
+          ]
+        },
+        "pulse_candidate": {
+          "command_l": 23.4814092883716,
+          "sampled_passed": 0,
+          "sampled_failed": 11,
+          "min_slack_c": -0.20063659197021622,
+          "failed_parameters": [
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 0.975
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.00085,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 32.5,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.0
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.0009,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.025
+            },
+            {
+              "D": 0.00095,
+              "h_surface": 30.0,
+              "h_body": 35.0,
+              "flow_multiplier": 1.05
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "scope": "Two predeclared endpoint nominal synthetic observations, same 2835-point finite prior. Frozen policies, 5-second base-grid screening only; no reoptimized cost comparison, empirical calibration, interval certificate or award test."
+}

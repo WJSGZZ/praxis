@@ -65,6 +65,8 @@
 </tr>
 </table>
 
+**观测结果会改变行动。** 两种另外设定的合成机制让被动／主动试验分别保留 60／14 和 70／11 个模型。较强混合下，两个条件候选需要 16.51／15.37 L 控制水量，等复位成本的交叉改为第六次使用。较弱混合下，被动搜索未找到可接受方案；脉冲候选 35.05 L 通过物理包络，但优化器没有成功、额外设计余量没有满足。共 255 项新增三网格检查通过；搜索失败不证明无解，物理检查通过也不等于求得最优。这些是分开的观测情景，不是事先已知的试验收益。
+
 **[阅读完整 26 页英文论文 →](deliverables/7391856.pdf)** 使用固定的 Tectonic 0.17.0 与 v33 资源包排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；25 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
 
 ## 自己跑一次
@@ -81,6 +83,8 @@ uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demo
 uv run --locked python demos/mcm-2016-a/reproduce/study_calibration.py --output demos/mcm-2016-a/reproduce/reproduced/calibration-study.json --seconds 180
 uv run --locked python demos/mcm-2016-a/reproduce/study_information_value.py --output demos/mcm-2016-a/reproduce/reproduced/information-value.json --seconds 360
 uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --output demos/mcm-2016-a/reproduce/reproduced/finite-volume-verification.json
+uv run --locked python demos/mcm-2016-a/reproduce/screen_observations.py --output demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --seconds 120
+uv run --locked python demos/mcm-2016-a/reproduce/study_observation_control.py --input demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --output demos/mcm-2016-a/reproduce/reproduced/observation-control.json --seconds 180
 ```
 
 基准入口拒绝覆盖既有 `reproduce/reproduced/`；扩展与验收脚本在该目录写各自的结果，不改归档证据或最终 PDF。复现入口的 18 项检查不能回写成论文里的 17 项。重新排版 PDF 需要 Tectonic 0.17.0，使用固定资源包，见[构建说明](reproduce/README.md)；数学复现不依赖排版工具，也不连接 AI 服务。

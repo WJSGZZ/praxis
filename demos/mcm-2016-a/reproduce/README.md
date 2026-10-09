@@ -40,3 +40,8 @@ The information-design study compares alternative passive and pulse observations
 `check_finite_volume.py --output <new.json>` 使用独立解析答案核验空域极限：绝热三维扩散模态的单元平均解，及零扩散入口路径的串联搅拌单元响应。四套逐步加密网格的最细观测阶约1.98，最粗两网格约1.76也保留；网格16→24不是嵌套划分。实跑约0.075秒。这不检验人体占据几何、浮力、湍流或真实浴缸。文件与数值见`reference/finite-volume-verification.json`。
 
 The discretization check uses an independent continuum diffusion mode and analytical inlet-cascade response. Successive refinement approaches second order in the empty domain; the coarser pre-asymptotic result is retained. This verifies implementation in those limits, not the bath's unresolved velocity or mixing closure.
+
+
+`screen_observations.py --output <new-screen.json> --seconds 120` 在预先指定的两个合成机制中生成四个独立观测相容集合，保留旧策略的采样失败；公开入口实际7.19秒。`study_observation_control.py --input <new-screen.json> --output <new-control.json> --seconds 180` 接续该集合，实际55.31秒完成有界搜索和255项独立三网格物理包络。预算为协作式检查，控制阶段会保存到达预算时的部分运行，两入口拒绝覆盖已有输出；两份reference收据与实际源哈希相绑，`observation_values.py`在生成论文前核验覆盖、参数、来源及实际水量。弱混合脉冲的物理通过与优化器失败分开，弱被动未接受不是不可行证明。
+
+The alternative-observation run took 7.19 seconds for screening and 55.31 seconds for bounded optimization and independent replay. Three candidates passed 255 physical model-grid envelopes; the weak-passive search failed, while the weak-pulse solver failed its additional design target despite physical acceptance. The report consumer checks source and bank bindings, unique replay coverage and delivered-water arithmetic. These cooperative budgets are not operating-system timeouts; alternative synthetic trials are neither sequential inference nor empirical calibration.

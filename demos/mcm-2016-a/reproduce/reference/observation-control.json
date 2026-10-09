@@ -1,0 +1,4159 @@
+{
+  "status": "completed",
+  "elapsed_s": 55.31013170799997,
+  "time_budget_s": 180.0,
+  "base_commit": "9ca3f21",
+  "workspace_state": "Base plus hash-bound new observation study, not clean HEAD-only identity",
+  "source_sha256": "07d38ab75cd2aa3a71c9b1f3cda76153c657ff09674e5e6b7ef2aeeff0c5f19a",
+  "input_sha256": "16c2f48fd60a390820a899256e2d580b14f4d76c99cfb885dbb983bad3598301",
+  "physical_source_sha256": {
+    "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+    "code/policy_validation.py": "d2b3cef9c8fc7a16e06fc10cc23386e147383359b73443a350b3e20f3cfc831f",
+    "reference/calibration-study.json": "aa007c17bb525b9e6776c48f09e42722a718a2bfeffb6ce362b30de80b864337",
+    "reference/information-value.json": "978db06b858ca8759aebf2f7093965fcafca650b53a9b3cf716405888ad811dc"
+  },
+  "completed": [
+    {
+      "truth": "strong_mixing_low_loss",
+      "design": "passive",
+      "models": 60,
+      "attempts": [
+        {
+          "initial": "passive_candidate",
+          "round": 0,
+          "optimizer_success": true,
+          "message": "Optimization terminated successfully",
+          "flow_lpm": [
+            0.0,
+            1.6210104863786656,
+            1.0918641155853186,
+            0.5898643827517411,
+            2.0019045778178874e-13,
+            1.2612133727818442e-13
+          ],
+          "command_l": 16.51369492358026,
+          "sampled_failures": [],
+          "min_slack_c": 0.09601119927619095
+        },
+        {
+          "initial": "pulse_candidate",
+          "round": 0,
+          "optimizer_success": true,
+          "message": "Optimization terminated successfully",
+          "flow_lpm": [
+            0.0,
+            1.6210104864079762,
+            1.0918641155867024,
+            0.589864382360927,
+            0.0,
+            0.0
+          ],
+          "command_l": 16.513694921778026,
+          "sampled_failures": [],
+          "min_slack_c": 0.09601119925424229
+        }
+      ],
+      "accepted": true,
+      "independent": [
+        {
+          "model_index": 0,
+          "prior_index": 0,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14853109965062,
+          "upper_temperature_bound_c": 40.747752935821644,
+          "span_upper_bound_c": 1.3038260114811997
+        },
+        {
+          "model_index": 0,
+          "prior_index": 0,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15057087626109,
+          "upper_temperature_bound_c": 40.75168325924304,
+          "span_upper_bound_c": 1.3246512120966902
+        },
+        {
+          "model_index": 0,
+          "prior_index": 0,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.151212408131556,
+          "upper_temperature_bound_c": 40.788356841026626,
+          "span_upper_bound_c": 1.3674419085785834
+        },
+        {
+          "model_index": 1,
+          "prior_index": 1,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.1707389735399,
+          "upper_temperature_bound_c": 40.779362355914024,
+          "span_upper_bound_c": 1.3324129679629482
+        },
+        {
+          "model_index": 1,
+          "prior_index": 1,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17284482818998,
+          "upper_temperature_bound_c": 40.783023194728,
+          "span_upper_bound_c": 1.353579857228912
+        },
+        {
+          "model_index": 1,
+          "prior_index": 1,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17352045758625,
+          "upper_temperature_bound_c": 40.82027071030038,
+          "span_upper_bound_c": 1.398030209974349
+        },
+        {
+          "model_index": 2,
+          "prior_index": 2,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.192935760546426,
+          "upper_temperature_bound_c": 40.81083780007672,
+          "span_upper_bound_c": 1.3620869094006263
+        },
+        {
+          "model_index": 2,
+          "prior_index": 2,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19510756746433,
+          "upper_temperature_bound_c": 40.81422078338997,
+          "span_upper_bound_c": 1.3822888531206403
+        },
+        {
+          "model_index": 2,
+          "prior_index": 2,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19581705561898,
+          "upper_temperature_bound_c": 40.85202524388796,
+          "span_upper_bound_c": 1.4284265481620864
+        },
+        {
+          "model_index": 3,
+          "prior_index": 3,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.215121196671916,
+          "upper_temperature_bound_c": 40.84217963755591,
+          "span_upper_bound_c": 1.3916821827980952
+        },
+        {
+          "model_index": 3,
+          "prior_index": 3,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21735884825712,
+          "upper_temperature_bound_c": 40.84527657102895,
+          "span_upper_bound_c": 1.4112222203265554
+        },
+        {
+          "model_index": 3,
+          "prior_index": 3,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21810195862636,
+          "upper_temperature_bound_c": 40.883621134609484,
+          "span_upper_bound_c": 1.458631503890604
+        },
+        {
+          "model_index": 4,
+          "prior_index": 4,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23729501671316,
+          "upper_temperature_bound_c": 40.87338824392682,
+          "span_upper_bound_c": 1.4212241452383367
+        },
+        {
+          "model_index": 4,
+          "prior_index": 4,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23959842274879,
+          "upper_temperature_bound_c": 40.876191099549935,
+          "span_upper_bound_c": 1.4406335013511407
+        },
+        {
+          "model_index": 4,
+          "prior_index": 4,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24037492041579,
+          "upper_temperature_bound_c": 40.9150590672972,
+          "span_upper_bound_c": 1.4886456407611053
+        },
+        {
+          "model_index": 5,
+          "prior_index": 405,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15963830398005,
+          "upper_temperature_bound_c": 40.72097197243974,
+          "span_upper_bound_c": 1.2697232520447472
+        },
+        {
+          "model_index": 5,
+          "prior_index": 405,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16150203397708,
+          "upper_temperature_bound_c": 40.7249799503851,
+          "span_upper_bound_c": 1.2885057137134677
+        },
+        {
+          "model_index": 5,
+          "prior_index": 405,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.162047286973305,
+          "upper_temperature_bound_c": 40.75920384701134,
+          "span_upper_bound_c": 1.330245304936628
+        },
+        {
+          "model_index": 6,
+          "prior_index": 406,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18205368294318,
+          "upper_temperature_bound_c": 40.75206855579598,
+          "span_upper_bound_c": 1.2989613049534359
+        },
+        {
+          "model_index": 6,
+          "prior_index": 406,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.183979404827866,
+          "upper_temperature_bound_c": 40.75582664867025,
+          "span_upper_bound_c": 1.317769027174045
+        },
+        {
+          "model_index": 6,
+          "prior_index": 406,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18455569845684,
+          "upper_temperature_bound_c": 40.79060421723194,
+          "span_upper_bound_c": 1.3601391715562214
+        },
+        {
+          "model_index": 7,
+          "prior_index": 407,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20445517727949,
+          "upper_temperature_bound_c": 40.78303851526094,
+          "span_upper_bound_c": 1.3280439431689683
+        },
+        {
+          "model_index": 7,
+          "prior_index": 407,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20644281993369,
+          "upper_temperature_bound_c": 40.78653911644576,
+          "span_upper_bound_c": 1.34686967006654
+        },
+        {
+          "model_index": 7,
+          "prior_index": 407,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.207049945158055,
+          "upper_temperature_bound_c": 40.821855115021016,
+          "span_upper_bound_c": 1.389851739326743
+        },
+        {
+          "model_index": 8,
+          "prior_index": 408,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.226842541239115,
+          "upper_temperature_bound_c": 40.813882171347046,
+          "span_upper_bound_c": 1.3569711926845358
+        },
+        {
+          "model_index": 8,
+          "prior_index": 408,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22889204965688,
+          "upper_temperature_bound_c": 40.81711784685001,
+          "span_upper_bound_c": 1.3758080250644984
+        },
+        {
+          "model_index": 8,
+          "prior_index": 408,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22952979942887,
+          "upper_temperature_bound_c": 40.85295715848016,
+          "span_upper_bound_c": 1.4193835339722576
+        },
+        {
+          "model_index": 9,
+          "prior_index": 409,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24921552818923,
+          "upper_temperature_bound_c": 40.844599850765356,
+          "span_upper_bound_c": 1.3858080905684889
+        },
+        {
+          "model_index": 9,
+          "prior_index": 409,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25132686279322,
+          "upper_temperature_bound_c": 40.847563328993516,
+          "span_upper_bound_c": 1.4045844673583048
+        },
+        {
+          "model_index": 9,
+          "prior_index": 409,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.251995031548304,
+          "upper_temperature_bound_c": 40.883910954444595,
+          "span_upper_bound_c": 1.4487350578867924
+        },
+        {
+          "model_index": 10,
+          "prior_index": 810,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16901752958119,
+          "upper_temperature_bound_c": 40.69594428595648,
+          "span_upper_bound_c": 1.2386058682611176
+        },
+        {
+          "model_index": 10,
+          "prior_index": 810,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17070418652667,
+          "upper_temperature_bound_c": 40.700019796556035,
+          "span_upper_bound_c": 1.2567058874046382
+        },
+        {
+          "model_index": 10,
+          "prior_index": 810,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17115685569284,
+          "upper_temperature_bound_c": 40.731980861903025,
+          "span_upper_bound_c": 1.294996571777394
+        },
+        {
+          "model_index": 11,
+          "prior_index": 811,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19160492933367,
+          "upper_temperature_bound_c": 40.72655440431801,
+          "span_upper_bound_c": 1.2672057802384882
+        },
+        {
+          "model_index": 11,
+          "prior_index": 811,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19334934778114,
+          "upper_temperature_bound_c": 40.73039638668159,
+          "span_upper_bound_c": 1.2853311018043538
+        },
+        {
+          "model_index": 11,
+          "prior_index": 811,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19383016472261,
+          "upper_temperature_bound_c": 40.762889940084506,
+          "span_upper_bound_c": 1.324217342087305
+        },
+        {
+          "model_index": 12,
+          "prior_index": 812,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21417601813389,
+          "upper_temperature_bound_c": 40.75699373151888,
+          "span_upper_bound_c": 1.2955533997961213
+        },
+        {
+          "model_index": 12,
+          "prior_index": 812,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21597817516649,
+          "upper_temperature_bound_c": 40.76064596453191,
+          "span_upper_bound_c": 1.3138011461939112
+        },
+        {
+          "model_index": 12,
+          "prior_index": 812,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.216486959408414,
+          "upper_temperature_bound_c": 40.79365829288166,
+          "span_upper_bound_c": 1.3532663268046141
+        },
+        {
+          "model_index": 13,
+          "prior_index": 813,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.236730566944544,
+          "upper_temperature_bound_c": 40.787231833219266,
+          "span_upper_bound_c": 1.3235868561021042
+        },
+        {
+          "model_index": 13,
+          "prior_index": 813,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.238590454102386,
+          "upper_temperature_bound_c": 40.79076897956143,
+          "span_upper_bound_c": 1.342116379656071
+        },
+        {
+          "model_index": 13,
+          "prior_index": 813,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23912702701246,
+          "upper_temperature_bound_c": 40.8242864723719,
+          "span_upper_bound_c": 1.3821439988821178
+        },
+        {
+          "model_index": 14,
+          "prior_index": 814,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.259268346095716,
+          "upper_temperature_bound_c": 40.81734890440652,
+          "span_upper_bound_c": 1.3514700297402567
+        },
+        {
+          "model_index": 14,
+          "prior_index": 814,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.26118596877542,
+          "upper_temperature_bound_c": 40.820765877079154,
+          "span_upper_bound_c": 1.3702771536898053
+        },
+        {
+          "model_index": 14,
+          "prior_index": 814,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.261750153127664,
+          "upper_temperature_bound_c": 40.85477502015883,
+          "span_upper_bound_c": 1.410850809804236
+        },
+        {
+          "model_index": 15,
+          "prior_index": 815,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.12980693642402,
+          "upper_temperature_bound_c": 40.68504518485115,
+          "span_upper_bound_c": 1.2423121124097574
+        },
+        {
+          "model_index": 15,
+          "prior_index": 815,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13151327919757,
+          "upper_temperature_bound_c": 40.68916105983554,
+          "span_upper_bound_c": 1.2601342451589197
+        },
+        {
+          "model_index": 15,
+          "prior_index": 815,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13197402155755,
+          "upper_temperature_bound_c": 40.72115280899437,
+          "span_upper_bound_c": 1.2984506920027354
+        },
+        {
+          "model_index": 16,
+          "prior_index": 816,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15232264188859,
+          "upper_temperature_bound_c": 40.71568117289592,
+          "span_upper_bound_c": 1.2709408878696882
+        },
+        {
+          "model_index": 16,
+          "prior_index": 816,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15408674873817,
+          "upper_temperature_bound_c": 40.71956339278496,
+          "span_upper_bound_c": 1.288787469795568
+        },
+        {
+          "model_index": 16,
+          "prior_index": 816,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.154575627018,
+          "upper_temperature_bound_c": 40.752088285067,
+          "span_upper_bound_c": 1.3277001593762288
+        },
+        {
+          "model_index": 17,
+          "prior_index": 817,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17482207709156,
+          "upper_temperature_bound_c": 40.746137504116724,
+          "span_upper_bound_c": 1.2992990746514996
+        },
+        {
+          "model_index": 17,
+          "prior_index": 817,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.176643925620674,
+          "upper_temperature_bound_c": 40.74983858922295,
+          "span_upper_bound_c": 1.3172853683714945
+        },
+        {
+          "model_index": 17,
+          "prior_index": 817,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.177160759968224,
+          "upper_temperature_bound_c": 40.78288289714769,
+          "span_upper_bound_c": 1.3567776683118875
+        },
+        {
+          "model_index": 18,
+          "prior_index": 818,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19730501412179,
+          "upper_temperature_bound_c": 40.77640107932918,
+          "span_upper_bound_c": 1.327360277885355
+        },
+        {
+          "model_index": 18,
+          "prior_index": 818,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19918459628481,
+          "upper_temperature_bound_c": 40.7799870994416,
+          "span_upper_bound_c": 1.345628300992974
+        },
+        {
+          "model_index": 18,
+          "prior_index": 818,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19972920865417,
+          "upper_temperature_bound_c": 40.813537196601295,
+          "span_upper_bound_c": 1.3856836896151565
+        },
+        {
+          "model_index": 19,
+          "prior_index": 819,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21977122444047,
+          "upper_temperature_bound_c": 40.80654350873547,
+          "span_upper_bound_c": 1.3552710632198546
+        },
+        {
+          "model_index": 19,
+          "prior_index": 819,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22170854594533,
+          "upper_temperature_bound_c": 40.810009369559786,
+          "span_upper_bound_c": 1.373816620140036
+        },
+        {
+          "model_index": 19,
+          "prior_index": 819,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2222807596635,
+          "upper_temperature_bound_c": 40.844051731935636,
+          "span_upper_bound_c": 1.4144186877858045
+        },
+        {
+          "model_index": 20,
+          "prior_index": 1215,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17694582141814,
+          "upper_temperature_bound_c": 40.671920493835096,
+          "span_upper_bound_c": 1.2075265132363304
+        },
+        {
+          "model_index": 20,
+          "prior_index": 1215,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17845946261939,
+          "upper_temperature_bound_c": 40.67585350163379,
+          "span_upper_bound_c": 1.2249071811434213
+        },
+        {
+          "model_index": 20,
+          "prior_index": 1215,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.178671881741124,
+          "upper_temperature_bound_c": 40.70648636520469,
+          "span_upper_bound_c": 1.261523287277213
+        },
+        {
+          "model_index": 21,
+          "prior_index": 1216,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19967551587411,
+          "upper_temperature_bound_c": 40.70200368391786,
+          "span_upper_bound_c": 1.2354267831499777
+        },
+        {
+          "model_index": 21,
+          "prior_index": 1216,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2012426820294,
+          "upper_temperature_bound_c": 40.70576831069177,
+          "span_upper_bound_c": 1.2528897805696795
+        },
+        {
+          "model_index": 21,
+          "prior_index": 1216,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2014977770138,
+          "upper_temperature_bound_c": 40.73692557128607,
+          "span_upper_bound_c": 1.2900924493616885
+        },
+        {
+          "model_index": 22,
+          "prior_index": 1217,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22238678191272,
+          "upper_temperature_bound_c": 40.73197264772478,
+          "span_upper_bound_c": 1.263184806916153
+        },
+        {
+          "model_index": 22,
+          "prior_index": 1217,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.224007491734575,
+          "upper_temperature_bound_c": 40.73556280624232,
+          "span_upper_bound_c": 1.2807244441865728
+        },
+        {
+          "model_index": 22,
+          "prior_index": 1217,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22428405848771,
+          "upper_temperature_bound_c": 40.767231854457535,
+          "span_upper_bound_c": 1.3184983686116436
+        },
+        {
+          "model_index": 23,
+          "prior_index": 1218,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.245079405831866,
+          "upper_temperature_bound_c": 40.76182765702946,
+          "span_upper_bound_c": 1.29080063405186
+        },
+        {
+          "model_index": 23,
+          "prior_index": 1218,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24675369114569,
+          "upper_temperature_bound_c": 40.76523740743255,
+          "span_upper_bound_c": 1.3084115249756352
+        },
+        {
+          "model_index": 23,
+          "prior_index": 1218,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2470684183822,
+          "upper_temperature_bound_c": 40.79740570592795,
+          "span_upper_bound_c": 1.3467414615124593
+        },
+        {
+          "model_index": 24,
+          "prior_index": 1219,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2677531734931,
+          "upper_temperature_bound_c": 40.79156898817382,
+          "span_upper_bound_c": 1.3182743248689053
+        },
+        {
+          "model_index": 24,
+          "prior_index": 1219,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.26948107870455,
+          "upper_temperature_bound_c": 40.79479250962467,
+          "span_upper_bound_c": 1.3359513296320509
+        },
+        {
+          "model_index": 24,
+          "prior_index": 1219,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.26980143365652,
+          "upper_temperature_bound_c": 40.827447621580454,
+          "span_upper_bound_c": 1.374822156312522
+        },
+        {
+          "model_index": 25,
+          "prior_index": 1220,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13774142428408,
+          "upper_temperature_bound_c": 40.660935217981105,
+          "span_upper_bound_c": 1.2111116073265822
+        },
+        {
+          "model_index": 25,
+          "prior_index": 1220,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13927405702989,
+          "upper_temperature_bound_c": 40.66489075903021,
+          "span_upper_bound_c": 1.2282340638057525
+        },
+        {
+          "model_index": 25,
+          "prior_index": 1220,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.139493540677385,
+          "upper_temperature_bound_c": 40.69555351323316,
+          "span_upper_bound_c": 1.2648754878950519
+        },
+        {
+          "model_index": 26,
+          "prior_index": 1221,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.160399223293076,
+          "upper_temperature_bound_c": 40.691043807884476,
+          "span_upper_bound_c": 1.239039929784485
+        },
+        {
+          "model_index": 26,
+          "prior_index": 1221,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16198538806279,
+          "upper_temperature_bound_c": 40.694830905067036,
+          "span_upper_bound_c": 1.2562440115803182
+        },
+        {
+          "model_index": 26,
+          "prior_index": 1221,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.162247899277446,
+          "upper_temperature_bound_c": 40.726018786448236,
+          "span_upper_bound_c": 1.2934728424180455
+        },
+        {
+          "model_index": 27,
+          "prior_index": 1222,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18303864353171,
+          "upper_temperature_bound_c": 40.72103806897696,
+          "span_upper_bound_c": 1.2668258768766252
+        },
+        {
+          "model_index": 27,
+          "prior_index": 1222,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18467835948653,
+          "upper_temperature_bound_c": 40.724650632535656,
+          "span_upper_bound_c": 1.2841059013407923
+        },
+        {
+          "model_index": 27,
+          "prior_index": 1222,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18496215528963,
+          "upper_temperature_bound_c": 40.75635100748499,
+          "span_upper_bound_c": 1.321906794576659
+        },
+        {
+          "model_index": 28,
+          "prior_index": 1223,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20565947235463,
+          "upper_temperature_bound_c": 40.75091827330432,
+          "span_upper_bound_c": 1.2944694982722695
+        },
+        {
+          "model_index": 28,
+          "prior_index": 1223,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20735277167103,
+          "upper_temperature_bound_c": 40.75435036442808,
+          "span_upper_bound_c": 1.3118200930571993
+        },
+        {
+          "model_index": 28,
+          "prior_index": 1223,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20767469229087,
+          "upper_temperature_bound_c": 40.78655066822966,
+          "span_upper_bound_c": 1.350177761537314
+        },
+        {
+          "model_index": 29,
+          "prior_index": 1224,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.228261496683615,
+          "upper_temperature_bound_c": 40.78068469749053,
+          "span_upper_bound_c": 1.3219708544576874
+        },
+        {
+          "model_index": 29,
+          "prior_index": 1224,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.230008424023566,
+          "upper_temperature_bound_c": 40.78393047729809,
+          "span_upper_bound_c": 1.3393868556753645
+        },
+        {
+          "model_index": 29,
+          "prior_index": 1224,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23033577017025,
+          "upper_temperature_bound_c": 40.81661826395183,
+          "span_upper_bound_c": 1.3782861696979483
+        },
+        {
+          "model_index": 30,
+          "prior_index": 1620,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.183654193587635,
+          "upper_temperature_bound_c": 40.649755349793985,
+          "span_upper_bound_c": 1.1789053836100556
+        },
+        {
+          "model_index": 30,
+          "prior_index": 1620,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.1850021991739,
+          "upper_temperature_bound_c": 40.65306457162017,
+          "span_upper_bound_c": 1.194450693047332
+        },
+        {
+          "model_index": 30,
+          "prior_index": 1620,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18524781668095,
+          "upper_temperature_bound_c": 40.68254632742463,
+          "span_upper_bound_c": 1.2296755746561663
+        },
+        {
+          "model_index": 31,
+          "prior_index": 1621,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.206501270819196,
+          "upper_temperature_bound_c": 40.67928803729808,
+          "span_upper_bound_c": 1.2059892203325029
+        },
+        {
+          "model_index": 31,
+          "prior_index": 1621,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20789865530441,
+          "upper_temperature_bound_c": 40.68253800526505,
+          "span_upper_bound_c": 1.2218112892186024
+        },
+        {
+          "model_index": 31,
+          "prior_index": 1621,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20802699533671,
+          "upper_temperature_bound_c": 40.71253615516319,
+          "span_upper_bound_c": 1.2576144969768186
+        },
+        {
+          "model_index": 32,
+          "prior_index": 1622,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22932806033028,
+          "upper_temperature_bound_c": 40.70871051142603,
+          "span_upper_bound_c": 1.2329348180065556
+        },
+        {
+          "model_index": 32,
+          "prior_index": 1622,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23077487776203,
+          "upper_temperature_bound_c": 40.711897165259096,
+          "span_upper_bound_c": 1.249030534124597
+        },
+        {
+          "model_index": 32,
+          "prior_index": 1622,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.230948021437534,
+          "upper_temperature_bound_c": 40.74240004871197,
+          "span_upper_bound_c": 1.285397871530314
+        },
+        {
+          "model_index": 33,
+          "prior_index": 1623,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25213436252004,
+          "upper_temperature_bound_c": 40.73802312558772,
+          "span_upper_bound_c": 1.259742395047841
+        },
+        {
+          "model_index": 33,
+          "prior_index": 1623,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25363067895615,
+          "upper_temperature_bound_c": 40.7411424067769,
+          "span_upper_bound_c": 1.2761087009122942
+        },
+        {
+          "model_index": 33,
+          "prior_index": 1623,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25388360460614,
+          "upper_temperature_bound_c": 40.77213844906386,
+          "span_upper_bound_c": 1.3130260689544446
+        },
+        {
+          "model_index": 34,
+          "prior_index": 1624,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.27491997750611,
+          "upper_temperature_bound_c": 40.76722623083209,
+          "span_upper_bound_c": 1.2864121696465196
+        },
+        {
+          "model_index": 34,
+          "prior_index": 1624,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.27646587053807,
+          "upper_temperature_bound_c": 40.77027409335526,
+          "span_upper_bound_c": 1.3030460800587407
+        },
+        {
+          "model_index": 34,
+          "prior_index": 1624,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2767942185902,
+          "upper_temperature_bound_c": 40.8017518256893,
+          "span_upper_bound_c": 1.340499530805719
+        },
+        {
+          "model_index": 35,
+          "prior_index": 1625,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14445610548607,
+          "upper_temperature_bound_c": 40.63866814382392,
+          "span_upper_bound_c": 1.182372367775296
+        },
+        {
+          "model_index": 35,
+          "prior_index": 1625,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14582243703258,
+          "upper_temperature_bound_c": 40.64200527518109,
+          "span_upper_bound_c": 1.1976818225328574
+        },
+        {
+          "model_index": 35,
+          "prior_index": 1625,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.146000502305576,
+          "upper_temperature_bound_c": 40.67151573083574,
+          "span_upper_bound_c": 1.2329308061475135
+        },
+        {
+          "model_index": 36,
+          "prior_index": 1626,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16723112169862,
+          "upper_temperature_bound_c": 40.66822578379009,
+          "span_upper_bound_c": 1.209483157737125
+        },
+        {
+          "model_index": 36,
+          "prior_index": 1626,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16864684303137,
+          "upper_temperature_bound_c": 40.671503753693315,
+          "span_upper_bound_c": 1.2250693466568479
+        },
+        {
+          "model_index": 36,
+          "prior_index": 1626,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16878542353788,
+          "upper_temperature_bound_c": 40.70153129389276,
+          "span_upper_bound_c": 1.2608974318112585
+        },
+        {
+          "model_index": 37,
+          "prior_index": 1627,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18998590791443,
+          "upper_temperature_bound_c": 40.69767310766906,
+          "span_upper_bound_c": 1.2364555882825896
+        },
+        {
+          "model_index": 37,
+          "prior_index": 1627,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19145107346776,
+          "upper_temperature_bound_c": 40.70088782014834,
+          "span_upper_bound_c": 1.252315327397757
+        },
+        {
+          "model_index": 37,
+          "prior_index": 1627,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.191649783117356,
+          "upper_temperature_bound_c": 40.73142080123969,
+          "span_upper_bound_c": 1.2887083605122913
+        },
+        {
+          "model_index": 38,
+          "prior_index": 1628,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21272026552445,
+          "upper_temperature_bound_c": 40.72701046951718,
+          "span_upper_bound_c": 1.263289878142792
+        },
+        {
+          "model_index": 38,
+          "prior_index": 1628,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.214234941652954,
+          "upper_temperature_bound_c": 40.73015787823053,
+          "span_upper_bound_c": 1.279420133268074
+        },
+        {
+          "model_index": 38,
+          "prior_index": 1628,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21455045809765,
+          "upper_temperature_bound_c": 40.76118469395489,
+          "span_upper_bound_c": 1.3163639627433772
+        },
+        {
+          "model_index": 39,
+          "prior_index": 1629,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23543399564102,
+          "upper_temperature_bound_c": 40.75623822101396,
+          "span_upper_bound_c": 1.2899862458359612
+        },
+        {
+          "model_index": 39,
+          "prior_index": 1629,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23699826014504,
+          "upper_temperature_bound_c": 40.75931427120511,
+          "span_upper_bound_c": 1.3063840141459422
+        },
+        {
+          "model_index": 39,
+          "prior_index": 1629,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23727742133206,
+          "upper_temperature_bound_c": 40.790823440975785,
+          "span_upper_bound_c": 1.3438646780665988
+        },
+        {
+          "model_index": 40,
+          "prior_index": 2025,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.1893354548209,
+          "upper_temperature_bound_c": 40.62823808971423,
+          "span_upper_bound_c": 1.1502819537452256
+        },
+        {
+          "model_index": 40,
+          "prior_index": 2025,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19052725239979,
+          "upper_temperature_bound_c": 40.631604544682816,
+          "span_upper_bound_c": 1.1654016464312495
+        },
+        {
+          "model_index": 40,
+          "prior_index": 2025,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19034203113659,
+          "upper_temperature_bound_c": 40.660009995036695,
+          "span_upper_bound_c": 1.1993226210701684
+        },
+        {
+          "model_index": 41,
+          "prior_index": 2026,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21227902808457,
+          "upper_temperature_bound_c": 40.65733805524331,
+          "span_upper_bound_c": 1.1767660844557568
+        },
+        {
+          "model_index": 41,
+          "prior_index": 2026,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.213516214291104,
+          "upper_temperature_bound_c": 40.66065677550975,
+          "span_upper_bound_c": 1.192162168947665
+        },
+        {
+          "model_index": 41,
+          "prior_index": 2026,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.213526829491464,
+          "upper_temperature_bound_c": 40.689569871240735,
+          "span_upper_bound_c": 1.2266521747375043
+        },
+        {
+          "model_index": 42,
+          "prior_index": 2027,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23520067117525,
+          "upper_temperature_bound_c": 40.686332814107146,
+          "span_upper_bound_c": 1.2031175457856562
+        },
+        {
+          "model_index": 42,
+          "prior_index": 2027,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23648332958119,
+          "upper_temperature_bound_c": 40.68960015084857,
+          "span_upper_bound_c": 1.2187872593817086
+        },
+        {
+          "model_index": 42,
+          "prior_index": 2027,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23651181899192,
+          "upper_temperature_bound_c": 40.71901010704612,
+          "span_upper_bound_c": 1.2538331550591235
+        },
+        {
+          "model_index": 43,
+          "prior_index": 2028,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25810019748806,
+          "upper_temperature_bound_c": 40.71522269070112,
+          "span_upper_bound_c": 1.229336542069235
+        },
+        {
+          "model_index": 43,
+          "prior_index": 2028,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25942842276158,
+          "upper_temperature_bound_c": 40.718435009838174,
+          "span_upper_bound_c": 1.245277199743006
+        },
+        {
+          "model_index": 43,
+          "prior_index": 2028,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.25948021113417,
+          "upper_temperature_bound_c": 40.748331120887656,
+          "span_upper_bound_c": 1.2808659435877174
+        },
+        {
+          "model_index": 44,
+          "prior_index": 2029,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.28097742025973,
+          "upper_temperature_bound_c": 40.74400800716573,
+          "span_upper_bound_c": 1.2554232774244372
+        },
+        {
+          "model_index": 44,
+          "prior_index": 2029,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.28235131773557,
+          "upper_temperature_bound_c": 40.747161701098186,
+          "span_upper_bound_c": 1.2716322915675347
+        },
+        {
+          "model_index": 44,
+          "prior_index": 2029,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.28250788201619,
+          "upper_temperature_bound_c": 40.7775333313892,
+          "span_upper_bound_c": 1.307750925113848
+        },
+        {
+          "model_index": 45,
+          "prior_index": 2030,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15010588524772,
+          "upper_temperature_bound_c": 40.617061810137,
+          "span_upper_bound_c": 1.1536475568714755
+        },
+        {
+          "model_index": 45,
+          "prior_index": 2030,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15045084990991,
+          "upper_temperature_bound_c": 40.62045500029873,
+          "span_upper_bound_c": 1.1685913615152397
+        },
+        {
+          "model_index": 45,
+          "prior_index": 2030,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15013081571492,
+          "upper_temperature_bound_c": 40.64888800151085,
+          "span_upper_bound_c": 1.202485574675266
+        },
+        {
+          "model_index": 46,
+          "prior_index": 2031,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17301504389054,
+          "upper_temperature_bound_c": 40.646186402820014,
+          "span_upper_bound_c": 1.1801581393333191
+        },
+        {
+          "model_index": 46,
+          "prior_index": 2031,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17359679867216,
+          "upper_temperature_bound_c": 40.649531932784754,
+          "span_upper_bound_c": 1.1953286350144947
+        },
+        {
+          "model_index": 46,
+          "prior_index": 2031,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17330466845484,
+          "upper_temperature_bound_c": 40.678473281331634,
+          "span_upper_bound_c": 1.229842355183413
+        },
+        {
+          "model_index": 47,
+          "prior_index": 2032,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19586455453818,
+          "upper_temperature_bound_c": 40.675205691223255,
+          "span_upper_bound_c": 1.2065359390915809
+        },
+        {
+          "model_index": 47,
+          "prior_index": 2032,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19671912710834,
+          "upper_temperature_bound_c": 40.67849990259808,
+          "span_upper_bound_c": 1.2219800097529727
+        },
+        {
+          "model_index": 47,
+          "prior_index": 2032,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19644620814118,
+          "upper_temperature_bound_c": 40.70793881271191,
+          "span_upper_bound_c": 1.2570504378740222
+        },
+        {
+          "model_index": 48,
+          "prior_index": 2033,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21869201437807,
+          "upper_temperature_bound_c": 40.7041200003396,
+          "span_upper_bound_c": 1.232781160748018
+        },
+        {
+          "model_index": 48,
+          "prior_index": 2033,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21981766429285,
+          "upper_temperature_bound_c": 40.70735927668515,
+          "span_upper_bound_c": 1.2484961547860915
+        },
+        {
+          "model_index": 48,
+          "prior_index": 2033,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21953499914408,
+          "upper_temperature_bound_c": 40.737285005476636,
+          "span_upper_bound_c": 1.2841101838348066
+        },
+        {
+          "model_index": 49,
+          "prior_index": 2034,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24149723758055,
+          "upper_temperature_bound_c": 40.73292965289393,
+          "span_upper_bound_c": 1.2588940087042604
+        },
+        {
+          "model_index": 49,
+          "prior_index": 2034,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.242888881792915,
+          "upper_temperature_bound_c": 40.73611035948577,
+          "span_upper_bound_c": 1.2748772838880658
+        },
+        {
+          "model_index": 49,
+          "prior_index": 2034,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24269437447284,
+          "upper_temperature_bound_c": 40.76651226690149,
+          "span_upper_bound_c": 1.3110219495354911
+        },
+        {
+          "model_index": 50,
+          "prior_index": 2430,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.1941507085079,
+          "upper_temperature_bound_c": 40.60794907890521,
+          "span_upper_bound_c": 1.1229614110183552
+        },
+        {
+          "model_index": 50,
+          "prior_index": 2430,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19423222147408,
+          "upper_temperature_bound_c": 40.61134864308469,
+          "span_upper_bound_c": 1.137652060668088
+        },
+        {
+          "model_index": 50,
+          "prior_index": 2430,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19405120583694,
+          "upper_temperature_bound_c": 40.638746163447934,
+          "span_upper_bound_c": 1.1703493459061736
+        },
+        {
+          "model_index": 51,
+          "prior_index": 2431,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21717325793295,
+          "upper_temperature_bound_c": 40.63663710243477,
+          "span_upper_bound_c": 1.1488684366816593
+        },
+        {
+          "model_index": 51,
+          "prior_index": 2431,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.217494674695715,
+          "upper_temperature_bound_c": 40.639998511542835,
+          "span_upper_bound_c": 1.1638335121307344
+        },
+        {
+          "model_index": 51,
+          "prior_index": 2431,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.21725277233953,
+          "upper_temperature_bound_c": 40.66789450674835,
+          "span_upper_bound_c": 1.1970899480617152
+        },
+        {
+          "model_index": 52,
+          "prior_index": 2432,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24017241775385,
+          "upper_temperature_bound_c": 40.66522448221535,
+          "span_upper_bound_c": 1.1746479162345482
+        },
+        {
+          "model_index": 52,
+          "prior_index": 2432,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24073228053132,
+          "upper_temperature_bound_c": 40.66854445353564,
+          "span_upper_bound_c": 1.1898849718972133
+        },
+        {
+          "model_index": 52,
+          "prior_index": 2432,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24045257013593,
+          "upper_temperature_bound_c": 40.69692892682688,
+          "span_upper_bound_c": 1.2236883851808642
+        },
+        {
+          "model_index": 53,
+          "prior_index": 2433,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.26314801337156,
+          "upper_temperature_bound_c": 40.69371151735539,
+          "span_upper_bound_c": 1.2003000420637129
+        },
+        {
+          "model_index": 53,
+          "prior_index": 2433,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.26394487802802,
+          "upper_temperature_bound_c": 40.69698679170717,
+          "span_upper_bound_c": 1.2158067248409472
+        },
+        {
+          "model_index": 53,
+          "prior_index": 2433,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.26369107162055,
+          "upper_temperature_bound_c": 40.72584974460059,
+          "span_upper_bound_c": 1.250144863552382
+        },
+        {
+          "model_index": 54,
+          "prior_index": 2434,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.286099870126996,
+          "upper_temperature_bound_c": 40.722098504817225,
+          "span_upper_bound_c": 1.225825006373259
+        },
+        {
+          "model_index": 54,
+          "prior_index": 2434,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.28713230583457,
+          "upper_temperature_bound_c": 40.72532583671018,
+          "span_upper_bound_c": 1.241599032975835
+        },
+        {
+          "model_index": 54,
+          "prior_index": 2434,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.286795668166,
+          "upper_temperature_bound_c": 40.75465739845353,
+          "span_upper_bound_c": 1.276459869757266
+        },
+        {
+          "model_index": 55,
+          "prior_index": 2435,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15384765399221,
+          "upper_temperature_bound_c": 40.59668928443215,
+          "span_upper_bound_c": 1.1262309284106615
+        },
+        {
+          "model_index": 55,
+          "prior_index": 2435,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.154034462959366,
+          "upper_temperature_bound_c": 40.600114499497984,
+          "span_upper_bound_c": 1.140823431798237
+        },
+        {
+          "model_index": 55,
+          "prior_index": 2435,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.688010175689124,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15392046689372,
+          "upper_temperature_bound_c": 40.62753851020855,
+          "span_upper_bound_c": 1.1734244568484231
+        },
+        {
+          "model_index": 56,
+          "prior_index": 2436,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17703754426848,
+          "upper_temperature_bound_c": 40.62540161528514,
+          "span_upper_bound_c": 1.1521639267049069
+        },
+        {
+          "model_index": 56,
+          "prior_index": 2436,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17721975518325,
+          "upper_temperature_bound_c": 40.62878874607237,
+          "span_upper_bound_c": 1.1669455126232935
+        },
+        {
+          "model_index": 56,
+          "prior_index": 2436,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.100852548733574,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17707552265507,
+          "upper_temperature_bound_c": 40.6567119306676,
+          "span_upper_bound_c": 1.200191828796217
+        },
+        {
+          "model_index": 57,
+          "prior_index": 2437,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20020215374586,
+          "upper_temperature_bound_c": 40.65401320945385,
+          "span_upper_bound_c": 1.177969271928272
+        },
+        {
+          "model_index": 57,
+          "prior_index": 2437,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.200380280556296,
+          "upper_temperature_bound_c": 40.65735898171413,
+          "span_upper_bound_c": 1.1929900767320676
+        },
+        {
+          "model_index": 57,
+          "prior_index": 2437,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.513694921778026,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20017055593805,
+          "upper_temperature_bound_c": 40.68577131950338,
+          "span_upper_bound_c": 1.2268169043045583
+        },
+        {
+          "model_index": 58,
+          "prior_index": 2438,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2233413142029,
+          "upper_temperature_bound_c": 40.68252436659965,
+          "span_upper_bound_c": 1.2036471566902183
+        },
+        {
+          "model_index": 58,
+          "prior_index": 2438,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.223515878946245,
+          "upper_temperature_bound_c": 40.68582551433096,
+          "span_upper_bound_c": 1.2189375708444206
+        },
+        {
+          "model_index": 58,
+          "prior_index": 2438,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 16.926537294822474,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.22333374561795,
+          "upper_temperature_bound_c": 40.71471699403822,
+          "span_upper_bound_c": 1.2532998805534616
+        },
+        {
+          "model_index": 59,
+          "prior_index": 2439,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.246450715881764,
+          "upper_temperature_bound_c": 40.71093538423241,
+          "span_upper_bound_c": 1.2291977734472526
+        },
+        {
+          "model_index": 59,
+          "prior_index": 2439,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24662638982568,
+          "upper_temperature_bound_c": 40.71418865476082,
+          "span_upper_bound_c": 1.2447554978546562
+        },
+        {
+          "model_index": 59,
+          "prior_index": 2439,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 17.33937966786693,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.24634653209027,
+          "upper_temperature_bound_c": 40.74354939919747,
+          "span_upper_bound_c": 1.2796412585742898
+        }
+      ],
+      "selected": {
+        "initial": "pulse_candidate",
+        "round": 0,
+        "optimizer_success": true,
+        "message": "Optimization terminated successfully",
+        "flow_lpm": [
+          0.0,
+          1.6210104864079762,
+          1.0918641155867024,
+          0.589864382360927,
+          0.0,
+          0.0
+        ],
+        "command_l": 16.513694921778026,
+        "sampled_failures": [],
+        "min_slack_c": 0.09601119925424229
+      }
+    },
+    {
+      "truth": "strong_mixing_low_loss",
+      "design": "pulse",
+      "models": 14,
+      "attempts": [
+        {
+          "initial": "passive_candidate",
+          "round": 0,
+          "optimizer_success": true,
+          "message": "Optimization terminated successfully",
+          "flow_lpm": [
+            2.44727308170536e-12,
+            1.2916841144861235,
+            1.5296295192813478,
+            0.25331247227696785,
+            1.3703548500042568e-12,
+            5.178132765189103e-13
+          ],
+          "command_l": 15.373130530243875,
+          "sampled_failures": [],
+          "min_slack_c": 0.10000000000145803
+        },
+        {
+          "initial": "pulse_candidate",
+          "round": 0,
+          "optimizer_success": true,
+          "message": "Optimization terminated successfully",
+          "flow_lpm": [
+            6.087854886871166e-13,
+            1.2916838012955707,
+            1.5296295950138457,
+            0.25331271579016856,
+            1.4051144569382427e-14,
+            8.715280659720171e-14
+          ],
+          "command_l": 15.373130560501476,
+          "sampled_failures": [],
+          "min_slack_c": 0.09999999999269704
+        }
+      ],
+      "accepted": true,
+      "independent": [
+        {
+          "model_index": 0,
+          "prior_index": 1216,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14526263303994,
+          "upper_temperature_bound_c": 40.86835774548421,
+          "span_upper_bound_c": 1.4438271271061813
+        },
+        {
+          "model_index": 0,
+          "prior_index": 1216,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14662944124767,
+          "upper_temperature_bound_c": 40.88167787019225,
+          "span_upper_bound_c": 1.4788482773144875
+        },
+        {
+          "model_index": 0,
+          "prior_index": 1216,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14678281854594,
+          "upper_temperature_bound_c": 40.90422467186019,
+          "span_upper_bound_c": 1.4998809465225624
+        },
+        {
+          "model_index": 1,
+          "prior_index": 1620,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 14.604474003731681,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.12982334513821,
+          "upper_temperature_bound_c": 40.79874263671894,
+          "span_upper_bound_c": 1.3680450030756623
+        },
+        {
+          "model_index": 1,
+          "prior_index": 1620,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 14.604474003731681,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.1299212082884,
+          "upper_temperature_bound_c": 40.8108556754384,
+          "span_upper_bound_c": 1.3997071738677203
+        },
+        {
+          "model_index": 1,
+          "prior_index": 1620,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 14.604474003731681,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.12975855258178,
+          "upper_temperature_bound_c": 40.843008638252485,
+          "span_upper_bound_c": 1.4416107817024018
+        },
+        {
+          "model_index": 2,
+          "prior_index": 1621,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15133898662472,
+          "upper_temperature_bound_c": 40.83835849574883,
+          "span_upper_bound_c": 1.3983042512306625
+        },
+        {
+          "model_index": 2,
+          "prior_index": 1621,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15170039146185,
+          "upper_temperature_bound_c": 40.85045835082865,
+          "span_upper_bound_c": 1.4302461013355667
+        },
+        {
+          "model_index": 2,
+          "prior_index": 1621,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.151497049108535,
+          "upper_temperature_bound_c": 40.88313264768195,
+          "span_upper_bound_c": 1.4727709340227126
+        },
+        {
+          "model_index": 3,
+          "prior_index": 1622,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17283888478513,
+          "upper_temperature_bound_c": 40.877799348925,
+          "span_upper_bound_c": 1.4283321410172711
+        },
+        {
+          "model_index": 3,
+          "prior_index": 1622,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.173462231678144,
+          "upper_temperature_bound_c": 40.88987972868239,
+          "span_upper_bound_c": 1.4605463887838481
+        },
+        {
+          "model_index": 3,
+          "prior_index": 1622,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17339109714158,
+          "upper_temperature_bound_c": 40.914444769619685,
+          "span_upper_bound_c": 1.4862486323263755
+        },
+        {
+          "model_index": 4,
+          "prior_index": 2025,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 14.604474003731681,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.133449279023296,
+          "upper_temperature_bound_c": 40.77113742138516,
+          "span_upper_bound_c": 1.3259349648943732
+        },
+        {
+          "model_index": 4,
+          "prior_index": 2025,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 14.604474003731681,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13366754471239,
+          "upper_temperature_bound_c": 40.78212940910761,
+          "span_upper_bound_c": 1.3547736669513746
+        },
+        {
+          "model_index": 4,
+          "prior_index": 2025,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 14.604474003731681,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13344262641631,
+          "upper_temperature_bound_c": 40.81312546099391,
+          "span_upper_bound_c": 1.3951616971281435
+        },
+        {
+          "model_index": 5,
+          "prior_index": 2026,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.155273433848,
+          "upper_temperature_bound_c": 40.81021001843989,
+          "span_upper_bound_c": 1.3553379171153757
+        },
+        {
+          "model_index": 5,
+          "prior_index": 2026,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.155490495208596,
+          "upper_temperature_bound_c": 40.8211763873851,
+          "span_upper_bound_c": 1.384406586804711
+        },
+        {
+          "model_index": 5,
+          "prior_index": 2026,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.155239223907444,
+          "upper_temperature_bound_c": 40.85268565878541,
+          "span_upper_bound_c": 1.4254078506074248
+        },
+        {
+          "model_index": 6,
+          "prior_index": 2027,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17707860921323,
+          "upper_temperature_bound_c": 40.84911475241307,
+          "span_upper_bound_c": 1.3845196575705057
+        },
+        {
+          "model_index": 6,
+          "prior_index": 2027,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17729500810455,
+          "upper_temperature_bound_c": 40.8600498136707,
+          "span_upper_bound_c": 1.4138115877446702
+        },
+        {
+          "model_index": 6,
+          "prior_index": 2027,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.177060637284576,
+          "upper_temperature_bound_c": 40.89205986481922,
+          "span_upper_bound_c": 1.455409338856848
+        },
+        {
+          "model_index": 7,
+          "prior_index": 2028,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.198864630418306,
+          "upper_temperature_bound_c": 40.887852089897194,
+          "span_upper_bound_c": 1.413480700421074
+        },
+        {
+          "model_index": 7,
+          "prior_index": 2028,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19908091660616,
+          "upper_temperature_bound_c": 40.898750364774244,
+          "span_upper_bound_c": 1.4429895808131492
+        },
+        {
+          "model_index": 7,
+          "prior_index": 2028,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19882679920671,
+          "upper_temperature_bound_c": 40.93124886376626,
+          "span_upper_bound_c": 1.4851672071177475
+        },
+        {
+          "model_index": 8,
+          "prior_index": 2032,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13670747961843,
+          "upper_temperature_bound_c": 40.832386966805544,
+          "span_upper_bound_c": 1.3888086795467633
+        },
+        {
+          "model_index": 8,
+          "prior_index": 2032,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13705076265208,
+          "upper_temperature_bound_c": 40.84332312474485,
+          "span_upper_bound_c": 1.4178714333584639
+        },
+        {
+          "model_index": 8,
+          "prior_index": 2032,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13689124911401,
+          "upper_temperature_bound_c": 40.87538145231533,
+          "span_upper_bound_c": 1.4595227211540862
+        },
+        {
+          "model_index": 9,
+          "prior_index": 2431,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15838319056282,
+          "upper_temperature_bound_c": 40.78356860045582,
+          "span_upper_bound_c": 1.3143614547850955
+        },
+        {
+          "model_index": 9,
+          "prior_index": 2431,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15869286484346,
+          "upper_temperature_bound_c": 40.79365716656308,
+          "span_upper_bound_c": 1.3411134152165807
+        },
+        {
+          "model_index": 9,
+          "prior_index": 2431,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 14.988802266987777,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.15859845922745,
+          "upper_temperature_bound_c": 40.824075668025905,
+          "span_upper_bound_c": 1.3806880481871298
+        },
+        {
+          "model_index": 10,
+          "prior_index": 2432,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18021836669771,
+          "upper_temperature_bound_c": 40.82181459834015,
+          "span_upper_bound_c": 1.342434644361548
+        },
+        {
+          "model_index": 10,
+          "prior_index": 2432,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.180529790488166,
+          "upper_temperature_bound_c": 40.832009745865705,
+          "span_upper_bound_c": 1.36966676272394
+        },
+        {
+          "model_index": 10,
+          "prior_index": 2432,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.18048622278088,
+          "upper_temperature_bound_c": 40.8629212153013,
+          "span_upper_bound_c": 1.4098301168878962
+        },
+        {
+          "model_index": 11,
+          "prior_index": 2433,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20203344494261,
+          "upper_temperature_bound_c": 40.859898956927914,
+          "span_upper_bound_c": 1.3702952670642996
+        },
+        {
+          "model_index": 11,
+          "prior_index": 2433,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20234713094202,
+          "upper_temperature_bound_c": 40.87019643717607,
+          "span_upper_bound_c": 1.3980029090465085
+        },
+        {
+          "model_index": 11,
+          "prior_index": 2433,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20228877090389,
+          "upper_temperature_bound_c": 40.901589389135744,
+          "span_upper_bound_c": 1.438739546675777
+        },
+        {
+          "model_index": 12,
+          "prior_index": 2437,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13990494878936,
+          "upper_temperature_bound_c": 40.804959760957395,
+          "span_upper_bound_c": 1.3465577829244206
+        },
+        {
+          "model_index": 12,
+          "prior_index": 2437,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14033765372893,
+          "upper_temperature_bound_c": 40.81517221086842,
+          "span_upper_bound_c": 1.3736169834712373
+        },
+        {
+          "model_index": 12,
+          "prior_index": 2437,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.373130530243875,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.140115209670995,
+          "upper_temperature_bound_c": 40.84613033306868,
+          "span_upper_bound_c": 1.4138177020750626
+        },
+        {
+          "model_index": 13,
+          "prior_index": 2438,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.161646056508594,
+          "upper_temperature_bound_c": 40.84308165210122,
+          "span_upper_bound_c": 1.3744625088572535
+        },
+        {
+          "model_index": 13,
+          "prior_index": 2438,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.162081523282886,
+          "upper_temperature_bound_c": 40.85339685338606,
+          "span_upper_bound_c": 1.4019831906094022
+        },
+        {
+          "model_index": 13,
+          "prior_index": 2438,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 15.757458793499971,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.16186925601711,
+          "upper_temperature_bound_c": 40.88483747756738,
+          "span_upper_bound_c": 1.4427728234166393
+        }
+      ],
+      "selected": {
+        "initial": "passive_candidate",
+        "round": 0,
+        "optimizer_success": true,
+        "message": "Optimization terminated successfully",
+        "flow_lpm": [
+          2.44727308170536e-12,
+          1.2916841144861235,
+          1.5296295192813478,
+          0.25331247227696785,
+          1.3703548500042568e-12,
+          5.178132765189103e-13
+        ],
+        "command_l": 15.373130530243875,
+        "sampled_failures": [],
+        "min_slack_c": 0.10000000000145803
+      }
+    },
+    {
+      "truth": "weak_mixing_high_loss",
+      "design": "passive",
+      "models": 70,
+      "attempts": [
+        {
+          "initial": "passive_candidate",
+          "round": 0,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.4825403000935984,
+            1.120348212946508,
+            1.0327834023794242,
+            1.0206632235598856,
+            0.985469494444042,
+            0.8909512347626559
+          ],
+          "command_l": 32.663779340930574,
+          "sampled_failures": [
+            0,
+            5,
+            6,
+            15
+          ],
+          "min_slack_c": -0.042850159392287424
+        },
+        {
+          "initial": "passive_candidate",
+          "round": 1,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.4825403000935984,
+            1.120348212946508,
+            1.0327834023794242,
+            1.0206632235598856,
+            0.985469494444042,
+            0.8909512347626559
+          ],
+          "command_l": 32.663779340930574,
+          "sampled_failures": [
+            0,
+            5,
+            6,
+            15
+          ],
+          "min_slack_c": -0.042850159392287424
+        },
+        {
+          "initial": "passive_candidate",
+          "round": 2,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.4825403000935984,
+            1.120348212946508,
+            1.0327834023794242,
+            1.0206632235598856,
+            0.985469494444042,
+            0.8909512347626559
+          ],
+          "command_l": 32.663779340930574,
+          "sampled_failures": [
+            0,
+            5,
+            6,
+            15
+          ],
+          "min_slack_c": -0.042850159392287424
+        },
+        {
+          "initial": "pulse_candidate",
+          "round": 0,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.48254030061557,
+            1.1787303786255567,
+            1.0976933677232457,
+            1.0762874251930123,
+            0.9154951021918386,
+            1.0202833636209232
+          ],
+          "command_l": 33.855149689850734,
+          "sampled_failures": [
+            5
+          ],
+          "min_slack_c": -0.004948276952333686
+        },
+        {
+          "initial": "pulse_candidate",
+          "round": 1,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.48254030061557,
+            1.1787303786255567,
+            1.0976933677232457,
+            1.0762874251930123,
+            0.9154951021918386,
+            1.0202833636209232
+          ],
+          "command_l": 33.855149689850734,
+          "sampled_failures": [
+            5
+          ],
+          "min_slack_c": -0.004948276952333686
+        },
+        {
+          "initial": "pulse_candidate",
+          "round": 2,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.48254030061557,
+            1.1787303786255567,
+            1.0976933677232457,
+            1.0762874251930123,
+            0.9154951021918386,
+            1.0202833636209232
+          ],
+          "command_l": 33.855149689850734,
+          "sampled_failures": [
+            5
+          ],
+          "min_slack_c": -0.004948276952333686
+        }
+      ],
+      "accepted": false,
+      "independent": []
+    },
+    {
+      "truth": "weak_mixing_high_loss",
+      "design": "pulse",
+      "models": 11,
+      "attempts": [
+        {
+          "initial": "passive_candidate",
+          "round": 0,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.5241709509919061,
+            1.1785834347173123,
+            1.0912922636816067,
+            1.0789402352185007,
+            1.0719156519932826,
+            1.0655408601777951
+          ],
+          "command_l": 35.05221698390202,
+          "sampled_failures": [],
+          "min_slack_c": 0.052282341245678765
+        },
+        {
+          "initial": "pulse_candidate",
+          "round": 0,
+          "optimizer_success": false,
+          "message": "Positive directional derivative for linesearch",
+          "flow_lpm": [
+            1.5242005286236364,
+            1.201376668914617,
+            1.1087213222580639,
+            1.0741377599122413,
+            1.072148904795388,
+            1.0664943396041062
+          ],
+          "command_l": 35.23539762054027,
+          "sampled_failures": [],
+          "min_slack_c": 0.04402270937003294
+        }
+      ],
+      "accepted": true,
+      "independent": [
+        {
+          "model_index": 0,
+          "prior_index": 396,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 34.17591155930447,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.10819020980675,
+          "upper_temperature_bound_c": 40.85282503773396,
+          "span_upper_bound_c": 1.3913284690108731
+        },
+        {
+          "model_index": 0,
+          "prior_index": 396,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 34.17591155930447,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.10935899173756,
+          "upper_temperature_bound_c": 40.8557978897083,
+          "span_upper_bound_c": 1.383095062560337
+        },
+        {
+          "model_index": 0,
+          "prior_index": 396,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 34.17591155930447,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.110294310086545,
+          "upper_temperature_bound_c": 40.889173980980146,
+          "span_upper_bound_c": 1.4016770811600483
+        },
+        {
+          "model_index": 1,
+          "prior_index": 397,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.145278297028874,
+          "upper_temperature_bound_c": 40.8817943303735,
+          "span_upper_bound_c": 1.4167334742068733
+        },
+        {
+          "model_index": 1,
+          "prior_index": 397,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14647188046086,
+          "upper_temperature_bound_c": 40.88470701662617,
+          "span_upper_bound_c": 1.4084082363800319
+        },
+        {
+          "model_index": 1,
+          "prior_index": 397,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14744323576551,
+          "upper_temperature_bound_c": 40.91861366488043,
+          "span_upper_bound_c": 1.4281807089041407
+        },
+        {
+          "model_index": 2,
+          "prior_index": 401,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 34.17591155930447,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.071170175602084,
+          "upper_temperature_bound_c": 40.847846757944836,
+          "span_upper_bound_c": 1.3972612673433686
+        },
+        {
+          "model_index": 2,
+          "prior_index": 401,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 34.17591155930447,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.07233557029277,
+          "upper_temperature_bound_c": 40.85083542782658,
+          "span_upper_bound_c": 1.3889956948247904
+        },
+        {
+          "model_index": 2,
+          "prior_index": 401,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 34.17591155930447,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.073269979455574,
+          "upper_temperature_bound_c": 40.88423121448692,
+          "span_upper_bound_c": 1.4076261943421293
+        },
+        {
+          "model_index": 3,
+          "prior_index": 402,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.10814868950076,
+          "upper_temperature_bound_c": 40.8768219501025,
+          "span_upper_bound_c": 1.422772032432831
+        },
+        {
+          "model_index": 3,
+          "prior_index": 402,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.10933842636655,
+          "upper_temperature_bound_c": 40.87975068325354,
+          "span_upper_bound_c": 1.4144149726919177
+        },
+        {
+          "model_index": 3,
+          "prior_index": 402,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.11030908804964,
+          "upper_temperature_bound_c": 40.91367725080434,
+          "span_upper_bound_c": 1.4333362835455565
+        },
+        {
+          "model_index": 4,
+          "prior_index": 403,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14510282613839,
+          "upper_temperature_bound_c": 40.905680523252364,
+          "span_upper_bound_c": 1.4479112179744154
+        },
+        {
+          "model_index": 4,
+          "prior_index": 403,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.146317678867554,
+          "upper_temperature_bound_c": 40.908543357644895,
+          "span_upper_bound_c": 1.4394645825660732
+        },
+        {
+          "model_index": 4,
+          "prior_index": 403,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.14732458045992,
+          "upper_temperature_bound_c": 40.94298656456893,
+          "span_upper_bound_c": 1.4606757702895319
+        },
+        {
+          "model_index": 5,
+          "prior_index": 802,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17000248103101,
+          "upper_temperature_bound_c": 40.85494935708559,
+          "span_upper_bound_c": 1.3466627921488372
+        },
+        {
+          "model_index": 5,
+          "prior_index": 802,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17125696829612,
+          "upper_temperature_bound_c": 40.85832939207418,
+          "span_upper_bound_c": 1.348473323057638
+        },
+        {
+          "model_index": 5,
+          "prior_index": 802,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17220710088407,
+          "upper_temperature_bound_c": 40.890127056343744,
+          "span_upper_bound_c": 1.3728807263507183
+        },
+        {
+          "model_index": 6,
+          "prior_index": 807,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.132899483451425,
+          "upper_temperature_bound_c": 40.849903127300195,
+          "span_upper_bound_c": 1.3524627320457483
+        },
+        {
+          "model_index": 6,
+          "prior_index": 807,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.13415145022097,
+          "upper_temperature_bound_c": 40.85329733872899,
+          "span_upper_bound_c": 1.3518427412229042
+        },
+        {
+          "model_index": 6,
+          "prior_index": 807,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.05221698390202,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.135100405608554,
+          "upper_temperature_bound_c": 40.885113699555,
+          "span_upper_bound_c": 1.3762739619215953
+        },
+        {
+          "model_index": 7,
+          "prior_index": 808,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.17019842895467,
+          "upper_temperature_bound_c": 40.87827829439047,
+          "span_upper_bound_c": 1.3769935133773321
+        },
+        {
+          "model_index": 7,
+          "prior_index": 808,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.171474407921046,
+          "upper_temperature_bound_c": 40.88163120708967,
+          "span_upper_bound_c": 1.3794199854839047
+        },
+        {
+          "model_index": 7,
+          "prior_index": 808,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.172457836550876,
+          "upper_temperature_bound_c": 40.913948254138965,
+          "span_upper_bound_c": 1.4042325662301103
+        },
+        {
+          "model_index": 8,
+          "prior_index": 809,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 36.80482783309712,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20746167888598,
+          "upper_temperature_bound_c": 40.906556622535085,
+          "span_upper_bound_c": 1.4043383642606198
+        },
+        {
+          "model_index": 8,
+          "prior_index": 809,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 36.80482783309712,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.20876228279369,
+          "upper_temperature_bound_c": 40.90984996072536,
+          "span_upper_bound_c": 1.406794077921216
+        },
+        {
+          "model_index": 8,
+          "prior_index": 809,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 36.80482783309712,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.209779984725444,
+          "upper_temperature_bound_c": 40.94265508752247,
+          "span_upper_bound_c": 1.4319796990444031
+        },
+        {
+          "model_index": 9,
+          "prior_index": 1213,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19288466756816,
+          "upper_temperature_bound_c": 40.852778203675825,
+          "span_upper_bound_c": 1.3260192656094003
+        },
+        {
+          "model_index": 9,
+          "prior_index": 1213,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.19421738251143,
+          "upper_temperature_bound_c": 40.85646909342925,
+          "span_upper_bound_c": 1.3282225088341986
+        },
+        {
+          "model_index": 9,
+          "prior_index": 1213,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 35.92852240849957,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.1951600996985,
+          "upper_temperature_bound_c": 40.88682006719226,
+          "span_upper_bound_c": 1.3513293089729626
+        },
+        {
+          "model_index": 10,
+          "prior_index": 1214,
+          "grid": [
+            8,
+            4,
+            3
+          ],
+          "water_l": 36.80482783309712,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23045124953226,
+          "upper_temperature_bound_c": 40.880738140231266,
+          "span_upper_bound_c": 1.3524121986222013
+        },
+        {
+          "model_index": 10,
+          "prior_index": 1214,
+          "grid": [
+            12,
+            6,
+            4
+          ],
+          "water_l": 36.80482783309712,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.23180748551861,
+          "upper_temperature_bound_c": 40.88425701297752,
+          "span_upper_bound_c": 1.3546470273266507
+        },
+        {
+          "model_index": 10,
+          "prior_index": 1214,
+          "grid": [
+            16,
+            8,
+            6
+          ],
+          "water_l": 36.80482783309712,
+          "continuous_passed": true,
+          "sampled_passed": true,
+          "lower_temperature_bound_c": 39.2327830255354,
+          "upper_temperature_bound_c": 40.91508043664942,
+          "span_upper_bound_c": 1.378112751294951
+        }
+      ],
+      "selected": {
+        "initial": "passive_candidate",
+        "round": 0,
+        "optimizer_success": false,
+        "message": "Positive directional derivative for linesearch",
+        "flow_lpm": [
+          1.5241709509919061,
+          1.1785834347173123,
+          1.0912922636816067,
+          1.0789402352185007,
+          1.0719156519932826,
+          1.0655408601777951
+        ],
+        "command_l": 35.05221698390202,
+        "sampled_failures": [],
+        "min_slack_c": 0.052282341245678765
+      }
+    }
+  ],
+  "current": null,
+  "scope": "Four nominal alternative observation banks, common six stages/2Lmin/.1C design plus .03C floor reserve; two starting candidates, constraint generation, local search. Selected-target margin not all-model .1C guarantee. Three-grid independent floating-point envelope only for sample-accepted candidates; no full parameter-domain or real-bath certification."
+}
