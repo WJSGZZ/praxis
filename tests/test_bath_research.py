@@ -63,7 +63,9 @@ def test_manuscript_retains_the_actual_sampling_scope_and_strategy_quantifiers()
     assert 'min/max/spread/final-body' in text
     assert 'remainingbath,foreverycompatiblemodel' in compact
     assert 'zeroflowfollowedbyaqualifiedbackup' in compact
-    assert 'Nomeasurable' in compact and 'fixed-networkimpossibility' in compact
+    assert 'Nomeasurable' in compact and 'onthe96-cellnetwork' in compact
+    assert 'finite-networkobstructions,notacontinuumlimit' in compact
+    assert 'Bothoriginal288-cellrelaxationsremaininconclusive' in compact
 
 
 def test_rational_all_control_certificate_and_feasible_control():
@@ -80,6 +82,45 @@ def test_whole_horizon_certificate_same_model_distinct_residual():
     assert result['exact']['exact_bound_display']>1/25
     assert result['scope']['conditions']['horizon_s']==1800
     assert result['files']['network96/primitives.npz']==mod.all_control_exclusion(ROOT)['files']['primitives.npz']
+
+
+def test_fixed_region_big_rational_without_changing_host_limit():
+    import sys
+    before=sys.get_int_max_str_digits() if hasattr(sys,'get_int_max_str_digits') else None
+    result=mod.fixed_region_exclusion(ROOT)
+    assert result['lower_display']==dict(network96='0.115',network288='0.217',network768='0.179')
+    assert len(result['exact']['network768']['exact_bound_denominator'])>4300
+    if before is not None:assert sys.get_int_max_str_digits()==before
+
+
+@pytest.mark.parametrize('defect',['scope','region','zero_bound','bad_integer','denominator','negative'])
+def test_rebound_fixed_region_receipts_rejected(tmp_path,defect):
+    data=mod.fixed_region_exclusion(ROOT)['files'].copy()
+    name='scope.json' if defect in ['scope','region'] else 'portable-negative-checks.json' if defect=='negative' else 'portable-exact-checks.json'
+    row=json.loads(data[name])
+    if defect=='scope':row['conditions']['rate_lpm']=[0,4]
+    elif defect=='region':row['fixed_region']['center_m']=['0','0','0']
+    elif defect=='negative':row['actual_negative_cases'].pop()
+    else:row['network768']['exact_bound_numerator' if defect!='denominator' else 'exact_bound_denominator']='0' if defect!='bad_integer' else '1e9999'
+    data[name]=json.dumps(row).encode();manifest=json.loads(data['manifest.json'])
+    manifest['members']={n:hashlib.sha256(data[n]).hexdigest() for n in manifest['members']};data['manifest.json']=json.dumps(manifest).encode()
+    (tmp_path/'reference').mkdir();np.savez_compressed(tmp_path/'reference/fixed-region-exclusion.npz',**{n:np.frombuffer(b,dtype=np.uint8) for n,b in data.items()})
+    (tmp_path/'reference/all-control-exclusion.npz').write_bytes((ROOT/'reference/all-control-exclusion.npz').read_bytes())
+    with pytest.raises(ValueError):mod.fixed_region_exclusion(tmp_path)
+
+
+def test_fixed_region_fresh_portable_three_network_replay(tmp_path):
+    import subprocess,sys
+    files=mod.fixed_region_exclusion(ROOT)['files']
+    for name,raw in files.items():
+        p=tmp_path/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw)
+    run=subprocess.run([sys.executable,str(tmp_path/'verify_exact.py')],cwd=tmp_path,capture_output=True,text=True,timeout=65)
+    assert run.returncode==0,run.stderr
+    actual=json.loads(run.stdout)
+    assert set(actual)=={'network96','network288','network768'}
+    for label,row in mod.fixed_region_exclusion(ROOT)['exact'].items():
+        assert actual[label]['exact_bound_numerator']==row['exact_bound_numerator']
+        assert actual[label]['exact_bound_denominator']==row['exact_bound_denominator']
 
 
 @pytest.mark.parametrize('defect',['none','zero_dual','wrong_initial','wrong_units','wrong_primitive'])

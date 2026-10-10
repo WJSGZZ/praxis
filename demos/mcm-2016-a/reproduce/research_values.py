@@ -201,3 +201,48 @@ def whole_horizon_exclusion(root):
             and all(row['rejected'] is True for row in exact['negative_checks'].values()),
             'Independent rejection checks missing')
     return dict(exact=cert,scope=scope,files=files)
+
+
+def fixed_region_exclusion(root):
+    """Bind three finite-network certificates; do not infer a continuum limit."""
+    files, read, manifest, bindings = archive(root, 'fixed-region-exclusion')
+    scope = read('scope.json'); exact = read('portable-exact-checks.json')
+    grids = dict(network96=[8,4,3], network288=[12,6,4], network768=[16,8,6])
+    require(scope['networks'] == grids and set(exact) == set(grids), 'Fixed-region network scope differs')
+    require(scope['fixed_region'] == dict(center_m=['0','13/40','23/100'],radius_m='3/20',
+            cell_center_membership='squared_distance>9/400'), 'Fixed physical region differs')
+    require(scope['conditions'] == dict(D=.0003,initial_c=40,contact_c=34,inlet_c=50,
+            air_c=22,horizon_s=1800,rate_lpm=[0,3],floor_c=39,outside_ceiling_c=41,
+            outside_span_c=1.5,inside_upper_barrier_c=50), 'Fixed-region conditions differ')
+    from fractions import Fraction
+    def natural(text):
+        # Parse bounded chunks without changing the host's global integer-text limit.
+        require(isinstance(text,str) and 0<len(text)<=20000
+                and all('0'<=c<='9' for c in text), 'Invalid exact natural number')
+        value=0
+        for i in range(0,len(text),1000):
+            chunk=text[i:i+1000];value=value*10**len(chunk)+int(chunk)
+        return value
+    lower={}
+    for label,shape in zip(grids,[(1332,298),(4004,874),(10644,2314)]):
+        cert=exact[label];num=natural(cert['exact_bound_numerator']);den=natural(cert['exact_bound_denominator'])
+        require(den>0 and num>0, 'Nonpositive fixed-region certificate')
+        bound=Fraction(num,den)
+        require((cert['rows'],cert['variables'])==shape
+                and cert['status']=='verified positive necessary-condition obstruction'
+                and cert['global_50c_barrier_max_rhs']<0
+                and math.isclose(float(bound),cert['exact_bound_display'],rel_tol=1e-12,abs_tol=1e-14),
+                'Fixed-region exact receipt differs')
+        require(all(hashlib.sha256(files[label+'/'+name]).hexdigest()==digest
+                    for name,digest in cert['sha256'].items()), 'Fixed-region certificate inputs stale')
+        thousandths=(num*1000)//den
+        lower[label]=f'{thousandths//1000}.{thousandths%1000:03d}'
+    require(files['original/network96/primitives.npz']==all_control_exclusion(root)['files']['primitives.npz'],
+            'Original fixed-region comparison network differs')
+    negatives=read('portable-negative-checks.json');rows=negatives['actual_negative_cases']
+    expected={(label,defect) for label in grids for defect in
+              ['zero_dual','wrong_initial','wrong_units','wrong_primitive','wrong_region']}
+    require(negatives['status']=='passed' and len(rows)==15
+            and {(x['network'],x['mutation']) for x in rows}==expected
+            and all(x['rejected'] is True for x in rows), 'Fixed-region rejection coverage differs')
+    return dict(exact=exact,scope=scope,lower_display=lower,files=files)

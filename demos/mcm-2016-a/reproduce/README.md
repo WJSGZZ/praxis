@@ -117,3 +117,7 @@ Both archives contain byte-preserved numerical sources and recorded checks. Larg
 [The earlier windowed proof](reference/all-control-exclusion.md) and its byte-preserved `all-control-exclusion.npz` remain available: 61,869 rows, a per-window residual above 1/5000°C and the original failures. The two bounds use different residual definitions and cannot be compared as physical violations. Neither of the two finer 288-cell relaxations yielded an exclusion.
 
 This excludes arbitrary measurable0–3L/min supply only in the fixed96-cell weak-mixing network, with specified initial/contact temperatures, route, horizon and limits. The three-grid constant-rate certificates have a different scope. The feasible-control LP timeout remains; independent direct-flux moments satisfy its constraints. The supplement keeps the failed and inconclusive routes distinguishable from the accepted proof.
+
+`reference/fixed-region-exclusion.npz` 是另一个区域敏感性证据包：球心固定于物理边界，而非入口单元中心，三个有限网络的全可测控制排除经精确重放。只改舒适区域，不更改原热primitive，不继承原区域288结论。生成器通过 `research_values.fixed_region_exclusion()` 绑定它；完整假设与39成员解包、复核说明见 [fixed-region-exclusion.md](reference/fixed-region-exclusion.md)。
+
+The companion fixed-region archive binds three exact finite-network certificates to an explicitly anchored comfort mask. It changes the target, not the archived thermal coefficients; original moving-mask conclusions remain separate. [Scope and independent replay](reference/fixed-region-exclusion.md) describe the self-contained packet.

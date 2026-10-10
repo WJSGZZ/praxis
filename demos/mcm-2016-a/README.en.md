@@ -93,6 +93,8 @@ The policy now connects observation to action over the remaining horizon: wait w
 
 **A change of schedule can have a mathematical limit.** For one fixed96-cell weak-mixing network, a rational certificate rules out every measurable supply function in0–3 L/min, including delayed or pulsed delivery and realized feedback paths. The proof couples shared-flow temperature moments with spatial limits, reconstructs1,332whole-horizon necessary constraints and accounts for coefficient rounding and dual stationarity. This leaves the24.14/21.48 L baseline unchanged: the obstruction has different mixing conditions. Its scope stops at the archived network, with no finer-grid, axial-model or empirical claim. [Derivation and fast exact replay](reproduce/reference/whole-horizon-exclusion.md) accompany the original three-grid constant-flow certificates and unsuccessful routes. Fixed-action bounds and fixed-policy payback still do not certify every feedback branch.
 
+**Mesh refinement must identify what stays fixed.** The original exclusion follows an inlet-cell center, which moves as the mesh changes. A companion study anchors the comfort region in physical coordinates and obtains exact obstructions on96,288 and768cells. These are different constraint targets; they neither settle the original fine-grid case nor establish a continuum limit. [The region study and portable replay](reproduce/reference/fixed-region-exclusion.md) keep both research phases and their rejection tests available.
+
 The [version-bound record](verification.json) identifies the final PDF and review scope. This is a qualitative comparison, not a contest result or a probability of winning.
 
 ## Run it yourself
