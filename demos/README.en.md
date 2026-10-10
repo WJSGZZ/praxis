@@ -1,8 +1,8 @@
 <div align="center">
 
-# Cases
+# Case Gallery
 
-### Follow the question through to the finished work
+### Models, arguments and complete reports
 
 Contest reports, mathematical arguments, and decision studies—with the evidence behind them.
 
@@ -14,7 +14,7 @@ Contest reports, mathematical arguments, and decision studies—with the evidenc
 
 ## Contest modeling
 
-Two complete demonstrations show different demands on a modeling workflow. Trace transaction fees through an investment decision, or see what a warm average conceals in a bath. Each case includes its report, runnable code, and checks, organized for its respective delivery target.
+Explore two complete solutions with different mathematical demands: investment allocation and spatial temperature control. Each page explains the result, method, evidence and review before linking to the paper and reproduction instructions.
 
 <table>
 <tr>
@@ -22,8 +22,8 @@ Two complete demonstrations show different demands on a modeling workflow. Trace
 <td width="50%" valign="top"><a href="mcm-2016-a/README.en.md"><img src="mcm-2016-a/assets/overview-en.png" alt="MCM: spatial temperature and replenishment strategies" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>CUMCM · Investment and risk</strong><br>1998 Problem A · 23-page Chinese report<br><br>Minimum fees make allocation decisions discontinuous. Regime enumeration and analytical bounds check the selected portfolio.<br><br><a href="cumcm-1998-a/README.en.md">Explore →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">Report</a> · <a href="cumcm-1998-a/reproduce/">Reproduce</a></td>
-<td valign="top"><strong>MCM · A Hot Bath</strong><br>2016 Problem A · 26-page English report<br><br>A proved well-mixed benchmark meets a three-dimensional thermal network: local temperatures change the water-saving strategy.<br><br><a href="mcm-2016-a/README.en.md">Explore →</a> · <a href="mcm-2016-a/paper.pdf">Report</a> · <a href="mcm-2016-a/reproduce/">Reproduce</a></td>
+<td valign="top"><strong>CUMCM · Investment and risk</strong><br>1998 Problem A · 23-page Chinese report<br><br>Minimum fees make allocation decisions discontinuous. Regime enumeration and analytical bounds check the selected portfolio.<br><br><a href="cumcm-1998-a/README.en.md">Explore →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">Report</a> · <a href="cumcm-1998-a/README.en.md#reproduction">Reproduce</a></td>
+<td valign="top"><strong>MCM · A Hot Bath</strong><br>2016 Problem A · 26-page English report<br><br>A proved well-mixed benchmark meets a three-dimensional thermal network: local temperatures change the water-saving strategy.<br><br><a href="mcm-2016-a/README.en.md">Explore →</a> · <a href="mcm-2016-a/paper.pdf">Report</a> · <a href="mcm-2016-a/README.en.md#reproduction">Reproduce</a></td>
 </tr>
 </table>
 
@@ -37,14 +37,14 @@ Computation can suggest a pattern; a proof establishes where it holds. These not
 <td width="50%" valign="top"><a href="collatz-research/README.en.md"><img src="collatz-research/assets/overview-en.png" alt="Collatz: first-contraction depth, residual density and a finite exception bound" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>Domino tilings · Discover, test, prove</strong><br>Combinatorial counting · 4-page English note<br><br>Compare three counting methods, test four held-out terms, then derive the recurrence through decomposition and a transfer-matrix argument.<br><br><a href="domino-research/README.en.md">Explore →</a> · <a href="domino-research/deliverables/paper.pdf">Note</a> · <a href="domino-research/reproduce/">Reproduce</a></td>
-<td valign="top"><strong>Collatz · A finite check with infinite reach</strong><br>Open-problem exploration · 7-page English note<br><br>A sharp first-crossing envelope reduces a conditional all-integer statement to exact finite checks. The same analysis exposes the route's limits.<br><br><a href="collatz-research/README.en.md">Explore →</a> · <a href="collatz-research/deliverables/paper.pdf">Note</a> · <a href="collatz-research/reproduce/">Reproduce</a></td>
+<td valign="top"><strong>Domino tilings · Discover, test, prove</strong><br>Combinatorial counting · 4-page English note<br><br>Compare three counting methods, test four held-out terms, then derive the recurrence through decomposition and a transfer-matrix argument.<br><br><a href="domino-research/README.en.md">Explore →</a> · <a href="domino-research/deliverables/paper.pdf">Note</a> · <a href="domino-research/README.en.md#reproduction">Reproduce</a></td>
+<td valign="top"><strong>Collatz · A finite check with infinite reach</strong><br>Open-problem exploration · 7-page English note<br><br>A sharp first-crossing envelope reduces a conditional all-integer statement to exact finite checks. The same analysis exposes the route's limits.<br><br><a href="collatz-research/README.en.md">Explore →</a> · <a href="collatz-research/deliverables/paper.pdf">Note</a> · <a href="collatz-research/README.en.md#reproduction">Reproduce</a></td>
 </tr>
 </table>
 
 ## Decision studies
 
-### Paying for the bottleneck
+### Toll-plaza layout and downstream queues
 
 **2017 MCM B · Merge After Toll · 17-page English report**
 

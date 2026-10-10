@@ -653,8 +653,8 @@
   "reproduction": "uv run --locked python research/merge-after-toll/reproduce.py --output .session/merge-replay",
   "default_plugin_bundle": false,
   "files_sha256": {
-    "README.en.md": "fc41384d05056d8e7c12e25c1cb70a3ed325c19a29077aeb79e0a8c9ac5a46c2",
-    "README.md": "6af9177dece2f4531b3300dffefe1f235c172e5cdd88e6c5f6cdb1f0009e2092",
+    "README.en.md": "e4b0c3f065e7ad0213f8c60dba10af784344656ef8c6f1a38b5701eb8bc29e8e",
+    "README.md": "d72ddb8bece71916a4d0f5bfd56a3fecf44dc8f0c90d631a8e7dfd226e21dfea",
     "audit.py": "8503e5daeb6929f21c22b697d5ff381fe35b6a6edddaf5d78c7322cdd31407a7",
     "baseline/code/baseline.py": "6d1261f4feaabef98e68b116d89cf90be798a8ca1b9264a8b46cc6d8925844d4",
     "baseline/code/config.json": "16574ea7502bc0616067a6b83e813e94405388f2ddc2df399b5769af867399df",
@@ -747,5 +747,22 @@
     "previous_audit_sha256": "9ecc142e689ec912a85239664f39360c6f70efce323a4dbbf9c93b9bfbe088f7",
     "revision": "reviews/routing-audit-revision.json",
     "scope": "Current executable audit; historical independent-audit.json remains bound to its original inputs and review."
-  }
+  },
+  "documentation_revisions": [
+    {
+      "recorded_utc": "2026-10-10T15:43:49.968010+00:00",
+      "source_commit": "b29ba373c15793c174ddd461d1e546eda143cd6f",
+      "scope": "Reader-facing case organization, actual review findings and reproduction navigation; numerical archives, calculations, PDF and scientific figures unchanged. Historical source and review bindings retain their identities.",
+      "files": {
+        "README.md": {
+          "previous_sha256": "6af9177dece2f4531b3300dffefe1f235c172e5cdd88e6c5f6cdb1f0009e2092",
+          "current_sha256": "d72ddb8bece71916a4d0f5bfd56a3fecf44dc8f0c90d631a8e7dfd226e21dfea"
+        },
+        "README.en.md": {
+          "previous_sha256": "fc41384d05056d8e7c12e25c1cb70a3ed325c19a29077aeb79e0a8c9ac5a46c2",
+          "current_sha256": "e4b0c3f065e7ad0213f8c60dba10af784344656ef8c6f1a38b5701eb8bc29e8e"
+        }
+      }
+    }
+  ]
 }

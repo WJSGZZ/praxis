@@ -1,103 +1,108 @@
-# CUMCM Demo: Investment Return and Risk
+# Investment Return and Risk
 
-**1998 CUMCM Problem A: a portfolio problem with minimum transaction fees, taken from model and proof through robustness checks to a paper others can verify.**
+**1998 CUMCM Problem A · A portfolio model that accounts for minimum fees and explains when its solution is provably optimal.**
 
-[中文](README.md) · [Full paper (PDF, Chinese)](deliverables/paper.pdf) · [Supporting archive (ZIP)](deliverables/supporting_materials.zip) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
+[简体中文](README.md) · [Paper](deliverables/paper.pdf) · [Supporting archive](deliverables/supporting_materials.zip) · [All cases](../README.en.md) · [Praxis](../../README.en.md)
 
-![Risk–return curves for the two asset sets, with representative portfolios](assets/risk-return.png)
+[Results](#results) · [Review](#review) · [Reproduction](#reproduction)
 
-## What the problem asks
+![Risk–return curves and representative portfolios for both asset sets](assets/risk-return.png)
 
-A firm has a sum M and can buy any of n assets or put money in a bank (5% a year, riskless, no fee). Each asset has an average return, a loss rate and a fee rate; a purchase below a threshold is still charged as if it were at the threshold. Overall risk is the largest loss among the assets bought. The statement supplies one set of 4 assets and one of 15, and asks for portfolios with high net return and low risk.
+## The modeling problem
 
-The difficulty is not computation. It is three things: the fee is piecewise, two goals must be traded off, and the problem never says how much risk the firm accepts.
+A firm can leave its capital in a bank or invest in assets with different returns, possible losses and transaction fees. Small purchases still incur a minimum fee. The supplied four-asset and fifteen-asset datasets therefore require more than simply ranking returns.
 
-## Results first
+Risk here means the **largest possible loss on any single asset**, rather than portfolio variance. The bank pays 5% annually. Principal, fees and the bank balance share one budget; the firm's acceptable risk is not specified.
 
-| Case | Risk cap | Best net return | Supporting argument |
+## Results
+
+The representative calculations use **CNY 1,000,000**, with fees deducted from net return.
+
+| Dataset | Risk limit | Optimal net return | Optimality evidence |
 |---|---:|---:|---|
-| 4 assets | 1% | **21.90%** | MILP solve, enumeration of fee regimes, analytic upper bound |
-| 15 assets | 10% | **33.53%** | MILP solve, analytic upper bound |
+| Four assets | 1% | **21.90%** | Integer optimization, all 81 fee regimes and an analytical bound agree |
+| Fifteen assets | 10% | **33.53%** | A feasible allocation attains the analytical bound |
 
-Capital is **CNY 1,000,000**; risk is the largest asset-level loss amount divided by capital; net return is after fees. The two risk caps differ, so the rows do not rank the asset sets, and neither is a forecast of real returns. With no stated risk appetite the paper recommends the knee of the return–risk curve: a 0.6% cap for 4 assets (20.19%) and 8% for 15 assets (32.29%).
+The risk limit is the largest asset-level loss divided by capital. Different limits make these two rows unsuitable for ranking the datasets; the values are conditional optimization results.
 
-## How it is solved
+The full return–risk frontier exposes the choice facing the firm. Its geometric knees illustrate a **0.6%** limit with **20.19%** return for four assets and an **8%** limit with **32.29%** return for fifteen assets. They provide a transparent compromise rule; an investor's preferences still determine whether either is appropriate.
 
-1. **Read the statement into a model.** Zero fee when nothing is bought, otherwise the larger of the amount and the threshold, times the fee rate; bank balance, principal and fees share one budget.
-2. **Mixed-integer linear program.** A binary variable switches each asset on; maximize net return under a risk cap and sweep the cap to trace the return–risk curve.
-3. **An independent argument.** Dropping the minimum fee gives a proportional-fee relaxation whose analytic bound cannot be below the original optimum; a feasible plan that reaches it is globally optimal. The 4-asset case is also checked by enumerating 81 fee regimes.
-4. **Capital scale.** A sufficient condition: once capital covers every active threshold, the original problem attains the relaxed bound. At the representative caps this is **CNY 339 and CNY 2,602**. It is sufficient, not necessary.
-5. **Recommendation and robustness.** The knee is the recommendation without preferences; then test whether it can be executed as written and whether it survives data error.
+## Model and argument
 
-For perturbed inputs, the original allocation proportions are reduced to satisfy both the new risk cap and the fee-inclusive budget before comparing returns. Raw overshoots remain diagnostic. The independent-risk comparison uses a closed-form allocation with its fee and budget premises checked.
+1. **Represent fees faithfully.** An unpurchased asset incurs no fee. Once selected, it is charged on the greater of the purchase and threshold amounts; binary variables capture that distinction.
+2. **Trace the frontier.** A mixed-integer linear program maximizes net return at each risk limit.
+3. **Establish a separate bound.** Removing the minimum fee yields a proportional-fee relaxation solved by ranking gain per unit of budget. A feasible original allocation reaching its bound is globally optimal.
+4. **Explain the role of scale.** At the representative limits, **CNY 339 and CNY 2,602** are sufficient capital thresholds for attaining the relaxed bound. They are not necessary thresholds.
 
-## Evidence
+## Verification and scope
 
-- **12 model checks** cover constraints, fees, boundaries and parameter scenarios, plus 4 capital-threshold checks and 2 knee checks. They are different kinds of check, not 12 independent algorithms.
-- **The recommended plan uses the whole risk cap, so following it loosely breaks the cap.** With ±5% error on each amount, about nine in ten random trials exceed the cap (median overshoot 2–3%). With ±10% perturbations to returns, risk-loss rates and transaction-fee rates (minimum-fee thresholds fixed), the same assets are chosen in at least 99.5% of trials. The margin to keep is therefore on risk: tightening the cap by 5% costs only about 0.3–0.6 points of net return.
-- **How far simple rules go.** At CNY 1,000,000, greedy by the per-budget gain from the paper's Proposition 2, buying each asset up to its risk allowance, matches the integer optimum in all six cases tested: the minimum fee is inactive at this scale, and the integer model matters at small budgets. Ranking by return over risk loses up to 4.3 points; equal weights reach only 11.8% and 22.0%.
-- **Every chosen asset matters.** Removing any one lowers net return noticeably.
-- **The risk definition changes the answer.** Reading risk as a standard deviation with independent returns, the same caps give net returns of only 13.4% and 17.4%, and the stated max-loss knee portfolios carry several times the cap under that reading. The paper answers as stated and flags this as something to confirm with the decision maker.
+| Question | Finding |
+|---|---|
+| Is the optimization correct? | Fee-regime enumeration, analytical bounds and independent rational arithmetic agree; 12 baseline checks cover budgets, fees and boundary cases. |
+| Can the allocation tolerate execution error? | Under ±5% random purchase errors, roughly nine in ten trials exceed the risk limit. A 5% tighter limit costs about 0.3–0.6 percentage points in the checked cases. |
+| Does input uncertainty change the selection? | Under ±10% perturbations to returns, loss rates and fee rates, with minimum-fee thresholds fixed, the selected assets persist in at least 99.5% of trials. Return comparisons first restore budget and risk feasibility. |
+| Is a simpler rule adequate? | At CNY 1,000,000, allocation by gain per unit of budget matches the integer optimum in six checked cases. Minimum fees matter more at small budgets. Return-to-risk ranking loses up to 4.3 percentage points. |
+| Does another risk definition change the answer? | Treating risk as a standard deviation of independent returns produces different allocations. The paper keeps this comparison explicit. |
 
-## Two pages of the paper
+Trial proportions describe the stated error scenarios, not real-world investment success rates. Removing selected assets measures their contribution in the checked portfolios. Detailed records are in [reproduce/reference/](reproduce/reference/).
 
-<table>
-<tr>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-abstract.png" alt="Report page 1: abstract and quantitative results" width="100%"></a></td>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/report-proof.png" alt="Report page 7: proof of the analytic bound and certificates" width="100%"></a></td>
-</tr>
-<tr>
-<td><strong>Abstract: problem, method, result</strong><br>States the risk definition, fee treatment and representative numbers.</td>
-<td><strong>Argument: from computation to proof</strong><br>The analytic bound, an exchange argument and the capital condition.</td>
-</tr>
-</table>
+## Review
 
-**[Read the complete 23-page paper →](deliverables/paper.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: ctex for Chinese, a Times family for Latin text and equations, and figures drawn by pgfplots straight from the data. Level-1 headings are centered, figure captions sit below figures and table captions above tables. The body has no table of contents, and the appendix lists the supporting files and the full source code, as the 2026 CUMCM format rules require; the rules leave fonts and sizes free.
+**Reference assessment: competitive at the lower edge of National First Prize, with a National Second–First Prize range.**
 
-The manuscript uses Fandol 0.3, supplied by TeX Live, MiKTeX and Tectonic, rather than operating-system fonts. The pinned font files are recorded in the [font manifest](../../templates/cumcm-fonts.json). Install the named package if it is missing; do not substitute a different face. Numerical reproduction is independent of typesetting.
+The strongest feature is the explanation of optimality: the paper distinguishes principal, fees and profit, covers both datasets, and uses an exchange argument and capital thresholds to show when a feasible allocation reaches a global bound. The reviewer independently checked eight representative allocations and two capital thresholds with rational arithmetic.
 
-## Assessment
+The main weakness is the final choice of risk limit. Conditional optima are well supported, but the geometric knee does not establish a particular firm's preferences. A clearer preference-to-frontier argument would strengthen the recommendation.
 
-**Target: National First Prize. Reference: competitive at its lower edge, with a National Second–First Prize range.** An AI reviewer separate from the author read the current 23-page paper and performed independent rational-arithmetic checks of eight representative allocations and two capital thresholds. The review is non-blind and its award boundaries are uncalibrated; it is not a contest result.
+This author-external AI review covers the current 23-page manuscript. It is non-blind and uncalibrated against award boundaries, rather than an official contest result. [Review record](verification.json)
 
-The strongest contribution is explaining when the fee-constrained problem reduces to a continuous knapsack and when a feasible allocation attains a provable global bound. Both asset sets are covered, and principal, fees and profit are kept distinct. The next improvement should connect the firm's preferences to its risk limit: the present geometric knee is a transparent convention, but the paper does not yet explain the trade-offs that would make it the right choice for a particular firm. The [version-bound record](verification.json) identifies the unchanged PDF, actual review scope and computations that were not repeated.
+## Paper and deliverables
 
-## Run it yourself
+| Resource | Contents |
+|---|---|
+| [The complete 23-page paper](deliverables/paper.pdf) | Chinese manuscript with models, proofs, verification, references and source appendix |
+| [Supporting ZIP](deliverables/supporting_materials.zip) | 26 files, including calculation code, LaTeX sources and AI-use details |
+| [Checksums](manifest.json) | File sizes, MD5 and SHA-256 for both deliverables |
+
+Only the PDF and ZIP sit in `deliverables/`. Presentation assets and reproduction records are separate. The manuscript uses the shared [CUMCM template](../../templates/cumcm-paper.tex) and [pinned fonts](../../templates/cumcm-fonts.json).
+
+## Reproduction
 
 From the Praxis repository root:
 
 ```bash
 uv sync --locked
-uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py                 # both asset sets, curves and the 12 checks
-uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py  # capital threshold (4 checks)
-uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py     # knee and analytic bound
-uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py         # execution error, margin, data error (seeded)
-uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py       # simple rules, drop-one, alternative risk reading
+uv run --locked python demos/cumcm-1998-a/reproduce/run_demo.py
 ```
 
-The whole set takes a few minutes. Results go to `reproduce/reproduced/`, excluded from Git; the first script will not overwrite an existing results folder. You can also unzip the [supporting archive](deliverables/supporting_materials.zip) and reproduce the paper's computation on its own, with no Praxis and no AI service.
+This recomputes both datasets, frontiers and baseline checks in `demos/cumcm-1998-a/reproduce/reproduced/`. It refuses to overwrite an existing output directory. Numerical reproduction needs neither LaTeX nor an AI service.
 
-## File map
+<details>
+<summary>Additional verification commands</summary>
+
+```bash
+uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py
+```
+
+These cover capital thresholds, knee recommendations and bounds, error margins, alternative rules and risk interpretations. The supporting ZIP can also be reproduced independently using its included instructions.
+
+</details>
+
+## File structure
 
 ```text
-deliverables/                 # the two electronic submission files
-  paper.pdf                   # 23 pages, with file list and full source appendix
-  supporting_materials.zip    # 26 files, including the LaTeX sources and AI-use details
-reproduce/                    # entry points, archived numbers and check scripts
-assets/                       # images for the homepage and this page
-manifest.json                 # bytes, MD5 and SHA-256 of the two deliverables
-verification.json             # acceptance record
+deliverables/       Paper PDF and supporting ZIP
+reproduce/          Calculations, checks and archived results
+assets/             Presentation images
+manifest.json       Deliverable checksums
+verification.json   Review and acceptance record
 ```
 
-Only the PDF and ZIP belong to the submission; previews, notes and hashes stay outside. The PDF was rendered and reviewed page by page, the ZIP was extracted and rerun independently, and the appendix list matches its members.
+## Sources and license
 
-## Sources, limits and license
+Inputs come from page 11 of the organizers' [historical problem collection](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf). Deliverables follow the [2026 format guidance](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html) and [AI-use policy](https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html).
 
-- The problem and its two parameter tables come from the organizers' [official collection of past problems](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf), page 11; only the parameters needed to reproduce and their provenance are included.
-- Paper and attachments follow the [2026 format rules](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html); the AI statement follows the [2026 AI-use rules](https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html).
-- The solution, code, figures and paper were made for this project. They are not an official answer, a prize-winning paper or a real contest result; AI involvement and verification are recorded truthfully in the supporting archive.
-- This case validates one conditional optimization model and the delivery chain; it does not claim arbitrary problems finish automatically.
-
-Implementation, documents and figures are under the repository's MIT license; problem parameters keep their stated origin and third-party tools their own licenses. No private contest material is included.
-
-If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.
+This historical-problem solution was produced for Praxis. Original code, manuscript, documentation and figures use the repository's [MIT License](../../LICENSE); problem inputs and third-party tools retain their stated origins and rights.

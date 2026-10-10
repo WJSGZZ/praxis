@@ -1,93 +1,86 @@
-# Collatz: a finite check with infinite reach
+# Collatz First Contraction: A Finite Certificate
 
-**A sharp first-crossing envelope turns a conditional statement over all positive integers into a finite computation—and explains why this route cannot settle the general problem.**
+**A conditional theorem over an infinite domain · Structural bounds make the checks finite and reveal where this route stops.**
 
-[简体中文](README.md) · [Research note](deliverables/paper.pdf) · [Reproduction sources](reproduce/) · [All cases](../README.en.md)
+[简体中文](README.md) · [Complete paper](deliverables/paper.pdf) · [All cases](../README.en.md) · [Praxis](../../README.en.md)
 
-[![First-contraction depth and unclassified natural density](assets/overview-en.png)](deliverables/paper.pdf)
+[Results](#results) · [Review](#review) · [Reproduction](#reproduction)
+
+[![First-contraction depth, unclassified density and finite scan bound](assets/overview-en.png)](deliverables/paper.pdf)
 
 ## The question
 
-Use the shortcut Collatz map: halve an even integer; for an odd integer, multiply by three, add one, then halve. We ask when an iterate first falls below its starting value. These step counts differ from those of the unshortened map.
+The shortcut Collatz map divides even integers by two and sends odd integers to (3n+1)/2. When does an orbit first fall below its starting value? Its step count differs from the map that leaves the odd step undivided.
 
-A parity prefix gives an affine expression: a coefficient times the start, plus a nonnegative offset. The first coefficient below one need not, by itself, force the endpoint below the start. Write τ for the first coefficient contraction and σ for the first actual descent. Can the constraints before that first contraction reduce an all-integer conditional claim to a manageable finite check?
+A finite iterate has the form “coefficient × start + offset.” The coefficient can fall below one while the positive offset prevents an actual descent. Write τ for first coefficient contraction and σ for first descent. The study uses the constraints on every earlier prefix to establish conditions under which they coincide.
 
-## What the study establishes
+## Results
 
 | Result | Evidence and scope |
 |---|---|
-| **For every n>1, τ(n)≤1024 implies σ(n)=τ(n)** | A sharp offset envelope, a finite-reduction proof, and exact checks. There is no upper bound on n; larger or infinite τ is outside the theorem. |
-| Only starts 2..72058 need checking for a potential failure | The worst envelope over 647 feasible first-crossing depths. All 72057 starts were checked, with no failure or trajectory censored at the cap. |
-| Unclassified natural density is about 1.1537401×10^-19 | Forward state counts agree with a separate binomial recurrence. This is neither a divergence probability nor zero. |
-| Normalized maximal offsets tend to 1/(6 ln 2) | An exact identity and classical equidistribution give the limit; no finite convergence rate is claimed. |
-| Fixed horizons and one fixed envelope scan limit cannot cover the general case | Explicit uncovered starts and a proof that the sufficient scan bound grows without bound. Neither result supplies an actual counterexample or rules out other methods. |
+| **For every n>1, τ(n)≤1024 implies σ(n)=τ(n)** | A sharp offset envelope, finite-reduction proof and exact checks. There is no upper bound on n; larger or infinite τ is outside the theorem. |
+| Potential exceptions require only starts **2…72058** | The worst bound over 647 feasible crossing depths; all 72057 starts were checked without a failure or a trajectory censored at the cap. |
+| Unclassified natural density is about **1.1537401×10⁻¹⁹** | Forward state counts agree with a separate binomial recurrence. This is neither a divergence probability nor zero. |
+| Normalized maximal offsets tend to **1/(6 ln 2)** | An exact identity and equidistribution establish the limit, without a claimed finite-depth error rate. |
+| A fixed horizon and one fixed envelope scan bound cannot cover the general case | Explicit uncovered starts and an unbounded sufficient scan limit; neither result supplies a counterexample or excludes other methods. |
 
-## The argument
+## Argument and computation
 
-1. **Keep the first-crossing information.** Every earlier parity prefix must remain uncontracted, giving an exact integer barrier.
-2. **Maximize under that barrier.** Each odd position has a latest feasible location. One word attains all those bounds, giving the unique sharp offset envelope.
-3. **Reduce the possible exceptions.** A start whose endpoint has not descended must lie below the offset divided by the contraction gap. The largest required bound is 72,058.
-4. **Check by different recurrences.** The generator follows the barrier word and forward counts. The checker instead uses max-plus extrema, binomial first-passage counts, and direct integer trajectories.
-5. **Establish the stopping point.** Envelope asymptotics and explicit fixed-horizon obstructions identify the structural work that larger computations would leave undone.
+The first-crossing condition supplies an integer barrier on every earlier parity prefix. It bounds the latest possible positions of odd steps, and one word attains all of those bounds, yielding the sharp offset envelope.
 
-## Checks behind the claims
+If the contracted endpoint has not descended, its start must be no larger than the offset divided by the contraction gap. Maximizing this bound over feasible depths reduces the potential exceptions to starts at most 72,058.
 
-The [verification summary](verification.json) binds the manuscript, PDF, code and recorded calculations. Six damaged certificates test wrong offsets, thresholds, missing crossing depths, densities, scan coverage and histograms; all are rejected.
+Generation and checking use different constructions: barrier words and forward counts on one side; max-plus extrema, binomial first-passage counts and direct integer trajectories on the other. Six damaged-certificate tests alter offsets, thresholds, crossing-depth coverage, density, scan range or histogram; each is rejected. The [verification summary](verification.json) binds the manuscript, source and recorded calculations.
 
-A separate AI reviewer checked the six-page baseline and key numerical evidence, including independent extrema and trajectory calculations. The added example and both figure datasets were reviewed separately; the computational certificate is unchanged. That is distinct from human peer review or proof-assistant certification. The case is a literature-informed development study, with independently written scripts; it is not a blind evaluation or a causal estimate of the plugin's benefit.
+Finally, envelope asymptotics and explicit uncovered starts establish what increasing this calculation alone would leave unresolved.
 
-## Inside the note
+## Review
 
-<table>
-<tr>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-page1.png" alt="Page 1: definitions and the conditional theorem" width="100%"></a></td>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-barrier.png" alt="Page 3: first-crossing barriers and a worked example" width="100%"></a></td>
-</tr>
-<tr><td><strong>The question and theorem</strong><br>The definitions keep coefficient contraction separate from actual descent.</td><td><strong>The barrier in a small example</strong><br>Inspect the parity word, offset and residue restriction directly.</td></tr>
-</table>
+**A substantive computational synthesis with inspectable proofs and certificates; an original research contribution remains unestablished.**
 
-**[Read the seven-page paper →](deliverables/paper.pdf)** Uses the shared [AMS-style research template](../../templates/research-paper.tex): amsart, 11pt Latin Modern, A4 and 30mm margins. Every page was visually inspected. Two figures explain the first-crossing construction and distinguish the scan bound from the remaining residue density.
+Its strength is the connection between structural bounds and finite verification for a conditional all-integer statement. Distinct recurrences check the extrema and counts, while the exposition separates the theorem, density and unresolved domain.
 
-## Research assessment
+Originality is the central gap. The cited Rozier–Terracol Theorem 5.3 and Corollary 5.4 state stronger coverage, so depth 1024 is not a new verification record. A theorem-level literature comparison is needed to determine the envelope and reduction's independent contribution; major new progress is not established by the present evidence.
 
-An author-external AI role read the current seven-page paper and performed bounded independent checks. **The work is a substantive computational synthesis; original mathematical contribution and major research significance remain unestablished.** The supplied arguments, method, exposition and inspectable evidence are supported within the stated review scope. The cited Rozier–Terracol Theorem 5.3 and Corollary 5.4 state stronger coverage, so depth 1024 is not a new verification record.
+An author-external AI role read the current seven-page paper and performed bounded independent checks. That review did not rerun the complete 72057-trajectory scan. The [version-bound assessment](evaluation.json) records the non-blind scope, distinct from human peer review or formal certification.
 
-| Criterion | Finding |
+## Paper and materials
+
+| Resource | Contents |
 |---|---|
-| Correctness | The envelope, reduction and limitations have argument and bounded-check support; the full scan was not rerun in this review. |
-| Originality | Unestablished; a theorem-level comparison with the closest literature is needed. |
-| Significance | A self-contained certificate has methodological value, but a major new advance has not been demonstrated. |
-| Method | Structural bounds reduce the problem to finite checks with distinct recurrences; transfer to other problems is untested. |
-| Exposition | Conditional statements, density and uncovered cases are distinguished. |
-| Verifiability | Exact certificates and source can be inspected; no proof-assistant certification is claimed. |
+| [Complete 7-page English paper](deliverables/paper.pdf) | Conditional theorem, worked barrier example, proofs, two figures and route limitations |
+| [Verification record](verification.json) | Evidence identities, versions and checking scope |
+| [Source and certificates](reproduce/) | Generator, independent checker and frozen results |
 
-The priority is a bounded prior-art study, rather than a larger search. The [version-bound review](evaluation.json) retains evidence and limits. [Annals](https://annals.math.princeton.edu/board) and [Inventiones](https://link.springer.com/journal/222/aims-and-scope) provide the reference for importance and originality; this non-blind, uncalibrated AI assessment is neither journal endorsement nor an acceptance prediction.
+The paper uses the shared [AMS-style research template](../../templates/research-paper.tex). Its barrier diagram explains the construction; a second figure separates the scan bound from residual density.
 
-## Reproduce it
+## Reproduction
 
-Run from the repository root. Make a working copy first; `copytree` refuses an existing target:
+From the repository root, create a fresh working copy:
 
-```sh
+```bash
+uv sync --locked
 uv run --locked python -c "from shutil import copytree; copytree('demos/collatz-research/reproduce', '.session/collatz-replay')"
 uv run --locked python .session/collatz-replay/code/verify.py
 uv run --locked python .session/collatz-replay/code/analyze.py
 ```
 
-The core scripts use only the Python standard library. These commands recheck the certificate and regenerate presentation decimals in the copy. Run its `code/certify.py` to rebuild the certificate as well. Recorded generation and checking took about 0.065 and 0.639 seconds respectively; those observations exclude derivation, reading, review and typesetting.
+`copytree` refuses an existing target. The core scripts use only the Python standard library: `verify.py` checks the certificate, and `analyze.py` regenerates presentation decimals. Run the copy's `code/certify.py` to regenerate the certificate as well. Computation times exclude reading, derivation and review.
 
-## File map
+## File structure
 
 ```text
-deliverables/paper.pdf          # complete English paper, seven pages
-reproduce/paper/paper.tex       # corresponding manuscript source
-reproduce/code/                # generator, independent checker, decimal analysis
-reproduce/runs/                # fixed exact certificate and checking results
-verification.json             # scope and evidence hashes
-assets/                       # bilingual covers and actual page previews
+deliverables/paper.pdf     Complete English paper
+reproduce/paper/paper.tex  Corresponding LaTeX source
+reproduce/code/           Generation, independent checking and analysis
+reproduce/runs/           Exact certificate and checking results
+verification.json         Evidence identities and scope
+evaluation.json           Full-paper review
+assets/                   Case illustrations
 ```
 
 ## Background and license
 
-Parity vectors, stopping times and offset comparisons have a classical literature; references appear in the note. This study extends the project's early replication with a sharp envelope, finite reduction and explicit route limitations. Original priority for those arguments has not been established. No resolution of the Collatz conjecture or computational record is claimed.
+Parity vectors, stopping times and offset comparisons have a classical literature; references appear in the paper. This is a literature-informed development study extending an earlier project replication. It is neither an unseen-problem evaluation nor an estimate of the plugin's causal benefit, and does not claim to resolve the Collatz conjecture.
 
-Original scripts, documentation and the note use the repository's [MIT License](../../LICENSE). Cited publications retain their own rights; their full texts are not redistributed.
+Original scripts, documentation and paper use the repository's [MIT License](../../LICENSE). Cited publications retain their rights and are not redistributed in full.

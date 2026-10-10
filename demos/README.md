@@ -1,10 +1,10 @@
 <div align="center">
 
-# 案例
+# 案例总览
 
-### 看见问题怎样变成一份完整作品
+### 从建模问题到完整作品
 
-从国赛、美赛的完整解答，到猜想、证明与开放数学探索。
+竞赛解答、数学证明与决策研究：查看主要结果、评阅意见、完整论文和计算依据。
 
 **简体中文** · [English](README.en.md) · [返回 Praxis](../README.md)
 
@@ -14,7 +14,7 @@
 
 ## 竞赛建模
 
-从这两个完整 Demo 入手：一个处理费用门槛与风险，一个处理空间温差与控制。报告、代码和验证都可以打开查看；两个案例按各自的交付目标组织。
+两个完整案例分别研究投资配置与热水控制。每个页面先说明问题和结果，再提供方法、验证、作品评议、论文与计算复现。
 
 <table>
 <tr>
@@ -22,8 +22,8 @@
 <td width="50%" valign="top"><a href="mcm-2016-a/README.md"><img src="mcm-2016-a/assets/overview-zh.png" alt="美赛：空间水温与补水策略比较" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>国赛 · 投资的收益和风险</strong><br>1998 CUMCM A · 23 页中文报告<br><br>把最低交易费与风险约束放进一个优化模型，用费用分区和解析上界检查推荐方案。<br><br><a href="cumcm-1998-a/README.md">查看案例 →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">论文</a> · <a href="cumcm-1998-a/reproduce/">复现</a></td>
-<td valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A · 26 页英文报告<br><br>从理想完混基线走到三维热网络，解释为什么平均水温足够高，局部仍可能太冷。<br><br><a href="mcm-2016-a/README.md">查看案例 →</a> · <a href="mcm-2016-a/paper.pdf">论文</a> · <a href="mcm-2016-a/reproduce/">复现</a></td>
+<td valign="top"><strong>国赛 · 投资收益与风险</strong><br>1998 CUMCM A · 23 页中文报告<br><br>把最低交易费与风险约束放进一个优化模型，用费用分区和解析上界检查推荐方案。<br><br><a href="cumcm-1998-a/README.md">查看案例 →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">论文</a> · <a href="cumcm-1998-a/README.md#计算复现">复现</a></td>
+<td valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A · 26 页英文报告<br><br>从理想充分混合基线走到三维热网络，解释为什么平均水温足够高，局部仍可能太冷。<br><br><a href="mcm-2016-a/README.md">查看案例 →</a> · <a href="mcm-2016-a/paper.pdf">论文</a> · <a href="mcm-2016-a/README.md#计算复现">复现</a></td>
 </tr>
 </table>
 
@@ -37,18 +37,18 @@
 <td width="50%" valign="top"><a href="collatz-research/README.md"><img src="collatz-research/assets/overview-zh.png" alt="Collatz：首收缩深度、未覆盖自然密度及有限例外界" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>多米诺 · 从规律到证明</strong><br>组合计数 · 4 页英文笔记<br><br>三种算法核对小例子，保留四项检验猜测，再用构造分解与转移矩阵分别证明递推。<br><br><a href="domino-research/README.md">查看案例 →</a> · <a href="domino-research/deliverables/paper.pdf">论文</a> · <a href="domino-research/reproduce/">复现</a></td>
-<td valign="top"><strong>Collatz · 有限核对与严格归约</strong><br>开放数学探索 · 7 页英文笔记<br><br>首收缩锐包络把无限整数域中的条件命题归约到有限检查，并证明继续扩大同类计算的局限。<br><br><a href="collatz-research/README.md">查看案例 →</a> · <a href="collatz-research/deliverables/paper.pdf">论文</a> · <a href="collatz-research/reproduce/">复现</a></td>
+<td valign="top"><strong>多米诺 · 从规律到证明</strong><br>组合计数 · 4 页英文笔记<br><br>三种算法核对小例子，保留四项检验猜测，再用构造分解与转移矩阵分别证明递推。<br><br><a href="domino-research/README.md">查看案例 →</a> · <a href="domino-research/deliverables/paper.pdf">论文</a> · <a href="domino-research/README.md#计算复现">复现</a></td>
+<td valign="top"><strong>Collatz · 有限核对与严格归约</strong><br>开放数学探索 · 7 页英文笔记<br><br>首收缩锐包络把无限整数域中的条件命题归约到有限检查，并证明继续扩大同类计算的局限。<br><br><a href="collatz-research/README.md">查看案例 →</a> · <a href="collatz-research/deliverables/paper.pdf">论文</a> · <a href="collatz-research/README.md#计算复现">复现</a></td>
 </tr>
 </table>
 
 ## 决策分析
 
-### 收费之后，瓶颈在哪里？
+### 收费站布局与汇合排队
 
 **2017 MCM B · Merge After Toll · 17 页英文报告**
 
-更多收费窗口不一定带来更短等待。研究把支付兼容、汇合几何与有限排队空间连接起来，保留首稿、反例、被拒绝的路线和独立核验。这是往年竞赛题上的条件性决策研究，作为固定研究归档展示。
+增加收费窗口可能改善通行，也可能加重出口等待。研究将支付兼容、汇合几何与有限排队空间连接起来，解释方案偏好为何反转，并保留反例与独立核验。
 
 **[打开研究归档 →](https://github.com/WJSGZZ/praxis/tree/main/research/merge-after-toll)**
 

@@ -1,92 +1,83 @@
-# Research-Mode Case: Domino Tilings of a 3×2n Board
+# Domino Tilings: From Exact Counts to a Recurrence Proof
 
-**How Praxis works when no answer key exists: guess a pattern, hold terms out, hunt for counterexamples, prove it twice, and label how sure each claim is.**
+**A 3×2n rectangle · Independent computations suggest the pattern; two arguments establish it for every size.**
 
-[中文](README.md) · [Research note (PDF)](deliverables/paper.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
+[简体中文](README.md) · [Complete note](deliverables/paper.pdf) · [All cases](../README.en.md) · [Praxis](../../README.en.md)
 
-## What the problem asks
+[Results](#results) · [Review](#review) · [Reproduction](#reproduction)
 
-In how many ways can a 3×2n rectangle be tiled with 1×2 dominoes? Call the count a(n). The problem comes with no answer key and no ready-made model: the pattern has to be found and then proved. It is a classical result, and the case does not claim a discovery; it shows how Praxis's research mode turns "looks right" into "proved".
+[![Exact tiling counts, held-out terms and two proofs](assets/overview-en.png)](deliverables/paper.pdf)
 
-## Results first
+## The problem
 
-| Statement | Confidence | Evidence |
-|---|---|---|
-| a(n) = 4a(n−1) − a(n−2), a(0)=1, a(1)=3 | **Proved, twice and independently** | a decomposition by the leftmost column; an order bound from the transfer matrix plus a check of eight equations |
-| a(n) = ((3+√3)/6)(2+√3)ⁿ + ((3−√3)/6)(2−√3)ⁿ, ratio → 2+√3 | Proved | follows from the recurrence |
-| First 17 terms 1, 3, 11, 41, 153, … , 1117014753 | Checked to n=16 | All three agree through n=5; transfer matrix and recurrences agree through n=16 (the abstract derives these ranges from archived arrays) |
-| No polynomial formula of degree ≤ 8 | Proved | the growth is exponential |
+How many ways can 1×2 dominoes tile a 3×2n rectangle? Let a(n) denote the count. Small boards can be enumerated directly, but larger ones call for a recurrence and a reason to trust it beyond the observed terms.
 
-## How it is done
+This case reconstructs a classical enumeration. Its focus is the transition from computational evidence to an all-size proof: **many successful tests do not, by themselves, establish a theorem.**
 
-1. **Three independent counts of small cases:** backtracking, a transfer matrix over 8 column profiles, and coupled recurrences from a local decomposition, checked against each other.
-2. **Guess:** an exact search on the first 13 terms finds a recurrence of order 2 with coefficients (4, −1), eleven equations for two unknowns; a polynomial formula is ruled out.
-3. **Hold out and attack:** a(13)…a(16) were kept out of the fit and all satisfy the recurrence; an exhaustive search over 2≤n≤60 finds no counterexample.
-4. **Prove it twice:** splitting by the leftmost column gives two coupled recurrences that eliminate to the result; independently, the transfer matrix bounds the order by N=8, so the difference sequence obeys the same order-8 recurrence and vanishes once its first 8 terms do.
-5. **Record:** `route_graph` keeps the three routes (guess a recurrence, guess a polynomial, decompose by columns) and why one died; `route_to_lesson` drafts a lesson that can carry over.
+## Results
 
-## Evidence
-
-- the three methods agree wherever they can be compared;
-- the recurrence holds on four held-out terms and for n≤60, and is proved by two independent arguments;
-- the finite-check proof rests on "order at most 8", which comes from the 8×8 transfer matrix (Cayley–Hamilton), not from the data;
-- every claim carries a rung of the confidence ladder; independent numerical checks are distinguished from proof-assistant verification.
-
-## Two pages of the note
-
-<table>
-<tr>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-page1.png" alt="Note page 1: result, three counts, guess and hold-out" width="100%"></a></td>
-<td width="50%"><a href="deliverables/paper.pdf"><img src="assets/note-proofs.png" alt="Page 2: the local board decomposition and forced dominoes" width="100%"></a></td>
-</tr>
-<tr>
-<td><strong>Result and discovery</strong><br>The theorem, three ways of counting, the guess and its hold-out test.</td>
-<td><strong>See the decomposition</strong><br>Each forced boundary configuration leaves the board counted by its label.</td>
-</tr>
-</table>
-
-**[Read the complete 4-page research note →](deliverables/paper.pdf)** Built from the shared [AMS-style template](../../templates/research-paper.tex), using 11pt Latin Modern on A4 with 30mm margins. All four pages were inspected after the pinned Tectonic build. The plots draw directly from archived values.
-
-## Research assessment
-
-A full reading by an author-external AI role supports the arguments in this four-page note. **It is a clear reconstruction of a classical result, useful as a demonstration of proof and checking; it is not currently original research for a leading mathematics journal.** Correctness does not establish originality.
-
-| Criterion | Finding |
+| Result | Justification |
 |---|---|
-| Correctness | Both proofs, the closed form and the generating function are supported; the proved order bound justifies the all-size conclusion. |
-| Originality | The central count and recurrence are classical. |
-| Significance | Educational value is clear; there is no new theorem or major research consequence. |
-| Method | The link between finite states and a justified recurrence bound is reusable, unlike an order guessed only from data. |
-| Exposition | Tests, proofs and the known status of the result are distinguished. |
-| Verifiability | Independent small-board counts and eight difference equations agree; this is not formal certification. |
+| **a(n)=4a(n−1)−a(n−2)**, with a(0)=1 and a(1)=3 | Two independent arguments: a board decomposition and a transfer-matrix proof. |
+| a(n)=((3+√3)/6)(2+√3)ⁿ + ((3−√3)/6)(2−√3)ⁿ | Solving the recurrence; successive ratios tend to 2+√3. |
+| a(0)…a(16): 1, 3, 11, 41, 153, …, **1117014753** | All three counting methods agree through n=5; matrix and recurrence counts agree through n=16. |
+| No polynomial formula of degree ≤8 | The exponential growth rules out a polynomial count. |
 
-The [version-bound review](evaluation.json) records checks and limits. A misleading ratio field was corrected to `ratio_a16_over_a15`; its value, the paper and the figures are unchanged, and the finding is retained. Any future original study needs a genuinely unresolved extension before further computation. [Annals](https://annals.math.princeton.edu/board) and [Inventiones](https://link.springer.com/journal/222/aims-and-scope) inform the research target; this is a non-blind, uncalibrated AI review, not a journal decision.
+## Derivation and checks
 
-## Run it yourself
+Backtracking, an eight-state transfer matrix, and coupled recurrences from local board configurations first produce independent small-case counts. An exact recurrence search uses only the first 13 terms; a(13)…a(16) are held out. A further counterexample search covers 2≤n≤60.
+
+The all-size result has two proofs:
+
+- **Decomposition:** an exhaustive classification at the left edge yields two coupled recurrences, from which the auxiliary count can be eliminated.
+- **Finite-state argument:** the matrix supplies a proved order bound of eight. The difference sequence for the proposed recurrence inherits that bound, so eight zero initial terms establish that it vanishes identically.
+
+The order bound comes from the mathematical structure, not the fitted data. Held-out tests and counterexample searches challenge the guess; the theorem rests on the separate arguments. The [archived results](reproduce/reference/) retain the computations and rejected route.
+
+## Review
+
+**A sound, readable reconstruction of a classical result, with a useful account of discovery and proof checking.**
+
+The complementary proofs are its main strength. The decomposition explains where the recurrence comes from; the matrix argument explains why a finite check is sufficient. Computational agreement, conjecture testing and proof are clearly distinguished.
+
+Its contribution is expository rather than original mathematical research. The central enumeration is known, and no new theorem or major consequence has been established. Further computation or typesetting would not resolve that originality gap.
+
+This is an author-external AI review of the current four-page note, conducted non-blind. The [version-bound assessment](evaluation.json) records its scope; it is neither human peer review nor proof-assistant certification.
+
+## Note and materials
+
+| Resource | Contents |
+|---|---|
+| [Complete 4-page English note](deliverables/paper.pdf) | Three counting methods, two proofs, diagrams and theorem scope |
+| [Calculation source](reproduce/explore.py) | Exact counts, recurrence search, held-out checks and route record |
+| [Reference results](reproduce/reference/) | Frozen computations and evidence |
+
+The note uses the shared [AMS-style research template](../../templates/research-paper.tex). Open the complete PDF for the arguments and diagrams.
+
+## Reproduction
 
 From the Praxis repository root:
 
 ```bash
 uv sync --locked
-uv run --locked python demos/domino-research/reproduce/explore.py   # recomputes every number in seconds; writes reproduce/reproduced/
+uv run --locked python demos/domino-research/reproduce/explore.py
 ```
 
-To retypeset the note you need Tectonic 0.17.0 and the pinned resource bundle: `uv run --locked python demos/domino-research/reproduce/build_note.py`.
+The script recomputes the counts and checks into `reproduce/reproduced/`, leaving the reference archive intact. Repeated runs update that reproduction directory. No typesetting tools or AI service are needed for the calculations.
 
-## File map
+Optional typesetting: `uv run --locked python demos/domino-research/reproduce/build_note.py`, using Tectonic 0.17.0 and the pinned resource bundle.
+
+## File structure
 
 ```text
-deliverables/paper.pdf         # the research note (English, 4 pages)
-reproduce/explore.py          # three counts, guess and tests, finite check, route record and lesson
-reproduce/build_note.py       # typesets the note from the archived numbers
-reproduce/reference/          # archived numbers and the route record
-assets/                       # images for this page
+deliverables/paper.pdf   English research note
+reproduce/explore.py     Counts, conjectures and checks
+reproduce/build_note.py  Builds the note from archived values
+reproduce/reference/    Frozen results and route record
+evaluation.json         Full-note review and checking scope
+assets/                 Case illustrations
 ```
 
-## Sources, limits and license
+## Sources and license
 
-- The sequence 1, 1, 3, 11, 41, 153, … is [OEIS A001835](https://oeis.org/A001835) (offset by one); the case did not search the literature further and claims no novelty.
-- The proofs in the note are short enough to check by hand; nothing was formalised in a proof assistant. The case shows a way of working, not an upper bound on research strength.
-- Code, note and figure are under the repository's MIT license.
-
-If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.
+The count is [OEIS A001835](https://oeis.org/A001835), with an index shift of one. The case presents a reconstruction, without claiming a new discovery. Original code, note and figures use the repository's [MIT License](../../LICENSE).

@@ -1,4 +1,64 @@
-# Calculation and report build
+# 计算复现与证据索引 · Reproduction guide
+
+## 复现索引
+
+先选择要核查的结论，再决定是否需要重新计算。**归档审计**只核对身份、覆盖和算术；**独立重放**重新积分或检查既有策略；**重新求解**另行产生候选。三者不能互相替代。全部命令从 Praxis 仓库根目录执行，锁定依赖先运行 `uv sync --locked`。
+
+Choose an evidence claim before launching a calculation. Archive audits inspect bindings and arithmetic; independent replays check fixed policies; new solves create new candidates. The index below separates these operations and their scope.
+
+| 核查目的 / Question | 入口与范围 / Entry and scope |
+|---|---|
+| 基准结果 / Baseline | [基准计算与排版](#基准计算与论文构建)：`run_demo.py`，18 项复现检查，独立于后续专项。 |
+| 归档候选 / Historical candidates | [历史候选与验证器](#历史候选与验证器)：冻结源及原验收身份；当前修复不会改写旧运行。 |
+| 测量与结构 / Observations and structure | [控制与测量研究](#控制与测量研究)：各研究的输入、比较范围和原运行限制。 |
+| 公平成本 / Comparable costs | [Common-reserve structural comparison](#common-reserve-structural-comparison)：快速审计、54 个极端对象独立重放，或可选全集合重算。 |
+| 反馈行动 / Realized feedback | [Observation-triggered feedback](#observation-triggered-feedback)：归档审计与三网格行动重放；不重新生成闭环搜索。 |
+| 模型外与连续邻域 / Transfer | [Off-bank transfer](#off-bank-transfer-boundaries)及[连续参数框](#continuous-fixed-action-parameter-boxes)：完整／部分轨迹与固定动作的条件证据。 |
+| 替代输运机制 / Alternative transport | [Independent transport comparison](#independent-transport-comparison)：不同守恒闭合、原策略重放及限定搜索。 |
+| 模型拒绝后的接续 / Recourse | [拒绝后接续](#拒绝之后怎样续行)及[目录外接续](#恒流障碍与目录外接续)：保留失败与实际接续范围。 |
+| 全时域可达性 / Attainability | [Arbitrary-control certificate](#arbitrary-control-certificate)、[时序判据](reference/spatial-functional/README.md)及[等待界](reference/delayed-upper/README.md)：精确证书／条件数值重放，按各说明操作。 |
+
+<details>
+<summary>快速归档审计与独立重放 / Audits and independent replays</summary>
+
+输出路径必须是新文件。以下是可分别选择的操作，不是必须依次执行的流水线；`--seconds` 是协作式预算检查，不能中断正在执行的数值调用。
+
+```bash
+uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode audit --output .session/bath-common-audit.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode audit --output .session/bath-feedback-audit.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_common_reserve.py --mode replay-extrema --seconds 180 --output .session/bath-common-replay.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_feedback.py --mode replay --seconds 30 --output .session/bath-feedback-replay.json
+uv run --locked python demos/mcm-2016-a/reproduce/check_finite_volume.py --output .session/bath-discretization.json
+```
+
+这些操作核查既有证据或固定轨迹。全银行资格重算另选 `study_common_reserve.py --mode qualify --seconds 900 --output <new.json>`，不会重新优化，也不自动提供全银行独立积分。
+
+</details>
+
+<details>
+<summary>可选专项计算 / Optional study computations</summary>
+
+先执行基准入口建立 `reproduced/`。下列命令各有不同的研究目的，详见对应段落；扩展优化的历史运行约 20 分钟，其他 `--seconds` 是单次协作式预算，不是整批硬限制。重建输出使用当前源码，不能冒充冻结的历史运行。
+
+```bash
+uv run --locked python demos/mcm-2016-a/reproduce/run_extended.py
+uv run --locked python demos/mcm-2016-a/reproduce/run_mesh_check.py
+uv run --locked python demos/mcm-2016-a/reproduce/check_structure.py --output demos/mcm-2016-a/reproduce/reproduced/structure.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_control.py --output demos/mcm-2016-a/reproduce/reproduced/control-study.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_calibration.py --output demos/mcm-2016-a/reproduce/reproduced/calibration-study.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/check_calibration_transfer.py --output demos/mcm-2016-a/reproduce/reproduced/calibration-transfer.json
+uv run --locked python demos/mcm-2016-a/reproduce/study_information_value.py --output demos/mcm-2016-a/reproduce/reproduced/information-value.json --seconds 360
+uv run --locked python demos/mcm-2016-a/reproduce/screen_observations.py --output demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --seconds 120
+uv run --locked python demos/mcm-2016-a/reproduce/study_observation_control.py --input demos/mcm-2016-a/reproduce/reproduced/observation-screening.json --output demos/mcm-2016-a/reproduce/reproduced/observation-control.json --seconds 180
+uv run --locked python demos/mcm-2016-a/reproduce/study_structure_inference.py --output demos/mcm-2016-a/reproduce/reproduced/structure-inference.json --seconds 150
+uv run --locked python demos/mcm-2016-a/reproduce/study_structure_decision.py --output demos/mcm-2016-a/reproduce/reproduced/structure-decision.json --seconds 180
+```
+
+Each command has a separate scope. Preserve failures and inspect the new receipt; a successful historical run does not certify the current source version or replace a failed new candidate.
+
+</details>
+
+## 基准计算与论文构建
 
 数学复现从仓库根目录运行 `uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py`。源码只依赖锁定环境中的 NumPy 与 SciPy；没有原题专属观测数据，也不连接 AI 服务。生成目录存在时拒绝覆盖。
 
@@ -16,9 +76,13 @@ uv run --locked python demos/mcm-2016-a/reproduce/build_report.py --run demos/mc
 
 The calculation is portable Python. Report builds require Tectonic 0.17.0 with the resource bundle pinned in `templates/typesetting-runtime.json`; a build receipt binds the source and PDF: figures are generated as pgfplots/TikZ source by `scripts/texplot.py`, and the fonts come with the TeX distribution. Rebuilding is optional and does not change the archived deliverable. Render and inspect any rebuilt PDF before treating it as a final document.
 
+## 历史候选与验证器
+
 历史 `reference/mesh_check.json` 仍绑定原验证器，精确源码保留为 `reference/mesh-validator-335052c.py`。当前 `run_mesh_check.py` 另修复了空候选恢复；本次只在短合成案例验证新分支，没有重跑原全时域三网格验收。报告重建可引用哈希匹配的历史验证器及未变的物理源码，不将旧结果认证为新版验证器运行；新验收须生成自己的新收据。
 
 The archived mesh receipt keeps its original validator, preserved byte-for-byte as `reference/mesh-validator-335052c.py`. The current validator adds failed-candidate recovery, checked on short synthetic cases only. Report reconstruction can use the hash-matched historical source and unchanged physical code; it does not claim a new full-horizon validation.
+
+## 控制与测量研究
 
 `study_control.py --output <new.json> --seconds 180` 在归档基线之外重算有限测温与已知混合系数的条件策略；`reference/control-study.json` 保存九情景探头诊断、两候选的完整流量、优化尝试和三网格条件连续核验。拒绝覆盖输出；时间边界在计算节点检查，不是操作系统强制超时。它不重跑原基线优化，也不提供真实参数辨识、噪声传感或人工执行保证。报告构建器核对该收据的源码哈希与基线流量。
 
@@ -83,7 +147,7 @@ Two off-grid parameter cases complete30minutes with22.593389/22.797395 L command
 
 See [the derivation, bounds, failures and scope](reference/continuous-transfer.md). `feedback_study.continuous_values()` audits the two-route, three-grid, predeclared-scale archive and all 102 independent corner identities. The accepted PDF integrates the conditions and exact-remainder argument in Section 11.3. Its current whole-paper assessment is bound separately in verification.json; numerical audit alone is not an award judgment. Exact archived producers and dependencies permit fresh-copy reproduction without rerunning the earlier feedback search.
 
-To rebuild the two case-page excerpts after reviewing and adopting a paper, run `uv run --locked python demos/mcm-2016-a/reproduce/build_previews.py --pdf demos/mcm-2016-a/deliverables/7391856.pdf --output demos/mcm-2016-a/assets` from the repository root. The proof page is located by its content rather than an old page number; the returned receipt binds both images to the selected PDF. This only renders excerpts and does not approve the manuscript. After a candidate passes manuscript and PDF review, copy the same accepted bytes to `../paper.pdf` (public reading) and `../deliverables/7391856.pdf` (submission). The builder does not replace either accepted public copy; equality is checked in the release regression.
+To render optional manuscript excerpts for detailed inspection, run `uv run --locked python demos/mcm-2016-a/reproduce/build_previews.py --pdf demos/mcm-2016-a/deliverables/7391856.pdf --output .session/bath-excerpts` from the repository root. The proof page is located by its content rather than an old page number; the returned receipt binds both images to the selected PDF. This only renders excerpts and does not approve the manuscript. After a candidate passes manuscript and PDF review, copy the same accepted bytes to `../paper.pdf` (public reading) and `../deliverables/7391856.pdf` (submission). The builder does not replace either accepted public copy; equality is checked in the release regression.
 
 ## Independent transport comparison
 
