@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
-  "bytes": 174216,
+  "sha256": "54a75b59eb97ac3e9cac08ee76f61be31b05c465d4485d9178292b9ea6e868eb",
+  "bytes": 174093,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "All 26 pages rendered and contact-reviewed; changed pages 21/26 inspected at readable size. Full prior-symbol candidate independently read, then final omega correction inspected separately. Zero out-of-page characters; fonts, baseline and five figures unchanged; native and pinned compile success.",
+  "visual_review_note": "All26 pages rendered and contact-reviewed; changed2/16/17/18/19/20/21/22 inspected at readable size. Author-external targeted final review with prior whole-manuscript understanding, not a repeated new full read. Zero out-of-page characters; native and pinned compile success; same fonts, five figures and numerical results.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "2fa1fd4a8b5ca0ae0420dcd057267e85",
-  "generator_sha256": "537c53130667228ed60b2f2260b6cd42433eae6387a48c1333cc430af5ac1716",
-  "tex_sha256": "51d79502d70980af2b630f3db12cc5d1d72a2473ad5e413296618401016b7cb5"
+  "md5": "968a9871424ebe8d457f84745f0e7c88",
+  "generator_sha256": "84d65dcc45b0c33e6093b8d572a77d754415ea41932bfb007656819cf54e3303",
+  "tex_sha256": "5fc80d6c417ac10abb9c5db70750ca5b0c66ec933777b0c28d91da2b62955239"
  },
  "model_checks": {
   "total": 17,
@@ -117,7 +117,7 @@
  },
  "preview_pages": [
   1,
-  8
+  7
  ],
  "user_guide_page": 23,
  "float_callout_review": {
@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 737,
+  "passed": 744,
   "date": "2026-10-10",
-  "scope": "Final adopted ef282 manuscript and portable spatial-functional evidence, 737 passed/0 failed/0 skipped; first 736+1 export-link failure preserved and explicit export allowlist repaired. Three existing texplot negative-input warnings. No thermal optimization rerun."
+  "scope": "Final adopted54a manuscript and conditional-strategy consumer,744passed/0failed/0skipped after correcting public reading hash. Initial743+1 binding failure retained. Three existing texplot negative-input warnings; no thermal optimization rerun."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -780,9 +780,9 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
+  "version_sha256": "54a75b59eb97ac3e9cac08ee76f61be31b05c465d4485d9178292b9ea6e868eb",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external full 26-page c4b9 candidate review, then actual final ef282 page21 symbol/text/image check; scope separated. Same-family AI, nonblind, uncalibrated.",
+  "review_scope": "Author-external final changed-page/source/negative-case review using prior whole-manuscript understanding; same-family AI, nonblind, uncalibrated.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -792,11 +792,12 @@
    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
    "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
-   "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary."
+   "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
+   "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected."
   ],
-  "main_gap": "Qualified policies and negative functional results still need a coherent mechanism boundary; stronger diffusion non-exclusion does not establish feasibility.",
-  "highest_value_next_action": "Organize existing qualified policies and obstruction certificates into one conditional mechanism boundary with explicitly unproved regions.",
-  "strength_note": "Strong Finalist center/F–O adjacent; real mechanism interpretation improved, Outstanding not established.",
+  "main_gap": "Eleven discrete scenarios do not establish continuous transport/loss/tolerance conditions or thresholds for immediate supply, waiting and arbitrary-control exclusion.",
+  "highest_value_next_action": "Derive and independently check a conditional strategy-switch boundary rather than interpolating the eleven archived scenarios.",
+  "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
   "calibrated": false
  },
  "feedback_revision": {
@@ -1618,7 +1619,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
+  "sha256": "54a75b59eb97ac3e9cac08ee76f61be31b05c465d4485d9178292b9ea6e868eb",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -1940,5 +1941,95 @@
    "fixed768": 1533
   },
   "scope": "Signed contrast, not heat; existing dual-derived fixed weights, separately verified state supports. Finite networks only; stronger diffusion loses this obstruction without proving feasibility. No thermal optimization or figure-data changes."
+ },
+ "conditional_strategy_revision": {
+  "previous_pdf": {
+   "sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
+   "bytes": 174216,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All 26 pages rendered and contact-reviewed; changed pages 21/26 inspected at readable size. Full prior-symbol candidate independently read, then final omega correction inspected separately. Zero out-of-page characters; fonts, baseline and five figures unchanged; native and pinned compile success.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "2fa1fd4a8b5ca0ae0420dcd057267e85",
+   "generator_sha256": "537c53130667228ed60b2f2260b6cd42433eae6387a48c1333cc430af5ac1716",
+   "tex_sha256": "51d79502d70980af2b630f3db12cc5d1d72a2473ad5e413296618401016b7cb5"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
+   "checked_on": "2026-10-10",
+   "review_scope": "Author-external full 26-page c4b9 candidate review, then actual final ef282 page21 symbol/text/image check; scope separated. Same-family AI, nonblind, uncalibrated.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+    "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
+    "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary."
+   ],
+   "main_gap": "Qualified policies and negative functional results still need a coherent mechanism boundary; stronger diffusion non-exclusion does not establish feasibility.",
+   "highest_value_next_action": "Organize existing qualified policies and obstruction certificates into one conditional mechanism boundary with explicitly unproved regions.",
+   "strength_note": "Strong Finalist center/F–O adjacent; real mechanism interpretation improved, Outstanding not established.",
+   "calibrated": false
+  },
+  "previous_test_suite": {
+   "passed": 737,
+   "date": "2026-10-10",
+   "scope": "Final adopted ef282 manuscript and portable spatial-functional evidence, 737 passed/0 failed/0 skipped; first 736+1 export-link failure preserved and explicit export allowlist repaired. Three existing texplot negative-input warnings. No thermal optimization rerun."
+  },
+  "scope": "Eleven archived scenarios joined to action and evidence; S is independent five-second sampled replay, E96 is a matched arbitrary-control finite-network exclusion, unresolved is not infeasible. No new heat simulation, optimization, continuous switching threshold or empirical calibration.",
+  "retrospective_binding": "reproduce/reference/regime-binding.json",
+  "negative_cases_rejected": 6,
+  "numerical_results_changed": false,
+  "figures_changed": false,
+  "pages_changed": [
+   2,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22
+  ]
  }
 }

@@ -98,6 +98,8 @@ CE=constant_exclusion(ROOT); RT=recourse_transfer(ROOT); AC=all_control_exclusio
 FR=fixed_region_exclusion(ROOT)
 from spatial_functional_values import spatial_functional_values
 SF=spatial_functional_values(ROOT)
+from regime_values import regime_values
+REGIME=regime_values(ROOT,args.run)
 AXM=AX['groups'][('uniform',.001)]['selected']; AXS=AX['groups'][('uniform',.003)]['selected']
 AXWEAK=next(x['metrics'] for x in AX['run']['rows'] if x['profile']=='uniform' and x['D']==.0003 and x['cells']==160 and x['policy']=='original_constant')
 AX_ERR=math.ceil(max(max(x['max_error_c'][-1:]) for x in AX['checks']['records'] if x['check']=='transient_continuum_refinement')*1e6)/1e6
@@ -128,7 +130,7 @@ escape=lambda s:s
 tex=[];eqcount=0;tabcount=0;table_total=0;SEC=[0]
 CAPS=['Where each requirement is answered','Modeling options compared','Baseline inputs','Coefficient anchors and the values used','Symbols',
  'Baseline result under the best constant rate','Constant rate, scheduled flow and the bounds','Geometry, size and body scenarios',
- 'Mixing, surface, comfort and supply scenarios','Mesh replay: constrained temperatures','Common-reserve structural decisions','Scenario definitions','Scenario definitions (continued)']
+ 'Conditional strategy map','Mesh replay: constrained temperatures','Common-reserve structural decisions','Scenario definitions','Scenario definitions (continued)']
 UNI={'′':r"$'$",'Ṫ':r'$\dot T$','∫':r'$\int$','≥':r'$\geq$','≤':r'$\leq$','≈':r'$\approx$','→':r'$\rightarrow$','≠':r'$\neq$','⁻':r'$^{-}$','¹':r'$^{1}$','⁰':r'$^{0}$','∂':r'$\partial$','ρ':r'$\rho$','Δ':r'$\Delta$','∑':r'$\sum$','−':'-','µ':r'$\mu$','∞':r'$\infty$'}
 def esc(s):
     s=s.replace('\\',r'\textbackslash{}')
@@ -473,15 +475,16 @@ para(f'The larger-body case combines displacement and contact-area changes and {
 para('To transfer the model to a real tub, measure water volume after entry, submerged contact geometry, temperatures at several depths and distances, and no-inlet cooling. Shape and temperature should not be inferred from a single mean cooling curve.')
 
 page('9. Motion and bubble-layer scenarios')
-rows=[['Scenario','Added water (L)','Search outcome']]
-for key in ['weak mixing','strong mixing','moving with added surface loss','stratified','convective surface layer','foam','tight comfort','loose comfort','low loss','high loss','cool supply']:
- v=sc[key]['policy'];rows.append([key.title(),f'{v["water_l"]:.2f}' if v['feasible'] else '—','Accepted' if v['feasible'] else 'None accepted'])
-table(rows,[224,116,128])
+rows=[['Scenario','Water (L)','Action and evidence']]
+for row in REGIME['rows']:
+ rows.append([row['scenario'].title(),f'{row["water_l"]:.2f}' if row['water_l'] is not None else '—',row['action']])
+table(rows,[186,68,214])
+para('S means five-second sampled qualification; E96 is the matched 96-cell all-control exclusion (Section 11.4). Waiting precedes the archived constant rate. High loss is unresolved; no interpolation or between-sample guarantee follows. The baseline schedule is separately qualified by three-grid continuous envelopes (Section 7).')
 para(f'Increasing D reduces the gradient created by the localized inlet. The strong-mixing scenario uses {sc["strong mixing"]["policy"]["water_l"]:.2f} L against {b["water_l"]:.2f} L, but motion may also increase heat loss. When D is increased together with a 20% increase in the surface coefficient (30 instead of 25 W/(m² K)), the need rises to {sc["moving with added surface loss"]["policy"]["water_l"]:.2f} L and most of the benefit disappears. The comparison deliberately separates transport improvement from its possible boundary cost.')
-para(f'Stratification is tested separately. A hot inlet layer is lighter than the water below, and the stable density gradient suppresses vertical mixing. With a cell height of 0.077 m, a vertical temperature difference of 1 K, a velocity scale of 0.02 m/s and an expansion coefficient of about 3.8e-4 per K, the gradient Richardson number is $\\mathrm{{Ri}}=g\\beta\\,\\Delta T\\,\\ell/u^2\\approx 0.7$. The Munk–Anderson stability function for scalars, $(1+3.33\\,\\mathrm{{Ri}})^{{-3/2}}$ [8], then reduces vertical diffusivity to about 0.15 of its neutral value. We test a vertical-to-horizontal ratio of 0.2. The best constant rate becomes {sc["stratified"]["policy"]["water_l"]:.2f} L against {b["water_l"]:.2f} L, but the maximum spread rises from {b["max_span"]:.2f} to {sc["stratified"]["policy"]["max_span"]:.2f}°C against the 1.50°C limit. Stratification therefore costs little water here and uses {100*(sc["stratified"]["policy"]["max_span"]-b["max_span"])/(p["span"]-b["max_span"]):.0f}% of the remaining uniformity margin; the ratio is an order-of-magnitude scenario and the Richardson estimate uses assumed velocity and temperature scales. The stable layer is an upper-bound picture: evaporative cooling at the surface can instead drive convection and raise vertical mixing, so a vertical-to-horizontal ratio of 3 is also tested, and it {fx("convective surface layer")}.')
+para(f'A stable hot surface layer can suppress vertical mixing. Assumed scales $\\ell=0.077$ m, $\\Delta T=1$ K, $u=0.02$ m/s and $\\beta=3.8\\times10^{{-4}}$ K$^{{-1}}$ give $\\mathrm{{Ri}}=g\\beta\\Delta T\\ell/u^2\\approx0.7$. The Munk–Anderson scalar factor $(1+3.33\\mathrm{{Ri}})^{{-3/2}}$ [8] is about 0.15; we test a vertical/horizontal diffusivity ratio of 0.2. Water rises from {b["water_l"]:.2f} to {sc["stratified"]["policy"]["water_l"]:.2f} L, while spread rises from {b["max_span"]:.2f} to {sc["stratified"]["policy"]["max_span"]:.2f}°C, using {100*(sc["stratified"]["policy"]["max_span"]-b["max_span"])/(p["span"]-b["max_span"]):.0f}% of the remaining uniformity margin. These assumed scales are not measurements. Evaporative surface cooling may instead drive convection; testing ratio 3 gives {sc["convective surface layer"]["policy"]["water_l"]:.2f} L.')
 para(f'The foam scenario multiplies only the effective surface coefficient by 0.4. With all other inputs fixed, the best constant rate falls to {sc["foam"]["policy"]["water_l"]:.2f} L. The assumed 60% reduction is a scenario, not an experimentally established property of bubble-bath additive. If the layer breaks up or motion raises evaporation, this result must be recomputed.')
 none=[k.title() for k,v in sc.items() if not v['policy']['feasible']]
-para('No candidate was accepted for: '+', '.join(none)+'. In weak-mixing, high-loss and wide-shallow trials, sufficient inflow violates spread on sampled rates 0.8–2.5 L/min. Finite search does not prove infeasibility; Section 11.4 gives a separate fixed-network obstruction. Circulation, inlet layout, duration or comfort tolerance may need to change; each remedy requires its own evidence.')
+para('No candidate was accepted for: '+', '.join(none)+'. In weak-mixing, high-loss and wide-shallow trials, sufficient inflow violates spread on sampled rates 0.8–2.5 L/min. Finite search does not prove infeasibility; Section 11.4 gives a separate fixed-network obstruction. Changing circulation, inlet layout, duration or tolerance requires separate evidence.')
 
 page('10. Numerical verification')
 num=lambda name:json.loads(next(c['evidence'] for c in checks if c['name']==name))

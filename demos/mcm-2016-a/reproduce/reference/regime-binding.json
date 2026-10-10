@@ -1,0 +1,9 @@
+{
+  "scope": "Retrospective binding of the existing accepted scenario values and independent sampled receipts, not a new heat replay or original-run hash record",
+  "base_commit": "e6cc37c2284f49bef541d96614ec0538e440c895",
+  "files_sha256": {
+    "reference/results.json": "b30b158686f029640df0b975739c3d9b2c14dfeb507d762e1999df694940da28",
+    "reference/checks.json": "ca0ac71a5f2f52e61a52f4291cc6245b93cf6eadcff2c614a2a6880e76d04dc3",
+    "code/model.py": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db"
+  }
+}
