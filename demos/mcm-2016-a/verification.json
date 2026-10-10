@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
-  "bytes": 175095,
+  "sha256": "26ae30bea0b8ce28e03454fce1ac0d368be629249a6469a392b2f63d69ed6837",
+  "bytes": 175826,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "Inherited711e full understanding, final2621 all26 overview and16/17 actual inspected; textdiff only16/17. Native and pinned compile success, no outside-page characters, fonts/five figures unchanged.",
+  "visual_review_note": "Final26page render and zero outside-page characters; author-external full current1036line text/original question and allpage overview,14 original-size pages including allfive figures. Root changed1/2/16–22/26 inspected; pinned/native compilation successful.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "7add557ba52cc39d3ea4c4796041a8d7",
-  "generator_sha256": "91b480f7a4eff29aa41717302f5bad9414ca3ab4a113c78c55ee40f46c9809d3",
-  "tex_sha256": "de85406a9ee1d34a62fff9ea24125aa38f213f51b6173b18ed0ddd43d71f6e9c"
+  "md5": "cf0b7b2d48ca2e7edaab118592564583",
+  "generator_sha256": "10817791bc48be3e870d00833aff617b1891ffedae455179063a491f312b390f",
+  "tex_sha256": "2c784f66d45a7b23f1eaa467799ae105e2cb00a744a03bd873ae33d524f555f0"
  },
  "model_checks": {
   "total": 17,
@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 758,
+  "passed": 771,
   "date": "2026-10-10",
-  "scope": "758 passed, 0 failed, 0 skipped; 3 existing warnings; 160.08s. Final2621 adopted PDF and delay-path capsule included."
+  "scope": "771 passed,0failed,0skipped;3existingwarnings;174.93s. Final26ae pulse/exclusion integration included. Earlier766+1 export-link and770+1 obsolete equivalent-wording assertion failures retained privately and corrected at their roots."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -780,9 +780,9 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
+  "version_sha256": "26ae30bea0b8ce28e03454fce1ac0d368be629249a6469a392b2f63d69ed6837",
   "checked_on": "2026-10-10",
-  "review_scope": "Inherited prior711e full manuscript/original question understanding plus final2621 pages16/17 and actual26page overview, complete extracted-page diff. Same-family AI, nonblind uncalibrated.",
+  "review_scope": "Current26ae whole1036line manuscript and original question reread; final26page overview and14 actual-size pages including five figures. Same-family author-external AI, nonblind uncalibrated; lightweight consumer executed, no reviewer integration rerun.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -796,10 +796,12 @@
    "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected.",
    "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization.",
    "Implicit terminal-floor branch sensitivity gives opposite water-delay signs at D=.001 and.003; independent stream/ODE variations and strict physical envelopes agree. Numerical local crossing≈1.38e-3m²/s, not exact/unique/global threshold.",
-   "Same terminal39.03C branch at D=.003:700s wait passes full-path envelopes;720s wait has an actual interior violation, independently rechecked at the same minimum point with matrix exponential. Prefixes both qualify; no latest-delay claim."
+   "Same terminal39.03C branch at D=.003:700s wait passes full-path envelopes;720s wait has an actual interior violation, independently rechecked at the same minimum point with matrix exponential. Prefixes both qualify; no latest-delay claim.",
+   "At D=.003, cooperative optimistic comparison and independent archive-only flux/error enclosure exclude every common measurable q in[0,3] after zero-flow prefix>=790s. Fixed original96 IEEE64 scope; not sharp/PDE/empirical.",
+   "On the sameD=.003 archived96 network, a780s zero-prefix two-stage supply uses19.26264L and qualifies the whole path with cumulative assumed solver error;>=790s is excluded for every common measurable q in[0,3] under an explicit IEEE64 enclosure. Ten-second gap remains unresolved."
   ],
-  "main_gap": "Qualified700s and failed720s show interior constraints truncate the terminal-floor branch, but do not establish a finite safe-delay range or complete strategy selection.",
-  "highest_value_next_action": "Connect active path constraints to a bounded finite-delay decision rule; distinguish stationary candidates, conditional qualification and arbitrary-control limits.",
+  "main_gap": "The780s conditional positive witness and790s all-control exclusion give a ten-second unresolved gap at one fixed network; how transport/loss changes move waiting/action boundaries remains unestablished.",
+  "highest_value_next_action": "Explain waiting/action boundaries across a bounded transport/loss region using shared conditions and distinct qualified/excluded/unresolved evidence; avoid refining only the same single point.",
   "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
   "calibrated": false
  },
@@ -1622,7 +1624,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
+  "sha256": "26ae30bea0b8ce28e03454fce1ac0d368be629249a6469a392b2f63d69ed6837",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -2346,5 +2348,76 @@
     }
    }
   }
+ },
+ "delayed_upper_revision": {
+  "previous_pdf_sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
+  "previous_source_commit": "43f40210e20f6c2c690ce02b4729aaa52acd2c00",
+  "pdf_sha256": "eb6619dd4fa189da2fdb3184823ce7b3cf0200657e9ac90535fe75a1c7b9466c",
+  "scope": "Archived96 D=.003; prefix>=790s excludes any common measurable q in[0,3], 39C all-cell floor throughout1800s. IEEE64 assumptions, not sharp cutoff/PDE/empirical.",
+  "checker": "Primitive archive, independent direct flux SSP2/Euler, rational truncation/rounding budget and all-step state-domain induction. Publicstdout replay actually executed; original private producer not required.",
+  "strict_upper_c": 38.99797708255518,
+  "changed_text_pages": [
+   1,
+   17,
+   22,
+   26
+  ],
+  "native_compile": "success",
+  "whole_paper_review": "all26 currenttext/original question and original-size changed/figurepages;strongF center/F–O, nonblind uncalibrated, Ounestablished",
+  "original_optimization_and_five_figures": "unchanged",
+  "tests_status": "13 current pair guards and771 whole regression passed; originaleb review remains historical.",
+  "preview_binding": {
+   "pdf_sha256": "eb6619dd4fa189da2fdb3184823ce7b3cf0200657e9ac90535fe75a1c7b9466c",
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "sha256": "af3a5a5dcf796f7cdefc321da060a13bc813d942d1b9a3319b1df655729739e1"
+    },
+    "report-proof.png": {
+     "page": 7,
+     "sha256": "6c65222385971819ff3ce78a11edf4840e00b40070758478f7ab1d763bfa9f9a"
+    }
+   }
+  }
+ },
+ "waiting_witness_revision": {
+  "previous_pdf_sha256": "eb6619dd4fa189da2fdb3184823ce7b3cf0200657e9ac90535fe75a1c7b9466c",
+  "pdf_sha256": "26ae30bea0b8ce28e03454fce1ac0d368be629249a6469a392b2f63d69ed6837",
+  "scope": "Same archived96cell D=.003; zero prefix780s then3L/min90s then0.9524284460L/min to1800s. Qualified positive witness, not latest delay/global water optimum/PDE/empirical.",
+  "water_l": 19.26264091349054,
+  "floor_lower_c": 39.00439309505924,
+  "ceiling_upper_c": 40.0000035657,
+  "spread_upper_c": 0.7904224639,
+  "comparison": "Every common measurable q in[0,3] excluded for prefix>=790s; ten-second unresolved gap; sup of feasible delays may equal790.",
+  "checker": "Immutable primitive direct flux DOP853 with0.1s second-derivative chord and assumed2e-6C error accumulated across three stages.",
+  "changed_text_pages": [
+   1,
+   2,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   26
+  ],
+  "native_compiler": "success",
+  "tests_status": "771 whole and13 direct guards passed; earlier770+1 equivalent-prose guard failure preserved. Export replay329 hashes/4RPC and independent upper/pulse plus3network/5functional checks passed before final metadata update.",
+  "original_optimization_and_five_figures": "unchanged",
+  "preview_binding": {
+   "pdf_sha256": "26ae30bea0b8ce28e03454fce1ac0d368be629249a6469a392b2f63d69ed6837",
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "sha256": "36d64a5b052ebd5b534980cd5e7718cbeadef827b30846ad364e7c8f780afea3"
+    },
+    "report-proof.png": {
+     "page": 7,
+     "sha256": "6c65222385971819ff3ce78a11edf4840e00b40070758478f7ab1d763bfa9f9a"
+    }
+   }
+  },
+  "whole_paper_review": "Actual final26ae full manuscript/question,14 actual pages including5figures; no blockers. StrongF/F–O reference, nonblind uncalibrated, Ounestablished."
  }
 }

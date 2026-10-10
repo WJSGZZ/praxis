@@ -1,0 +1,44 @@
+{
+  "selected": [
+    {
+      "delay": 720.0,
+      "lead": 3.0,
+      "pulse": 90.0,
+      "tail": 0.8944990520946149,
+      "water_l": 19.259234359561145,
+      "floor": 39.03000000000827,
+      "ceiling": 40.0,
+      "spread": 0.7840974719137179,
+      "terminal_floor": 39.030000000010546,
+      "accepted_sample": true
+    },
+    {
+      "delay": 750.0,
+      "lead": 3.0,
+      "pulse": 90.0,
+      "tail": 0.9224064284090999,
+      "water_l": 19.2585028545456,
+      "floor": 39.03000000000813,
+      "ceiling": 40.0,
+      "spread": 0.7863913296832408,
+      "terminal_floor": 39.030000000009395,
+      "accepted_sample": true
+    },
+    {
+      "delay": 780.0,
+      "lead": 3.0,
+      "pulse": 90.0,
+      "tail": 0.9524284460316478,
+      "water_l": 19.26264091349054,
+      "floor": 39.004689370914505,
+      "ceiling": 40.0,
+      "spread": 0.788678165296119,
+      "terminal_floor": 39.030000000006474,
+      "accepted_sample": true
+    }
+  ],
+  "model_sha256": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+  "primitive_sha256": "cdfa0427fe6380219353caae99152996ee887d8de4791a194633bbf4ad8e69c4",
+  "prior_screen_sha256": "e03af0f52dcdceb1436214378ad1f33e86d0b8760616eab7c162ebcd36c260b1",
+  "scope": "Three selected27candidate original96 strongD=.003 finite screen. Positive floating qualification; not optimality or a sharp cutoff."
+}

@@ -46,6 +46,7 @@ TREES = {
     'demos/mcm-2016-a/reproduce/reference': {'.npz', '.json', '.py', '.md'},
     'demos/mcm-2016-a/reproduce/reference/transport': {'.json', '.py', '.md'},
     'demos/mcm-2016-a/reproduce/reference/spatial-functional': {'.json', '.py', '.md'},
+    'demos/mcm-2016-a/reproduce/reference/delayed-upper': {'.json', '.py', '.md', '.npz'},
     'demos/domino-research': {'.md', '.json'},
     'demos/domino-research/assets': {'.png'},
     'demos/domino-research/deliverables': {'.pdf'},

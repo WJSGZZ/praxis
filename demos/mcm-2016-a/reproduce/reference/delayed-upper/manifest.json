@@ -1,0 +1,16 @@
+{
+  "members": {
+    "README.md": "130a87b18cdf05c94800452e76d75664ba26777d7201120bb90ca162af6d5f3f",
+    "check.py": "a5530596cd6f0b70d1808554b7ca58b75525bc131a18dac5e793a7b0accd2efa",
+    "check_pulse.py": "d3f4d05be222c1dd1b0ddb11b605b08b5ae87c746a1bd9f2dd3b4ec45025ab29",
+    "checked-enclosure.json": "e0841204472c7d68b2e5b43cd62bdc50d4e2a31700f82334d2dfb6735edcb9a2",
+    "enclosure-states.npz": "5005d08b433ce0c28a7d5d978b34f58c880042b77227d69faafde193ed25a46d",
+    "enclosure.json": "8c0437c99c958aa28b0136d0f462725d5561dcecaf45ffd0a99d7b6737dee231",
+    "inputs.json": "7a8a4cbe9d18361d781764be3fc9462b8569b33e9e4491559c172cb9b7f7991a",
+    "primitives.npz": "cdfa0427fe6380219353caae99152996ee887d8de4791a194633bbf4ad8e69c4",
+    "pulse-checks.json": "6a9e1cf4edbb6fa73c760ea2a968b41316dedf3d30bbe7dcda1e958b37eee29d",
+    "pulse-policies.json": "87185fcafb05cfe671b904c49ddc5c5f83188ee38a2c1e50fdb2e54465db9624",
+    "rounding-proof.md": "7a8f0421c26222c01b5922454701dee8ca4f3ae9417365f7a68a7285179bee78"
+  },
+  "scope": "Fixed archived original96 delayed-start exclusion; IEEE64 floating contract, no PDE/empirical/latest-threshold claim"
+}

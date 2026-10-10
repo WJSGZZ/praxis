@@ -1,0 +1,55 @@
+{
+  "parameters": {
+    "inlet_exclusion": 0.15,
+    "L": 1.5,
+    "W": 0.65,
+    "H": 0.23,
+    "body_volume": 0.06,
+    "body_area": 1.15,
+    "body_temp": 34.0,
+    "air_temp": 22.0,
+    "initial": 40.0,
+    "inlet_temp": 50.0,
+    "rho": 1000.0,
+    "cp": 4180.0,
+    "h_surface": 25.0,
+    "h_wall": 6.5,
+    "h_body": 25.0,
+    "D": 0.003,
+    "body_shape": [
+      0.4,
+      0.16,
+      0.12
+    ],
+    "foam": 1.0,
+    "horizon": 1800.0,
+    "floor": 39.0,
+    "ceiling": 41.0,
+    "span": 1.5
+  },
+  "grid": [
+    8,
+    4,
+    3
+  ],
+  "initial_temperature_c": 40,
+  "flow_max_l_min": 3,
+  "prefix_s": 790,
+  "witness_relative_s": 86.5,
+  "model_sha256": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+  "producer_sha256": "f134c064c2adfcf3105b942f908375d5ce76e3aa17c52ac614a50eb1c19fa7f8",
+  "primitives_sha256": "cdfa0427fe6380219353caae99152996ee887d8de4791a194633bbf4ad8e69c4",
+  "states_sha256": "5005d08b433ce0c28a7d5d978b34f58c880042b77227d69faafde193ed25a46d",
+  "enclosure_sha256": "8c0437c99c958aa28b0136d0f462725d5561dcecaf45ffd0a99d7b6737dee231",
+  "created_utc": "2026-10-10T11:56:18.367446+00:00",
+  "provenance": "Primitive packet reconstructed after first enclosure run from unchanged deterministic model on same runtime. Independent archive-only replay must verify it; not described as frozen before first run.",
+  "array_hashes": {
+    "G": "a9962c687be2aa5983cca2c85d7c29e88c3201f25edbe881baeb86bd478b2348",
+    "cap": "de95a261b24ad9d1a8ebfa2736fbc67337e5d3a956dda72e6c9f2e85d4aa1cdd",
+    "ha": "4fc5d6d8dc1f1f0067813ec9dfb92a55e24a9d4c7fb96924e4b9b75547e73921",
+    "hb": "fb312e0c081306a96ee27d7b851093fafe1d7286bfd25d8ddd75471e26108610",
+    "adv": "63a7b3496cc650722368c3aa922b943b460c1a04f9c4524dd185063b3ae971fa",
+    "hot": "53081b3e8654a719f3dd816a707c506c6ff9bbc93866ea2098fd741c501647f1",
+    "region": "6ffa3fd17d824e63dbb5d77444d5b2afab64ee99a8219d10648a4d3f2f9d07a9"
+  }
+}

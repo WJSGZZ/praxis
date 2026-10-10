@@ -1,0 +1,163 @@
+{
+  "rows": [
+    {
+      "policy": {
+        "delay": 720.0,
+        "lead": 3.0,
+        "pulse": 90.0,
+        "tail": 0.8944990520946149,
+        "water_l": 19.259234359561145,
+        "floor": 39.03000000000827,
+        "ceiling": 40.0,
+        "spread": 0.7840974719137179,
+        "terminal_floor": 39.030000000010546,
+        "accepted_sample": true
+      },
+      "envelopes": [
+        {
+          "floor_c": 39.13169918835671,
+          "ceiling_c": 40.00000356570644,
+          "spread_c": 0.03229180238097846,
+          "sample_min_c": 39.131702754063156,
+          "sample_min_s": 720.0,
+          "sample_min_cell": 53,
+          "allowance_c": 3.565706441253204e-06,
+          "flow_l_min": 0.0,
+          "duration_s": 720.0
+        },
+        {
+          "floor_c": 39.071965536533455,
+          "ceiling_c": 39.856684885880185,
+          "spread_c": 0.7846346780699968,
+          "sample_min_c": 39.07223413961154,
+          "sample_min_s": 807.2,
+          "sample_min_cell": 89,
+          "allowance_c": 0.00026860307808259043,
+          "flow_l_min": 3.0,
+          "duration_s": 90.0
+        },
+        {
+          "floor_c": 39.02982975655112,
+          "ceiling_c": 39.857996523663886,
+          "spread_c": 0.7858128829792926,
+          "sample_min_c": 39.03000000001089,
+          "sample_min_s": 1800.0,
+          "sample_min_cell": 89,
+          "allowance_c": 0.00017024345976650987,
+          "flow_l_min": 0.8944990520946149,
+          "duration_s": 990.0
+        }
+      ],
+      "qualified": true,
+      "water_l": 19.259234359561145
+    },
+    {
+      "policy": {
+        "delay": 750.0,
+        "lead": 3.0,
+        "pulse": 90.0,
+        "tail": 0.9224064284090999,
+        "water_l": 19.2585028545456,
+        "floor": 39.03000000000813,
+        "ceiling": 40.0,
+        "spread": 0.7863913296832408,
+        "terminal_floor": 39.030000000009395,
+        "accepted_sample": true
+      },
+      "envelopes": [
+        {
+          "floor_c": 39.09752752911294,
+          "ceiling_c": 40.00000356570644,
+          "spread_c": 0.03229180238097846,
+          "sample_min_c": 39.09753109481938,
+          "sample_min_s": 750.0,
+          "sample_min_cell": 53,
+          "allowance_c": 3.565706441253204e-06,
+          "flow_l_min": 0.0,
+          "duration_s": 750.0
+        },
+        {
+          "floor_c": 39.0381316492777,
+          "ceiling_c": 39.82516706771869,
+          "spread_c": 0.7869302106769978,
+          "sample_min_c": 39.038401089774375,
+          "sample_min_s": 836.9,
+          "sample_min_cell": 89,
+          "allowance_c": 0.00026944049667246007,
+          "flow_l_min": 3.0,
+          "duration_s": 90.0
+        },
+        {
+          "floor_c": 39.02983138506911,
+          "ceiling_c": 39.826497829389325,
+          "spread_c": 0.7881208241644327,
+          "sample_min_c": 39.03000000002053,
+          "sample_min_s": 1800.0,
+          "sample_min_cell": 89,
+          "allowance_c": 0.00016861495142122163,
+          "flow_l_min": 0.9224064284090999,
+          "duration_s": 960.0
+        }
+      ],
+      "qualified": true,
+      "water_l": 19.258502854545597
+    },
+    {
+      "policy": {
+        "delay": 780.0,
+        "lead": 3.0,
+        "pulse": 90.0,
+        "tail": 0.9524284460316478,
+        "water_l": 19.26264091349054,
+        "floor": 39.004689370914505,
+        "ceiling": 40.0,
+        "spread": 0.788678165296119,
+        "terminal_floor": 39.030000000006474,
+        "accepted_sample": true
+      },
+      "envelopes": [
+        {
+          "floor_c": 39.06345420144767,
+          "ceiling_c": 40.00000356570644,
+          "spread_c": 0.03229180238097846,
+          "sample_min_c": 39.06345776715411,
+          "sample_min_s": 780.0,
+          "sample_min_cell": 53,
+          "allowance_c": 3.565706441253204e-06,
+          "flow_l_min": 0.0,
+          "duration_s": 780.0
+        },
+        {
+          "floor_c": 39.00439309505924,
+          "ceiling_c": 39.79373961986685,
+          "spread_c": 0.7892187163408506,
+          "sample_min_c": 39.00466337058119,
+          "sample_min_s": 866.5,
+          "sample_min_cell": 89,
+          "allowance_c": 0.0002702755219465824,
+          "flow_l_min": 3.0,
+          "duration_s": 90.0
+        },
+        {
+          "floor_c": 39.00462437121088,
+          "ceiling_c": 39.7950903988731,
+          "spread_c": 0.7904224639384476,
+          "sample_min_c": 39.00479117904794,
+          "sample_min_s": 870.0,
+          "sample_min_cell": 89,
+          "allowance_c": 0.00016680783706468825,
+          "flow_l_min": 0.9524284460316478,
+          "duration_s": 930.0
+        }
+      ],
+      "qualified": true,
+      "water_l": 19.262640913490543
+    }
+  ],
+  "elapsed_s": 0.17614670901093632,
+  "policies_sha256": "87185fcafb05cfe671b904c49ddc5c5f83188ee38a2c1e50fdb2e54465db9624",
+  "checker_sha256": "d3f4d05be222c1dd1b0ddb11b605b08b5ae87c746a1bd9f2dd3b4ec45025ab29",
+  "model_sha256": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+  "scope": "Three selected original96 strong-mixing two-stage policies, independent stream/DOP853 and0.1s chord. Each phase assumes2e-6C solver error, accumulated across nonexpansive phase boundaries; conditional floating qualification, no interval/PDE/empirical/global optimum.",
+  "primitive_sha256": "cdfa0427fe6380219353caae99152996ee887d8de4791a194633bbf4ad8e69c4"
+}

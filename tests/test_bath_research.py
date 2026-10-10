@@ -61,8 +61,14 @@ def test_manuscript_retains_the_actual_sampling_scope_and_strategy_quantifiers()
     assert 'scrambledseed7' in compact and '17–37/4.5–8.5/12–40' in compact
     assert 'defines their ranges' not in text
     assert 'min/max/spread/final-body' in text
-    assert 'remainingbath,foreverycompatiblemodel' in compact
-    assert 'zeroflowfollowedbyaqualifiedbackup' in compact
+    # Guard the time/model quantifiers and qualified continuation, rather than
+    # pinning an incidental phrase that legitimate language edits can replace.
+    assert any(scope in compact for scope in (
+        'remainingbath,foreverycompatiblemodel',
+        'remaininghorizon,foreverycompatiblemodel'))
+    assert any(rule in compact for rule in (
+        'zeroflowfollowedbyaqualifiedbackup',
+        'waitonlywithaqualifiedzero-flowbridgeandbackup'))
     assert 'Nomeasurable' in compact and 'onthe96-cellnetwork' in compact
     assert 'finite-networkobstructions,notacontinuumlimit' in compact
     assert 'Original288-cellrelaxationsremaininconclusive' in compact
