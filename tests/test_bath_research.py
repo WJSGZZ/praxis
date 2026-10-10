@@ -74,6 +74,59 @@ def test_rational_all_control_certificate_and_feasible_control():
     assert cert['checks']['known_feasible_flux_integral_matrix_residual']<1e-7
 
 
+def test_whole_horizon_certificate_same_model_distinct_residual():
+    result=mod.whole_horizon_exclusion(ROOT)
+    assert result['exact']['rows']==1332 and result['exact']['variables']==298
+    assert result['exact']['exact_bound_display']>1/25
+    assert result['scope']['conditions']['horizon_s']==1800
+    assert result['files']['network96/primitives.npz']==mod.all_control_exclusion(ROOT)['files']['primitives.npz']
+
+
+@pytest.mark.parametrize('defect',['none','zero_dual','wrong_initial','wrong_units','wrong_primitive'])
+def test_integral_certificate_replay_rejects_corruptions(tmp_path,defect):
+    import subprocess,sys
+    from scipy.sparse import load_npz,save_npz
+    for name,raw in mod.whole_horizon_exclusion(ROOT)['files'].items():
+        p=tmp_path/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw)
+    if defect=='wrong_units':
+        p=tmp_path/'network96/A.npz';a=load_npz(p);a.data[0]*=1000;save_npz(p,a)
+    elif defect!='none':
+        p=tmp_path/'network96'/('solution.npz' if defect=='zero_dual' else 'problem.npz' if defect=='wrong_initial' else 'primitives.npz')
+        with np.load(p,allow_pickle=False) as z:data={k:z[k] for k in z.files}
+        if defect=='zero_dual':
+            for key in ('inequality_dual','lower_dual','upper_dual'):data[key][:]=0
+        elif defect=='wrong_initial':data['b'][0]+=1
+        else:data['ha'][0]*=2
+        np.savez(p,**data)
+    run=subprocess.run([sys.executable,str(tmp_path/'verify_exact.py')],capture_output=True,text=True,timeout=65)
+    if defect=='none':
+        assert run.returncode==0,run.stderr
+        result=json.loads(run.stdout)
+        assert result['network96']['exact_bound_display']>1/25 and 'network288' not in result
+    else:assert run.returncode!=0 and 'AssertionError' in run.stderr
+
+
+@pytest.mark.parametrize('defect',['scope','bound','display','negative','primitive'])
+def test_rebound_integral_receipt_cannot_change_claim(tmp_path,defect):
+    data=mod.whole_horizon_exclusion(ROOT)['files'].copy()
+    name='archive-scope.json' if defect=='scope' else 'portable-exact-checks.json'
+    row=json.loads(data[name])
+    if defect=='scope':row['conditions']['rate_lpm']=[0,4]
+    elif defect=='bound':row['network96']['exact_bound_numerator']='0'
+    elif defect=='display':row['network96']['exact_bound_display']=100
+    elif defect=='negative':row['negative_checks']['wrong_units']['rejected']=False
+    else:
+        import io
+        key='network96/primitives.npz'
+        with np.load(io.BytesIO(data[key]),allow_pickle=False) as z:primitive={k:z[k] for k in z.files}
+        primitive['cap'][0]*=2;stream=io.BytesIO();np.savez(stream,**primitive);data[key]=stream.getvalue()
+        row['network96']['sha256']['primitives.npz']=hashlib.sha256(data[key]).hexdigest()
+    data[name]=json.dumps(row).encode();manifest=json.loads(data['manifest.json']);manifest['members']={n:hashlib.sha256(data[n]).hexdigest() for n in manifest['members']};data['manifest.json']=json.dumps(manifest).encode()
+    (tmp_path/'reference').mkdir();np.savez_compressed(tmp_path/'reference/whole-horizon-exclusion.npz',**{n:np.frombuffer(b,dtype=np.uint8) for n,b in data.items()})
+    (tmp_path/'reference/all-control-exclusion.npz').write_bytes((ROOT/'reference/all-control-exclusion.npz').read_bytes())
+    with pytest.raises(ValueError):mod.whole_horizon_exclusion(tmp_path)
+
+
 @pytest.mark.parametrize('defect',['none','zero_dual','wrong_balance','wrong_initial','wrong_primitive'])
 def test_exact_certificate_replay_rejects_independent_corruptions(tmp_path,defect):
     import subprocess,sys

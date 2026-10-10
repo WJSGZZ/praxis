@@ -1,6 +1,6 @@
 # Why changing the supply schedule cannot repair this network
 
-The result in §11.4 concerns one specified thermal network, not an actual bathtub or the continuum PDE. It excludes **every measurable supply function** with values in 0–3 L/min, including delayed, pulsed and feedback-generated functions once their realized trajectory is fixed. It does not assume six constant stages.
+This historical windowed proof establishes the same scoped conclusion now presented with a [whole-horizon argument](whole-horizon-exclusion.md) in §11.4. It concerns one specified thermal network, not an actual bathtub or the continuum PDE. It excludes **every measurable supply function** with values in 0–3 L/min, including delayed, pulsed and feedback-generated functions once their realized trajectory is fixed. It does not assume six constant stages.
 
 ## Fixed conditions
 

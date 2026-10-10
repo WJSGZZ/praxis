@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "3c46f612837b08e5e8e64fa0f1d20d0eb9b6f4ebbbf4395c0479431f0656a180",
-  "bytes": 173684,
+  "sha256": "ff475e8a63f848b04c5a8008eae18b42ea36601c6525787ca27c7598bf171964",
+  "bytes": 174022,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "All26pages rendered and contact sheets viewed; unchanged TeX except five captions, with separate scoped author-external review. No font, margin, plot or numerical change.",
+  "visual_review_note": "All26pages rendered/contact-reviewed; final21 and Figure5 checked at readable size. Author-external full26page review and final terminology check;25solution+1AI,zero out-of-page characters,native compiler success. No numerical,plot,font or margin change.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "d93e973616e18fb84602c8d796c5d8d6",
-  "generator_sha256": "331b83c39563c21d550c90199c132218a43a240a8c46569685eb9c71bac31241",
-  "tex_sha256": "1807e0de95c592c67dc0409aed2d1bd615194ae1723aec005f1ff7c38572fcc9"
+  "md5": "96a45121d03b259acaf57cccab8a574b",
+  "generator_sha256": "0e90922ae6b528be49b9c133a578691d227fda260a0c3e6bca6548f97fb708a9",
+  "tex_sha256": "8d184406ffeea7f9ea21a7cfd4bea15fcb6fbc80791bd8c17459720d75b3b598"
  },
  "model_checks": {
   "total": 17,
@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 672,
+  "passed": 722,
   "date": "2026-10-10",
-  "scope": "Final adopted1bf manuscript, current source binding, historical revision preservation and competition/research assessment regressions;672passed,0failures/0skips,3existing invalid-plot warnings,146.41s. No physical studies rerun."
+  "scope": "Final adopted ff475e manuscript and exact-certificate archive, semantic corruption cases, source bindings and all existing regressions;722passed/0failed/0skipped,3existing plot warnings,147.74s. No thermal research or baseline optimization rerun."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -633,6 +633,11 @@
    "passed": 591,
    "date": "2026-10-09",
    "scope": "Full local public suite after final c413 adopted PDF and associated source replacement; three intentional plot warnings; no baseline optimization rerun"
+  },
+  {
+   "passed": 672,
+   "date": "2026-10-10",
+   "scope": "Final adopted1bf manuscript, current source binding, historical revision preservation and competition/research assessment regressions;672passed,0failures/0skips,3existing invalid-plot warnings,146.41s. No physical studies rerun."
   }
  ],
  "structure_observation_revision": {
@@ -765,9 +770,9 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "3c46f612837b08e5e8e64fa0f1d20d0eb9b6f4ebbbf4395c0479431f0656a180",
+  "version_sha256": "ff475e8a63f848b04c5a8008eae18b42ea36601c6525787ca27c7598bf171964",
   "checked_on": "2026-10-10",
-  "review_scope": "Prior full-manuscript scientific review with final466a scoped checks, followed by five-caption and neighboring-text comparison on current3c46; nonblind, uncalibrated.",
+  "review_scope": "Fresh full26page manuscript/original-question and actual PDF review; final terminology correction scoped check. Author-external same-family AI, nonblind, uncalibrated.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -775,10 +780,10 @@
    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-   "Exact rational dual and independent reconstruction of61869necessary constraints exclude every measurable0–3L/min supply for the fixed96cell primitive network; rounding and finite-box remainder explicitly accounted."
+   "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included."
   ],
-  "main_gap": "Arbitrary-control exclusion remains limited to one fixed96cell network. Bounded288cell necessary-constraint attempts were inconclusive; no finer-network certificate was obtained.",
-  "highest_value_next_action": "Reassess the scientific value of a finer-network obstruction before further computation; do not repeat solver time extensions without a new mathematical hypothesis.",
+  "main_gap": "No finer-network obstruction or mechanism-stability result; two288cell necessary relaxations remain inconclusive.",
+  "highest_value_next_action": "Determine whether the96cell spatial obstruction survives independent resolution with an explicitly fixed physical inlet region before expanding computation.",
   "strength_note": "Strong Finalist/F–O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
   "calibrated": false
  },
@@ -1601,7 +1606,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "3c46f612837b08e5e8e64fa0f1d20d0eb9b6f4ebbbf4395c0479431f0656a180",
+  "sha256": "ff475e8a63f848b04c5a8008eae18b42ea36601c6525787ca27c7598bf171964",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -1676,5 +1681,80 @@
   "figures_changed": false,
   "captions_revised": 5,
   "scope": "Short titles plus essential reading cues; duplicate exposition removed. Public reading name paper.pdf; numbered submission remains byte-identical."
+ },
+ "whole_horizon_revision": {
+  "previous_pdf": {
+   "sha256": "3c46f612837b08e5e8e64fa0f1d20d0eb9b6f4ebbbf4395c0479431f0656a180",
+   "bytes": 173684,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All26pages rendered and contact sheets viewed; unchanged TeX except five captions, with separate scoped author-external review. No font, margin, plot or numerical change.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "d93e973616e18fb84602c8d796c5d8d6",
+   "generator_sha256": "331b83c39563c21d550c90199c132218a43a240a8c46569685eb9c71bac31241",
+   "tex_sha256": "1807e0de95c592c67dc0409aed2d1bd615194ae1723aec005f1ff7c38572fcc9"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "3c46f612837b08e5e8e64fa0f1d20d0eb9b6f4ebbbf4395c0479431f0656a180",
+   "checked_on": "2026-10-10",
+   "review_scope": "Prior full-manuscript scientific review with final466a scoped checks, followed by five-caption and neighboring-text comparison on current3c46; nonblind, uncalibrated.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included."
+   ],
+   "main_gap": "Arbitrary-control exclusion remains limited to one fixed96cell network. Bounded288cell necessary-constraint attempts were inconclusive; no finer-network certificate was obtained.",
+   "highest_value_next_action": "Reassess the scientific value of a finer-network obstruction before further computation; do not repeat solver time extensions without a new mathematical hypothesis.",
+   "strength_note": "Strong Finalist/F–O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
+   "calibrated": false
+  },
+  "archive": "reproduce/reference/whole-horizon-exclusion.npz",
+  "archive_sha256": "9caec35c6db64714ff9f4e634fbfb16695e2baaba8299eaf147fb72bd1e6f0a4",
+  "rows": 1332,
+  "variables": 298,
+  "rational_residual_lower_bound": "strictly greater than1/25°C",
+  "scope": "Whole1800s integrated balance residual for archived96cell network;not physical violation margin. Two288cell relaxations inconclusive. Original windowed proof retained unchanged.",
+  "review": "Author-external full26page/original-question review on34c; final region terminology correction separately checked. Same-family,nonblind,uncalibrated."
  }
 }

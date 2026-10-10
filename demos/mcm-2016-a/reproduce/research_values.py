@@ -170,3 +170,34 @@ def all_control_exclusion(root):
             and all(x[0]>=39 and x[1]<=41 and x[2]<=1.5 for x in independent['known_feasible_stage_metrics']),
             'All-control negative trajectory check differs')
     return dict(exact=exact,run=run,checks=independent,files=files)
+
+
+def whole_horizon_exclusion(root):
+    """Audit the simpler integral certificate without promoting finer zero bounds."""
+    files, read, manifest, bindings = archive(root, 'whole-horizon-exclusion')
+    exact = read('portable-exact-checks.json'); scope = read('archive-scope.json')
+    cert = exact['network96']
+    require(set(exact) == {'network96', 'negative_checks'}, 'Portable certificate scope differs')
+    require(scope['conditions'] == dict(grid=[8,4,3],D=.0003,initial_c=40,contact_c=34,
+            inlet_c=50,air_c=22,horizon_s=1800,rate_lpm=[0,3],floor_c=39,
+            outside_ceiling_c=41,outside_span_c=1.5,inside_upper_barrier_c=50),
+            'Whole-horizon physical conditions differ')
+    require(cert['rows']==1332 and cert['variables']==298
+            and cert['status']=='verified positive necessary-condition obstruction'
+            and cert['global_50c_barrier_max_rhs']<0, 'Integral certificate or barrier differs')
+    from fractions import Fraction
+    numerator = int(cert['exact_bound_numerator']); denominator = int(cert['exact_bound_denominator'])
+    require(denominator > 0, 'Exact bound denominator must be positive')
+    bound = Fraction(numerator, denominator)
+    require(bound > Fraction(1,25)
+            and math.isclose(float(bound),cert['exact_bound_display'],rel_tol=1e-12,abs_tol=1e-14),
+            'Exact integral residual bound is not positive enough')
+    require(all(hashlib.sha256(files['network96/'+name]).hexdigest()==digest
+                for name,digest in cert['sha256'].items()), 'Integral certificate data stale')
+    old = all_control_exclusion(root)
+    require(files['network96/primitives.npz'] == old['files']['primitives.npz'],
+            'Whole-horizon model differs from original fixed network')
+    require(set(exact['negative_checks']) == {'zero_dual','wrong_initial','wrong_units','wrong_primitive'}
+            and all(row['rejected'] is True for row in exact['negative_checks'].values()),
+            'Independent rejection checks missing')
+    return dict(exact=cert,scope=scope,files=files)
