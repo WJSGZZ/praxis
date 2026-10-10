@@ -34,7 +34,7 @@
 | `check_recurrence` | sequence*, coefficients*, order_bound | Check that a sequence satisfies a_n = c_1 a_{n-1} +  |
 | `guess_sequence` | sequence*, max_order, max_degree, holdout | Guess a constant-coefficient linear recurrence and a polynomial formula for a sequence of rationals (exact) |
 | `find_relation` | value*, constants*, dps, max_coeff | Integer relation (PSLQ) between a value and constants, e.g |
-| `lesson_add` | path*, lesson* | Append a lesson to the project memory (JSON lines): problem, structure, how it was recognised, routes tried, what failed, what worked, how verified, and a transferable principle |
+| `lesson_add` | path*, lesson* | Store a project lesson; identical active records are reused |
 | `lesson_search` | path*, query, tags, limit | Search the project memory for lessons by keywords and tags before starting a new problem; also returns recurring structures |
 | `solve_diffusion` | length*, cells, k*, rho_c*, initial*, t_end*, steps, left, right, source, theta, points | One-dimensional heat/diffusion equation rho_c u_t = (k u_x)_x + s by finite volumes (theta scheme), with an energy account |
 | `grid_convergence_index` | f_fine*, f_medium*, f_coarse*, refinement_ratio*, safety_factor | Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity |

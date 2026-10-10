@@ -128,6 +128,22 @@ def test_no_lesson_hits_are_preserved(case):
     assert state['metering']=={'model':'unknown','tokens':'not measured'}
 
 
+def test_lesson_retirement_does_not_rewrite_frozen_workflow(case):
+    history=w.pipeline.PROJECT/'lessons.jsonl'
+    history.write_bytes((w.BUNDLE/'templates/lessons-seed.jsonl').read_bytes())
+    init=w.init(case,'integer check',query='integer tolerance',lessons_path=history,budget_seconds=120,max_attempts=3,per_run_timeout=5)
+    frozen=init['state']['lesson_retrieval'];before=(case/'planning/progress.md').read_bytes()
+    target=frozen['hits'][0]['id']
+    w.lessons.add_lesson(history,{'event':'retire','target':target,'reason':'test explicit retirement after retrieval'})
+    assert target not in {r['id'] for r in w.lessons.search_lessons(history,'integer tolerance')}
+    assert any(r['id']==target and w.canonical_hash(r)==frozen['hits'][0]['sha256'] for r in w.lessons.load(history))
+    args=[sys.executable,str(w.BUNDLE/'scripts/workflow.py'),'--workspace',str(w.pipeline.PROJECT),'next','--case',str(case)]
+    resumed=subprocess.run(args,capture_output=True,text=True,check=True)
+    assert json.loads(resumed.stdout)['action']=='run'
+    assert (case/'planning/progress.md').read_bytes()==before
+    assert w.read_state(case)[0]['lesson_retrieval']==frozen
+
+
 @pytest.mark.parametrize('bad', ['NaN','1e999'])
 def test_strict_json_and_damaged_blocks(case,bad):
     initialise(case)

@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 本地经验检索采用活动视图：重复记录复用身份，修订可显式替代旧条，退役保留原文但停止召回。外部建议保持候选证据，历史工作流的检索身份不回写；审查建议连接实际区分性检查与处理决定。
+  Local lesson retrieval now excludes retired and superseded records without rewriting history. Duplicate additions reuse their identities, external proposals remain candidates, and frozen workflow retrievals stay unchanged. Important critiques lead to a bounded discriminating check and an evidence-based decision.
+
 - 新增可选案例协调入口：初次运行前检索本地经验，以同一接续记录连接预算、最新证据、明确质量判断和报告。失败不覆盖已接受指针，过期证据阻断交付；可交付与值得继续分别判断。
   An optional case coordinator connects local lesson retrieval, bounded execution, current evidence, reviews and reports in one resumable record. Accepted identities survive failed candidates, while stale evidence blocks delivery. A complete draft and a decision to stop are tracked separately.
 

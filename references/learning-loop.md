@@ -22,12 +22,16 @@
 课程存成 JSON 行，放在**用户的项目里**（如 `planning/lessons.jsonl`），不上传、不共享。
 
 - 必填：`problem`、`structure`、`recognized`、`routes_tried`、`what_failed`、`what_worked`、`verified_by`、`principle`；
-- 可选：`tags`、`evidence`（observed once / seen repeatedly / derived / checked on a held-out problem）；
+- 可选：`tags`、`evidence`（candidate / observed once / seen repeatedly / derived / checked on a held-out problem）、`source_kind`（external_proposal / task_observation / mathematical_derivation；旧记录为legacy_unspecified）；
 - `principle` 要写成能迁移的规则，不是对本题的描述。
 
 路线记录完成后，`route_to_lesson` 可起草课程。逐项审核草稿是否忠实于真实尝试，再补写适用条件与可迁移原则，交给 `lesson_add`；自动起草不代表已经学会或验证。
 
 已有课程且当前结构可能相关时，用 `lesson_search` 按关键词和标签检索；`route_graph` 新建图时传 `lessons_path` 也会返回相关经验。候选形成前审读，检索命中只是提示，不替代本题检验。
+
+同一活动记录重复写入返回原ID，不产生一次新观察；不同任务或新证据仍可分别记录。修订课程时在完整新记录中给 `supersedes: ["L0001"]`，只替代当前活动ID。证据推翻但没有替代规则时，调用同一 `lesson_add`，传 `lesson: {"event":"retire","target":"L0001","reason":"具体证据与原因"}`。检索与结构计数使用去重后的活动视图；替代链、退役和原文都留在JSONL。不存在的引用、自引用和循环拒绝，不静默删除坏记录。`modeling.lessons.load`仍读取历史课程原文；既有workflow保存的检索ID、记录哈希和当时索引哈希不随当前库更新而改写。
+
+外部材料的新建议先以 `source_kind: external_proposal, evidence: candidate` 入库；本题实践核验后另存带实际证据的 `task_observation` 或 `mathematical_derivation`，明确替代关系。元数据是来源声明，不是自动认证；检索排序、重复存入和同题重放不能将经验升级为异题验证。成熟且通用的规则合并到所属参考或工具，私有来源与案例细节留本地；本题专用结论不进入默认核心。没有适用的下一题时保留候选，不为晋升经验启动昂贵研究。
 
 ## 公共开发题与工具回归：`evals.planted`
 

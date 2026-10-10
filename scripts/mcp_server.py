@@ -358,7 +358,7 @@ TOOLS = dict([
     _tool('find_relation', 'Integer relation (PSLQ) between a value and constants, e.g. value "zeta(2)", constants {"pi2": "pi**2"}. A hint to prove, not a proof.',
           {'value': {'type': 'string'}, 'constants': {'type': 'object'}, 'dps': {'type': 'integer'}, 'max_coeff': {'type': 'integer'}}, ['value', 'constants'],
           lambda a: experiment.find_relation(a['value'], a['constants'], dps=a.get('dps', 50), max_coeff=a.get('max_coeff', 1000))),
-    _tool('lesson_add', 'Append a lesson to the project memory (JSON lines): problem, structure, how it was recognised, routes tried, what failed, what worked, how verified, and a transferable principle.',
+    _tool('lesson_add', 'Store a project lesson; identical active records are reused. Optional supersedes contains active lesson IDs. Retire via lesson={event:"retire",target:"L0001",reason:"evidence"}. External proposals use source_kind="external_proposal", evidence="candidate". Historical rows remain unchanged.',
           {'path': {'type': 'string', 'description': 'e.g. planning/lessons.jsonl inside the project'}, 'lesson': {'type': 'object'}}, ['path', 'lesson'],
           lambda a: lessons.add_lesson(Path(a['path']), a['lesson'])),
     _tool('lesson_search', 'Search the project memory for lessons by keywords and tags before starting a new problem; also returns recurring structures.',
