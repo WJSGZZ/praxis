@@ -48,6 +48,19 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert meta['pdf']['generator_sha256']==hashlib.sha256((HERE/'build_report.py').read_bytes()).hexdigest()
 
 
+def test_public_reading_copy_matches_numbered_submission_and_links():
+    demo=HERE.parent
+    reading=demo/'paper.pdf'
+    submission=demo/'deliverables/7391856.pdf'
+    assert reading.read_bytes()==submission.read_bytes()
+    meta=json.loads((demo/'verification.json').read_text())
+    assert meta['public_paper']['sha256']==hashlib.sha256(reading.read_bytes()).hexdigest()
+    for language in ['README.md','README.en.md']:
+        text=(demo/language).read_text()
+        assert '(paper.pdf)' in text and 'href="paper.pdf"' in text
+    assert sorted(p.name for p in (demo/'deliverables').iterdir())==['7391856.pdf']
+
+
 @pytest.mark.parametrize('defect',['stale','coverage','failed','water','refinement','outlet'])
 def test_consumer_rejects_corrupt_evidence_even_after_outer_rebinding(tmp_path,defect):
     folder=tmp_path/'reference/transport'

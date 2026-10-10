@@ -2,9 +2,9 @@
 
 **2016 MCM A《A Hot Bath》：从平均水温走到空间差异、策略比较，再到能不能照着做。**
 
-[English](README.en.md) · [完整英文论文](deliverables/7391856.pdf) · [复现源码](reproduce/) · [返回 Praxis](../../README.md) · [案例总览](../README.md)
+[English](README.en.md) · [完整英文论文](paper.pdf) · [复现源码](reproduce/) · [返回 Praxis](../../README.md) · [案例总览](../README.md)
 
-[![美赛案例：空间水温与三种补水量证据](assets/overview-zh.png)](deliverables/7391856.pdf)
+[![美赛案例：空间水温与三种补水量证据](assets/overview-zh.png)](paper.pdf)
 
 ## 这道题问什么
 
@@ -64,8 +64,8 @@
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-summary.png" alt="英文 Summary Sheet：方法、结果与验证" width="100%"></a></td>
-<td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-proof.png" alt="理想完混模型的最优策略证明" width="100%"></a></td>
+<td width="50%"><a href="paper.pdf"><img src="assets/report-summary.png" alt="英文 Summary Sheet：方法、结果与验证" width="100%"></a></td>
+<td width="50%"><a href="paper.pdf"><img src="assets/report-proof.png" alt="理想完混模型的最优策略证明" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>Summary Sheet：问题、方法、结果</strong><br>一页写清决策、数值与证据等级。</td>
@@ -75,7 +75,7 @@
 
 **观测结果会改变行动。** 两种另外设定的合成参数情景让被动／主动试验分别保留 60／14 和 70／11 个模型。较强混合下，两个条件候选需要 16.51／15.37 L 控制水量，等复位成本的交叉改为第六次使用。较弱混合下，被动搜索未找到可接受方案；脉冲候选 35.05 L 通过物理包络，但优化器没有成功、额外设计余量没有满足。共 255 项新增三网格检查通过；搜索失败不证明无解，物理检查通过也不等于求得最优。这些是分开的观测情景，不是事先已知的试验收益。
 
-**[阅读完整 26 页英文论文 →](deliverables/7391856.pdf)** 使用固定的 Tectonic 0.17.0 与 v33 资源包排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；25 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
+**[阅读完整 26 页英文论文 →](paper.pdf)** 使用固定的 Tectonic 0.17.0 与 v33 资源包排版：Times 系字体与公式，图由 pgfplots 与 TikZ 从归档数值直接绘制，图表自动编号与交叉引用；25 页解答含一页给使用者的非技术说明，后接 1 页 AI 使用披露。按 2027 年美赛提交规范编排：正文 12 磅，匿名页眉与页码，Summary 单页。
 
 **从两个点，走向有边界的适用范围。** [连续参数补充验证](reproduce/reference/continuous-transfer.md)保留原供水指令，在四个静态参数同时变化的窄邻域内，推导一阶变分与完整余项界；两条流路、三套网格均满足物理温度约束，102 次独立角点及中心重放用于核对实现。更严的统一设计余量并未全部满足，也未认证每种参数下的反馈分支。完整论文 §11.3 已纳入必要条件与精确余项证明，详细推导和失败记录留在补充页；论文奖项由完整稿另行审读。
 
@@ -142,6 +142,8 @@ sources.json                  # 来源记录
 verification.json             # 验收记录
 AI-use.md                     # AI 使用记录
 ```
+公开阅读文件统一为 [`paper.pdf`](paper.pdf)，与队号提交文件逐字节一致；`deliverables/` 仍只含模拟提交所需的一份 PDF。
+
 
 提交目录仅含一份英文 PDF，符合美赛的单文件形态；`7391856` 是案例占位编号，没有借用真实队伍身份。
 

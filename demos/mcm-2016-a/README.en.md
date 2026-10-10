@@ -2,9 +2,9 @@
 
 **2016 MCM Problem A, "A Hot Bath": from mean water temperature to spatial differences, strategy comparison, and whether anyone can follow the answer.**
 
-[中文](README.md) · [Full paper (PDF, English)](deliverables/7391856.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
+[中文](README.md) · [Full paper (PDF, English)](paper.pdf) · [Reproduction code](reproduce/) · [Back to Praxis](../../README.en.md) · [All cases](../README.en.md)
 
-[![MCM case: spatial water temperature and three water budgets](assets/overview-en.png)](deliverables/7391856.pdf)
+[![MCM case: spatial water temperature and three water budgets](assets/overview-en.png)](paper.pdf)
 
 ## What the problem asks
 
@@ -66,8 +66,8 @@ Table 8 compares the three policies on one finite ambiguity set: 130, 174 and 17
 
 <table>
 <tr>
-<td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-summary.png" alt="Summary Sheet: method, results and validation" width="100%"></a></td>
-<td width="50%"><a href="deliverables/7391856.pdf"><img src="assets/report-proof.png" alt="Optimal-policy proof for the perfectly mixed model" width="100%"></a></td>
+<td width="50%"><a href="paper.pdf"><img src="assets/report-summary.png" alt="Summary Sheet: method, results and validation" width="100%"></a></td>
+<td width="50%"><a href="paper.pdf"><img src="assets/report-proof.png" alt="Optimal-policy proof for the perfectly mixed model" width="100%"></a></td>
 </tr>
 <tr>
 <td><strong>Summary Sheet: problem, method, result</strong><br>The decision, the numbers and the evidence level on one page.</td>
@@ -77,7 +77,7 @@ Table 8 compares the three policies on one finite ambiguity set: 130, 174 and 17
 
 **Let the readings change the decision.** Two additional synthetic mechanisms leave passive/pulse banks of 60/14 and 70/11 models. Under stronger mixing, checked candidates use 16.51/15.37 L during control; equal reset costs shift the pulse's payback to the sixth use. The weaker-mixing passive search finds no accepted candidate. Its pulse candidate uses 35.05 L and passes the physical envelopes despite solver failure and an unmet extra design margin. The three accepted candidates pass 255 further model-grid checks. Neither search failure nor physical acceptance establishes an optimum, and the alternative trial outcomes are not known in advance.
 
-**[Read the complete 26-page paper →](deliverables/7391856.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-five pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
+**[Read the complete 26-page paper →](paper.pdf)** Built with Tectonic 0.17.0 and the pinned v33 resource bundle: Times-family text and equations, figures drawn by pgfplots and TikZ straight from the archived numbers, automatically numbered and cross-referenced. Twenty-five pages of solution include a one-page plain-language note for the user, followed by a one-page AI-use report. It follows the 2027 MCM submission rules: 12-point body text, anonymous running header with page numbers, and a one-page Summary Sheet.
 
 ## A neighborhood, rather than two isolated successes
 
@@ -146,6 +146,8 @@ sources.json                  # provenance record
 verification.json             # acceptance record
 AI-use.md                     # AI-use record
 ```
+The public reading copy is [`paper.pdf`](paper.pdf), generated from the same accepted PDF as the numbered submission. The submission folder still contains just one PDF.
+
 
 The submission folder holds a single English PDF, as the MCM requires; `7391856` is a placeholder control number and borrows no real team identity.
 

@@ -28,6 +28,7 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
     assert not (demo / 'reproduce/reproduced').exists()
     bath = output / 'skills/praxis/demos/mcm-2016-a'
     assert (bath / 'deliverables/7391856.pdf').read_bytes() == (BUNDLE / 'demos/mcm-2016-a/deliverables/7391856.pdf').read_bytes()
+    assert (bath / 'paper.pdf').read_bytes() == (bath / 'deliverables/7391856.pdf').read_bytes()
     assert (bath / 'assets/overview-zh.png').is_file()
     assert (bath / 'reproduce/reference/trajectory.npz').is_file()
     assert not (bath / 'reproduce/reproduced').exists()

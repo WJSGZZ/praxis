@@ -23,7 +23,7 @@
 </tr>
 <tr>
 <td valign="top"><strong>国赛 · 投资的收益和风险</strong><br>1998 CUMCM A · 23 页中文报告<br><br>把最低交易费与风险约束放进一个优化模型，用费用分区和解析上界检查推荐方案。<br><br><a href="cumcm-1998-a/README.md">查看案例 →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">论文</a> · <a href="cumcm-1998-a/reproduce/">复现</a></td>
-<td valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A · 26 页英文报告<br><br>从理想完混基线走到三维热网络，解释为什么平均水温足够高，局部仍可能太冷。<br><br><a href="mcm-2016-a/README.md">查看案例 →</a> · <a href="mcm-2016-a/deliverables/7391856.pdf">论文</a> · <a href="mcm-2016-a/reproduce/">复现</a></td>
+<td valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A · 26 页英文报告<br><br>从理想完混基线走到三维热网络，解释为什么平均水温足够高，局部仍可能太冷。<br><br><a href="mcm-2016-a/README.md">查看案例 →</a> · <a href="mcm-2016-a/paper.pdf">论文</a> · <a href="mcm-2016-a/reproduce/">复现</a></td>
 </tr>
 </table>
 

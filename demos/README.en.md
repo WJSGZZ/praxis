@@ -23,7 +23,7 @@ Two complete demonstrations show different demands on a modeling workflow. Trace
 </tr>
 <tr>
 <td valign="top"><strong>CUMCM · Investment and risk</strong><br>1998 Problem A · 23-page Chinese report<br><br>Minimum fees make allocation decisions discontinuous. Regime enumeration and analytical bounds check the selected portfolio.<br><br><a href="cumcm-1998-a/README.en.md">Explore →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">Report</a> · <a href="cumcm-1998-a/reproduce/">Reproduce</a></td>
-<td valign="top"><strong>MCM · A Hot Bath</strong><br>2016 Problem A · 26-page English report<br><br>A proved well-mixed benchmark meets a three-dimensional thermal network: local temperatures change the water-saving strategy.<br><br><a href="mcm-2016-a/README.en.md">Explore →</a> · <a href="mcm-2016-a/deliverables/7391856.pdf">Report</a> · <a href="mcm-2016-a/reproduce/">Reproduce</a></td>
+<td valign="top"><strong>MCM · A Hot Bath</strong><br>2016 Problem A · 26-page English report<br><br>A proved well-mixed benchmark meets a three-dimensional thermal network: local temperatures change the water-saving strategy.<br><br><a href="mcm-2016-a/README.en.md">Explore →</a> · <a href="mcm-2016-a/paper.pdf">Report</a> · <a href="mcm-2016-a/reproduce/">Reproduce</a></td>
 </tr>
 </table>
 

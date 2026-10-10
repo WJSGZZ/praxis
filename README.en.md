@@ -61,7 +61,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 <tr>
 <td valign="top"><a href="demos/cumcm-1998-a/README.en.md"><strong>Explore the CUMCM case →</strong></a><br><a href="demos/cumcm-1998-a/deliverables/paper.pdf">Read the report</a> · <a href="demos/cumcm-1998-a/reproduce/">Run the model</a></td>
-<td valign="top"><a href="demos/mcm-2016-a/README.en.md"><strong>Explore the MCM case →</strong></a><br><a href="demos/mcm-2016-a/deliverables/7391856.pdf">Read the report</a> · <a href="demos/mcm-2016-a/reproduce/">Run the model</a></td>
+<td valign="top"><a href="demos/mcm-2016-a/README.en.md"><strong>Explore the MCM case →</strong></a><br><a href="demos/mcm-2016-a/paper.pdf">Read the report</a> · <a href="demos/mcm-2016-a/reproduce/">Run the model</a></td>
 </tr>
 </table>
 
