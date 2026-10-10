@@ -64,3 +64,11 @@ From the repository root, use the locked project environment:
 ```
 
 These two checkers reconstruct the exact bounds without solving an LP or modifying the archive. `potential.py`, `transfer.py` and `analytic_check.py` require an explicit `--output` pointing to a new scratch directory; they never replace the accepted receipts. `manifest.json` binds the current portable files and the two external certificate archives. Historical checker hashes inside original receipts identify their original execution, while the manifest and a fresh replay identify the portable checker version.
+
+## Local timing mechanism
+
+For the original96 network, consider a constant L/min rate q after a delay d, with the same terminal-floor target39.03°C as the archived search. Let F(q,d,D) be terminal cell89 temperature minus that target and H=1800s. Where that cell is uniquely binding and Fq>0, the implicit function theorem gives q′(d)=−Fd/Fq and J′(d)=[−(H−d)Fd/Fq−q]/60. Short waiting trades a shorter delivery period against a larger rate needed to protect the remote floor.
+
+At d=0, the baseline D=.001 slope is positive (about9.50e−4 L/s); at D=.003 it is negative (about−1.10e−3 L/s). A numerical local sign crossing lies near D=1.38e−3 m²/s. Matrix-exponential Frechet sensitivities and an independently assembled stream with DOP853 variational integration agree. Strict continuous-time physical envelopes hold at five selected inputs, under the stated2e−6°C integration allowance; these are floating enclosures, not interval arithmetic. A unique local terminal branch and a numerical crossing do not prove global optimality, uniqueness of the crossing, a full parameter partition or a real-bath threshold.
+
+`timing.py --output NEW.json` refuses an existing file. `check_timing.py` prints its independent receipt and does not replace the accepted archive. The paper consumer checks the same physical source, derivative identity, paired evidence and strict physical limits. Passive-reserve and fixed-policy perturbation studies remain separate local research evidence; their bounds are not substituted for the terminal-floor timing result.

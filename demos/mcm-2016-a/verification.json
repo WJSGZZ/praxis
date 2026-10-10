@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "1bf154440c56fb34d280430e538ddeb3ab3cec5cd3f6792a93a4f91238dc87c6",
-  "bytes": 174761,
+  "sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
+  "bytes": 175026,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "All26pages rendered and contact reviewed; root final full text read, changed21/22/26 original-size checked. Author-external current full manuscript/original question reread, all five figures and changed21/26 checked. Zero outside-page characters; native and pinned compilation successful; unchanged fonts and five figure data.",
+  "visual_review_note": "All26pages rendered/contact reviewed; readable9/16/21/26 inspected, final16rechecked. Author-external cffe full manuscript/original question read,0b5a branch-qualification check and final711e text/image diff. Native and pinned compile success; zero outside-page characters; fonts and five figures unchanged.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "34fe9199ab70227125edd79d022b1e71",
-  "generator_sha256": "9f3f5a0d53adbeeb1e8d91d72f534c59c6b536557083494ef3f003ff0cefa163",
-  "tex_sha256": "fbde8422ba2f26154d9fff72681e44d13816fd36940efd083c6c0c05794f9d5e"
+  "md5": "8102791c6f6a179b103960d015e3952c",
+  "generator_sha256": "658ee48962afebe00c290b8f9ff86541eb012160c6adb930a0874d07985512cf",
+  "tex_sha256": "367f0748c2dba72b65d04368ee077ddd9372e804fdedc8f37e6851db6a54aa9b"
  },
  "model_checks": {
   "total": 17,
@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 749,
+  "passed": 753,
   "date": "2026-10-10",
-  "scope": "749localpassed/0failed/0skipped,3existing warnings,169.67s. First748+1 obsolete prose guard failure retained; current wording scope corrected, no math or PDF change."
+  "scope": "753 local passed, 0 failed, 0 skipped; 3 existing warnings; 167.50s. Final adopted timing PDF and capsule included."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -229,7 +229,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -292,7 +292,7 @@
     1
    ],
    "native_compiler": "success",
-   "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+   "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
    "historical_mathematical_review_rebound": false
   }
  ],
@@ -337,7 +337,7 @@
      1
     ],
     "native_compiler": "success",
-    "visual_review": "Current first three pages viewed; pages 2\u201325 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
+    "visual_review": "Current first three pages viewed; pages 2–25 pixel-identical to the saved pre-revision PDF and inherit its existing visual review.",
     "historical_mathematical_review_rebound": false
    }
   },
@@ -598,7 +598,7 @@
     25,
     26
    ],
-   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15\u201316 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
+   "visual_review_note": "All 26 pages rendered/contact-reviewed; final measurement/cost pages 15–16 and merged scenario appendix 25 viewed at readable size. Full text reviewed; explicit references resolved; zero out-of-page characters. Shared font/layout unchanged. Desktop native current source compilation succeeded.",
    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
    "md5": "ec4693d0583e779f872e1635912b0720"
   },
@@ -780,9 +780,9 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "1bf154440c56fb34d280430e538ddeb3ab3cec5cd3f6792a93a4f91238dc87c6",
+  "version_sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
   "checked_on": "2026-10-10",
-  "review_scope": "Current whole manuscript and original question reread by author-external same-family AI; all-page overview and five figures inspected. Nonblind uncalibrated reference.",
+  "review_scope": "Author-external current scientific review, cffe26page full manuscript/original question and actual overview/changedpages;0b5a/711e final paragraph checks with explicit intermediate identities. Same-family AI, nonblind uncalibrated.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -790,15 +790,16 @@
    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-   "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3\u2212q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+   "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
    "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
    "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
    "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected.",
-   "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization."
+   "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization.",
+   "Implicit terminal-floor branch sensitivity gives opposite water-delay signs at D=.001 and.003; independent stream/ODE variations and strict physical envelopes agree. Numerical local crossing≈1.38e-3m²/s, not exact/unique/global threshold."
   ],
-  "main_gap": "The continuous exclusion window is a sufficient frozen-certificate region; it does not establish a stable action-switch boundary between immediate supply, waiting, changing conditions and unresolved cases.",
-  "highest_value_next_action": "Connect qualified policies and arbitrary-control exclusion on a common-condition slice, separating certificate roots from actual feasible-policy transitions.",
-  "strength_note": "Strong Finalist center/F\u2013O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
+  "main_gap": "Local terminal-floor timing sensitivity does not track active-constraint changes or qualify a finite delay range; sufficient exclusion windows are not arbitrary-control strategy boundaries.",
+  "highest_value_next_action": "Track finite-delay and active-constraint changes on the same physical policy branch, retaining physical envelopes and comparing only qualified candidates.",
+  "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
   "calibrated": false
  },
  "feedback_revision": {
@@ -1346,7 +1347,7 @@
    "outstanding_established": false,
    "version_sha256": "1bfaf1aee901812b4617c416c49396a424d19802c21e3ab0bbcc71427a3105b6",
    "checked_on": "2026-10-10",
-   "review_scope": "Complete original official one-page PDF text and complete26-page current PDF/full-text; pages7\u201319 reread directly in bounded output after first complete-text call was truncated; Complete actual generator diff vs frozen incumbent; corresponding current tex branch locations. Numerical studies and physical code not rerun/re-audited; prior bound scientific reviews retained. No new algorithm or qualification run claimed. Nonblind same-family AI, uncalibrated.",
+   "review_scope": "Complete original official one-page PDF text and complete26-page current PDF/full-text; pages7–19 reread directly in bounded output after first complete-text call was truncated; Complete actual generator diff vs frozen incumbent; corresponding current tex branch locations. Numerical studies and physical code not rerun/re-audited; prior bound scientific reviews retained. No new algorithm or qualification run claimed. Nonblind same-family AI, uncalibrated.",
    "basis": [
     "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
     "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -1354,7 +1355,7 @@
    ],
    "main_gap": "Certificate rejection detects model mismatch but does not provide a qualified continuation to finish the remaining bath.",
    "highest_value_next_action": "Fix a bounded mismatch domain and explicitly permitted service changes; independently check a conservative continuation or termination rule after certificate refusal. Do not reuse an unsupported backup.",
-   "strength_note": "Fresh complete-paper review: strong F center, nearer F/O boundary; adjacent F\u2013O, O competitive but not established."
+   "strength_note": "Fresh complete-paper review: strong F center, nearer F/O boundary; adjacent F–O, O competitive but not established."
   },
   "pdf_sha256": "b3778cd318abec934d29576c1fce31d2bf6d49915de0335284abf6d0224a883a",
   "generator_sha256": "d5b8e4029567096e73e32f68cfa83607c4564edfd7f3fbe63ad56ceff00b14a4",
@@ -1473,7 +1474,7 @@
    ],
    "main_gap": "Limited recourse is developed on an exposed static catalog. Its behavior on a predeclared condition not used to construct that catalog remains untested.",
    "highest_value_next_action": "Freeze the catalog, observation and bridge/tail rule; test a new predeclared mismatch for qualified continuation or justified withdrawal, without truth-state initialization or retuning after outcomes.",
-   "strength_note": "Fresh full-paper review: strong Finalist center with Finalist\u2013Outstanding adjacent range; limited recourse closes the former missing-continuation gap. Outstanding not established."
+   "strength_note": "Fresh full-paper review: strong Finalist center with Finalist–Outstanding adjacent range; limited recourse closes the former missing-continuation gap. Outstanding not established."
   },
   "pdf_sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
   "generator_sha256": "7d10055a73889417ba68c8dd4ed02fd2d9f4bb10eb4e980eba3f7984894935df",
@@ -1512,7 +1513,7 @@
   "analytic_cases": 6,
   "negative_control": "sampled-feasible center; unresolved intervals prohibit an infeasibility claim",
   "transfer_independent_paths": 18,
-  "transfer_scope": "Single excluded static parameter pair, predeclared9-minute diagnostic\u2014not an original-controller alarm. Five retained hypotheses plus actual truth on three meshes; known initial states and frozen catalog.",
+  "transfer_scope": "Single excluded static parameter pair, predeclared9-minute diagnostic—not an original-controller alarm. Five retained hypotheses plus actual truth on three meshes; known initial states and frozen catalog.",
   "mathematical_scope": "Conditional numerical state/sensitivity/derivative accuracy, fixed34C contact, immediate constant controls only. No directed-rounding/all-control/PDE/physical proof. Failed ideal envelope retained.",
   "large_traces": "Local only; public source and SHA256 permit fresh-copy regeneration. Artifact consumer checks recorded evidence, not new execution.",
   "old_numerical_studies_rerun": false,
@@ -1594,7 +1595,7 @@
    ],
    "main_gap": "The same weak-transport scenario has a constant-rate obstruction but still lacks a qualified positive policy result or a stronger bounded exclusion for time-varying supply.",
    "highest_value_next_action": "Under the sameD=.0003geometryandphysicallimits, test whether bounded time-varying supply overcomes the constant-flow obstruction; preserve failure or qualify any successful policy independently.",
-   "strength_note": "Strong Finalist center/F\u2013O adjacent reference: scientific explanation improved beyond finite-search failures; Outstanding not established."
+   "strength_note": "Strong Finalist center/F–O adjacent reference: scientific explanation improved beyond finite-search failures; Outstanding not established."
   },
   "pdf_sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
   "archive_sha256": "a33a8316f478f60b53646093b00b2e93ec10b420fda7da3322781e010610e112",
@@ -1605,7 +1606,7 @@
    "denominator": 5000,
    "unit": "C per30s integrated heat-balance residual"
   },
-  "scope": "Arbitrary measurableq0\u20133L/min for archived96cell primitive-coefficient network only;D=.0003,fixed34contact,40initial,1800s,39allfloor/41outsideceiling/1.5outsidespread. Primitive coefficients interpreted as exact rationals; LP coefficient-rounding accounted, not empirical/PDE/finer-network proof.",
+  "scope": "Arbitrary measurableq0–3L/min for archived96cell primitive-coefficient network only;D=.0003,fixed34contact,40initial,1800s,39allfloor/41outsideceiling/1.5outsidespread. Primitive coefficients interpreted as exact rationals; LP coefficient-rounding accounted, not empirical/PDE/finer-network proof.",
   "known_feasible_control": "SeparateLP5secondstimeout preserved. Independent direct-flux moments pass full analogous matrix to4.3e-13; sampledphysical limits pass.",
   "new_verifier": "Extract archive into fresh directory and execute verify_exact.py; reconstructs every necessary row and rational dual without solvingLP.",
   "old_numerical_studies_rerun": false,
@@ -1620,7 +1621,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "1bf154440c56fb34d280430e538ddeb3ab3cec5cd3f6792a93a4f91238dc87c6",
+  "sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -1683,11 +1684,11 @@
     "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
     "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
     "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-    "Exact rational dual and independent reconstruction of61869necessary constraints exclude every measurable0\u20133L/min supply for the fixed96cell primitive network; rounding and finite-box remainder explicitly accounted."
+    "Exact rational dual and independent reconstruction of61869necessary constraints exclude every measurable0–3L/min supply for the fixed96cell primitive network; rounding and finite-box remainder explicitly accounted."
    ],
    "main_gap": "The arbitrary-control obstruction is established on one fixed96cell transport network; its persistence under independently specified finer transport resolution is not yet tested.",
    "highest_value_next_action": "Apply the necessary-constraint certificate to one independently refined conservative network, with bounded solve/check allocations; retain inconclusive or negative results.",
-   "strength_note": "Strong Finalist/F\u2013O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
+   "strength_note": "Strong Finalist/F–O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
    "calibrated": false
   },
   "pdf_sha256": "3c46f612837b08e5e8e64fa0f1d20d0eb9b6f4ebbbf4395c0479431f0656a180",
@@ -1756,18 +1757,18 @@
     "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
     "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
     "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3\u2212q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included."
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included."
    ],
    "main_gap": "Arbitrary-control exclusion remains limited to one fixed96cell network. Bounded288cell necessary-constraint attempts were inconclusive; no finer-network certificate was obtained.",
    "highest_value_next_action": "Reassess the scientific value of a finer-network obstruction before further computation; do not repeat solver time extensions without a new mathematical hypothesis.",
-   "strength_note": "Strong Finalist/F\u2013O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
+   "strength_note": "Strong Finalist/F–O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
    "calibrated": false
   },
   "archive": "reproduce/reference/whole-horizon-exclusion.npz",
   "archive_sha256": "9caec35c6db64714ff9f4e634fbfb16695e2baaba8299eaf147fb72bd1e6f0a4",
   "rows": 1332,
   "variables": 298,
-  "rational_residual_lower_bound": "strictly greater than1/25\u00b0C",
+  "rational_residual_lower_bound": "strictly greater than1/25°C",
   "scope": "Whole1800s integrated balance residual for archived96cell network;not physical violation margin. Two288cell relaxations inconclusive. Original windowed proof retained unchanged.",
   "review": "Author-external full26page/original-question review on34c; final region terminology correction separately checked. Same-family,nonblind,uncalibrated."
  },
@@ -1831,11 +1832,11 @@
     "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
     "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
     "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3\u2212q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included."
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included."
    ],
    "main_gap": "No finer-network obstruction or mechanism-stability result; two288cell necessary relaxations remain inconclusive.",
    "highest_value_next_action": "Determine whether the96cell spatial obstruction survives independent resolution with an explicitly fixed physical inlet region before expanding computation.",
-   "strength_note": "Strong Finalist/F\u2013O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
+   "strength_note": "Strong Finalist/F–O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
    "calibrated": false
   },
   "archive": "reproduce/reference/fixed-region-exclusion.npz",
@@ -1926,12 +1927,12 @@
     "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
     "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
     "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3\u2212q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
     "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee."
    ],
    "main_gap": "Conditional results are not yet condensed into a transferable transport-loss-comfort-region mechanism criterion; source grid lane and physical coefficients remain scenario assumptions.",
    "highest_value_next_action": "Derive a pre-computation transport-loss-comfort-region criterion from existing network and axial evidence to distinguish timing improvements from necessary changes in mixing or tolerance.",
-   "strength_note": "Strong Finalist center/F\u2013O adjacent reference; fixed-region certificates strengthen interpretation, but Outstanding level is not established.",
+   "strength_note": "Strong Finalist center/F–O adjacent reference; fixed-region certificates strengthen interpretation, but Outstanding level is not established.",
    "calibrated": false
   },
   "archive": "reproduce/reference/spatial-functional/",
@@ -2003,13 +2004,13 @@
     "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
     "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
     "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3\u2212q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
     "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
     "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary."
    ],
    "main_gap": "Qualified policies and negative functional results still need a coherent mechanism boundary; stronger diffusion non-exclusion does not establish feasibility.",
    "highest_value_next_action": "Organize existing qualified policies and obstruction certificates into one conditional mechanism boundary with explicitly unproved regions.",
-   "strength_note": "Strong Finalist center/F\u2013O adjacent; real mechanism interpretation improved, Outstanding not established.",
+   "strength_note": "Strong Finalist center/F–O adjacent; real mechanism interpretation improved, Outstanding not established.",
    "calibrated": false
   },
   "previous_test_suite": {
@@ -2122,14 +2123,14 @@
      "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
      "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
      "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-     "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3\u2212q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+     "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
      "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
      "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
      "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected."
     ],
     "main_gap": "Eleven discrete scenarios do not establish continuous transport/loss/tolerance conditions or thresholds for immediate supply, waiting and arbitrary-control exclusion.",
     "highest_value_next_action": "Derive and independently check a conditional strategy-switch boundary rather than interpolating the eleven archived scenarios.",
-    "strength_note": "Strong Finalist center/F\u2013O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
+    "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
     "calibrated": false
    },
    "test_suite": {
@@ -2160,7 +2161,7 @@
   },
   "unchanged": "Original heat optimization and all five figures; preview pages1/8 unchanged.",
   "math_review": "Author-external exact support signs, convexity, root bracket signs and portable coefficient diffs checked; no identified blocker.",
-  "whole_paper_review": "Current26page full text/original question reread and actual visuals checked; strongF center/F\u2013O adjacent, O unestablished; nonblind uncalibrated.",
+  "whole_paper_review": "Current26page full text/original question reread and actual visuals checked; strongF center/F–O adjacent, O unestablished; nonblind uncalibrated.",
   "boundary_source_sha256": "81b08f4cb422912060571544c423d0ea898c67edec91e76916cfb5efd2250a57",
   "checker_sha256": "2863c7c846b426ebd7e8c662d04a4f052ea9c12ee90bbda00e8182629106d10b",
   "native_compile": "success",
@@ -2192,6 +2193,125 @@
    "skipped": 0,
    "elapsed_s": 169.67,
    "previous_failure": "748passed plus obsolete Bothoriginal prose assertion; corrected to current Original288 wording, same scientific scope."
+  }
+ },
+ "local_timing_revision": {
+  "previous": {
+   "pdf": {
+    "sha256": "1bf154440c56fb34d280430e538ddeb3ab3cec5cd3f6792a93a4f91238dc87c6",
+    "bytes": 174761,
+    "pages_total": 26,
+    "solution_pages": 25,
+    "ai_pages": 1,
+    "text_bounds_checked": true,
+    "pages_rendered_and_visually_reviewed": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26
+    ],
+    "visual_review_note": "All26pages rendered and contact reviewed; root final full text read, changed21/22/26 original-size checked. Author-external current full manuscript/original question reread, all five figures and changed21/26 checked. Zero outside-page characters; native and pinned compilation successful; unchanged fonts and five figure data.",
+    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+    "md5": "34fe9199ab70227125edd79d022b1e71",
+    "generator_sha256": "9f3f5a0d53adbeeb1e8d91d72f534c59c6b536557083494ef3f003ff0cefa163",
+    "tex_sha256": "fbde8422ba2f26154d9fff72681e44d13816fd36940efd083c6c0c05794f9d5e"
+   },
+   "public_paper": {
+    "path": "paper.pdf",
+    "sha256": "1bf154440c56fb34d280430e538ddeb3ab3cec5cd3f6792a93a4f91238dc87c6",
+    "byte_identical_to": "deliverables/7391856.pdf"
+   },
+   "current_award_assessment": {
+    "target": "Outstanding Winner",
+    "reference_center": "Finalist",
+    "adjacent_reference_range": [
+     "Finalist",
+     "Outstanding Winner"
+    ],
+    "outstanding_established": false,
+    "version_sha256": "1bf154440c56fb34d280430e538ddeb3ab3cec5cd3f6792a93a4f91238dc87c6",
+    "checked_on": "2026-10-10",
+    "review_scope": "Current whole manuscript and original question reread by author-external same-family AI; all-page overview and five figures inspected. Nonblind uncalibrated reference.",
+    "basis": [
+     "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+     "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+     "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+     "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+     "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+     "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
+     "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+     "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
+     "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
+     "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected.",
+     "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization."
+    ],
+    "main_gap": "The continuous exclusion window is a sufficient frozen-certificate region; it does not establish a stable action-switch boundary between immediate supply, waiting, changing conditions and unresolved cases.",
+    "highest_value_next_action": "Connect qualified policies and arbitrary-control exclusion on a common-condition slice, separating certificate roots from actual feasible-policy transitions.",
+    "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
+    "calibrated": false
+   },
+   "test_suite": {
+    "passed": 749,
+    "date": "2026-10-10",
+    "scope": "749localpassed/0failed/0skipped,3existing warnings,169.67s. First748+1 obsolete prose guard failure retained; current wording scope corrected, no math or PDF change."
+   }
+  },
+  "pdf_sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
+  "parameters": "Original96cell, fixed losses/capacity/geometry/route, constant L/min after delay,1800s, terminal-floor branch39.03C; physical39/41/1.5C checked separately.",
+  "selected_sensitivity_inputs": 5,
+  "local_bracket_inputs": 2,
+  "independent_method": "Direct stream construction and DOP853 variational equations vs matrix-exponential Frechet block; shared network coefficients, not independent physical model.",
+  "time_enclosures": "One-second second-derivative chord bounds with2e-6C assumed integration error; floating, not interval arithmetic.",
+  "local_crossing_display_m2_s": "approximately1.38e-3",
+  "scientific_scope": "Local derivative direction only, not root uniqueness/global optimum/fullDpartition.",
+  "math_review": "Author-external full derivation and source review, five independent algebra slope checks; no ODE/expm rerun by reviewer.",
+  "paper_review": "Full cffe text/question and final711e paragraph view/diff, no blockers. StrongF center/F–O adjacent, O unestablished.",
+  "changed_text_pages": [
+   9,
+   16,
+   21,
+   26
+  ],
+  "unchanged": "Original optimized schedules, all five figure data, summary and practical-guide recommendations.",
+  "native_compiler": "success",
+  "rejected_candidates": "Actual27page integration and syntax failure retained privately; scope qualifier repaired in final source, no numerical reoptimization.",
+  "preview_binding": {
+   "pdf_sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
+   "scale": 1.6,
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "pixel_identical_to_prior": true,
+     "sha256": "d1c034d78af0c9597d7d13dfb45a25e46d6b3a03acf9352ac4d503450c75d8dd"
+    },
+    "report-proof.png": {
+     "page": 7,
+     "pixel_identical_to_prior": true,
+     "sha256": "6c65222385971819ff3ce78a11edf4840e00b40070758478f7ab1d763bfa9f9a"
+    }
+   }
   }
  }
 }

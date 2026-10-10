@@ -1,6 +1,6 @@
 {
   "members": {
-    "README.md": "b5294b62c60fb7d175727a9e662029773c54c1c68ac683b851b2d6e8f668897c",
+    "README.md": "f8311375b4c7b5b912975b49577de9ead57a89e4d87d38edc11107460ae012cc",
     "analytic-checks.json": "973c7066fd4d22d9d904a40ce6d042083c33b447edb3aeeef31803dbe1f84f66",
     "analytic_check.py": "14e760c86ea071a463229a6756d83c5d549fa49e4e810bec228c3a10dd792c3e",
     "check.py": "3f0e9fe5e2f1a772019ea8da5c0c24448ef3b0dcb4f724d364b347ca874035ee",
@@ -17,7 +17,11 @@
     "boundary-thresholds.json": "aaf4e1313d60ff6dca88991b0efbf1b9805eee7e746faf5f44929e73554056a0",
     "check_boundary.py": "2863c7c846b426ebd7e8c662d04a4f052ea9c12ee90bbda00e8182629106d10b",
     "derive_boundary.py": "5662ed89982677864db8691ec44fd6b4654b866281867d94ee958d479a9ad9b1",
-    "boundary_thresholds.py": "9836bbe9e10f4b3d6057bf64202ea00b7f9c838d162389dd969e07edc9085f4d"
+    "boundary_thresholds.py": "9836bbe9e10f4b3d6057bf64202ea00b7f9c838d162389dd969e07edc9085f4d",
+    "timing.py": "f279e211c3ccadb8a4dbd322fdeef3d5972a2b3bd6f54d7a7aa02b34de7f2746",
+    "check_timing.py": "4797423e382987431f96d1500e6f2cd2480f9bd9bef9491f25c94f534ad489bd",
+    "timing-results.json": "921286817580d2dbb29ddd7549a59d51a5bd4bc0a50b07ea43c014437a76fa07",
+    "timing-checks.json": "38a62e260ff5e0a761123762da027e10f2d94f931fced340a8aaab7a45ca7f27"
   },
   "external_archives": {
     "whole-horizon-exclusion.npz": "9caec35c6db64714ff9f4e634fbfb16695e2baaba8299eaf147fb72bd1e6f0a4",

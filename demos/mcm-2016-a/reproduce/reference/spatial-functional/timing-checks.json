@@ -1,0 +1,108 @@
+{
+  "elapsed_s": 1.5369828340189997,
+  "independent_rows": [
+    {
+      "D": 0.0007,
+      "q": 0.9131626996704982,
+      "terminal_cell": 89,
+      "terminal_min": 39.030000000001195,
+      "Fq": 1.2166397247301766,
+      "Fd": -0.0007198680748333177,
+      "slope": 0.002531186449902282,
+      "envelope": {
+        "floor": 39.028271055882634,
+        "ceiling": 40.59880814815249,
+        "spread": 1.4645194823670913
+      }
+    },
+    {
+      "D": 0.001,
+      "q": 0.8047484170227436,
+      "terminal_cell": 89,
+      "terminal_min": 39.02999999999836,
+      "Fq": 1.3232275294294147,
+      "Fd": -0.0006334776733055934,
+      "slope": 0.0009496294804938225,
+      "envelope": {
+        "floor": 39.02785908966638,
+        "ceiling": 40.320627654066755,
+        "spread": 0.971116709796539
+      }
+    },
+    {
+      "D": 0.002,
+      "q": 0.6921470586537343,
+      "terminal_cell": 89,
+      "terminal_min": 39.03000000000439,
+      "Fq": 1.4836444234289732,
+      "Fd": -0.0005370795413371994,
+      "slope": -0.0006757790524406393,
+      "envelope": {
+        "floor": 39.02637713139222,
+        "ceiling": 40.11899691198528,
+        "spread": 0.45254031817901463
+      }
+    },
+    {
+      "D": 0.003,
+      "q": 0.6587292454371465,
+      "terminal_cell": 89,
+      "terminal_min": 39.02999999999494,
+      "Fq": 1.5444758280367907,
+      "Fd": -0.0005085970183073206,
+      "slope": -0.0010997988443211648,
+      "envelope": {
+        "floor": 39.024852944227696,
+        "ceiling": 40.07439608926423,
+        "spread": 0.29872809304754977
+      }
+    },
+    {
+      "D": 0.0013775264687982006,
+      "q": 0.7407745623382148,
+      "terminal_cell": 89,
+      "terminal_min": 39.03000000000232,
+      "Fq": 1.4068135042893393,
+      "Fd": -0.0005789620321801338,
+      "slope": -8.511894892630304e-14,
+      "envelope": {
+        "floor": 39.02731056387066,
+        "ceiling": 40.19629132062778,
+        "spread": 0.677177721031379
+      }
+    }
+  ],
+  "local_sign_bracket": [
+    {
+      "D": 0.00137752,
+      "q": 0.7407753250387604,
+      "terminal_cell": 89,
+      "terminal_min": 39.030000000001415,
+      "Fq": 1.4068123965895942,
+      "Fd": -0.0005789626897149794,
+      "slope": 1.1031259402235113e-08,
+      "envelope": {
+        "floor": 39.02731057343291,
+        "ceiling": 40.196292646512475,
+        "spread": 0.6771812384301595
+      }
+    },
+    {
+      "D": 0.00137754,
+      "q": 0.7407729669749318,
+      "terminal_cell": 89,
+      "terminal_min": 39.03000000000286,
+      "Fq": 1.406815821310293,
+      "Fd": -0.0005789606567947029,
+      "slope": -2.307467220630244e-08,
+      "envelope": {
+        "floor": 39.027310543867316,
+        "ceiling": 40.19628855612821,
+        "spread": 0.6771703635893628
+      }
+    }
+  ],
+  "timing_source_sha256": "921286817580d2dbb29ddd7549a59d51a5bd4bc0a50b07ea43c014437a76fa07",
+  "scope": "Direct physical stream reconstruction and DOP853 augmented sensitivities vs matrix exponential Frechet producer. Floating bracket, integration allowance2e-6, no interval arithmetic/root uniqueness/global optimum guarantee. Strict physical envelopes at checked points plus unique terminal binding/Fqpositive support local IFT branch.",
+  "checker_sha256": "4797423e382987431f96d1500e6f2cd2480f9bd9bef9491f25c94f534ad489bd"
+}

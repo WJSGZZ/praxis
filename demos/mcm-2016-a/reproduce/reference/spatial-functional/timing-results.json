@@ -1,0 +1,103 @@
+{
+  "elapsed_s": 0.11909183399984613,
+  "rows": [
+    {
+      "D": 0.0007,
+      "delay": 0,
+      "q": 0.9131626996704982,
+      "water_l": 27.394880990114945,
+      "terminal_cell": 89,
+      "second_cell_gap": 0.0036724469283271333,
+      "Fq": 1.216639724730146,
+      "Fd": -0.0007198680748333044,
+      "water_delay_derivative_l_per_s": 0.0025311864499024004
+    },
+    {
+      "D": 0.001,
+      "delay": 0,
+      "q": 0.8047484170227436,
+      "water_l": 24.142452510682308,
+      "terminal_cell": 89,
+      "second_cell_gap": 0.0029430709454913995,
+      "Fq": 1.323227529429676,
+      "Fd": -0.0006334776733056064,
+      "water_delay_derivative_l_per_s": 0.0009496294804912801
+    },
+    {
+      "D": 0.002,
+      "delay": 0,
+      "q": 0.6921470586537343,
+      "water_l": 20.764411759612027,
+      "terminal_cell": 89,
+      "second_cell_gap": 0.0007200699124325638,
+      "Fq": 1.483644423428832,
+      "Fd": -0.0005370795413371513,
+      "water_delay_derivative_l_per_s": -0.00067577905244058
+    },
+    {
+      "D": 0.003,
+      "delay": 0,
+      "q": 0.6587292454371465,
+      "water_l": 19.761877363114397,
+      "terminal_cell": 89,
+      "second_cell_gap": 0.00036293237752005325,
+      "Fq": 1.5444758280371693,
+      "Fd": -0.0005085970183073374,
+      "water_delay_derivative_l_per_s": -0.0010997988443232594
+    }
+  ],
+  "local_root": {
+    "D": 0.0013775264687982006,
+    "delay": 0,
+    "q": 0.7407745623382148,
+    "water_l": 22.223236870146444,
+    "terminal_cell": 89,
+    "second_cell_gap": 0.0014714293894400043,
+    "Fq": 1.406813504289362,
+    "Fd": -0.0005789620321800878,
+    "water_delay_derivative_l_per_s": -8.629763570411341e-14
+  },
+  "difference_checks": [
+    {
+      "D": 0.0007,
+      "analytic_slope": 0.0025311864499024004,
+      "finite_difference_slopes": [
+        0.0025315669593339862,
+        0.002531224757973405
+      ]
+    },
+    {
+      "D": 0.001,
+      "analytic_slope": 0.0009496294804912801,
+      "finite_difference_slopes": [
+        0.000949899513855712,
+        0.0009496649234108645
+      ]
+    },
+    {
+      "D": 0.002,
+      "analytic_slope": -0.00067577905244058,
+      "finite_difference_slopes": [
+        -0.000675644587246893,
+        -0.000675766355229257
+      ]
+    },
+    {
+      "D": 0.003,
+      "analytic_slope": -0.0010997988443232594,
+      "finite_difference_slopes": [
+        -0.0010996986415179322,
+        -0.0010997795563127966
+      ]
+    },
+    {
+      "D": 0.0013775264687982006,
+      "analytic_slope": -8.629763570411341e-14,
+      "finite_difference_slopes": [
+        1.916947667268687e-07,
+        1.795044113350741e-08
+      ]
+    }
+  ],
+  "scope": "Local terminal-floor policy branch only. Full trajectory physical constraints and independent direct RHS not yet checked; candidate mathematical mechanism, not adopted recommendation/global optimum."
+}
