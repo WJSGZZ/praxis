@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "b0e828308781ae3bc1ad377cb71f9b34e493e88d37d7b8a1940621ef6b226b8f",
-  "bytes": 174318,
+  "sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
+  "bytes": 174216,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "All26pages rendered and contact-reviewed; changed1/17/18/21/22/26 viewed at readable size. Author-external current whole-manuscript/original-question review and five figures inspected. Zero out-of-page characters; native and pinned compile success. Original figures, baseline values, font and margin unchanged.",
+  "visual_review_note": "All 26 pages rendered and contact-reviewed; changed pages 21/26 inspected at readable size. Full prior-symbol candidate independently read, then final omega correction inspected separately. Zero out-of-page characters; fonts, baseline and five figures unchanged; native and pinned compile success.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "b32d8fdd5ff0123f40c4e5120e7c992a",
-  "generator_sha256": "febb5dd3701a739e8123022f101f6c8d15251361122e226b796dbcb066c4dddf",
-  "tex_sha256": "5a0ad097537cbe3125093ff895ea9bbb3c80d9a90d92678a73392a5ab662f446"
+  "md5": "2fa1fd4a8b5ca0ae0420dcd057267e85",
+  "generator_sha256": "537c53130667228ed60b2f2260b6cd42433eae6387a48c1333cc430af5ac1716",
+  "tex_sha256": "51d79502d70980af2b630f3db12cc5d1d72a2473ad5e413296618401016b7cb5"
  },
  "model_checks": {
   "total": 17,
@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 732,
+  "passed": 737,
   "date": "2026-10-10",
-  "scope": "Final b0e828 manuscript and fixed-region archive;732passed/0failed/0skipped. Initial731passed/1failed was a stale literal phrase after manuscript condensation; corrected test retains original96 scope, finite-network restriction and original288 inconclusive checks. No thermal optimization rerun."
+  "scope": "Final adopted ef282 manuscript and portable spatial-functional evidence, 737 passed/0 failed/0 skipped; first 736+1 export-link failure preserved and explicit export allowlist repaired. Three existing texplot negative-input warnings. No thermal optimization rerun."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -643,6 +643,11 @@
    "passed": 722,
    "date": "2026-10-10",
    "scope": "Final adopted ff475e manuscript and exact-certificate archive, semantic corruption cases, source bindings and all existing regressions;722passed/0failed/0skipped,3existing plot warnings,147.74s. No thermal research or baseline optimization rerun."
+  },
+  {
+   "passed": 732,
+   "date": "2026-10-10",
+   "scope": "Final b0e828 manuscript and fixed-region archive;732passed/0failed/0skipped. Initial731passed/1failed was a stale literal phrase after manuscript condensation; corrected test retains original96 scope, finite-network restriction and original288 inconclusive checks. No thermal optimization rerun."
   }
  ],
  "structure_observation_revision": {
@@ -775,9 +780,9 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "b0e828308781ae3bc1ad377cb71f9b34e493e88d37d7b8a1940621ef6b226b8f",
+  "version_sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
   "checked_on": "2026-10-10",
-  "review_scope": "Fresh full current26page manuscript/original-question and actual PDF review; independent small arithmetic checks, no thermal optimization rerun. Author-external same-family AI, nonblind, uncalibrated.",
+  "review_scope": "Author-external full 26-page c4b9 candidate review, then actual final ef282 page21 symbol/text/image check; scope separated. Same-family AI, nonblind, uncalibrated.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -786,11 +791,12 @@
    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
-   "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee."
+   "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
+   "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary."
   ],
-  "main_gap": "Conditional results are not yet condensed into a transferable transport-loss-comfort-region mechanism criterion; source grid lane and physical coefficients remain scenario assumptions.",
-  "highest_value_next_action": "Derive a pre-computation transport-loss-comfort-region criterion from existing network and axial evidence to distinguish timing improvements from necessary changes in mixing or tolerance.",
-  "strength_note": "Strong Finalist center/F–O adjacent reference; fixed-region certificates strengthen interpretation, but Outstanding level is not established.",
+  "main_gap": "Qualified policies and negative functional results still need a coherent mechanism boundary; stronger diffusion non-exclusion does not establish feasibility.",
+  "highest_value_next_action": "Organize existing qualified policies and obstruction certificates into one conditional mechanism boundary with explicitly unproved regions.",
+  "strength_note": "Strong Finalist center/F–O adjacent; real mechanism interpretation improved, Outstanding not established.",
   "calibrated": false
  },
  "feedback_revision": {
@@ -1612,7 +1618,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "b0e828308781ae3bc1ad377cb71f9b34e493e88d37d7b8a1940621ef6b226b8f",
+  "sha256": "ef282eb9b2237a34607086954a6ab1280a79fdede25e469e967003d38647fff7",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -1857,5 +1863,82 @@
   "scope": "Fixed physical comfort exclusion ball, three specified finite networks only; source grid lane still changes. Original moving-region288 results remain inconclusive. Independent exact replay, not new thermal optimization.",
   "failure_record": "768 original exact checker exceeded default4300digit serialization limit after reconstruction; only checker replayed with20000 limit. Original rejected26solution-page manuscript retained privately; final25solution+1AI adopted.",
   "review": "Full original-question/current26page manuscript and actual figures reviewed by author-external same-family AI; nonblind, uncalibrated."
+ },
+ "spatial_functional_revision": {
+  "previous_pdf": {
+   "sha256": "b0e828308781ae3bc1ad377cb71f9b34e493e88d37d7b8a1940621ef6b226b8f",
+   "bytes": 174318,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "All26pages rendered and contact-reviewed; changed1/17/18/21/22/26 viewed at readable size. Author-external current whole-manuscript/original-question review and five figures inspected. Zero out-of-page characters; native and pinned compile success. Original figures, baseline values, font and margin unchanged.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "b32d8fdd5ff0123f40c4e5120e7c992a",
+   "generator_sha256": "febb5dd3701a739e8123022f101f6c8d15251361122e226b796dbcb066c4dddf",
+   "tex_sha256": "5a0ad097537cbe3125093ff895ea9bbb3c80d9a90d92678a73392a5ab662f446"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "b0e828308781ae3bc1ad377cb71f9b34e493e88d37d7b8a1940621ef6b226b8f",
+   "checked_on": "2026-10-10",
+   "review_scope": "Fresh full current26page manuscript/original-question and actual PDF review; independent small arithmetic checks, no thermal optimization rerun. Author-external same-family AI, nonblind, uncalibrated.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+    "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee."
+   ],
+   "main_gap": "Conditional results are not yet condensed into a transferable transport-loss-comfort-region mechanism criterion; source grid lane and physical coefficients remain scenario assumptions.",
+   "highest_value_next_action": "Derive a pre-computation transport-loss-comfort-region criterion from existing network and axial evidence to distinguish timing improvements from necessary changes in mixing or tolerance.",
+   "strength_note": "Strong Finalist center/F–O adjacent reference; fixed-region certificates strengthen interpretation, but Outstanding level is not established.",
+   "calibrated": false
+  },
+  "archive": "reproduce/reference/spatial-functional/",
+  "strict_safe_time_upper_s": {
+   "original96": 1717,
+   "fixed96": 1619,
+   "fixed288": 1481,
+   "fixed768": 1533
+  },
+  "scope": "Signed contrast, not heat; existing dual-derived fixed weights, separately verified state supports. Finite networks only; stronger diffusion loses this obstruction without proving feasibility. No thermal optimization or figure-data changes."
  }
 }

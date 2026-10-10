@@ -1,0 +1,21 @@
+{
+  "members": {
+    "README.md": "3d92cd8a4f28058829ee23a83c1c2e7459508deae7639b3bb96ec4716c1a86be",
+    "analytic-checks.json": "973c7066fd4d22d9d904a40ce6d042083c33b447edb3aeeef31803dbe1f84f66",
+    "analytic_check.py": "14e760c86ea071a463229a6756d83c5d549fa49e4e810bec228c3a10dd792c3e",
+    "check.py": "3f0e9fe5e2f1a772019ea8da5c0c24448ef3b0dcb4f724d364b347ca874035ee",
+    "check_transfer.py": "0246cbe6480c2d62f108a0ca60a50edd40e07b4df73c587737ec08666ab89c93",
+    "exact-checks.json": "4b45ba16b7bff37e98eb3010d21ac03ca42161c9ff4c8c255d7ca1c87939f641",
+    "potential-results.json": "23238e3169cbb7b7e0a4ad5f5ac0363fdb9c7b417b3097d20209fb0a35caeeab",
+    "potential.py": "06e34b52e3e827faae8afd8f60d483af36f1f010207a28556e543ef378e4f520",
+    "transfer-exact-checks.json": "f227777c9ca5a18144a4f2e6028dccdb6183a87161fec50cbf0a29ab605e1e0d",
+    "transfer-results.json": "c07cef0ef2d0dd9438fdd97d86d62a6c337390e02ab6a149b42b5ad88002477c",
+    "transfer.py": "eab9e1e7f830e17469ebae1285105560c974601a410434149dd9b88f71c0ed8e",
+    "weight-shape.json": "8eb32f4fcdf7a5cb1076797f24dca449dacab8b4383e7a869bb6782e7a52bc8b"
+  },
+  "external_archives": {
+    "whole-horizon-exclusion.npz": "9caec35c6db64714ff9f4e634fbfb16695e2baaba8299eaf147fb72bd1e6f0a4",
+    "fixed-region-exclusion.npz": "3f2bb55a53d3a257be855d06f9fe3fac9ae310723999335cab2f21e0da6e043e"
+  },
+  "scope": "Signed safe-state support functional; frozen existing dual weights, separate new support solves and rational check; not physical temperature shortfall or unseen transfer"
+}

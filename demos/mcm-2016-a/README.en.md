@@ -160,3 +160,5 @@ The submission folder holds a single English PDF, as the MCM requires; `7391856`
 - Model, code, paper and original figures are under the repository's MIT license; outside materials keep their own rights. The case tests a thermal network and a delivery process under stated conditions; it is not certification of measured accuracy.
 
 If this case helps you, a **Star on Praxis** is welcome, as are issues with a concrete question and a reproduction.
+
+The [spatial-functional criterion](reproduce/reference/spatial-functional/) explains the obstruction through a declining contrast between inlet-near and remote temperatures. Its verified bound excludes a full 30 minutes on the original weak-mixing 96-cell network (safety time < 1717 s). Frozen weights stop excluding under stronger diffusion; actual policy qualification is still required. These are finite-network statements, with the existing baseline and figure data retained.

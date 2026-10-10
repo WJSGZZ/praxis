@@ -1,0 +1,27 @@
+{
+  "remote_flux_cases": [
+    {
+      "diffusion_s_inv": "1/1000",
+      "loss_s_inv": "1/5000",
+      "max_remote_flux": "-19/10000",
+      "safe_time_bound_s": "10000/19",
+      "excludes1800s": true
+    },
+    {
+      "diffusion_s_inv": "3/1000",
+      "loss_s_inv": "1/5000",
+      "max_remote_flux": "11/10000",
+      "safe_time_bound_s": null,
+      "excludes1800s": false
+    },
+    {
+      "diffusion_s_inv": "1/1000",
+      "loss_s_inv": "0",
+      "max_remote_flux": "3/2000",
+      "safe_time_bound_s": null,
+      "excludes1800s": false
+    }
+  ],
+  "exact_endpoint_examples": 144,
+  "scope": "artificial two-node analytic special cases, not actual bath or PDE"
+}
