@@ -291,3 +291,25 @@ def test_removed_table_is_rejected_but_forward_and_package_references_are_valid(
     with pytest.raises(ValueError, match='removed'):
         check_explicit_references(r"Table \ref{remaining} and Table \ref{removed}. \label{remaining}")
     check_explicit_references("% \\ref{commented-out}\n" + r"\label{remaining} \eqref{remaining}")
+def test_caption_review_distinguishes_short_titles_and_necessary_explanations():
+    from scripts.paper_template import review_captions
+    text = r'''% \caption{This comment is not a figure.}
+\caption[Short list entry]{Rates $\frac{x}{y}$ and \{bounds\}.}
+\captionof{table}{''' + 'condition ' * 41 + r'''}
+\caption{''' + '比较' * 41 + r'''}'''
+    result = review_captions(text)
+    assert len(result['captions']) == 3
+    assert result['captions'][0]['text'].endswith(r'\{bounds\}.')
+    assert not result['captions'][0]['review_length']
+    assert result['captions'][1]['kind'] == 'table'
+    assert result['review_candidates'] == 2
+    # Flags locate review targets; necessary long descriptions remain intact.
+    assert result['captions'][1]['english_words'] == 41
+    assert result['captions'][2]['chinese_characters'] == 82
+
+
+def test_caption_review_does_not_claim_macro_or_malformed_coverage():
+    from scripts.paper_template import review_captions
+    result = review_captions(r'\mycaption{Unexpanded text}\caption{Unclosed')
+    assert result['captions'] == []
+    assert 'no rendered-line or semantic' in result['scope']

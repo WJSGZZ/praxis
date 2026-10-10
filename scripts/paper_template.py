@@ -146,6 +146,38 @@ def check_explicit_references(text):
         raise ValueError('Unresolved explicit cross-reference: ' + ', '.join(sorted(missing)))
 
 
+def review_captions(text):
+    """Locate literal long captions for human review, never a quality gate.
+
+    Counts cannot determine rendered lines, necessity or semantic correctness.
+    Macro-produced captions are outside this static reading aid.
+    """
+    text = re.sub(r'(?<!\\)%[^\n]*', lambda m: ' ' * len(m.group()), text)
+    captions = []
+    pattern = r'\\caption(?:of\s*\{(figure|table)\})?\*?\s*(?:\[[^\]]*\]\s*)?\{'
+    for match in re.finditer(pattern, text):
+        start = pos = match.end()
+        depth = 1
+        while pos < len(text) and depth:
+            if text[pos] == '\\':
+                pos += 2
+                continue
+            depth += (text[pos] == '{') - (text[pos] == '}')
+            pos += 1
+        if depth:
+            continue  # Compilation handles malformed TeX; do not invent content.
+        body = text[start:pos-1]
+        words = len(re.findall(r'[A-Za-z]+(?:[-\u2019\x27][A-Za-z]+)*', body))
+        chinese = len(re.findall(r'[\u3400-\u9fff]', body))
+        captions.append({'line': text.count('\n', 0, match.start()) + 1,
+                         'kind': match.group(1) or 'caption', 'text': body,
+                         'english_words': words, 'chinese_characters': chinese,
+                         'review_length': words > 40 or chinese > 80})
+    return {'scope': 'literal TeX captions; no rendered-line or semantic judgment',
+            'captions': captions,
+            'review_candidates': sum(c['review_length'] for c in captions)}
+
+
 def compile_paper(tex, contest, output, compiler=None):
     """Canonical compiler + bundle; a receipt binds this actual source and PDF."""
     import json
@@ -215,6 +247,8 @@ def main():
     parser.add_argument('--compile', action='store_true', help='Compile with the pinned canonical runtime')
     parser.add_argument('--output-directory', type=Path, help='New output directory for canonical build artifacts')
     parser.add_argument('--compiler', help='Path to Tectonic 0.17.0')
+    parser.add_argument('--review-captions', action='store_true',
+                        help='List literal captions and advisory length candidates; not a quality certification')
     args = parser.parse_args()
     try:
         if args.compile:
@@ -226,7 +260,11 @@ def main():
         result = check(args.tex.read_text(encoding='utf-8'), args.contest)
     except ValueError as exc:
         parser.exit(1, str(exc) + '\n')
-    print(f"PASS {result['profile']} {result['style_sha256']}")
+    if args.review_captions:
+        import json
+        print(json.dumps(review_captions(args.tex.read_text(encoding='utf-8')), ensure_ascii=False, indent=2))
+    else:
+        print(f"PASS {result['profile']} {result['style_sha256']}")
 
 
 if __name__ == '__main__':
