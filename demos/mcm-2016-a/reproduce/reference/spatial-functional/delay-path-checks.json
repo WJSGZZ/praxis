@@ -1,0 +1,60 @@
+{
+  "rows": [
+    {
+      "sample_min_time_s": 1089.1,
+      "sample_min_cell": 89,
+      "matrix_at_sample_min_c": 39.00848632977565,
+      "D": 0.003,
+      "delay": 700.0,
+      "q": 1.0596014016875643,
+      "water_l": 19.426025697605343,
+      "slope": 0.0005095056776964572,
+      "terminal_cell": 89,
+      "terminal_min_c": 39.03000000000324,
+      "envelopes": [
+        {
+          "floor": 39.15453508443335,
+          "ceiling": 40.00000356570644,
+          "spread": 0.03229180328943577
+        },
+        {
+          "floor": 39.00839283025324,
+          "ceiling": 39.47597155452092,
+          "spread": 0.4463434751074242
+        }
+      ],
+      "qualified": true,
+      "sample_min_c": 39.008486329774655
+    },
+    {
+      "sample_min_time_s": 1059.2,
+      "sample_min_cell": 89,
+      "matrix_at_sample_min_c": 38.991818877062876,
+      "D": 0.003,
+      "delay": 720.0,
+      "q": 1.0798424637650983,
+      "water_l": 19.43716434777177,
+      "slope": 0.0006052882054571625,
+      "terminal_cell": 89,
+      "terminal_min_c": 39.03000000000288,
+      "envelopes": [
+        {
+          "floor": 39.1316991883801,
+          "ceiling": 40.00000356570644,
+          "spread": 0.03229180328943577
+        },
+        {
+          "floor": 38.991723413280184,
+          "ceiling": 39.483828116209764,
+          "spread": 0.4544703081437442
+        }
+      ],
+      "qualified": false,
+      "sample_min_c": 38.99181887706193
+    }
+  ],
+  "checker_sha256": "fa50c69c47ad9143fc92cf001d64d582cc302ed3c6a741be2d227628a372c16f",
+  "model_sha256": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+  "elapsed_s": 0.31024116699700244,
+  "scope": "Original96 network, D=.003, terminal39.03 branch; DOP853 independent stream with0.1s chord and assumed2e-6 error. Qualified700s and actual numerical violation at720s, not latest-delay/global-optimality claim."
+}

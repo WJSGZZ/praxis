@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
-  "bytes": 175026,
+  "sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
+  "bytes": 175095,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "All26pages rendered/contact reviewed; readable9/16/21/26 inspected, final16rechecked. Author-external cffe full manuscript/original question read,0b5a branch-qualification check and final711e text/image diff. Native and pinned compile success; zero outside-page characters; fonts and five figures unchanged.",
+  "visual_review_note": "Inherited711e full understanding, final2621 all26 overview and16/17 actual inspected; textdiff only16/17. Native and pinned compile success, no outside-page characters, fonts/five figures unchanged.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "8102791c6f6a179b103960d015e3952c",
-  "generator_sha256": "658ee48962afebe00c290b8f9ff86541eb012160c6adb930a0874d07985512cf",
-  "tex_sha256": "367f0748c2dba72b65d04368ee077ddd9372e804fdedc8f37e6851db6a54aa9b"
+  "md5": "7add557ba52cc39d3ea4c4796041a8d7",
+  "generator_sha256": "91b480f7a4eff29aa41717302f5bad9414ca3ab4a113c78c55ee40f46c9809d3",
+  "tex_sha256": "de85406a9ee1d34a62fff9ea24125aa38f213f51b6173b18ed0ddd43d71f6e9c"
  },
  "model_checks": {
   "total": 17,
@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 753,
+  "passed": 758,
   "date": "2026-10-10",
-  "scope": "753 local passed, 0 failed, 0 skipped; 3 existing warnings; 167.50s. Final adopted timing PDF and capsule included."
+  "scope": "758 passed, 0 failed, 0 skipped; 3 existing warnings; 160.08s. Final2621 adopted PDF and delay-path capsule included."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -780,9 +780,9 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
+  "version_sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external current scientific review, cffe26page full manuscript/original question and actual overview/changedpages;0b5a/711e final paragraph checks with explicit intermediate identities. Same-family AI, nonblind uncalibrated.",
+  "review_scope": "Inherited prior711e full manuscript/original question understanding plus final2621 pages16/17 and actual26page overview, complete extracted-page diff. Same-family AI, nonblind uncalibrated.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
@@ -795,10 +795,11 @@
    "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
    "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected.",
    "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization.",
-   "Implicit terminal-floor branch sensitivity gives opposite water-delay signs at D=.001 and.003; independent stream/ODE variations and strict physical envelopes agree. Numerical local crossing≈1.38e-3m²/s, not exact/unique/global threshold."
+   "Implicit terminal-floor branch sensitivity gives opposite water-delay signs at D=.001 and.003; independent stream/ODE variations and strict physical envelopes agree. Numerical local crossing≈1.38e-3m²/s, not exact/unique/global threshold.",
+   "Same terminal39.03C branch at D=.003:700s wait passes full-path envelopes;720s wait has an actual interior violation, independently rechecked at the same minimum point with matrix exponential. Prefixes both qualify; no latest-delay claim."
   ],
-  "main_gap": "Local terminal-floor timing sensitivity does not track active-constraint changes or qualify a finite delay range; sufficient exclusion windows are not arbitrary-control strategy boundaries.",
-  "highest_value_next_action": "Track finite-delay and active-constraint changes on the same physical policy branch, retaining physical envelopes and comparing only qualified candidates.",
+  "main_gap": "Qualified700s and failed720s show interior constraints truncate the terminal-floor branch, but do not establish a finite safe-delay range or complete strategy selection.",
+  "highest_value_next_action": "Connect active path constraints to a bounded finite-delay decision rule; distinguish stationary candidates, conditional qualification and arbitrary-control limits.",
   "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
   "calibrated": false
  },
@@ -1621,7 +1622,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
+  "sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -2300,6 +2301,38 @@
   "preview_binding": {
    "pdf_sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
    "scale": 1.6,
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "pixel_identical_to_prior": true,
+     "sha256": "d1c034d78af0c9597d7d13dfb45a25e46d6b3a03acf9352ac4d503450c75d8dd"
+    },
+    "report-proof.png": {
+     "page": 7,
+     "pixel_identical_to_prior": true,
+     "sha256": "6c65222385971819ff3ce78a11edf4840e00b40070758478f7ab1d763bfa9f9a"
+    }
+   }
+  }
+ },
+ "delay_path_revision": {
+  "previous_pdf_sha256": "711ee59f34ab339970b074497becf56298284df899bbc51ec217bc2e117934c1",
+  "previous_source_commit": "c4d9c3e0050d2adbb24f521b9c3a1e95c814385f",
+  "pdf_sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
+  "scope": "Two constant-after-delay original96 policies atD=.003, terminal39.03C; not latest feasible delay/global optimum.",
+  "actual_rows": 2,
+  "checker": "Direct stream and DOP853 with0.1s chord/assumed2e-6C, same minimum point cross-checked by matrix exponential; shared network coefficients.",
+  "changes": "Scientific counterexample plus compact numerical-verification prose; all previous numerical values retained.",
+  "changed_text_pages": [
+   16,
+   17
+  ],
+  "native_compiler": "success",
+  "paper_review": "Inherited full understanding and final targeted2621 review; strongF/F–O, O unestablished.",
+  "optimization": "Archived accepted schedules and allfivefigures unchanged; no original optimization rerun.",
+  "tests_status": "758 whole passed;5 direct corruption/qualification guards passed",
+  "preview_binding": {
+   "pdf_sha256": "2621ef3884561a9a603d391be28b4215437f334c239572c3c6413228b2a08b30",
    "previews": {
     "report-summary.png": {
      "page": 1,
