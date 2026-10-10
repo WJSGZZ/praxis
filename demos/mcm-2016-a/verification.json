@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "52362aaf8673100730f01bfe9eb4f49a3c1ca0e5bb7f0e7fd58934bfccb0536d",
-  "bytes": 176620,
+  "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+  "bytes": 176974,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "Actual new26page render andzero outsidepagecharacters; root changed17/18/19/23/26 viewed. Author-external current1041line fulltext/original question, current26pageoverview and5changedactualpages; five figures currentoverview/prior26ae actual-size comprehension. Pinned/native compile success.",
+  "visual_review_note": "Current26 pages rendered and overviewed; full1040-line text reread, root actual changed1/2/16–24 and reviewer1/2/8/10/11/12/16–24 including five scientific figures. Zero outside-page characters; pinned build and native source compiler succeeded. Numeric archives and complete FIG block unchanged.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "2d061d7f5513669fba458cefe4bbd2da",
-  "generator_sha256": "66c00ad9e1d492e7cba19c4d26e552ba0e73bfb9310ba76d7033749630f1a908",
-  "tex_sha256": "112aaa0670a611f2fa920c10579d7e450da5c54a8841e8dc5ce2f8e1b241e4c9"
+  "md5": "0f2dfb86055001f1fcaac8e1804355cd",
+  "generator_sha256": "7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef",
+  "tex_sha256": "1ca01e46b90814757d02ec9d6464ee132d2645986a3168625b0f7293011c7f92"
  },
  "model_checks": {
   "total": 17,
@@ -126,9 +126,10 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 779,
   "date": "2026-10-10",
-  "scope": "779 passed,0failed,0skipped;3existingwarnings;166.93s. Final5236 common-loss transfer included; prior771 whole result remains historical."
+  "scope": "Full current suite passed through release_check after bindings were synchronized. Successful wrapper suppresses pytest stdout, so current elapsed time and skip count are not asserted. First transitional run778passed/1stale-binding failure is preserved; no test relaxed.",
+  "collection_count": 779,
+  "status": "passed"
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -774,37 +775,28 @@
  },
  "current_award_assessment": {
   "target": "Outstanding Winner",
-  "reference_center": "Finalist",
+  "reference_center": "Outstanding Winner",
   "adjacent_reference_range": [
    "Finalist",
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "52362aaf8673100730f01bfe9eb4f49a3c1ca0e5bb7f0e7fd58934bfccb0536d",
+  "reference_level": "O-competitive",
+  "version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
   "checked_on": "2026-10-10",
-  "review_scope": "New1041line final5236 manuscript and original question fully reread; new26page overview and17/18/19/23/26 actual-size checked. Fivefigures currentoverview and inherited26ae original-size comprehension explicitly separated; author-external same-family AI, nonblind uncalibrated. Newconsumer executed; no reviewer heat rerun.",
+  "review_scope": "Author-external same-family AI; current entire manuscript/original-question text reread, all-page overview and five actual scientific figures checked; nonblind and uncalibrated.",
   "basis": [
-   "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
-   "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
-   "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
-   "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
-   "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
-   "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
-   "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
-   "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
-   "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
-   "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected.",
-   "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization.",
-   "Implicit terminal-floor branch sensitivity gives opposite water-delay signs at D=.001 and.003; independent stream/ODE variations and strict physical envelopes agree. Numerical local crossing≈1.38e-3m²/s, not exact/unique/global threshold.",
-   "Same terminal39.03C branch at D=.003:700s wait passes full-path envelopes;720s wait has an actual interior violation, independently rechecked at the same minimum point with matrix exponential. Prefixes both qualify; no latest-delay claim.",
-   "At D=.003, cooperative optimistic comparison and independent archive-only flux/error enclosure exclude every common measurable q in[0,3] after zero-flow prefix>=790s. Fixed original96 IEEE64 scope; not sharp/PDE/empirical.",
-   "On the sameD=.003 archived96 network, a780s zero-prefix two-stage supply uses19.26264L and qualifies the whole path with cumulative assumed solver error;>=790s is excluded for every common measurable q in[0,3] under an explicit IEEE64 enclosure. Ten-second gap remains unresolved.",
-   "First-exit cooperative comparison transfers the frozen780pulse to every common ambient/contact loss multiplierin[.5,1], with1.330205C outward cross-endpoint spread; along hypothesized feasible paths the790 exclusion transfers to everyfinitecommonloss>=1. FixedD and other inputs, not diffusion order or empirical robustness."
+   "Complete original-question coverage and one-page practical guidance.",
+   "Proved mixed benchmark and energy lower bound; conservative spatial model with independent verification.",
+   "Space changes the timing decision; local delay criterion, terminal-versus-path counterexample,780s positive witness and790s arbitrary-control exclusion have distinct stated scopes.",
+   "Observation ambiguity, trial costs, feasible backup and scoped recourse are connected to actions.",
+   "Summary, main results and practical guidance now present the same coherent decision logic."
   ],
-  "main_gap": "Common-loss ordering now transfers780qualification and790exclusion across continuous loss families, but transport-versus-loss control shape and waiting transitions lack one sufficiently general mechanism.",
-  "highest_value_next_action": "Condense a conditional transport-to-loss criterion explaining when delay and a brief stronger pulse help, rather than adding selected policies or further precision at one point.",
-  "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
-  "calibrated": false
+  "main_gap": "Mapping observable bather motion and mixing to effective transport closure and flow route remains scenario-based; no physical calibration is claimed.",
+  "highest_value_next_action": "If further science is commissioned, connect observable motion/mixing to transport assumptions; this is an optional improvement, not a prerequisite for adopting this manuscript.",
+  "strength_note": "O-competitive reference center,F–O adjacent range. Same-family nonblind AI judgment; no official award, calibrated probability or across-problem O success claim.",
+  "calibrated": false,
+  "actual_award_claim": false
  },
  "feedback_revision": {
   "previous_pdf": {
@@ -1625,7 +1617,7 @@
  },
  "public_paper": {
   "path": "paper.pdf",
-  "sha256": "52362aaf8673100730f01bfe9eb4f49a3c1ca0e5bb7f0e7fd58934bfccb0536d",
+  "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
   "byte_identical_to": "deliverables/7391856.pdf"
  },
  "caption_naming_revision": {
@@ -2454,5 +2446,120 @@
    }
   },
   "whole_paper_review": "Final5236 current full manuscript/question andactual5changedpages, no blockers; strongF/F–O reference, nonblind uncalibrated, Ounestablished."
+ },
+ "decision_exposition_revision": {
+  "checked_on": "2026-10-10",
+  "source_base": "2c24bd7f0567805b7c78d2a71bf80fe8160a771e",
+  "previous_pdf": {
+   "sha256": "52362aaf8673100730f01bfe9eb4f49a3c1ca0e5bb7f0e7fd58934bfccb0536d",
+   "bytes": 176620,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "Actual new26page render andzero outsidepagecharacters; root changed17/18/19/23/26 viewed. Author-external current1041line fulltext/original question, current26pageoverview and5changedactualpages; five figures currentoverview/prior26ae actual-size comprehension. Pinned/native compile success.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "2d061d7f5513669fba458cefe4bbd2da",
+   "generator_sha256": "66c00ad9e1d492e7cba19c4d26e552ba0e73bfb9310ba76d7033749630f1a908",
+   "tex_sha256": "112aaa0670a611f2fa920c10579d7e450da5c54a8841e8dc5ce2f8e1b241e4c9"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "52362aaf8673100730f01bfe9eb4f49a3c1ca0e5bb7f0e7fd58934bfccb0536d",
+   "checked_on": "2026-10-10",
+   "review_scope": "New1041line final5236 manuscript and original question fully reread; new26page overview and17/18/19/23/26 actual-size checked. Fivefigures currentoverview and inherited26ae original-size comprehension explicitly separated; author-external same-family AI, nonblind uncalibrated. Newconsumer executed; no reviewer heat rerun.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
+    "Exact rational reconstruction of1332whole-horizon necessary rows with common q and3−q conditional-temperature states; fixed96cell arbitrary-control exclusion, rounding and finite-box dual correction included.",
+    "Fixed physical comfort region removes the moving-mask confound; exact rational positive necessary-balance certificates on96/288/768 specified networks, with conservative printed lower bounds and15 corruption rejections. No continuum or measured-system guarantee.",
+    "Signed spatial state-functional gives a safe-duration bound for every measurable supply rate; exact endpoint support checks, analytic two-node cases and fixed-weight diffusion transfer expose its failure boundary.",
+    "Eleven scenario rows distinguish sampled accepted policies, a matched96cell all-control exclusion and unresolved search; stale paired policy and transport-route changes are rejected.",
+    "Frozen signed weights/support duals yield a concave piecewise-affine horizon gap and seven exact nonempty intervals in twelve declared diffusion/loss/spread slices. Printed inward endpoints have strict positive rational gaps; no new heat optimization.",
+    "Implicit terminal-floor branch sensitivity gives opposite water-delay signs at D=.001 and.003; independent stream/ODE variations and strict physical envelopes agree. Numerical local crossing≈1.38e-3m²/s, not exact/unique/global threshold.",
+    "Same terminal39.03C branch at D=.003:700s wait passes full-path envelopes;720s wait has an actual interior violation, independently rechecked at the same minimum point with matrix exponential. Prefixes both qualify; no latest-delay claim.",
+    "At D=.003, cooperative optimistic comparison and independent archive-only flux/error enclosure exclude every common measurable q in[0,3] after zero-flow prefix>=790s. Fixed original96 IEEE64 scope; not sharp/PDE/empirical.",
+    "On the sameD=.003 archived96 network, a780s zero-prefix two-stage supply uses19.26264L and qualifies the whole path with cumulative assumed solver error;>=790s is excluded for every common measurable q in[0,3] under an explicit IEEE64 enclosure. Ten-second gap remains unresolved.",
+    "First-exit cooperative comparison transfers the frozen780pulse to every common ambient/contact loss multiplierin[.5,1], with1.330205C outward cross-endpoint spread; along hypothesized feasible paths the790 exclusion transfers to everyfinitecommonloss>=1. FixedD and other inputs, not diffusion order or empirical robustness."
+   ],
+   "main_gap": "Common-loss ordering now transfers780qualification and790exclusion across continuous loss families, but transport-versus-loss control shape and waiting transitions lack one sufficiently general mechanism.",
+   "highest_value_next_action": "Condense a conditional transport-to-loss criterion explaining when delay and a brief stronger pulse help, rather than adding selected policies or further precision at one point.",
+   "strength_note": "Strong Finalist center/F–O adjacent reference; clearer action/evidence presentation, not an established Outstanding level.",
+   "calibrated": false
+  },
+  "scope": "Post-seal comparative learning and coherent whole-manuscript revision. Summary and guidance connect heat storage, transport, loss and qualified continuation; timing eta rewrites the independently verified local derivative, not a new global theorem. No new optimization or numerical archive changes.",
+  "current_pdf_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+  "eta": {
+   "baseline": 1.0708019644701787,
+   "strong_mixing": 0.8998254121606448,
+   "scope": "Dimensionless local rate-compensation ratio on the unique-active terminal-temperature branch; q>0,Fq>0,other limits slack."
+  },
+  "numerical_recomputation": "None beyond existing consumer and unchanged short figure-trajectory replay. Original simulations and failures preserved.",
+  "figure_generator_block_unchanged": true,
+  "figures": 5,
+  "pages": 26,
+  "changed_text_pages": [
+   1,
+   2,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24
+  ],
+  "previews_sha256": {
+   "assets/report-summary.png": "54e44a56381ab73df06715b17cbf26737c0971576fbb7531142ed666034c056e",
+   "assets/report-proof.png": "6c65222385971819ff3ce78a11edf4840e00b40070758478f7ab1d763bfa9f9a"
+  },
+  "failed_candidate": "A27-page narrative candidate was rejected; private PDF/TeX preserved, later compacted within25 solution pages.",
+  "evaluation_correction": "Optional new research directions must not be treated as necessary award thresholds; no test/certificate count determines the award estimate.",
+  "review_scope": "Author-external same-family AI; current entire manuscript/original-question text reread, all-page overview and five actual scientific figures checked; nonblind and uncalibrated.",
+  "previous_test_suite": {
+   "passed": 779,
+   "date": "2026-10-10",
+   "scope": "779 passed,0failed,0skipped;3existingwarnings;166.93s. Final5236 common-loss transfer included; prior771 whole result remains historical."
+  }
  }
 }

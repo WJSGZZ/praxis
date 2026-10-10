@@ -7,6 +7,10 @@ from timing_values import timing_values
 def test_timing_local_comparison_keeps_scope():
  v=timing_values(ROOT)
  assert v['baseline_slope']>0>v['strong_slope'] and .00137<v['local_D']<.00138
+ # Ratios on opposite sides of one must retain the independent sensitivity
+ # result; a rate-unit mistake would reverse the action explanation.
+ assert v['baseline_compensation_ratio']==pytest.approx(1.07080196447)
+ assert v['strong_compensation_ratio']==pytest.approx(.899825412161)
 
 @pytest.mark.parametrize('defect',['derivative','envelope','branch'])
 def test_rehashed_timing_cannot_promote_changed_claim(tmp_path,defect):

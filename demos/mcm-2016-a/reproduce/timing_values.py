@@ -21,4 +21,9 @@ def timing_values(root):
  if rows[1]['water_delay_derivative_l_per_s']<=0 or rows[3]['water_delay_derivative_l_per_s']>=0:raise ValueError('Timing comparison changed')
  bracket=c['local_sign_bracket']
  if len(bracket)!=2 or not bracket[0]['D']<r['local_root']['D']<bracket[1]['D'] or not bracket[0]['slope']>0>bracket[1]['slope']:raise ValueError('Timing local numerical bracket invalid')
- return {'baseline_slope':rows[1]['water_delay_derivative_l_per_s'],'strong_slope':rows[3]['water_delay_derivative_l_per_s'],'local_D':r['local_root']['D'],'scope':'Local constant-after-delay branch with terminal39.03C, original96 only; no exact/unique root or arbitrary-control optimality'}
+ # This dimensionless compensation ratio rewrites the already checked slope;
+ # it introduces no new fitted model or numerical propagation.
+ ratios=[-1800*x['Fd']/(x['q']*x['Fq']) for x in rows]
+ return {'baseline_slope':rows[1]['water_delay_derivative_l_per_s'],'strong_slope':rows[3]['water_delay_derivative_l_per_s'],
+         'baseline_compensation_ratio':ratios[1],'strong_compensation_ratio':ratios[3],
+         'local_D':r['local_root']['D'],'scope':'Local constant-after-delay branch with terminal39.03C, original96 only; no exact/unique root or arbitrary-control optimality'}

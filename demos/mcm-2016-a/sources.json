@@ -76,21 +76,24 @@
       "title": "2016 MCM Problem A judges commentary",
       "url": "https://faculty.winthrop.edu/abernathyz/MathComps/2016_MCM_A-Com.pdf",
       "read": "five pages; post-seal comparative learning",
-      "use": "practical actions, spatial mixing and critical comparison; not an authoritative numerical answer"
+      "use": "practical actions, spatial mixing and critical comparison; not an authoritative numerical answer",
+      "latest_read": "2026-10-10: all5 pages/163 extracted lines; model suitability and clear action connections inform exposition, without a new numerical answer or mandatory O threshold."
     },
     {
       "id": "comparative-44845",
       "team": "44845",
       "title": "2016 MCM A Outstanding paper, University of Colorado Boulder",
       "read": "Full text, physical/printed pages 1–44; all-page layout overview and readable pages 12, 26, 37, 39; implementation source and all references not independently verified",
-      "use": "heat redistribution and feedback as mechanisms to test; original privately held, not redistributed; not all derivations independently verified"
+      "use": "heat redistribution and feedback as mechanisms to test; original privately held, not redistributed; not all derivations independently verified",
+      "latest_read": "2026-10-10: author-external reviewer read all44 English pages and16 recorded actual-size pages; root read the complete comparative review, not independently every original page. Implementation not executed."
     },
     {
       "id": "comparative-54164",
       "team": "54164",
       "title": "2016 MCM A Outstanding paper, Adlai E. Stevenson High School",
       "read": "Full text, physical pages 1–44 (printed 1–42 follows two front pages); all-page overview and readable physical pages 11, 14, 17, 40; raw experiments not independently verified",
-      "use": "limited comparison; original privately held, not redistributed; experiments not independently verified"
+      "use": "limited comparison; original privately held, not redistributed; experiments not independently verified",
+      "latest_read": "2026-10-10: root read all44 English pages including appendix code and references, all-page overview and original-size pages11/17/20/35/39/40. No experiment data or implementation rerun."
     },
     {
       "id": "synthetic-calibration-study",
@@ -159,6 +162,12 @@
       "id": "axial-transport-closure-comparison",
       "path": "reproduce/reference/transport/manifest.json",
       "use": "Matched totals, independently assembled one-dimensional conservative flux model; 36 unchanged-policy replays, six finite-family searches and 24 independent analytic/flux checks. Synthetic conditional model study, not physical data."
+    },
+    {
+      "id": "comparative-award-identity-2016-a",
+      "url": "https://www.contest.comap.org/undergraduate/contests/mcm/contests/2016/results/2016_MCM_Problem_A_Results.pdf",
+      "read": "Physical page2 checked, not the entire results document.",
+      "use": "Confirm44845 and54164 as Outstanding recipients; historical labels do not calibrate this manuscript or validate every reference derivation."
     }
   ]
 }
