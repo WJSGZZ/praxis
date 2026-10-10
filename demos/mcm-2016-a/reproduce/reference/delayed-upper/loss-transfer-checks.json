@@ -1,0 +1,81 @@
+{
+  "rows": [
+    {
+      "policy": {
+        "delay": 780.0,
+        "lead": 3.0,
+        "pulse": 90.0,
+        "tail": 0.9524284460316478,
+        "water_l": 19.26264091349054,
+        "floor": 39.004689370914505,
+        "ceiling": 40.0,
+        "spread": 0.788678165296119,
+        "terminal_floor": 39.030000000006474,
+        "accepted_sample": true
+      },
+      "envelopes": [
+        {
+          "floor_c": 39.522616525532534,
+          "ceiling_c": 40.000002782923495,
+          "spread_c": 0.016543566675267202,
+          "sample_min_c": 39.52261930845603,
+          "sample_min_s": 780.0,
+          "sample_min_cell": 53,
+          "allowance_c": 2.782923491687511e-06,
+          "flow_l_min": 0.0,
+          "duration_s": 780.0
+        },
+        {
+          "floor_c": 39.49951292069062,
+          "ceiling_c": 40.25309855169794,
+          "spread_c": 0.7459926320078276,
+          "sample_min_c": 39.49977231859931,
+          "sample_min_s": 843.4,
+          "sample_min_cell": 89,
+          "allowance_c": 0.0002593979086893509,
+          "flow_l_min": 3.0,
+          "duration_s": 90.0
+        },
+        {
+          "floor_c": 39.507205763232555,
+          "ceiling_c": 40.33482881484969,
+          "spread_c": 0.7471358925942881,
+          "sample_min_c": 39.5073653175988,
+          "sample_min_s": 870.0,
+          "sample_min_cell": 89,
+          "allowance_c": 0.00015955436624257442,
+          "flow_l_min": 0.9524284460316478,
+          "duration_s": 930.0
+        }
+      ],
+      "qualified": true,
+      "water_l": 19.262640913490543
+    }
+  ],
+  "elapsed_s": 0.059925709007075056,
+  "policies_sha256": "87185fcafb05cfe671b904c49ddc5c5f83188ee38a2c1e50fdb2e54465db9624",
+  "checker_sha256": "7801e9aaa6582190f92a667866c305c8737d5c8effd94ecff9e075d9d849924d",
+  "model_sha256": "6c9d1c4deef48552084234c1158fb928eeee73e566c7d4a4231061c1696035db",
+  "scope": "One predeclared lambda=.5 warm endpoint for frozen780pulse on original96, independent stream/DOP853 and0.1s chord. Each phase assumes2e-6C solver error, accumulated across nonexpansive phase boundaries; conditional floating qualification, no interval/PDE/empirical/global optimum.",
+  "primitive_sha256": "cdfa0427fe6380219353caae99152996ee887d8de4791a194633bbf4ad8e69c4",
+  "loss_factor": 0.5,
+  "cold_receipt_sha256": "6a9e1cf4edbb6fa73c760ea2a968b41316dedf3d30bbe7dcda1e958b37eee29d",
+  "cross_endpoint_bounds": [
+    {
+      "floor_lower_c": 39.06345420144767,
+      "ceiling_upper_c": 40.000002782923495,
+      "spread_upper_c": 0.9365485814758259
+    },
+    {
+      "floor_lower_c": 39.00439309505924,
+      "ceiling_upper_c": 40.25309855169794,
+      "spread_upper_c": 1.248705456638696
+    },
+    {
+      "floor_lower_c": 39.00462437121088,
+      "ceiling_upper_c": 40.33482881484969,
+      "spread_upper_c": 1.330204443638813
+    }
+  ],
+  "continuous_band_qualified": true
+}

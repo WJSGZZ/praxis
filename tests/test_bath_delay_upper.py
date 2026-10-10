@@ -30,3 +30,28 @@ def test_delayed_upper_rehashed_false_claim_rejected(tmp_path,defect):
         pp.write_text(json.dumps(pulse))
     p.write_text(json.dumps(r));m=json.loads((folder/'manifest.json').read_text());m['members']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.iterdir() if p.is_file() and p.name!='manifest.json'};(folder/'manifest.json').write_text(json.dumps(m))
     with pytest.raises(ValueError):delay_upper_values(tmp_path)
+
+
+def test_common_loss_transfer_has_continuous_band_and_outward_spread():
+    v=delay_upper_values(ROOT)
+    assert (v['loss_min'],v['loss_max'])==(.5,1.)
+    assert v['loss_band_spread_print']==1.330205
+
+
+@pytest.mark.parametrize('defect',['factor','cold_identity','phase','cross_difference','unsafe_spread','reset_error','nonfinite'])
+def test_common_loss_rebound_false_evidence_rejected(tmp_path,defect):
+    folder=tmp_path/'reference/delayed-upper';shutil.copytree(ROOT/'reference/delayed-upper',folder)
+    shutil.copytree(ROOT/'code',tmp_path/'code',ignore=shutil.ignore_patterns('__pycache__'))
+    p=folder/'loss-transfer-checks.json';r=json.loads(p.read_text())
+    if defect=='factor':r['loss_factor']=.6
+    elif defect=='cold_identity':r['cold_receipt_sha256']='0'*64
+    elif defect=='phase':r['rows'][0]['envelopes'][0]['duration_s']=750.
+    elif defect=='cross_difference':r['cross_endpoint_bounds'][2]['spread_upper_c']=.1
+    elif defect=='unsafe_spread':
+        r['rows'][0]['envelopes'][2]['ceiling_c']=42.
+        r['cross_endpoint_bounds'][2]['ceiling_upper_c']=42.
+        r['cross_endpoint_bounds'][2]['spread_upper_c']=42.-r['cross_endpoint_bounds'][2]['floor_lower_c']
+    elif defect=='reset_error':r['rows'][0]['envelopes'][2]['allowance_c']=2e-6
+    else:r['rows'][0]['envelopes'][0]['ceiling_c']=float('nan')
+    p.write_text(json.dumps(r));m=json.loads((folder/'manifest.json').read_text());m['members']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.iterdir() if p.is_file() and p.name!='manifest.json'};(folder/'manifest.json').write_text(json.dumps(m))
+    with pytest.raises(ValueError):delay_upper_values(tmp_path)
