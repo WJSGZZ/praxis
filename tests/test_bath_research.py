@@ -63,4 +63,59 @@ def test_manuscript_retains_the_actual_sampling_scope_and_strategy_quantifiers()
     assert 'min/max/spread/final-body' in text
     assert 'remainingbath,foreverycompatiblemodel' in compact
     assert 'zeroflowfollowedbyaqualifiedbackup' in compact
-    assert 'delayed/time-varyingcontrols' in compact
+    assert 'Nomeasurable' in compact and 'fixed-networkimpossibility' in compact
+
+
+def test_rational_all_control_certificate_and_feasible_control():
+    cert=mod.all_control_exclusion(ROOT)
+    assert cert['exact']['rational_rows']==61869
+    assert cert['exact']['corrected_bound_float_display']>1/5000
+    assert cert['run']['rows'][1]['success'] is False  # Timeout is not solved.
+    assert cert['checks']['known_feasible_flux_integral_matrix_residual']<1e-7
+
+
+@pytest.mark.parametrize('defect',['none','zero_dual','wrong_balance','wrong_initial','wrong_primitive'])
+def test_exact_certificate_replay_rejects_independent_corruptions(tmp_path,defect):
+    import subprocess,sys
+    from scipy.sparse import load_npz,save_npz
+    files=mod.all_control_exclusion(ROOT)['files']
+    for name,raw in files.items():
+        dest=tmp_path/name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(raw)
+    if defect=='zero_dual':
+        path=tmp_path/'weak96/solution.npz'
+        with np.load(path,allow_pickle=False) as z:data={k:z[k] for k in z.files}
+        for k in ('inequality_dual','lower_dual','upper_dual'):data[k]=np.zeros_like(data[k])
+        np.savez(path,**data)
+    elif defect=='wrong_balance':
+        path=tmp_path/'weak96/A.npz';a=load_npz(path);a.data[0]+=.01;save_npz(path,a)
+    elif defect=='wrong_initial':
+        path=tmp_path/'weak96/problem.npz'
+        with np.load(path,allow_pickle=False) as z:data={k:z[k] for k in z.files}
+        data['bounds'][0,0]=39;np.savez(path,**data)
+    elif defect=='wrong_primitive':
+        path=tmp_path/'primitives.npz'
+        with np.load(path,allow_pickle=False) as z:data={k:z[k] for k in z.files}
+        data['cap'][0]*=1.01;np.savez(path,**data)
+    result=subprocess.run([sys.executable,str(tmp_path/'verify_exact.py')],capture_output=True,text=True,timeout=70)
+    if defect=='none':
+        assert result.returncode==0,result.stderr
+        actual=json.loads(result.stdout)
+        assert actual['status']=='completed' and actual['corrected_bound_float_display']>1/5000
+    else:
+        assert result.returncode!=0 and 'AssertionError' in result.stderr
+
+
+def test_active_report_has_parallel_numbered_subsections_and_resolved_references():
+    from pypdf import PdfReader
+    import re
+    pages=PdfReader(ROOT.parent/'deliverables/7391856.pdf').pages
+    contents=pages[1].extract_text()
+    groups={}
+    for parent,child in re.findall(r'(?m)^\s*(\d+)\.(\d+)\s',contents):
+        groups.setdefault(parent,[]).append(child)
+    assert all(len(children)>=2 for children in groups.values()),groups
+    text=' '.join(p.extract_text() for p in pages)
+    assert 'Section 2.1' not in text and '??' not in text
+    assert 'Problem formulation' in contents
+    assert 'Optimality and energy bounds' in contents
+    assert 'Delivery-error sensitivity' in contents

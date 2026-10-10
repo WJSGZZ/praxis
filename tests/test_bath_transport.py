@@ -34,7 +34,7 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     pages=PdfReader(pdf).pages
     assert len(pages)==26
     text=' '.join(' '.join(p.extract_text().split()) for p in pages)
-    assert 'Challenge the transport mechanism' in text
+    assert 'Transport comparison and infeasibility' in text
     assert '-31.51' in text.replace('−', '-') and '-26.28' in text.replace('−', '-')
     assert 'a permitted short circuit does not establish the cause' in text
     assert 'for every compatible model' in text or 'Over every compatible model' in text

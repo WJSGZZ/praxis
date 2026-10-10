@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
-  "bytes": 175710,
+  "sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
+  "bytes": 174218,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "Full26-page original-problem review on33a3314;36521/22/26 scope/AI update and final8087 18/21/22 precision corrections separately bound. Final26 rendered with embedded fonts and zero boundary overflow. Original typography and five source-generated figures unchanged.",
+  "visual_review_note": "All26pages rendered and viewed;6dec full manuscript read by author-external AI,466a wording and academic heading changes separately reviewed on actual2/19/21/22/23/26. No font/margin changes. Final runtime and source bound by canonical freeze.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "dc0384add53007f7bf8288b38a425637",
-  "generator_sha256": "7d10055a73889417ba68c8dd4ed02fd2d9f4bb10eb4e980eba3f7984894935df",
-  "tex_sha256": "21e4856f070befc07531e24214e584ce359983a624553ad18e6717488a2a9d37"
+  "md5": "8b8fd03e0c85f58c742865ecf3822c7a",
+  "generator_sha256": "d9f302932bcb3dc0613f57c94f08945b65ffbbb8249e2db93c6b60971ca26aee",
+  "tex_sha256": "26035f5f6a16bff2b39530379734114983a5a7c4255b39903377ae8f3c2ca8f8"
  },
  "model_checks": {
   "total": 17,
@@ -765,20 +765,22 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
+  "version_sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
   "checked_on": "2026-10-10",
-  "review_scope": "Original problem and full26-page33a manuscript by author-external same-family AI; later final range/radius/decision/disclosure corrections separately reviewed on actual pages. Nonblind, uncalibrated, synthetic and conditional.",
+  "review_scope": "Full26page6dec scientific review inherited with final466a targeted language/heading/logic/PDF corrections. Author-external same-family AI, nonblind, uncalibrated.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
-   "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization."
+   "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization.",
+   "Exact rational dual and independent reconstruction of61869necessary constraints exclude every measurable0–3L/min supply for the fixed96cell primitive network; rounding and finite-box remainder explicitly accounted."
   ],
-  "main_gap": "The same weak-transport scenario has a constant-rate obstruction but still lacks a qualified positive policy result or a stronger bounded exclusion for time-varying supply.",
-  "highest_value_next_action": "Under the sameD=.0003geometryandphysicallimits, test whether bounded time-varying supply overcomes the constant-flow obstruction; preserve failure or qualify any successful policy independently.",
-  "strength_note": "Strong Finalist center/F–O adjacent reference: scientific explanation improved beyond finite-search failures; Outstanding not established."
+  "main_gap": "The arbitrary-control obstruction is established on one fixed96cell transport network; its persistence under independently specified finer transport resolution is not yet tested.",
+  "highest_value_next_action": "Apply the necessary-constraint certificate to one independently refined conservative network, with bounded solve/check allocations; retain inconclusive or negative results.",
+  "strength_note": "Strong Finalist/F–O adjacent reference; stronger O-edge evidence from the all-control certificate, not an established Outstanding level.",
+  "calibrated": false
  },
  "feedback_revision": {
   "previous_pdf": {
@@ -1509,5 +1511,92 @@
   "native_compile": "success",
   "out_of_page_characters": 0,
   "source_precision_correction": "Removed incorrect Sobol-table reference; actual six ranges,loguniformD,uniformothers,seed7 and summary-component identities restored."
+ },
+ "all_control_revision": {
+  "previous_pdf": {
+   "sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
+   "bytes": 175710,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "Full26-page original-problem review on33a3314;36521/22/26 scope/AI update and final8087 18/21/22 precision corrections separately bound. Final26 rendered with embedded fonts and zero boundary overflow. Original typography and five source-generated figures unchanged.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "dc0384add53007f7bf8288b38a425637",
+   "generator_sha256": "7d10055a73889417ba68c8dd4ed02fd2d9f4bb10eb4e980eba3f7984894935df",
+   "tex_sha256": "21e4856f070befc07531e24214e584ce359983a624553ad18e6717488a2a9d37"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
+   "checked_on": "2026-10-10",
+   "review_scope": "Original problem and full26-page33a manuscript by author-external same-family AI; later final range/radius/decision/disclosure corrections separately reviewed on actual pages. Nonblind, uncalibrated, synthetic and conditional.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+    "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+    "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization."
+   ],
+   "main_gap": "The same weak-transport scenario has a constant-rate obstruction but still lacks a qualified positive policy result or a stronger bounded exclusion for time-varying supply.",
+   "highest_value_next_action": "Under the sameD=.0003geometryandphysicallimits, test whether bounded time-varying supply overcomes the constant-flow obstruction; preserve failure or qualify any successful policy independently.",
+   "strength_note": "Strong Finalist center/F–O adjacent reference: scientific explanation improved beyond finite-search failures; Outstanding not established."
+  },
+  "pdf_sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
+  "archive_sha256": "a33a8316f478f60b53646093b00b2e93ec10b420fda7da3322781e010610e112",
+  "constraints": 61869,
+  "variables": 12399,
+  "exact_residual_lower_bound": {
+   "numerator": 1,
+   "denominator": 5000,
+   "unit": "C per30s integrated heat-balance residual"
+  },
+  "scope": "Arbitrary measurableq0–3L/min for archived96cell primitive-coefficient network only;D=.0003,fixed34contact,40initial,1800s,39allfloor/41outsideceiling/1.5outsidespread. Primitive coefficients interpreted as exact rationals; LP coefficient-rounding accounted, not empirical/PDE/finer-network proof.",
+  "known_feasible_control": "SeparateLP5secondstimeout preserved. Independent direct-flux moments pass full analogous matrix to4.3e-13; sampledphysical limits pass.",
+  "new_verifier": "Extract archive into fresh directory and execute verify_exact.py; reconstructs every necessary row and rational dual without solvingLP.",
+  "old_numerical_studies_rerun": false,
+  "headings": "Technical headings name objects/methods/results; isolated2.1and5.1merged,Section2.1references updated; required nontechnical guide stays action-oriented.",
+  "format": "25solution+1AI, originalfonts/margins,5figures/15tables/25equations",
+  "native_compile": "success",
+  "overfull_hbox": 0,
+  "previous_rejected_page_counts": [
+   28,
+   27
+  ]
  }
 }

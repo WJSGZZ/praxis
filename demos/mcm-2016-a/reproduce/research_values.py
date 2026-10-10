@@ -143,3 +143,30 @@ def recourse_transfer(root):
     require(history['retained'] == ids and history['preterminal'] == previous and len(history['records']) == 54
             and len(screen['rows'][1]['records']) == 54 and not screen['rows'][1]['retained'], 'Transfer history or negative control differs')
     return dict(run=run, row=row, checks=checks, files=files)
+
+
+def all_control_exclusion(root):
+    """Bind a fixed-network certificate; full rational replay is verify_exact.py.
+
+    This archive audit checks identity and scope, not the solver status alone.
+    The executable verifier reconstructs every row from exact archived primitives.
+    """
+    files, read, manifest, bindings = archive(root, 'all-control-exclusion')
+    exact=read('portable-exact-checks.json'); run=read('results.json'); independent=read('checks.json')
+    require(exact['status']=='completed' and independent['status']=='completed', 'All-control checks incomplete')
+    for record in (exact,run,independent):
+        require(all(hashlib.sha256(files[f]).hexdigest()==h for f,h in record['sha256'].items()), 'All-control source stale')
+    require(exact['rational_rows']==61869 and exact['variables']==12399
+            and exact['exact_verified_threshold']==dict(numerator=1,denominator=5000,unit='C per30s integrated-balance residual')
+            and exact['corrected_bound_float_display']>1/5000
+            and exact['global_50c_barrier_max_rhs_c_per_s']<0 and exact['min_dynamic_sink_w_per_k']>0,
+            'All-control certificate or invariant differs')
+    require(len(run['rows'])==2 and run['rows'][0]['grid']==[8,4,3]
+            and run['rows'][0]['D']==.0003 and run['rows'][0]['success'] is True
+            and run['rows'][1]['D']==.001 and run['rows'][1]['success'] is False
+            and run['rows'][1]['status']==1, 'All-control/control status differs')
+    require(independent['known_feasible_flux_integral_matrix_residual']<1e-7
+            and len(independent['known_feasible_stage_metrics'])==60
+            and all(x[0]>=39 and x[1]<=41 and x[2]<=1.5 for x in independent['known_feasible_stage_metrics']),
+            'All-control negative trajectory check differs')
+    return dict(exact=exact,run=run,checks=independent,files=files)
