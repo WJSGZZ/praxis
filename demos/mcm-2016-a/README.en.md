@@ -58,6 +58,8 @@ Volume 164.25 L, start 40°C, limits 39–41°C, largest spatial spread 1.5°C (
 
 Table 8 compares the three policies on one finite ambiguity set: 130, 174 and 178 of 178 models meet the five-second sampled limits. Commanded and delivered water are reported separately. Forty sampled structural replays of the new policy add a limited transfer check; they do not extend its continuous certificate to those alternative structures.
 
+**A refusal now has a bounded recourse study.** A second, previously exposed 54-point static catalog reconstructs state from the complete action/measurement history. A prequalified one-minute zero-flow bridge precedes the common constant tail. Independent three-grid sampled replay covers all 19 final survivors (57 runs). Completing the higher-loss case takes 30.76 L, above the old 26.09 L cap, and drops extra planning reserves; this is a qualified completion result, not a saving or live-control claim. [Reproduction notes](reproduce/README.md#拒绝之后怎样续行) retain the failing 0.70 L/min counterexample, actual historical sources and a separately tested deadline repair.
+
 ## Two pages of the paper
 
 **Turn ambiguous measurements into a decision.** A synthetic two-probe pulse leaves 178 compatible models in a 2,835-point parameter grid. Four of those models fail sampled checks of the original schedule. A replacement uses **23.48 L commanded** and passes 534 conditional envelope checks across three specified meshes. That coverage costs 9.33% more commanded water, plus a separate **6 L** calibration pulse and unmodeled reset costs. These are finite-set numerical results, not an empirical confidence region or a real-bath reliability guarantee; the complete record is `reference/calibration-study.json`.

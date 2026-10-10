@@ -90,3 +90,14 @@ To rebuild the two case-page excerpts after reviewing and adopting a paper, run 
 [Transport sources, numerical archive and reproduction](reference/transport/README.md) preserve a distinct conservative axial closure rather than another assembly of the same thermal network. All 36 original-policy replays and six bounded finite searches retain their identities and failures. Four selected candidates pass the specified sampled refinements; 24 analytic/independent-flux records check numerical implementation. The report consumer rejects stale inputs, missing coverage, incorrectly promoted failures and an incorrect original outlet identity. The original baseline and its optimization were not rerun. Section11.4, the summary, conclusion and user guide distinguish a permitted hot-water short circuit from actual excess outlet enthalpy: the adopted trajectories have cooler outlets. The standard uniform-loss gradient argument is conditional, and does not extend to the localized-body profile. This supplements structural interpretation, without establishing a PDE-wide feasibility certificate, empirical validity or a contest award.
 
 The subsequent Section12 decision synthesis reuses these archives and the retained-tail feedback argument. Waiting requires a qualifying zero-flow prefix followed by the whole backup, over every surviving finite model. Empty sets and unsupported backups trigger reassessment, not a recovery guarantee. This manuscript-only revision does not rerun numerical studies. Active source/PDF identities are in the root `pdf` record of `../verification.json`; each historical revision retains its own original identities.
+
+
+## 拒绝之后怎样续行
+
+`reference/recourse-study.npz` 保存四次历史拒绝的完整输入/观测、54个已暴露静态假设的重建、原始零延迟与60秒桥接版本、独立检查以及失败反例。`recourse_values.recourse_values()`只核验并读取证据，不重跑优化或热模拟；空集、缺桥段、超时、失败、时域/水量或身份覆盖错误均拒绝。论文第12节与指南使用同一份有效结果。
+
+桥段先在最后读数之前的29个相容假设上作基网格条件包络，随后读数删除到19个；57次独立三网格重放覆盖这19个的完整前缀/桥段/尾段。细网格是采样检查。该实验要求已知40°C/34°C初态、目录提前并行维护及静态失配，不认证实时调度或任意故障。物理39/41/1.5°C限值保持，额外规划储备放弃；最大30.76L指令超过旧26.09L上界。
+
+原0.70L/min尾段在仍相容供水偏冷模型上三网格均低于39°C；延迟方案采用0.80L/min。另存的`candidate_search.py`及`run-lagged-deadline.py`修复候选结束后超时仍被接受及状态覆盖，6个可控时钟测试与冻结候选重放验证修正。历史运行仍绑定旧源，不倒填成新执行；协作检查只能拒绝迟到结果，不能中断求解器。
+
+To inspect the archive without rerunning studies, load it with NumPy (`allow_pickle=False`) and extract only into a fresh directory. Byte-preserved historical producers retain their actual outputs; the separately named deadline revision is not substituted into their provenance. Expensive baseline optimization is unrelated to this supplement and need not be repeated.
