@@ -37,10 +37,10 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert 'Challenge the transport mechanism' in text
     assert '-31.51' in text.replace('−', '-') and '-26.28' in text.replace('−', '-')
     assert 'a permitted short circuit does not establish the cause' in text
-    assert 'over the remaining bath' in text
+    assert 'for every compatible model' in text or 'Over every compatible model' in text
     # PDF word-spacing may be emitted as glyph placement rather than spaces.
-    assert 'followedbythebackup' in ''.join(text.replace('- ', '').split())
-    assert 'retainthequalifiedbackup' in ''.join(text.split())
+    assert 'remainingbackuppassforeverycompatiblemodel' in ''.join(text.replace('- ', '').split())
+    assert 'otherwisekeep thecheckedbackup'.replace(' ', '') in ''.join(text.replace('- ', '').split())
     revision=meta['transport_revision']
     assert revision['checks']==24 and revision['replays']==36
     # Historical revisions retain their own sources; only the active PDF binding

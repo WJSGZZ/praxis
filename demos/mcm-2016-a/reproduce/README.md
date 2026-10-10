@@ -101,3 +101,11 @@ The subsequent Section12 decision synthesis reuses these archives and the retain
 原0.70L/min尾段在仍相容供水偏冷模型上三网格均低于39°C；延迟方案采用0.80L/min。另存的`candidate_search.py`及`run-lagged-deadline.py`修复候选结束后超时仍被接受及状态覆盖，6个可控时钟测试与冻结候选重放验证修正。历史运行仍绑定旧源，不倒填成新执行；协作检查只能拒绝迟到结果，不能中断求解器。
 
 To inspect the archive without rerunning studies, load it with NumPy (`allow_pickle=False`) and extract only into a fresh directory. Byte-preserved historical producers retain their actual outputs; the separately named deadline revision is not substituted into their provenance. Expensive baseline optimization is unrelated to this supplement and need not be repeated.
+
+## 恒流障碍与目录外接续
+
+`reference/constant-exclusion.npz` 保留三个弱混合网络的区间证书、全部125中心的独立检查、六个解析特例、已知可行条件负对照，以及失败的更宽理想加热上界。`research_values.constant_exclusion()`核查哈希、精确无缝区间覆盖、见证算术、检查身份及未决状态。9/18/30段覆盖只排除指定立即恒流族0–3 L/min；数值准确性假设分别有温度、敏感性及导数单位，不认证定向舍入、时变策略或PDE极限。
+
+`reference/recourse-transfer.npz`保存未调参的54目录对一个预声明目录外参数对的试验。九分钟预定诊断不是新执行的旧控制器报警；七个桥段假设删至五个，随后1.05 L/min尾段给出30.76 L指令/31.14 L真实合成入水。18次独立三网格采样覆盖五假设和目录外真值；`research_values.recourse_transfer()`拒绝缺真值检查、过期源、超时接受或错误水量。单点成功不是任意目录外保证。
+
+Both archives contain byte-preserved numerical sources and recorded checks. Large center traces are intentionally excluded from the public package; their identities remain in the manifest and research receipts. Extract into a new local directory, run each `run.py` in the frozen baseline/refinement/control subdirectory, then run the top-level `check.py` to regenerate traces and compare coverage. Existing outputs are protected: preserve the archived JSON receipts before running in a separate clean directory. The original study charged all four producer runs to one90-second/256-center boundary; do not reset those limits by renaming runs. Source regeneration needs NumPy/SciPy from the locked environment; no AI service or new physical solver is required. Reading the consumer verifies archived evidence and does not perform a fresh simulation or formal floating-point proof.

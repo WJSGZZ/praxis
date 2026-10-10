@@ -3,8 +3,8 @@
  "checked_on": "2026-10-10",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "b3778cd318abec934d29576c1fce31d2bf6d49915de0335284abf6d0224a883a",
-  "bytes": 174731,
+  "sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
+  "bytes": 175710,
   "pages_total": 26,
   "solution_pages": 25,
   "ai_pages": 1,
@@ -37,11 +37,11 @@
    25,
    26
   ],
-  "visual_review_note": "Full26-page text/contacts and all5 figures reviewed on748fc180. Final21/22/23 range wording and nonbreaking negative values checked at actual size; final26 pages rendered, embedded fonts and zero page-boundary overflow verified. Native saved final source compile success. Typography unchanged.",
+  "visual_review_note": "Full26-page original-problem review on33a3314;36521/22/26 scope/AI update and final8087 18/21/22 precision corrections separately bound. Final26 rendered with embedded fonts and zero boundary overflow. Original typography and five source-generated figures unchanged.",
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-  "md5": "acb8c5008a38aa8ec7f0a0d75893b178",
-  "generator_sha256": "d5b8e4029567096e73e32f68cfa83607c4564edfd7f3fbe63ad56ceff00b14a4",
-  "tex_sha256": "b37b97c1e0d64974466ce64be61f595d48201d1957ed74a9deeea5e9731eae4f"
+  "md5": "dc0384add53007f7bf8288b38a425637",
+  "generator_sha256": "7d10055a73889417ba68c8dd4ed02fd2d9f4bb10eb4e980eba3f7984894935df",
+  "tex_sha256": "21e4856f070befc07531e24214e584ce359983a624553ad18e6717488a2a9d37"
  },
  "model_checks": {
   "total": 17,
@@ -765,18 +765,20 @@
    "Outstanding Winner"
   ],
   "outstanding_established": false,
-  "version_sha256": "b3778cd318abec934d29576c1fce31d2bf6d49915de0335284abf6d0224a883a",
+  "version_sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
   "checked_on": "2026-10-10",
-  "review_scope": "Author-external same-family AI original problem/full26 text pages and all5 actual figures on748fc180; final scope/attribution/notation changes have separate author targeted review. Nonblind, uncalibrated, synthetic and conditional. No human or real award determination.",
+  "review_scope": "Original problem and full26-page33a manuscript by author-external same-family AI; later final range/radius/decision/disclosure corrections separately reviewed on actual pages. Nonblind, uncalibrated, synthetic and conditional.",
   "basis": [
    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
-   "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap."
+   "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap.",
+   "Conditional exact-remainder witnesses cover every immediate constantq in[0,3] on three weak-mixing networks, challenging finite-search failure with actual policy-class evidence.",
+   "One predeclared excluded parameter diagnostic passes18independent sampled paths including the actual synthetic truth, without truth-state initialization."
   ],
-  "main_gap": "Limited recourse is developed on an exposed static catalog. Its behavior on a predeclared condition not used to construct that catalog remains untested.",
-  "highest_value_next_action": "Freeze the catalog, observation and bridge/tail rule; test a new predeclared mismatch for qualified continuation or justified withdrawal, without truth-state initialization or retuning after outcomes.",
-  "strength_note": "Fresh full-paper review: strong Finalist center with Finalist–Outstanding adjacent range; limited recourse closes the former missing-continuation gap. Outstanding not established."
+  "main_gap": "The same weak-transport scenario has a constant-rate obstruction but still lacks a qualified positive policy result or a stronger bounded exclusion for time-varying supply.",
+  "highest_value_next_action": "Under the sameD=.0003geometryandphysicallimits, test whether bounded time-varying supply overcomes the constant-flow obstruction; preserve failure or qualify any successful policy independently.",
+  "strength_note": "Strong Finalist center/F–O adjacent reference: scientific explanation improved beyond finite-search failures; Outstanding not established."
  },
  "feedback_revision": {
   "previous_pdf": {
@@ -1388,5 +1390,124 @@
     }
    }
   }
+ },
+ "spatial_attainability_revision": {
+  "previous_pdf": {
+   "sha256": "b3778cd318abec934d29576c1fce31d2bf6d49915de0335284abf6d0224a883a",
+   "bytes": 174731,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "Full26-page text/contacts and all5 figures reviewed on748fc180. Final21/22/23 range wording and nonbreaking negative values checked at actual size; final26 pages rendered, embedded fonts and zero page-boundary overflow verified. Native saved final source compile success. Typography unchanged.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "acb8c5008a38aa8ec7f0a0d75893b178",
+   "generator_sha256": "d5b8e4029567096e73e32f68cfa83607c4564edfd7f3fbe63ad56ceff00b14a4",
+   "tex_sha256": "b37b97c1e0d64974466ce64be61f595d48201d1957ed74a9deeea5e9731eae4f"
+  },
+  "previous_award_assessment": {
+   "target": "Outstanding Winner",
+   "reference_center": "Finalist",
+   "adjacent_reference_range": [
+    "Finalist",
+    "Outstanding Winner"
+   ],
+   "outstanding_established": false,
+   "version_sha256": "b3778cd318abec934d29576c1fce31d2bf6d49915de0335284abf6d0224a883a",
+   "checked_on": "2026-10-10",
+   "review_scope": "Author-external same-family AI original problem/full26 text pages and all5 actual figures on748fc180; final scope/attribution/notation changes have separate author targeted review. Nonblind, uncalibrated, synthetic and conditional. No human or real award determination.",
+   "basis": [
+    "Complete problem coverage, proved mixed benchmark and conservative spatial modeling with independent numerical checks.",
+    "Matched transport closures, structural ambiguity and observation costs explain conditional changes in timing and control.",
+    "The wait/replenish/reassess rule now connects every surviving finite model and the whole remaining backup; refusal and recovery remain distinct.",
+    "Four preserved refusal histories now have scoped completed recourse: prior-qualified60s zero-flow bridge, reconstructed exposed54-model catalog and57 independent sampled replay checks. Higher-loss completion exceeds the earlier cost cap."
+   ],
+   "main_gap": "Limited recourse is developed on an exposed static catalog. Its behavior on a predeclared condition not used to construct that catalog remains untested.",
+   "highest_value_next_action": "Freeze the catalog, observation and bridge/tail rule; test a new predeclared mismatch for qualified continuation or justified withdrawal, without truth-state initialization or retuning after outcomes.",
+   "strength_note": "Fresh full-paper review: strong Finalist center with Finalist–Outstanding adjacent range; limited recourse closes the former missing-continuation gap. Outstanding not established."
+  },
+  "pdf_sha256": "8087ccd6d40cca19d3d2a5f301b648405bf021ce5532481b81de1565ee59d1cc",
+  "generator_sha256": "7d10055a73889417ba68c8dd4ed02fd2d9f4bb10eb4e980eba3f7984894935df",
+  "tex_sha256": "21e4856f070befc07531e24214e584ce359983a624553ad18e6717488a2a9d37",
+  "archives": {
+   "constant-exclusion.npz": "c2f45cd18e5c136ee693474c9bdcad503651de2e575c5319c4856e5e737d7f57",
+   "recourse-transfer.npz": "eb999957818ce775a06b26e322865276117233d1da3a5d8a19d103d052cb5423"
+  },
+  "constant_interval_lpm": [
+   0,
+   3
+  ],
+  "grids": [
+   [
+    8,
+    4,
+    3
+   ],
+   [
+    12,
+    6,
+    4
+   ],
+   [
+    16,
+    8,
+    6
+   ]
+  ],
+  "cover_intervals": [
+   9,
+   18,
+   30
+  ],
+  "independent_centers": 125,
+  "analytic_cases": 6,
+  "negative_control": "sampled-feasible center; unresolved intervals prohibit an infeasibility claim",
+  "transfer_independent_paths": 18,
+  "transfer_scope": "Single excluded static parameter pair, predeclared9-minute diagnostic—not an original-controller alarm. Five retained hypotheses plus actual truth on three meshes; known initial states and frozen catalog.",
+  "mathematical_scope": "Conditional numerical state/sensitivity/derivative accuracy, fixed34C contact, immediate constant controls only. No directed-rounding/all-control/PDE/physical proof. Failed ideal envelope retained.",
+  "large_traces": "Local only; public source and SHA256 permit fresh-copy regeneration. Artifact consumer checks recorded evidence, not new execution.",
+  "old_numerical_studies_rerun": false,
+  "format": "26pages=25solution+1AI; original fonts/margins and5figures;25equations/15tables",
+  "changed_text_pages": [
+   1,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   26
+  ],
+  "native_compile": "success",
+  "out_of_page_characters": 0,
+  "source_precision_correction": "Removed incorrect Sobol-table reference; actual six ranges,loguniformD,uniformothers,seed7 and summary-component identities restored."
  }
 }

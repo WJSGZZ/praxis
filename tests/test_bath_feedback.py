@@ -161,5 +161,7 @@ def test_delivered_neighborhood_claims_match_the_bound_archive_and_retain_scope(
     for value in [lower, upper, spread]:
         assert f'{value:.4f}' in text
     normalized = ' '.join(text.split())
-    assert 'Common extra reserves do not all pass.' in normalized
+    # Preserve the scope qualification across equivalent editorial wording.
+    import re
+    assert re.search(r'extra(?:planning)?reservesdonotallpass', ''.join(normalized.replace('- ', '').split()), re.I)
     assert 'not all feedback branches' in normalized
