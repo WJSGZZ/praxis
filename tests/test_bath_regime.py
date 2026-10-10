@@ -32,3 +32,28 @@ def test_changed_conditions_or_actions_refuse_old_evidence(tmp_path,defect):
         import hashlib
         q=tmp_path/'reference/regime-binding.json';b=json.loads(q.read_text());b['files_sha256']={name:hashlib.sha256((tmp_path/name).read_bytes()).hexdigest() for name in b['files_sha256']};q.write_text(json.dumps(b))
     with pytest.raises(ValueError):mod.regime_values(tmp_path)
+
+
+def test_roundoff_bridge_uses_exact_certificate_margin():
+    import numpy as np,io
+    with np.load(ROOT/'reference/whole-horizon-exclusion.npz',allow_pickle=False) as z:
+        with np.load(io.BytesIO(z['network96/primitives.npz'].tobytes()),allow_pickle=False) as z2:original={k:z2[k] for k in z2.files}
+    changed={k:v.copy() for k,v in original.items()}
+    # Simulate a platform-dependent exp/normalization last-bit difference.
+    changed['cap']=np.nextafter(changed['cap'],np.inf)
+    changed['hb']=np.nextafter(changed['hb'],np.inf)
+    changed['ha']=np.nextafter(changed['ha'],np.inf)
+    changed['G']=np.where(changed['G']!=0,np.nextafter(changed['G'],np.inf),changed['G'])
+    mod.certified_primitive_match(changed,original,ROOT)
+
+
+def test_large_or_nonfinite_perturbation_cannot_inherit_time_bound():
+    import numpy as np,io
+    with np.load(ROOT/'reference/whole-horizon-exclusion.npz',allow_pickle=False) as z:
+        with np.load(io.BytesIO(z['network96/primitives.npz'].tobytes()),allow_pickle=False) as z2:original={k:z2[k] for k in z2.files}
+    for defect in ['loss','nonfinite','region']:
+        changed={k:v.copy() for k,v in original.items()}
+        if defect=='loss':changed['ha']*=.1;changed['hb']*=.1
+        elif defect=='nonfinite':changed['cap'][0]=np.nan
+        else:changed['region'][0]=not changed['region'][0]
+        with pytest.raises(ValueError):mod.certified_primitive_match(changed,original,ROOT)

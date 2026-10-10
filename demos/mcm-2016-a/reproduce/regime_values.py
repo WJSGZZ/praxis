@@ -6,6 +6,54 @@ from spatial_functional_values import spatial_functional_values
 
 SCENARIOS=('weak mixing','strong mixing','moving with added surface loss','stratified','convective surface layer','foam','tight comfort','loose comfort','low loss','high loss','cool supply')
 
+def certified_primitive_match(net,original,root):
+    """Exact archived proof plus a rational perturbation bound, never allclose."""
+    if not np.array_equal(net['region'],original['region']):
+        raise ValueError('Exclusion physical region differs')
+    if all(np.array_equal(net[k],original[k]) for k in original):return
+    from fractions import Fraction as F
+    cache={}
+    def f(x):
+        x=float(x)
+        if not math.isfinite(x):raise ValueError('Nonfinite physical primitive')
+        if x not in cache:cache[x]=F.from_float(x)
+        return cache[x]
+    for k in ['G','cap','ha','hb']:
+        if net[k].shape!=original[k].shape or not np.isfinite(net[k]).all():raise ValueError('Invalid primitive shape or value')
+    if (net['cap']<=0).any() or (net['ha']<0).any() or (net['hb']<0).any():raise ValueError('Invalid thermal coefficients')
+    folder=Path(root)/'reference/spatial-functional'
+    data=json.loads((folder/'potential-results.json').read_text())
+    row=next(r for r in data['records'] if r['archive']=='whole-horizon-exclusion' and r['network']=='network96' and r['sign']==-1)
+    exact=json.loads((folder/'exact-checks.json').read_text())
+    proof=next(r for r in exact['checks'] if r['archive']=='whole-horizon-exclusion' and r['network']=='network96' and r['sign']==-1)
+    w=list(map(f,row['weights']));N=len(w)
+    # Same route and flow units are checked by the caller; rebuild per-L/min terms.
+    with np.load(Path(root)/'reference/whole-horizon-exclusion.npz',allow_pickle=False) as z:
+        with np.load(io.BytesIO(z['network96/problem.npz'].tobytes()),allow_pickle=False) as z2:path=list(z2['path'])
+    errors=[]
+    for q in [F(0),F(3)]:
+        delta=[F(0)]*N;constant=F(0)
+        for i in range(N):
+            if any(f(net['G'][i,j])<0 for j in range(N) if i!=j):raise ValueError('Invalid cooperative conduction')
+            if 50*sum(f(x) for x in net['G'][i])-28*f(net['ha'][i])-16*f(net['hb'][i])>0:raise ValueError('Jet temperature barrier not certified')
+            now=w[i]/f(net['cap'][i]);old=w[i]/f(original['cap'][i]);rowsum=F(0)
+            for j in np.flatnonzero((net['G'][i]!=0)|(original['G'][i]!=0)):
+                dg=now*f(net['G'][i,j])-old*f(original['G'][i,j]);delta[int(j)]+=dg;rowsum+=dg
+            da=now*f(net['ha'][i])-old*f(original['ha'][i]);db=now*f(net['hb'][i])-old*f(original['hb'][i])
+            delta[i]-=da+db;constant+=39*rowsum-17*da-5*db
+        for k,i in enumerate(path):
+            ds=q*w[i]*F(209,3)*(1/f(net['cap'][i])-1/f(original['cap'][i]));delta[i]-=ds
+            if k:delta[path[k-1]]+=ds
+            else:constant+=11*ds
+        errors.append(constant+sum(max(F(0),a*F(2 if region else 11)) for a,region in zip(delta,net['region'])))
+    gap=F(int(proof['gap_exact_numerator']),int(proof['gap_exact_denominator']))
+    ratio=F(int(proof['safe_time_exact_numerator']),int(proof['safe_time_exact_denominator']))
+    rate=gap/(ratio-1800);error=max(errors);current_rate=rate+error
+    # Preserve the actual printed strict1717s bound, not merely the1800s sign.
+    initial_minus_end=-ratio*rate
+    if current_rate>=0 or initial_minus_end/(-current_rate)>=1717:
+        raise ValueError('Exclusion physical perturbation exceeds certified time margin')
+
 def regime_values(root,run=None):
     root=Path(root);run=Path(run) if run is not None else root/'reference'
     binding=json.loads((root/'reference/regime-binding.json').read_text())
@@ -20,14 +68,14 @@ def regime_values(root,run=None):
     if not 0<sample['maximum_sampling_interval_s']<=5:raise ValueError('Scenario sampling scope changed')
     # Join the proof only after exact primitive identity and boundary checks.
     weak=r['scenarios']['weak mixing'];wp={**p,**weak['changes']}
-    conditions={'D':.0003,'initial':40.,'body_temp':34.,'inlet_temp':50.,'air_temp':22.,'horizon':1800.,'floor':39.,'ceiling':41.,'span':1.5,'rho':1000.,'cp':4180.}
-    if any(wp[k]!=v for k,v in conditions.items()) or r['grid']!=[8,4,3]:raise ValueError('Exclusion conditions changed')
+    conditions={'inlet_exclusion': 0.15, 'L': 1.5, 'W': 0.65, 'H': 0.23, 'body_volume': 0.06, 'body_area': 1.15, 'body_temp': 34.0, 'air_temp': 22.0, 'initial': 40.0, 'inlet_temp': 50.0, 'rho': 1000.0, 'cp': 4180.0, 'h_surface': 25.0, 'h_wall': 6.5, 'h_body': 25.0, 'D': 0.0003, 'body_shape': [0.4, 0.16, 0.12], 'foam': 1.0, 'horizon': 1800.0, 'floor': 39.0, 'ceiling': 41.0, 'span': 1.5}
+    if wp!=conditions or r['grid']!=[8,4,3]:raise ValueError('Exclusion conditions changed')
     spec=importlib.util.spec_from_file_location('bath_regime_model',root/'code/model.py')
     model=importlib.util.module_from_spec(spec);spec.loader.exec_module(model)
     n=model.network(wp,tuple(r['grid']))
     with np.load(root/'reference/whole-horizon-exclusion.npz',allow_pickle=False) as z:
         with np.load(io.BytesIO(z['network96/primitives.npz'].tobytes()),allow_pickle=False) as original:
-            if any(not np.array_equal(n[k],original[k]) for k in original.files):raise ValueError('Exclusion physical primitives differ')
+            certified_primitive_match(n,{k:original[k] for k in original.files},root)
         with np.load(io.BytesIO(z['network96/problem.npz'].tobytes()),allow_pickle=False) as problem:path=list(problem['path'])
     adv=np.zeros_like(n['adv']);hot=np.zeros_like(n['hot']);rho_cp=4180000.
     for i in path:adv[i,i]=-rho_cp

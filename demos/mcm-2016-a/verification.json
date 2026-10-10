@@ -126,9 +126,9 @@
   "method": "Numbered LaTeX references plus explanations at their associated arguments; PDF text heuristic checks presence, not semantic support."
  },
  "test_suite": {
-  "passed": 744,
+  "passed": 746,
   "date": "2026-10-10",
-  "scope": "Final adopted54a manuscript and conditional-strategy consumer,744passed/0failed/0skipped after correcting public reading hash. Initial743+1 binding failure retained. Three existing texplot negative-input warnings; no thermal optimization rerun."
+  "scope": "746local passed/0failed/0skipped,3existing warnings; final9test roundoff perturbation variant separately passed. Linux regression pending. PDF and original model unchanged."
  },
  "structural_replay": {
   "script": "reproduce/check_structure.py",
@@ -2031,5 +2031,18 @@
    21,
    22
   ]
+ },
+ "portable_evidence_revision": {
+  "scope": "Archive proof remains exact; reconstructed primitives use exact rational signed derivative-perturbation supports and the same strict1717s margin, with cooperative conduction/50C barrier and full fixed physical parameters. No numerical allclose waiver.",
+  "remote_failure": "Linux bitwise primitive equality failed onf56dffa; precise elementwise delta not collected there.",
+  "independent_review": "Derivation and signs reviewed; remote rerun pending.",
+  "pdf_unchanged": true,
+  "model_and_optimizer_unchanged": true,
+  "previous_test_suite": {
+   "passed": 744,
+   "date": "2026-10-10",
+   "scope": "Final adopted54a manuscript and conditional-strategy consumer,744passed/0failed/0skipped after correcting public reading hash. Initial743+1 binding failure retained. Three existing texplot negative-input warnings; no thermal optimization rerun."
+  },
+  "negative_scope": "OneULP changes to cap/hb/ha/nonzeroG accepted; substantial loss, nonfinite arrays, region/route/physical conditions and stale policy rejected."
  }
 }
