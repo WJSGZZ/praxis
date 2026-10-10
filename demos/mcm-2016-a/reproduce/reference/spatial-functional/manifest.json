@@ -1,6 +1,6 @@
 {
   "members": {
-    "README.md": "3d92cd8a4f28058829ee23a83c1c2e7459508deae7639b3bb96ec4716c1a86be",
+    "README.md": "b5294b62c60fb7d175727a9e662029773c54c1c68ac683b851b2d6e8f668897c",
     "analytic-checks.json": "973c7066fd4d22d9d904a40ce6d042083c33b447edb3aeeef31803dbe1f84f66",
     "analytic_check.py": "14e760c86ea071a463229a6756d83c5d549fa49e4e810bec228c3a10dd792c3e",
     "check.py": "3f0e9fe5e2f1a772019ea8da5c0c24448ef3b0dcb4f724d364b347ca874035ee",
@@ -11,7 +11,13 @@
     "transfer-exact-checks.json": "f227777c9ca5a18144a4f2e6028dccdb6183a87161fec50cbf0a29ab605e1e0d",
     "transfer-results.json": "c07cef0ef2d0dd9438fdd97d86d62a6c337390e02ab6a149b42b5ad88002477c",
     "transfer.py": "eab9e1e7f830e17469ebae1285105560c974601a410434149dd9b88f71c0ed8e",
-    "weight-shape.json": "8eb32f4fcdf7a5cb1076797f24dca449dacab8b4383e7a869bb6782e7a52bc8b"
+    "weight-shape.json": "8eb32f4fcdf7a5cb1076797f24dca449dacab8b4383e7a869bb6782e7a52bc8b",
+    "boundary.json": "81b08f4cb422912060571544c423d0ea898c67edec91e76916cfb5efd2250a57",
+    "boundary-checks.json": "f022b39cb9a300b4e14321f1076f11e628c4bfc321cd25ba2c629f3dc4ec47bc",
+    "boundary-thresholds.json": "aaf4e1313d60ff6dca88991b0efbf1b9805eee7e746faf5f44929e73554056a0",
+    "check_boundary.py": "2863c7c846b426ebd7e8c662d04a4f052ea9c12ee90bbda00e8182629106d10b",
+    "derive_boundary.py": "5662ed89982677864db8691ec44fd6b4654b866281867d94ee958d479a9ad9b1",
+    "boundary_thresholds.py": "9836bbe9e10f4b3d6057bf64202ea00b7f9c838d162389dd969e07edc9085f4d"
   },
   "external_archives": {
     "whole-horizon-exclusion.npz": "9caec35c6db64714ff9f4e634fbfb16695e2baaba8299eaf147fb72bd1e6f0a4",

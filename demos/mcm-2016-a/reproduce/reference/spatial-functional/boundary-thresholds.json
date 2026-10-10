@@ -1,0 +1,26 @@
+{
+  "scope": "At original D=.0003; frozen certificate root brackets only, not feasibility thresholds. Common air/body loss scale, fixed39/41 bounds.",
+  "loss_root": {
+    "lower": "344433581116269/351843720888320",
+    "upper": "1102187459572061/1125899906842624",
+    "lower_float": 0.9789391160560086,
+    "upper_float": 0.9789391160560088,
+    "lower_gap": -5.857104810358557e-17,
+    "upper_gap": 3.725405511317196e-16
+  },
+  "span_root_c": {
+    "lower": "3450725136403197/2251799813685248",
+    "upper": "1725362568201599/1125899906842624",
+    "lower_float": 1.5324297992350453,
+    "upper_float": 1.5324297992350457,
+    "lower_gap": 1.7630970478988818e-16,
+    "upper_gap": -5.236322908807855e-16
+  },
+  "conservative_examples": {
+    "loss_scale_at_least": 0.99,
+    "span_c_at_most": 1.5,
+    "scope": "Separate examples at otherwise baseline parameters; no joint rectangle guarantee stated"
+  },
+  "seconds": 0.2017934160248842,
+  "source_sha256": "81b08f4cb422912060571544c423d0ea898c67edec91e76916cfb5efd2250a57"
+}

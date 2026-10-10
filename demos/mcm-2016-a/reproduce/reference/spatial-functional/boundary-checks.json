@@ -1,0 +1,165 @@
+{
+  "status": "passed",
+  "source_sha256": "81b08f4cb422912060571544c423d0ea898c67edec91e76916cfb5efd2250a57",
+  "checker_sha256": "2863c7c846b426ebd7e8c662d04a4f052ea9c12ee90bbda00e8182629106d10b",
+  "exact_interval_checks": [
+    {
+      "loss": 0.8,
+      "span": 0.75,
+      "left_gap": 0.0,
+      "right_gap": 0.0
+    },
+    {
+      "loss": 1.0,
+      "span": 0.75,
+      "left_gap": 0.0,
+      "right_gap": 0.0
+    },
+    {
+      "loss": 1.0,
+      "span": 1.0,
+      "left_gap": 0.0,
+      "right_gap": 0.0
+    },
+    {
+      "loss": 1.0,
+      "span": 1.5,
+      "left_gap": 0.0,
+      "right_gap": 0.0
+    },
+    {
+      "loss": 1.2,
+      "span": 0.75,
+      "left_gap": 0.1644275997485383,
+      "right_gap": 0.0
+    },
+    {
+      "loss": 1.2,
+      "span": 1.0,
+      "left_gap": 0.0,
+      "right_gap": 0.0
+    },
+    {
+      "loss": 1.2,
+      "span": 1.5,
+      "left_gap": 0.0,
+      "right_gap": 0.0
+    }
+  ],
+  "direct_network_LP_diagnostics": [
+    {
+      "s": 0.998166986870083,
+      "loss": 0.8,
+      "span": 0.75,
+      "q": 0,
+      "direct_LP_rate": -0.0006364967348760406,
+      "certificate_upper": -0.0006066505355924217
+    },
+    {
+      "s": 0.998166986870083,
+      "loss": 0.8,
+      "span": 0.75,
+      "q": 3,
+      "direct_LP_rate": -0.0010157747184786352,
+      "certificate_upper": -0.0009870816317630788
+    },
+    {
+      "s": 1.0007084627151144,
+      "loss": 1.0,
+      "span": 0.75,
+      "q": 0,
+      "direct_LP_rate": -0.0008774243106491207,
+      "certificate_upper": -0.0008769836555212976
+    },
+    {
+      "s": 1.0007084627151144,
+      "loss": 1.0,
+      "span": 0.75,
+      "q": 3,
+      "direct_LP_rate": -0.0012578543233359115,
+      "certificate_upper": -0.0012574147516920136
+    },
+    {
+      "s": 1.0004943178182806,
+      "loss": 1.0,
+      "span": 1.0,
+      "q": 0,
+      "direct_LP_rate": -0.0007881576094779155,
+      "certificate_upper": -0.0007878942109773988
+    },
+    {
+      "s": 1.0004943178182806,
+      "loss": 1.0,
+      "span": 1.0,
+      "q": 3,
+      "direct_LP_rate": -0.0010417773322817206,
+      "certificate_upper": -0.0010415149417578582
+    },
+    {
+      "s": 1.0000660280246172,
+      "loss": 1.0,
+      "span": 1.5,
+      "q": 0,
+      "direct_LP_rate": -0.0006097387342450036,
+      "certificate_upper": -0.0006097153218895975
+    },
+    {
+      "s": 1.0000660280246172,
+      "loss": 1.0,
+      "span": 1.5,
+      "q": 3,
+      "direct_LP_rate": -0.0006097385322857323,
+      "certificate_upper": -0.0006097153218895438
+    },
+    {
+      "s": 1.0697726545808413,
+      "loss": 1.2,
+      "span": 0.75,
+      "q": 0,
+      "direct_LP_rate": -0.0010873720941612162,
+      "certificate_upper": -0.001055943520651243
+    },
+    {
+      "s": 1.0697726545808413,
+      "loss": 1.2,
+      "span": 0.75,
+      "q": 3,
+      "direct_LP_rate": -0.0014680023528839885,
+      "certificate_upper": -0.0014363746168220106
+    },
+    {
+      "s": 1.0184164380251377,
+      "loss": 1.2,
+      "span": 1.0,
+      "q": 0,
+      "direct_LP_rate": -0.0010099227822103203,
+      "certificate_upper": -0.001002978843637408
+    },
+    {
+      "s": 1.0184164380251377,
+      "loss": 1.2,
+      "span": 1.0,
+      "q": 3,
+      "direct_LP_rate": -0.00126391378489738,
+      "certificate_upper": -0.001256599574417919
+    },
+    {
+      "s": 1.0179881482314743,
+      "loss": 1.2,
+      "span": 1.5,
+      "q": 0,
+      "direct_LP_rate": -0.0008282491141217531,
+      "certificate_upper": -0.0008247218905393337
+    },
+    {
+      "s": 1.0179881482314743,
+      "loss": 1.2,
+      "span": 1.5,
+      "q": 3,
+      "direct_LP_rate": -0.0008288058319873646,
+      "certificate_upper": -0.0008247218905393317
+    }
+  ],
+  "convex_interpolation_checks": 6,
+  "scope": "Exact positive intervals/endpoints and independent network LP diagnostics; diagnostics floating, continuous certificate validity requires the independent algebra review; no feasible policy or actual bath validation"
+}

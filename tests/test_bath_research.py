@@ -65,7 +65,7 @@ def test_manuscript_retains_the_actual_sampling_scope_and_strategy_quantifiers()
     assert 'zeroflowfollowedbyaqualifiedbackup' in compact
     assert 'Nomeasurable' in compact and 'onthe96-cellnetwork' in compact
     assert 'finite-networkobstructions,notacontinuumlimit' in compact
-    assert 'Bothoriginal288-cellrelaxationsremaininconclusive' in compact
+    assert 'Original288-cellrelaxationsremaininconclusive' in compact
 
 
 def test_rational_all_control_certificate_and_feasible_control():
