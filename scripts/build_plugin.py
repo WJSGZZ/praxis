@@ -61,6 +61,9 @@ TREES = {
 }
 # Focused skills ship next to the core; all packaged Markdown links follow relocation.
 FOCUSED = ('praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
+# Use the maintained brand asset for native presentation; reports keep their
+# scientific typography and do not acquire the plugin logo.
+VISUAL_ASSETS = {'assets/praxis-logo.png': 'demos/assets_src/praxis-logo.png'}
 
 
 def export_path(relative: Path) -> Path:
@@ -145,6 +148,11 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
         else:
             shutil.copyfile(path, target)
         hashes[target.relative_to(output).as_posix()] = hashlib.sha256(target.read_bytes()).hexdigest()
+    for target_name, source_name in VISUAL_ASSETS.items():
+        target = output / target_name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((source / source_name).read_bytes())
+        hashes[target_name] = hashlib.sha256(target.read_bytes()).hexdigest()
     (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n')
     mcp = json.loads((source / 'packaging/mcp.json').read_text())
     (output / 'mcp.json').write_text(json.dumps(mcp, indent=2) + '\n')

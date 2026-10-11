@@ -3,7 +3,10 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
-## 未发布 · Unreleased
+## 0.5.0 · 2026-10-11
+
+- 插件安装界面与输入框图标使用现有新版 Logo，与源码中的品牌资产共用来源并进入导出哈希；插件元数据不再保留过时的技能数量。保留原 `praxis` 身份，现有数学接口继续使用。
+  Plugin presentation and the composer icon now use the maintained brand asset, included in the export receipt. Metadata describes the professional capabilities without a stale skill count. The `praxis` identity and existing mathematical interfaces are retained.
 
 - 章节结构用 pylatexenc 的语法树预检，并接入带源码的最终冻结；孤立编号子标题须整理或给出当前源码绑定的具体保留理由。整稿审阅连接题意、前提、模型、证据和条件答案，学习按多个维度记录实际应用与未验证部分，不以阅读篇数认证掌握。
   Heading review uses pylatexenc and is enforced when freezing a source-bound paper. Sole numbered child headings need a revision or a documented reason tied to the exact source. Whole-paper review follows the question, premises, model, evidence and scoped answer; learning records distinguish observation, application and verification across dimensions.

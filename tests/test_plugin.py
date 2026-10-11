@@ -190,6 +190,22 @@ def test_plugin_manifest_version_matches_pyproject():
     assert json.loads((root / 'packaging/plugin.json').read_text())['version'] == tomllib.loads((root / 'pyproject.toml').read_text())['project']['version']
 
 
+def test_exported_presentation_uses_the_maintained_logo(tmp_path):
+    output = tmp_path / 'plugin'
+    build_plugin(output, host='codex')
+    portable = json.loads((output / 'plugin.json').read_text())
+    native = json.loads((output / '.codex-plugin/plugin.json').read_text())
+    interface = portable['extensions']['com.openai']['interface']
+    receipt = json.loads((output / 'build-receipt.json').read_text())
+    for field in ('composerIcon', 'logo'):
+        relative = interface[field]
+        assert relative.startswith('./assets/')
+        asset = output / relative
+        assert asset.read_bytes() == (BUNDLE / 'demos/assets_src/praxis-logo.png').read_bytes()
+        assert receipt['files_sha256'][relative[2:]] == hashlib.sha256(asset.read_bytes()).hexdigest()
+        assert native['interface'][field] == relative
+
+
 def test_exported_plugin_carries_the_seed_lessons(tmp_path):
     out = tmp_path / 'plugin'
     build_plugin(out)
