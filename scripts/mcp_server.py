@@ -44,9 +44,11 @@ def _project_version():
 VERSION = _project_version()
 SUPPORTED_PROTOCOL_VERSIONS = ('2025-06-18',)
 EXPRESSION_TIMEOUT_SECONDS = 30
+# Coverage tests trace compiler/evaluator consumers from TOOLS independently of
+# this roster, then exercise both external routes with a controlled short cutoff.
 EXPRESSION_TOOLS = frozenset({'sobol_sensitivity', 'sobol_convergence', 'probe_structure', 'test_conjecture',
                              'find_counterexample', 'find_relation', 'calibrate_curve', 'solve_diffusion',
-                             'solve_ode', 'equilibria', 'minimize_nlp'})
+                             'solve_ode', 'equilibria', 'minimize_nlp', 'monte_carlo'})
 FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
              'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum}
 
