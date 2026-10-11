@@ -55,7 +55,12 @@ def test_manuscript_retains_the_actual_sampling_scope_and_strategy_quantifiers()
     from pypdf import PdfReader
     pdf=ROOT.parent/'deliverables/paper.pdf'
     import unicodedata
-    text=unicodedata.normalize('NFKC', ' '.join(p.extract_text() for p in PdfReader(pdf).pages))
+    import re
+    # A reflow may split a sentence across pages. Remove only the actual
+    # running header, never scientific words or arbitrary hyphens.
+    pages = [re.sub(r'Team # \d+\s+Page \d+ of\s*\d+', '', p.extract_text())
+             for p in PdfReader(pdf).pages]
+    text=unicodedata.normalize('NFKC', ' '.join(pages))
     compact=''.join(text.replace('- ', '').split())
     assert 'Dislog-uniform' in compact
     assert 'scrambledseed7' in compact and '17–37/4.5–8.5/12–40' in compact
