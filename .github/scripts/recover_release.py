@@ -23,6 +23,7 @@ import zlib
 
 TAG = 'v0.5.0'
 COMMIT = '685cdae4074920d8bc72e32d7bef9730a388b2d1'
+RELEASE_ID = 409767876
 HOSTS = ('portable', 'codex', 'claude', 'copilot', 'gemini', 'cursor')
 ZIP_DATE = (2026, 10, 11, 0, 0, 0)
 API = 'https://api.github.com'
@@ -258,8 +259,11 @@ def upload(args, expected):
             'All six local files must pass hashes again before any remote mutation')
     client = GitHub()
     client.confirm_tag()
-    release = client.api('/releases/tags/' + urllib.parse.quote(TAG, safe=''))
-    require(release.get('tag_name') == TAG and type(release.get('id')) is int, 'Existing release identity mismatch')
+    # The release-by-tag endpoint returns 404 for this unpublished draft.
+    # Bind the already-created release ID and independently verify its tag.
+    release = client.api(f'/releases/{RELEASE_ID}')
+    require(release.get('tag_name') == TAG and release.get('id') == RELEASE_ID,
+            'Existing release identity mismatch')
     require(release.get('assets_url') == f'{client.prefix}/releases/{release["id"]}/assets',
             'Existing release assets URL mismatch')
     catalog = client.assets(release['id'])
