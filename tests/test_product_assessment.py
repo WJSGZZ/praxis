@@ -42,6 +42,25 @@ def test_cannot_mix_awards_from_another_contest():
         user_view(report([{**award(), 'most_likely': '全国一等奖'}]), 'mcm')
 
 
+def test_2023_mcm_labels_are_accepted_without_inheriting_to_unknown_editions():
+    labels = ['Successful Participant', 'Honorable Mention', 'Meritorious', 'Finalist', 'Outstanding Winner']
+    record = lookup('mcm', 'MCM', '2023')
+    assert record['award_system'] == labels
+    assert record['status'] == {'rules': 'unconfirmed', 'workflow': 'not_validated', 'awards': 'uncalibrated'}
+
+    proposal = {**award(), 'edition': '2023', 'most_likely': 'Finalist',
+                'target': 'Outstanding Winner', 'range': ['Meritorious', 'Finalist']}
+    result = user_view(report([proposal]), 'mcm')['A']['assessments'][0]
+    assert result['award_system_status'] == 'verified'
+    assert result['most_likely'] == 'Finalist' and result['target'] == 'Outstanding Winner'
+    assert result['calibrated'] is False
+
+    unknown = user_view(report([{**proposal, 'edition': '2099'}]), 'mcm')['A']['assessments'][0]
+    assert unknown['award_system_status'] == 'unverified'
+    assert unknown['assessment_status'] == 'abstained_unverified_award_system'
+    assert unknown['most_likely'] is None and unknown['range'] == []
+
+
 def test_peak_hour_objection_changes_stability_not_a_finite_wait_prediction():
     from examples.novice_queue_demo import scenario
     # 80% utilization; Wq = rho/(mu-lambda) hours = .8/12 hours = 4 minutes.

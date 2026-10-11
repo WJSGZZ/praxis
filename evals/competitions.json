@@ -29,6 +29,33 @@
       "limits": "The results archive verifies names, not current work quality or edition-specific compliance. Unsuccessful/disqualified/not-judged statuses are not successful award levels."
     },
     {
+      "contest": "mcm",
+      "event": "MCM",
+      "edition": "2023",
+      "title": "COMAP MCM 2023 — award labels only",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "award_system": [
+        "Successful Participant",
+        "Honorable Mention",
+        "Meritorious",
+        "Finalist",
+        "Outstanding Winner"
+      ],
+      "award_system_scope": "Successful submission designations stated in the official 2023 MCM-ICM procedures and tips. Labels verified only for MCM; no historical rules, AI policy, full workflow or award calibration is established.",
+      "sources": [
+        {
+          "url": "https://contest.comap.com/undergraduate/contests/mcm/contests/2023/problems/MCM-ICM_Tips.pdf",
+          "checked": "2026-10-11",
+          "scope": "COMAP V20221007, PDF page 7: successful designations listed after the unsuccessful/disqualified statuses. Used only to register the five MCM successful award labels; not evidence of comprehensive 2023 rules, AI policy, workflow validation or award calibration."
+        }
+      ],
+      "limits": "This source covers an MCM/ICM guide, but this record is scoped to MCM labels only. It does not validate MCM or ICM rules, AI policy or full workflow, and does not calibrate award judgments. No other edition inherits these labels."
+    },
+    {
       "contest": "cumcm",
       "event": "undergraduate",
       "edition": "2026",
