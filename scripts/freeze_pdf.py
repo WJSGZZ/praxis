@@ -8,7 +8,8 @@ from io import BytesIO
 from pypdf import PdfReader
 
 
-def freeze(source, destination, *, tex=None, contest=None, build_receipt=None):
+def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
+           minimum_font_tex_pt=None, font_review=None):
     layout = None
     if (tex is None) != (contest is None):
         raise ValueError("Supply both TeX source and contest for a layout-gated snapshot")
@@ -33,6 +34,14 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None):
     doc = PdfReader(BytesIO(raw))
     if doc.is_encrypted or len(doc.pages) == 0:
         raise ValueError("PDF must be readable and nonempty")
+    sizes = None
+    if font_review is not None and minimum_font_tex_pt is None:
+        raise ValueError('A font review requires an explicit minimum font size')
+    if minimum_font_tex_pt is not None:
+        from scripts.check_pdf import inspect_font_sizes
+        sizes = inspect_font_sizes(source, minimum_font_tex_pt, font_review)
+        if not sizes['passed']:
+            raise ValueError('PDF font-size review failed: ' + '; '.join(sizes['errors']))
     boundaries = None
     if layout is not None and contest in ('mcm', 'cumcm'):
         from scripts.contest_rules import evaluate, extract
@@ -57,6 +66,7 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None):
         raise RuntimeError("Snapshot integrity check failed")
     destination.chmod(0o444)
     return {**({"layout": layout} if layout else {}), **({"pdf_boundaries": boundaries} if boundaries else {}),
+            **({"font_size_review": sizes} if sizes is not None else {}),
             "source": str(source.resolve()), "snapshot": str(destination.resolve()),
             "sha256": sha, "bytes": len(raw), "created_utc": datetime.now(timezone.utc).isoformat(),
             "note": "Local snapshot only; not proof of contest deadline compliance or submission."}
@@ -69,11 +79,14 @@ def main():
     parser.add_argument("--tex", type=Path, help="Required with --contest; validate shared layout before snapshot")
     parser.add_argument("--build-receipt", type=Path, help="Canonical .build.json receipt required for layout-gated freezing")
     parser.add_argument("--contest", choices=["mcm", "cumcm", "research"])
+    parser.add_argument("--minimum-font-tex-pt", type=float, help="Reject undersized final text before snapshot creation")
+    parser.add_argument("--font-review", type=Path, help="Exact-PDF-bound review of smaller mathematical text")
     args = parser.parse_args()
     receipt_path = args.destination.with_suffix(".pdf.receipt.json")
     if receipt_path.exists():
         parser.error("Receipt already exists; choose a new destination")
-    receipt = freeze(args.source, args.destination, tex=args.tex, contest=args.contest, build_receipt=args.build_receipt)
+    receipt = freeze(args.source, args.destination, tex=args.tex, contest=args.contest, build_receipt=args.build_receipt,
+                     minimum_font_tex_pt=args.minimum_font_tex_pt, font_review=args.font_review)
     # Receipt has its own name, never replaces the PDF or an earlier receipt.
     with receipt_path.open("x", encoding="utf-8") as stream:
         json.dump(receipt, stream, indent=2)

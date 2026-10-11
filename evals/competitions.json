@@ -95,8 +95,8 @@
           "scope": "Current official charter, Article5(2): national first and second prizes; Article5(1) regional prizes are separate. The 2026 rules explicitly refer to this charter. This verifies labels, not award calibration or historical1998 award boundaries."
         }
       ],
-      "checker": "scripts/contest_rules.py --contest cumcm",
-      "limits": "Mechanical checker covers a subset; historical demo does not validate this edition end to end.",
+      "checker": "scripts/contest_rules.py --contest cumcm --edition 2026",
+      "limits": "Mechanical checker covers a subset. Explicit edition 2026 checks one body AI declaration before references; edition=None retains a legacy subset and does not certify that policy. Statement truth, team-led modeling, manual verification and AI details/supporting archive contents are not certified. Historical demos do not validate this edition end to end.",
       "ai_requirements": {
         "team_led_core": true,
         "manual_review": true,
@@ -185,10 +185,10 @@
       "language": "Chinese",
       "participation": "Three graduate students; cross-institution teams only when all members are 2026 incoming graduate students; see invitation for eligibility.",
       "deliverables": [
-        "PDF paper using official standard document; PDF MD5 submitted separately before paper upload",
-        "Result files and program source when required by the chosen problem"
+        "PDF paper using the official cover (team identity and four unchanged logos), then the uniform abstract and body; PDF filename problem letter + team number; final PDF MD5 submitted separately before upload",
+        "Program/results archive when required by the problem (optional when useful and disclosed); filename problem letter + team number, no identifying content except the permitted filename, <=50M; see the 2026 opening notice"
       ],
-      "ai": null,
+      "ai": "Confirmed 2026-09-16 policy: AI may assist, not replace independent thought/core innovation. Cite model/formula sources; unverified AI sources require identifying the tool/model, developer and release date with an explicit risk. Annotate AI-assisted data analysis and program source with tool/model, developer and release date. Provide AI inputs and downstream processing strategy when the chosen problem requires it. No universal CUMCM-style AI declaration/details-PDF requirement is stated in this policy.",
       "award_system": [
         "一等奖",
         "二等奖",
@@ -210,19 +210,38 @@
           "checked": "2026-10-09",
           "scope": "Official 2026-09-16 paper-format DOCX, entire document XML text read; title, abstract, typography, page marks, anonymity and citations",
           "sha256": "46d2e2a87e90608ace764203d5326d7c7e41f01a5eb79986724a6f159fd70e16"
+        },
+        {
+          "url": "https://cpipc.acge.org.cn/cw/contestNews/detail/4/2c90801ca06f016101a0a47e06b77d9b?page=0",
+          "checked": "2026-10-11",
+          "scope": "Official 2026-09-16 opening notice: cover/abstract order, cover identity and four unchanged logos, subsequent anonymity, two-page abstract maximum, filename, MD5/upload and <=50M attachment window"
+        },
+        {
+          "url": "https://cpipc.acge.org.cn/sysFile/downFile.do?fileId=4fc024f7a1504abb87fc056440c64a28",
+          "checked": "2026-10-11",
+          "scope": "Official 2026-09-16 AI policy, entire DOCX XML text read; clauses 1-9, use-specific attribution and problem-dependent input/processing details",
+          "sha256": "5922c1f92530c88eab3214e67de981aeda195c27d5b583ddc2380ee24db0e539"
+        },
+        {
+          "url": "https://cpipc.acge.org.cn/sysFile/downFile.do?fileId=a730b312331e492baad17b248bad6b51",
+          "checked": "2026-10-11",
+          "scope": "Official 2026 template is legacy Word DOC despite a misleading local .docx extension; textutil read cover labels 学校/参赛队号/队员姓名 and subsequent uniform abstract. The four logos were not visually certified in this audit",
+          "sha256": "195b06cf670ec1aeb796bfd07e6d3e98e36d16db119308dcf4d0756319fe2e29"
         }
       ],
-      "checker": "scripts/contest_rules.py --contest graduate --edition 2026",
-      "limits": "Invitation and format are checked, AI-specific policy is unconfirmed. Checker covers abstract, page-number text and measured body size only; font family, title/heading typography, no-header rule, anonymity and actual submission require review. No end-to-end validation or award calibration.",
+      "checker": "scripts/contest_rules.py --contest graduate --edition 2026 --document-kind submission",
+      "limits": "Rules remain partial and workflow unvalidated. The default document_kind=report checks an anonymous abstract/body report and does not certify a full submission. Submission mode checks recognized cover labels, abstract on PDF page 2, logical page numbers from abstract 1, and configured forbidden terms only after the cover. Four original logos, exact template layout, all identifying information, filename/upload/MD5, abstract boundary, typography and AI-use attribution truth require further checks or review. No end-to-end validation or award calibration.",
       "format": {
         "title": "三号黑体，居中",
         "level_one_heading": "四号黑体，居中",
         "other_chinese": "小四号宋体，单倍行距",
         "header": "none",
-        "page_number": "bottom centre, Arabic, continuous from abstract page 1",
-        "abstract": "usually at most two pages; title/abstract/keywords, no English translation required",
+        "page_number": "bottom centre, Arabic, continuous from abstract logical page 1 (physical PDF page 2 in a full submission)",
+        "abstract": "Uniform abstract page; title/abstract/keywords, at most two pages under the 2026 opening notice, no English translation required",
         "contents": "not specified in the checked format document",
-        "page_limit": null
+        "page_limit": null,
+        "cover": "Required PDF page 1: official template, team identity fields and four unchanged logos; abstract starts on PDF page 2",
+        "anonymity": "Team identity is permitted on the official cover only; all subsequent pages prohibit institution, participant names and team number"
       },
       "submission": {
         "timezone": "Asia/Shanghai",
@@ -233,9 +252,32 @@
         "pdf_window": [
           "2026-09-27T14:00:00+08:00",
           "2026-09-29T00:00:00+08:00"
-        ]
+        ],
+        "attachment_window": [
+          "2026-09-29T08:00:00+08:00",
+          "2026-10-01T00:00:00+08:00"
+        ],
+        "attachment_max_size": "50M (official wording)"
       },
-      "defense": "At least 12 first-prize teams selected for 数模之星 defense; the top three defense teams receive champion/runner-up/third-place, remaining finalists receive nomination."
+      "defense": "At least 12 first-prize teams selected for 数模之星 defense; the top three defense teams receive champion/runner-up/third-place, remaining finalists receive nomination.",
+      "ai_requirements": {
+        "policy_status": "confirmed",
+        "policy_version": "2026-09-16",
+        "source": "https://cpipc.acge.org.cn/sysFile/downFile.do?fileId=4fc024f7a1504abb87fc056440c64a28",
+        "independent_thought_and_core_innovation": true,
+        "model_formula_source_attribution": true,
+        "data_analysis_annotation": true,
+        "program_source_comment": true,
+        "tool_metadata": [
+          "name",
+          "version_or_model",
+          "developer",
+          "release_date"
+        ],
+        "input_and_processing_details": "when required by the chosen problem",
+        "universal_declaration_or_details_pdf": "not stated in the checked policy",
+        "mechanically_certified": false
+      }
     },
     {
       "contest": "mathorcup",

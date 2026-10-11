@@ -214,6 +214,8 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
             revisions = [first]
             if 'font_layout_revision' in meta:
                 revisions.append(meta['font_layout_revision'])
+            if 'heading_layout_revision' in meta:
+                revisions.append(meta['heading_layout_revision'])
             expected_previous_sha = record['version_sha256']
             for revision in revisions:
                 inheritance = revision['scientific_review_inheritance']
@@ -263,6 +265,17 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
                     return self.generic_visit(node)
                 def visit_Call(self, node):
                     self.generic_visit(node)
+                    if (isinstance(node.func, ast.Name) and node.func.id == 'page'
+                            and node.args and isinstance(node.args[0], ast.Constant)):
+                        # Four exact editorial labels; do not exclude general
+                        # prose, scientific constants, or other page titles.
+                        titles = {
+                            '4. Mixed-model optimum and spatial energy bound': '4. Optimality and energy bounds',
+                            '7.4 Supply decisions from temperature probes': '7.4 Observation-conditioned decisions',
+                            '11.3 Parameter changes and fixed-policy bounds': '11.3 Continuous-parameter transfer bounds',
+                            '11.4 Transport comparison and network infeasibility': '11.4 Transport comparison and infeasibility',
+                        }
+                        node.args[0].value = titles.get(node.args[0].value, node.args[0].value)
                     if isinstance(node.func, ast.Name) and node.func.id in ('preamble', 'summary_header'):
                         node.keywords = [k for k in node.keywords if k.arg not in ('layout_version', 'edition')]
                     if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name) and node.func.value.id == 'texplot' and node.func.attr in ('Axis', 'hbar_chart', 'heatmap_panels', 'flow_diagram'):

@@ -83,9 +83,11 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
   --checks /实际运行/checks.json --claimed-check-count 12
 ```
 
+最终字号用 `--minimum-font-tex-pt 12` 显式检查（12是美赛新稿的项目与现行要求，不套给所有赛事）。测量使用成熟PDFium的字形矩阵，包含图形嵌套与旋转后的有效字号，不能用源码12pt或多数正文字号代替。首次输出列出所有较小文字及未识别字形；逐条看实际页面、上下文和源码，修正普通正文／轴／图例的小字，真实数学上下标和式内标注才可另记 `--font-review /绝对路径/font-review.json`。记录须含 `pdf_sha256`、`minimum_font_tex_pt` 和 `approved_math_runs`，每项用输出的 `id`、`role`（`math_script`或`math_notation`）及具体`reason`；未识别数学字形另用`approved_unmapped_math_glyphs`（`role=math_notation`）。不得按字号或字体批量豁免。记录与PDF或阈值不符、剩余候选未解决时拒绝通过；这保存审阅判断，不能自动证明某字真是数学。轮廓与图片文字仍需视觉核对。
+
 字体禁用与是否要求嵌入由本稿规格配置，不内置赛事的某一种字体名单。逐页视觉检查仍需 PDF 查看工具。交付组件的连续／独立结构按 [contest-delivery.md](contest-delivery.md) 选择，用 scripts.paper_template 的共享函数生成；check 与冻结门禁拒绝直接遗漏的边界，仍需在实际 PDF 核对前后页、浮动体和正文计页。contest_rules 只有确认AI报告独立起页时才排除该尾部，混页或重复标题不能获得美赛页数豁免；国赛首个附录若与正文混页，该页仍计入正文。普通连续章节并不因此违反格式。它们是可提取文本的机械检查，宏展开、图像和真实披露仍需审阅，不认证未知届次。
 
-正式论文先用 scripts.paper_template 的 --compile 入口核验 templates/typesetting-runtime.json 固定的编译器及完整资源包；scripts/freeze_pdf.py 的 --tex／--contest 门禁还必须提供同次 --build-receipt，核对实际源码、PDF与资源版本后创建字节一致的新副本。通用快照不等于论文通过门禁，构建记录也不是正式提交回执。
+正式论文先用 scripts.paper_template 的 --compile 入口核验 templates/typesetting-runtime.json 固定的编译器及完整资源包；scripts/freeze_pdf.py 的 --tex／--contest 门禁还必须提供同次 --build-receipt，核对实际源码、PDF与资源版本后创建字节一致的新副本。美赛v3成品冻结还应传 `--minimum-font-tex-pt 12`，有合法较小数学文字时同时传 `--font-review`；字号门禁在创建新PDF前拒绝未解决候选，并在冻结收据保存实际复核结果。未传该配置的历史／通用冻结仍保留旧用途，不能声称通过最终字号验收。通用快照不等于论文通过门禁，构建记录也不是正式提交回执。
 
 scripts/check_references.py 读取每行一条的参考文献文本，用 Crossref 免费接口核对其中的 DOI 是否存在、题名与年份是否与引文相符，输出 verified / mismatch / not_found / network_error / no_doi。需要联网；没有 DOI 的书、标准和网页只报告 no_doi，必须手工核对。通过只说明记录存在，不说明该文献支持所引论断。
 

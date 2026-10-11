@@ -16,8 +16,9 @@ def page(text, size=12):
 def test_graduate_invitation_and_format_have_separate_verified_sources():
     record = lookup('graduate', 'main', '2026')
     assert record['status'] == {'rules': 'partial', 'workflow': 'not_validated', 'awards': 'uncalibrated'}
-    assert len(record['sources']) == 2 and record['sources'][1]['sha256']
-    assert record['ai'] is None and record['format']['page_limit'] is None
+    assert any(source.get('sha256') and 'downFile.do' in source['url'] for source in record['sources'])
+    assert any('2c90801ca06f016101a0a47e06b77d9b' in source['url'] for source in record['sources'])
+    assert record['ai'].startswith('Confirmed 2026-09-16 policy:') and record['format']['page_limit'] is None
     assert record['submission']['md5_window'][1] < record['submission']['pdf_window'][0]
     assert '三等奖' in record['award_system'] and 'defense' in record['defense']
 
@@ -53,7 +54,8 @@ def test_graduate_abstract_guidance_is_not_a_cumcm_page_limit():
     records += [page(f'正文\n内容\n{i}') for i in range(3, 40)]
     report = evaluate(records, 'graduate', edition='2026')
     assert report['passed'] and report['facts']['page_limit'] is None
-    assert report['facts']['ai_policy_status'] == 'unconfirmed'
+    assert report['facts']['ai_policy_status'] == 'confirmed'
+    assert report['facts']['ai_policy_version'] == '2026-09-16'
     assert not any('keywords' in w or 'page-number' in w for w in report['warnings'])
     assert any('Not checked mechanically' in w for w in report['warnings'])
     assert evaluate([page('正文\n1')], 'graduate', edition='2026')['errors']

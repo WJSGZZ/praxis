@@ -38,13 +38,19 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert font_revision['previous_current_pdf']['sha256']==revision['current_pdf_sha256']
     font_inheritance=font_revision['scientific_review_inheritance']
     assert font_inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']
-    assert font_inheritance['current_pdf_sha256']==font_revision['current_pdf_sha256']==meta['pdf']['sha256']
+    assert font_inheritance['current_pdf_sha256']==font_revision['current_pdf_sha256']
     assert font_inheritance['new_scientific_review'] is False and font_inheritance['new_award_assessment'] is False
     assert inheritance['new_scientific_review'] is False and inheritance['new_award_assessment'] is False
+    heading_revision=meta['heading_layout_revision']
+    assert heading_revision['previous_current_pdf']['sha256']==font_revision['current_pdf_sha256']
+    heading_inheritance=heading_revision['scientific_review_inheritance']
+    assert heading_inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']
+    assert heading_inheritance['current_pdf_sha256']==heading_revision['current_pdf_sha256']==meta['pdf']['sha256']
+    assert heading_inheritance['new_scientific_review'] is False and heading_inheritance['new_award_assessment'] is False
     pages=PdfReader(pdf).pages
     assert len(pages)==26
     text=' '.join(' '.join(p.extract_text().split()) for p in pages)
-    assert 'Transport comparison and infeasibility' in text
+    assert 'Transport comparison and network infeasibility' in text
     assert '-31.51' in text.replace('−', '-') and '-26.28' in text.replace('−', '-')
     assert 'a permitted short circuit does not establish the cause' in text
     assert 'for every compatible model' in text or 'Over every compatible model' in text
@@ -61,6 +67,57 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     previous=meta['frontmatter_revision']['previous_current_pdf']
     old_source=demo/previous['generator_source']
     assert hashlib.sha256(old_source.read_bytes()).hexdigest()==previous['generator_sha256']=='7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef'
+
+
+def test_three_layout_edges_keep_actual_archived_generator_sources():
+    """Compare whole sources after reversing only the recorded layout edits."""
+    demo=HERE.parent
+    meta=json.loads((demo/'verification.json').read_text())
+    revisions=[meta[name] for name in ['frontmatter_revision','font_layout_revision','heading_layout_revision']]
+    old=[]
+    for revision in revisions:
+        binding=revision['previous_current_pdf']
+        raw=(demo/binding['generator_source']).read_bytes()
+        assert hashlib.sha256(raw).hexdigest()==binding['generator_sha256']
+        old.append(raw.decode())
+    current=(demo/meta['pdf']['generator_source']).read_text()
+
+    def replace(text,before,after,count=1):
+        assert text.count(before)==count
+        return text.replace(before,after)
+
+    # Original reviewed report -> edition-aware shared summary sheet.
+    assert replace(old[1],"summary_header('A', edition=2016)","summary_header('A')")==old[0]
+
+    # Shared v2 -> v3: exact typography/pagination edits, without removing
+    # arbitrary paragraphs, numerical expressions, or model calls.
+    v3=old[2]
+    v3=replace(v3,r'\begingroup\normalsize\setlength',r'\begingroup\small\setlength')
+    v3=replace(v3,r'\centering\normalsize\caption',r'\centering\small\caption')
+    v3=replace(v3,r'fontsize=\\normalsize',r'fontsize=\\small')
+    v3=replace(v3,", font_profile='mcm-v3'",'',10)
+    helper='\ndef mcm_spatial_layout(axes):\n    """Keep twelve-point plot text while fitting the full three-panel figure."""\n    return axes.replace(\'width=4.1cm,height=2.6cm\', \'width=3.8cm,height=2.6cm\').replace(\'horizontal sep=0.9cm\', \'horizontal sep=0.65cm\').replace(\'yshift=-1.0cm\', \'yshift=-1.25cm\')\n'
+    v3=replace(v3,helper,'')
+    v3=replace(v3,"FIG['spatial.png']=mcm_spatial_layout(FIG['spatial.png'])\n",'')
+    v3=replace(v3,"page('Appendix A. Scenario definitions')","page('Appendix A. Scenario definitions',True)")
+    disclosure=("# Disclosure paragraphs use a local list's natural paragraph separation, without changing body font or page margins.\n"
+        +r"tex.append('\\begin{list}{}{\\setlength{\\leftmargin}{0pt}\\setlength{\\rightmargin}{0pt}\\setlength{\\parsep}{2.5pt}\\setlength{\\topsep}{0pt}\\setlength{\\itemsep}{0pt}}\\item[]\n')"+'\n')
+    v3=replace(v3,disclosure,'')
+    for title in ['Tool, task and scope','Outputs, corrections and verification','Record limitations']:
+        before=r"tex.append('\\textbf{"+title+r"}\\par\n')"
+        v3=replace(v3,before,"para('"+title+"','heading')")
+    v3=replace(v3,r"tex.append('\\end{list}\n')"+'\n','')
+    assert v3==old[1]
+
+    # v3 -> current: four exact page-title literals, no prose/data exclusions.
+    for before,after in [
+        ('4. Optimality and energy bounds','4. Mixed-model optimum and spatial energy bound'),
+        ('7.4 Observation-conditioned decisions','7.4 Supply decisions from temperature probes'),
+        ('11.3 Continuous-parameter transfer bounds','11.3 Parameter changes and fixed-policy bounds'),
+        ('11.4 Transport comparison and infeasibility','11.4 Transport comparison and network infeasibility'),
+    ]:
+        current=replace(current,"page('"+after+"')","page('"+before+"')")
+    assert current==old[2]
 
 
 def test_public_reading_copy_matches_delivery_and_links():

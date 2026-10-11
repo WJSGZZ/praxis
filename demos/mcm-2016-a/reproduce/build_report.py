@@ -360,7 +360,7 @@ eq(r't_c=\frac{C}{H}\log\frac{T_0-T_e}{T_{\min}-T_e}')
 para(f'Baseline conductances are Ha = {a["air_conductance"]:.2f} W/K and Hb = {a["body_conductance"]:.2f} W/K, and C = {p["rho"]*p["cp"]*(p["L"]*p["W"]*p["H"]-p["body_volume"]):,.0f} J/K. Thus Te = {a["equilibrium"]:.2f}°C and tc = {a["coast_s"]/60:.2f} min.')
 para('A heat-loss model must approach an environmental equilibrium rather than zero Celsius. This analytic boundary also supplies a direct check on signs and units. The benchmark describes mixing perfectly; the spatial model will test the cost of departing from that assumption.')
 
-page('4. Optimality and energy bounds')
+page('4. Mixed-model optimum and spatial energy bound')
 para('Let $\\ell(T)=H_a(T-T_a)+H_b(T-T_b)$ be the heat loss of the mixed bath, and let the inlet be hotter than every temperature considered. <b>Proposition 1.</b> Coasting to the lower limit and then holding it uses the least water, provided the holding rate is within the faucet bound. The proof has four steps.')
 tex.append(r'\begin{proof}'+'\n')
 para('<b>Step 1, an identity.</b> Dividing the balance by $T_{\\mathrm{in}}-T$ and integrating over the horizon gives')
@@ -445,7 +445,7 @@ if rob:
     r10=rob['random_error']['0.10']
     rob_text=f' With the 0.1°C buffer, {r10["share_within_limits"]:.0%} of 200 draws with independent Gaussian multiplier standard deviation 0.1 stay within the limits.'
 para(f'The price of a margin is measured on a 6-segment version. Requiring all three limits to hold with a buffer b gives {pw[0.]:.2f} L at b = 0, {money_text(0.1)} at 0.1°C, {money_text(0.2)} at 0.2°C and {money_text(0.3)} at 0.3°C.'+rob_text+f' The {ctl["buffer_c"]:g}°C policy is selected here for its independently checked numerical margin. Its {rv["tap_error_share"]:.0%} acceptance under the stated random error model does not make it a reliable manual prescription; a real bath needs temperature feedback and separate calibration.')
-page('7.4 Observation-conditioned decisions')
+page('7.4 Supply decisions from temperature probes')
 para('Mixing changes timing: the weaker-mixing candidate starts immediately. Two probes miss violations in two of nine cases. We now propagate observation ambiguity into the supply decision.')
 para('A separate synthetic trial applies (0, 0, 1.2, 0, 0, 0) L/min in five-minute stages. Known geometry starts uniformly at 40°C; cells 89 and 6 are read every 30 s. Assumed reading errors and constant probe biases are each bounded by ±0.02°C; these are not instrument specifications.')
 para('For parameters $\\theta$ and probe j, let $d_j(t;\\theta)=T_j(t;\\theta)-y_j(t)$. At observed times $\\mathcal{T}=\\{0,30,\\ldots,1800\\}$ s, a model is compatible when a constant correction $a_j$ exists such that')
@@ -554,7 +554,7 @@ figure('feedback.png','Figure 10. Observation-dependent replenishment. Retained-
 para('A separate matched 12-model ablation uses 26.00 L without observations versus 22.86, 22.86 and 22.08 L with them in three structures. Six feedback trajectories pass 18 independent half-second three-grid RHS/energy replays; realized actions do not certify fine-grid feedback throughout the bank.')
 para('Minute-10 shifts to 45°C supply or 40 W/(m² K) surface loss empty the set at minute 11; terminal bias intervals independently exclude all 23 preceding survivors. Neither partial service counts as savings. An empty set invalidates reuse, without identifying the cause or certifying recovery.')
 
-page('11.3 Continuous-parameter transfer bounds')
+page('11.3 Parameter changes and fixed-policy bounds')
 para(f'Six predeclared bank-external truths give two complete services ({sum(FT["completed"]["offgrid_surface"]["flows"]):.2f}/{sum(FT["completed"]["offgrid_deep"]["flows"]):.2f} L commands). Changed storage, dimensions, supply or loss empties the bank after 28/5/11/9 minutes, before a checked temperature violation. Partial services are not savings; Section 12 separately tests limited recourse.')
 para(f'Fix those commands, baseline geometry, uniform 40°C initial water, 34°C contact, 50°C inlet and 22°C air. Static $(D,h_s,h_b,\\alpha)$ center is $({BOX_CENTER["D"]:.6f},{BOX_CENTER["h_surface"]:.3f},{BOX_CENTER["h_body"]:.2f},{BOX_CENTER["flow_multiplier"]:.4f})$; halfwidths {BOX_WIDTH["D"]:.2e} m²/s, {BOX_WIDTH["h_surface"]:.5f}/{BOX_WIDTH["h_body"]:.4f} W/(m² K), {BOX_WIDTH["flow_multiplier"]:.6f}. These mathematical neighborhoods are not measured tolerances.')
 para(r'<b>Fixed-command perturbation bound.</b> Write $U^{\prime}=M_\theta U+c_\theta$, affine in the four parameters. For halfwidths $w_j$, set $K_j=w_j\partial_jM$, $f_j=w_j\partial_jc$, and $\theta=\theta_0+w\odot z$ with $|z_j|\le1$. Nominal variations satisfy $S_j^{\prime}=M_0S_j+K_jU_0+f_j$, $S_j(0)=0$.')
@@ -567,7 +567,7 @@ para(r'The cellwise radius is $\sum_j|S_j|+R$: subtract it for the floor, add it
 tex.append(r'\end{proof}'+'\n')
 para(f'Half-second derivative/chord bounds assume 2e-6°C, 2e-6°C/s and 2e-6°C/s² errors. Of halfwidth scales 4/2/1/0.4, the displayed box is the largest passing both fixed paths on all three meshes: floor ≥{BOX_BOUND[0]:.4f}°C, ceiling ≤{BOX_BOUND[1]:.4f}°C, spread ≤{BOX_BOUND[2]:.4f}°C; extra planning reserves do not all pass. Independent RHS/energy checks cover {len(BOX["checks"])} corners/centers, not the continuum. A prior defect bound certified none. This exact-remainder box assumes numerical accuracy and covers fixed commands, not all feedback branches or real baths.')
 
-page('11.4 Transport comparison and infeasibility')
+page('11.4 Transport comparison and network infeasibility')
 para('A separate axial closure matches volume, storage and total conductances, with uniform/localized-body losses but different anatomy. With v=qL/V, loss per length $\\lambda$ and capacity per length c,')
 eq(r'T_t=D T_{xx}-vT_x-\lambda(x,T)/c,\qquad vT(0)-DT_x(0)=vT_{\rm in},\quad T_x(L)=0.')
 para(f'The flux inlet [11] conserves enthalpy. Both policies replay two loss profiles on 40/80/160 meshes at D=0.0003/0.001/0.003 m²/s. Under constant flow, weak-mixing mean/outlet ends at {AXWEAK["final_mean_c"]:.3f}/{AXWEAK["final_outlet_c"]:.3f}°C. N80 searches choose start 0 min at D=0.001 ({AXM["command_l"]:.2f}/{AX["groups"][("localized_body",.001)]["selected"]["command_l"]:.2f} L, uniform/local loss), or 10 min at D=0.003 ({AXS["command_l"]:.2f}/{AX["groups"][("localized_body",.003)]["selected"]["command_l"]:.2f} L); all selected candidates pass three-mesh sampled checks.')

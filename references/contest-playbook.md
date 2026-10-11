@@ -90,9 +90,9 @@
 | AI | 在正文行内引用并列入参考文献，文末另加“Report on Use of AI” | 2026细则已核：人工主导、逐项人工核实与实际使用披露，完整要求见当届档案 |
 | 提交 | 单个 PDF | 论文 PDF 或 Word（建议 PDF，不超 20 MB）加支撑材料压缩包（不超 20 MB） |
 
-成稿后运行 `uv run --locked python -m scripts.contest_rules 论文.pdf --contest mcm|cumcm [--forbidden 学校名]`，机械核对页数、首页、目录、页码与队号、页边距和附录等。MCM字号属于规则检查，CUMCM字号只记录事实；未被正文引用的图表等属于写作提示。分清错误、警告与事实，不能把所有输出都说成官方硬规则。
+成稿后运行 `uv run --locked python -m scripts.contest_rules 论文.pdf --contest mcm [--forbidden 学校名]`；国赛2026改为 `--contest cumcm --edition 2026`，不传届次仅兼容旧机械子集，不检查当届必需AI声明。机械核对页数、首页、目录、页码与队号、页边距和附录等。MCM字号属于规则检查，CUMCM字号只记录事实；未被正文引用的图表等属于写作提示。分清错误、警告与事实，不能把所有输出都说成官方硬规则。
 
-研究生赛2026的具名档案、官方格式源、MD5与PDF分开提交窗口、三人资格及数模之星答辩条件见[赛事档案](../evals/competitions.json)（`graduate / main / 2026`）。其摘要通常至多两页、无页眉、指定中文字体；不能直接用国赛模板当作已适配。`--contest graduate --edition 2026`只作明确标示的机械子集检查，AI细则仍待核，未验证完整提交流程；质量诊断继续用未校准的`general`，不新造研究生赛评分权重。
+研究生赛2026的具名档案、官方格式源、MD5与PDF分开提交窗口、三人资格及数模之星答辩条件见[赛事档案](../evals/competitions.json)（`graduate / main / 2026`）。按2026开赛公告，完整提交保留首页官方封面与四个原Logo，第二页开始至多两页摘要，后文无页眉且用指定中文字体；不能直接用国赛模板当作已适配。`--contest graduate --edition 2026 --document-kind submission`检查完整提交的有限结构；默认`report`仅针对匿名摘要／正文部分。2026-09-16 AI用途规定已经核对，具体标注与未验范围见档案，未验证完整提交流程；质量诊断继续用未校准的`general`，不新造研究生赛评分权重。
 
 模板与规则冲突时以规则为准：`templates/mcm-paper.tex` 带目录，`templates/cumcm-paper.tex` 不带，两者都不是官方模板，使用前对照当届官方文件。
 

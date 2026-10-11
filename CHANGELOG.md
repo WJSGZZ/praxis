@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 最终字号预检测量PDF变换后的文字，较小数学字形须逐项审阅并绑定当前PDF；冻结入口可在写文件前执行同一检查。国赛2026显式届次检查AI声明位置，研究生赛区分匿名报告与保留封面的完整提交；其2026 AI政策按用途核验。目录标题约束与当前浴缸稿的四处范围标题同步，历史稿及科学评阅保持。
+  Final-size inspection measures transformed PDF text, with individually reviewed mathematical exceptions bound to the current PDF; snapshot creation can enforce the same check before writing. Explicit CUMCM 2026 checks validate the disclosure position, while graduate checks distinguish an anonymous report from a submission with its official cover. Its 2026 AI policy is tracked by use. Contents-heading guidance and four scoped bath headings are synchronized; historical papers and scientific reviews remain intact.
+
 - 美赛共享v3默认A4，正文、图注、参考文献与普通图中文字用12pt。绘图API提供显式字体profile，独立图的完整边界与最终嵌入字号一并核验；旧v1/v2、历史评议和数值记录保留，原默认绘图输出不变。
   The shared MCM v3 layout defaults to A4 with 12-point body text, captions, references and ordinary figure text. Plot generators select an explicit font profile, and imported figures are checked at their final displayed size. Archived v1/v2 layouts, review identities and numerical records remain intact; existing default plot output is preserved.
 

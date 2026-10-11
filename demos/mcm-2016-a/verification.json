@@ -3,48 +3,48 @@
  "checked_on": "2026-10-11",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-  "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
-  "bytes": 176362,
-  "pages_total": 26,
-  "solution_pages": 25,
-  "ai_pages": 1,
-  "text_bounds_checked": true,
-  "pages_rendered_and_visually_reviewed": [
-   1,
-   2,
-   3,
-   4,
-   5,
-   6,
-   7,
-   8,
-   9,
-   10,
-   11,
-   12,
-   13,
-   14,
-   15,
-   16,
-   17,
-   18,
-   19,
-   20,
-   21,
-   22,
-   23,
-   24,
-   25,
-   26
-  ],
-  "visual_review_note": "All26 canonical A4 pages rendered and contact-reviewed; table/page4, plot/page12 and AI/page26 viewed at full resolution. All5 plots independently rendered and examined. Actual ordinary table, plot, caption and reference text12TeXpt; zero outside-page glyphs. AI begins a new page26.",
-  "typesetting": "Tectonic0.17.0 pinnedv33; actual latest source also desktop-native compile success.",
-  "md5": "fd9697fe52d39587d063224d68d5114c",
-  "generator_sha256": "45fad1e200d51f907ae09f03be25498af140bc0c92b2e5e8e129e18cb1792e81",
-  "generator_source": "reproduce/build_report.py",
-  "generator_source_note": "Active shared-v3 generator. Affected layout components executed against frozen TeX/plot arrays; full generator and model solvers not rerun. Explicit source/AST and23array-block preservation verified.",
-  "tex_sha256": "01bc8dbab7121919a3b65e82db1cf75af8125ebb4801c32f057018809bd99432"
- },
+    "sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+    "bytes": 176430,
+    "pages_total": 26,
+    "solution_pages": 25,
+    "ai_pages": 1,
+    "text_bounds_checked": true,
+    "pages_rendered_and_visually_reviewed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "visual_review_note": "All26 pages contact-reviewed. Contents page and all four affected body headings viewed at native page size; each title fits a single line, with no new overflow or orphan headings.",
+    "typesetting": "Tectonic0.17.0 pinnedv33 canonical build; actual desktop-native compiler success.",
+    "md5": "b3fb6ebf0b65809006658ef0aaba9874",
+    "generator_sha256": "f3b5418cf30f23f8e228da4c49b70bcb24ee124f8b622cef26e6f29b553e0d43",
+    "generator_source": "reproduce/build_report.py",
+    "generator_source_note": "Actual current generator --run reference rebuilt the report from fixed records and retained its short accepted-policy trajectory replay; no optimization or long study rerun. Four page-title source literals changed;23 plotted array blocks and scientific/AI content preserved, with one explicitly reported terminal TeX blank-line move.",
+    "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84"
+  },
  "model_checks": {
   "total": 17,
   "passed": 17,
@@ -1620,11 +1620,11 @@
   ]
  },
  "public_paper": {
-  "path": "paper.pdf",
-  "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
-  "byte_identical_to": "deliverables/paper.pdf",
-  "bytes": 176362
- },
+    "path": "paper.pdf",
+    "sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+    "byte_identical_to": "deliverables/paper.pdf",
+    "bytes": 176430
+  },
  "caption_naming_revision": {
   "previous_pdf": {
    "sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
@@ -2783,5 +2783,144 @@
    "new_award_assessment": false,
    "scope": "Both exact archived-generator comparisons and actual unchanged scientific/AI payload checks; original review remains bound to its original version."
   }
- }
+ },
+  "heading_layout_revision": {
+    "schema": 1,
+    "created_at_utc": "2026-10-11T13:05:59.150239+00:00",
+    "change": "Four section titles clarified in contents and body; scientific/AI words, equations, captions and23 plotted arrays unchanged.",
+    "previous_pdf_sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+    "current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+    "previous_current_pdf": {
+      "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+      "generator_source": "reproduce/reference/report-generator-9a05b2.py",
+      "generator_sha256": "45fad1e200d51f907ae09f03be25498af140bc0c92b2e5e8e129e18cb1792e81",
+      "tex_sha256": "01bc8dbab7121919a3b65e82db1cf75af8125ebb4801c32f057018809bd99432"
+    },
+    "current_generator_source": "reproduce/build_report.py",
+    "current_generator_sha256": "f3b5418cf30f23f8e228da4c49b70bcb24ee124f8b622cef26e6f29b553e0d43",
+    "current_tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84",
+    "title_changes": [
+      {
+        "old": "4. Optimality and energy bounds",
+        "new": "4. Mixed-model optimum and spatial energy bound",
+        "body_page": 7
+      },
+      {
+        "old": "7.4 Observation-conditioned decisions",
+        "new": "7.4 Supply decisions from temperature probes",
+        "body_page": 13
+      },
+      {
+        "old": "11.3 Continuous-parameter transfer bounds",
+        "new": "11.3 Parameter changes and fixed-policy bounds",
+        "body_page": 20
+      },
+      {
+        "old": "11.4 Transport comparison and infeasibility",
+        "new": "11.4 Transport comparison and network infeasibility",
+        "body_page": 21
+      }
+    ],
+    "actual_pages": {
+      "total": 26,
+      "counted_solution": 25,
+      "ai": 1,
+      "ai_new_page": 26
+    },
+    "source_only_four_page_title_literals_changed": true,
+    "science_and_AI_content_preserved_after_explicit_layout_normalization": true,
+    "all23_plotted_array_blocks_samebyte": true,
+    "tex_after_only_title_reversion_byte_identical": false,
+    "reported_non_title_tex_difference": {
+      "present": true,
+      "meaning": "one blank line moved from before the closing AI list to after it",
+      "parent_notified_before_normalizing": true,
+      "old_exact_suffix": "\n\n\n\\end{list}\n\\end{document}\n",
+      "new_exact_suffix": "\n\n\\end{list}\n\n\\end{document}\n",
+      "residual_unified_diff_after_title_reversions": "--- old tex\n+++ new tex with four titles reverted\n@@ -937,6 +937,6 @@\n \\textbf{Record limitations}\\par\n Task/tool/scope records, code and numerical receipts remain; the complete transcript is unavailable. Human verification, live control, experiments and feedback-wide certification were not performed.\n \n-\n \\end{list}\n+\n \\end{document}\n",
+      "allowed_normalization": "replace only the exact terminal new suffix with the exact old suffix; no generic source whitespace normalization"
+    },
+    "actual_execution": "Current build_report.py --run reference; fixed numerical records read and existing short six-segment trajectory propagated. No new optimization or long research run.",
+    "canonical_build": {
+      "runtime": {
+        "profile": "praxis-typesetting-v1",
+        "compiler": "Tectonic 0.17.0",
+        "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+        "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+        "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+      },
+      "layout": {
+        "profile": "praxis-mcm-v3",
+        "style_sha256": "955111ba2169ee2514af112c66048ebb21403511445853811f6c213e282bda1d"
+      },
+      "source_name": "paper.tex",
+      "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84",
+      "pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+      "visual_review_required": true
+    },
+    "desktop_compile": {
+      "kind": "success",
+      "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84"
+    },
+    "visual_review": {
+      "schema": 1,
+      "saved_at_utc": "2026-10-11T13:05:58.876044+00:00",
+      "pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+      "pages_total": 26,
+      "contact_pages_actually_viewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "native_page_images_actually_viewed": [
+        2,
+        7,
+        13,
+        20,
+        21
+      ],
+      "finding": "All26 pages contact-reviewed. Contents page and all four affected body headings viewed at native page size; each title fits a single line, with no new overflow or orphan headings.",
+      "source": "Existing render-receipt.json binds every page image to this exact canonical PDF."
+    },
+    "previews": {
+      "report-summary.png": {
+        "page": 1,
+        "sha256": "c89089e595ce3f37ff5a7602ede6f584604f750ec0335728424fcd1231a938ba"
+      },
+      "report-proof.png": {
+        "page": 7,
+        "sha256": "1e7330b2628ece5fc62d5d1d0d143285e44f7dec38e67e06ce70bf8615609ea2"
+      }
+    },
+    "scientific_review_inheritance": {
+      "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+      "current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+      "new_scientific_review": false,
+      "new_award_assessment": false,
+      "scope": "Original reviewed report -> edition-aware frontmatter -> shared-v3 typography -> four clarified titles. Actual old generator retained for every edge; whole-source equivalence is tested after reversing only each edge's explicit layout edits. Historical nonblind and uncalibrated award opinion retains its original version identity."
+    }
+  }
 }

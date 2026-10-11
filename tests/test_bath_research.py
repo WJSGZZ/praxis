@@ -222,5 +222,5 @@ def test_active_report_has_parallel_numbered_subsections_and_resolved_references
     text=' '.join(p.extract_text() for p in pages)
     assert 'Section 2.1' not in text and '??' not in text
     assert 'Problem formulation' in contents
-    assert 'Optimality and energy bounds' in contents
+    assert 'Mixed-model optimum and spatial energy bound' in contents
     assert 'Delivery-error sensitivity' in contents

@@ -6,8 +6,90 @@ Use PDFium's built-in mapping instead of interpreting CIDs as Unicode.
 https://github.com/TeX-Live/texlive-source/blob/trunk/texk/dvipdfm-x/type0.c
 """
 import collections
+import ctypes
+import math
 
 from pypdf import PdfReader
+
+
+def _unicode_chars(codes):
+    """Keep PDFium glyph indices while joining UTF-16 surrogate pairs."""
+    chars = []
+    malformed = 0
+    for index, code in enumerate(codes):
+        if 0xd800 <= code <= 0xdbff and index + 1 < len(codes) and 0xdc00 <= codes[index + 1] <= 0xdfff:
+            chars.append(chr(0x10000 + ((code - 0xd800) << 10) + codes[index + 1] - 0xdc00))
+        elif 0xdc00 <= code <= 0xdfff and index and 0xd800 <= codes[index - 1] <= 0xdbff:
+            chars.append('')  # The preceding index holds the combined scalar.
+        elif 0xd800 <= code <= 0xdfff or code > 0x10ffff:
+            chars.append('\ufffd')
+            malformed += 1
+        else:
+            chars.append(chr(code) if code else '')
+    return chars, malformed
+
+
+def effective_font_runs(path):
+    """Measure extractable glyphs after the PDF's effective transformations.
+
+    PDFium resolves nested Form XObjects and standard CJK mappings. Its font
+    size is nominal: multiply by the transformed vertical em vector, including
+    rotation. This measures typography, not whether text is prose or a script.
+    Outlined/raster text and clipping/visibility still require visual review.
+    """
+    import pypdfium2 as pdfium
+    from pypdfium2 import raw
+    reader = PdfReader(str(path))
+    if reader.is_encrypted:
+        raise ValueError('Encrypted PDF must be opened by its owner first')
+    records = []
+    with pdfium.PdfDocument(str(path)) as document:
+        for number, page in enumerate(document, 1):
+            unit = float(reader.pages[number - 1].get('/UserUnit', 1))
+            if not math.isfinite(unit) or unit <= 0:
+                raise ValueError('PDF page has an invalid UserUnit')
+            textpage = page.get_textpage()
+            try:
+                codes = [raw.FPDFText_GetUnicode(textpage, i)
+                         for i in range(textpage.count_chars())]
+                chars, _ = _unicode_chars(codes)
+                runs, unmapped = [], []
+                for index, char in enumerate(chars):
+                    if ((not char and codes[index] == 0 and raw.FPDFText_IsGenerated(textpage, index) != 1)
+                            or char == '\ufffd'):
+                        unmapped.append({'page': number, 'index': index, 'id': f'{number}:{index}',
+                                         'unicode_code': codes[index],
+                                         'context': ''.join(chars[max(0, index - 35):index + 36])})
+                    if not char:
+                        continue
+                    if char.isspace() or raw.FPDFText_IsGenerated(textpage, index) == 1:
+                        continue
+                    matrix = raw.FS_MATRIX()
+                    if not raw.FPDFText_GetMatrix(textpage, index, ctypes.byref(matrix)):
+                        raise ValueError(f'Cannot measure PDF glyph on page {number}, index {index}')
+                    size = raw.FPDFText_GetFontSize(textpage, index) * math.hypot(matrix.c, matrix.d) * unit
+                    if not math.isfinite(size) or size <= 0:
+                        raise ValueError(f'Invalid PDF glyph size on page {number}, index {index}')
+                    size = round(size, 5)
+                    previous = runs[-1] if runs else None
+                    between = ''.join(chars[previous['last_index'] + 1:index]) if previous else ''
+                    if previous and previous['size_pdf_bp'] == size and not between.strip():
+                        previous['text'] += between + char
+                        previous['last_index'] = index
+                    else:
+                        runs.append({'page': number, 'first_index': index, 'last_index': index,
+                                     'text': char, 'size_pdf_bp': size})
+                for run in runs:
+                    first, last = run['first_index'], run['last_index']
+                    run['id'] = f'{number}:{first}:{last}'
+                    run['context'] = ''.join(chars[max(0, first - 35):last + 36])
+                    run['size_tex_pt'] = round(run['size_pdf_bp'] * 72.27 / 72, 5)
+                records.append({'page': number, 'runs': runs, 'unmapped_glyphs': len(unmapped),
+                                'unmapped_runs': unmapped})
+            finally:
+                textpage.close()
+                page.close()
+    return records
 
 
 def needs_collection_mapping(reader):

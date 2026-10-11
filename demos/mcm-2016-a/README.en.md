@@ -68,7 +68,7 @@ The paper's strength is a complete decision argument. A proved ideal benchmark l
 
 Its principal limitation is the conditional transport closure. Observation and control results rely on synthetic scenarios and an offline-maintained model set. Connecting observable movement and mixing to effective transport parameters would most improve practical applicability.
 
-An author-external AI reviewed the preceding 26-page manuscript and its five scientific figures. The current copy retains two separate typography inheritance records: the unified summary sheet, then A4 with12-point ordinary text in tables, figures, captions and references. Scientific and AI-disclosure content remains unchanged. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
+An author-external AI reviewed the preceding 26-page manuscript and its five scientific figures. Three recorded revisions connect that reviewed version to the current copy: the unified summary sheet, A4 with 12-point ordinary text in tables, figures, captions and references, and four clearer section titles in the contents and body. Scientific and AI-disclosure content remains unchanged. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
 
 ## Paper and deliverables
 
