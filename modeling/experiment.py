@@ -1,6 +1,7 @@
 """Experimental mathematics: hunt for counterexamples, test conjectures at high precision, guess recurrences, polynomials and relations.
 
-Everything here produces candidates and refutations. A pattern that survives the search is a conjecture until it is proved."""
+Numerical searches produce candidates, not rigorous refutations. Exact finite
+checks carry only their explicitly stated domain and premises."""
 from __future__ import annotations
 
 import ast
@@ -12,6 +13,7 @@ from typing import Callable, Sequence
 import mpmath as mp
 import numpy as np
 import sympy as sp
+from modeling.expressions import parse_bounded_expression, compile_bounded_expression, RUNTIME_FUNCTIONS
 
 
 def find_counterexample(claim: Callable, domain: Sequence[tuple], *, trials: int = 20000, exhaustive_limit: int = 200000, seed: int = 2027,
@@ -19,7 +21,9 @@ def find_counterexample(claim: Callable, domain: Sequence[tuple], *, trials: int
     """Search for a false claim; exceptions/non-finite results are evaluation errors.
 
     Integer bounds are inclusive. An exhausted small integer domain proves the
-    claim there only when every evaluation succeeded. Shrinking has a finite
+    caller-supplied predicate there only when every evaluation succeeded; this
+    is a mathematical proof only if those predicate evaluations faithfully and
+    exactly implement the claim. Shrinking has a finite
     evaluation budget and does not establish a globally minimal counterexample.
     The budget limits calls, not the duration of an individual user callable.
     """
@@ -64,7 +68,7 @@ def find_counterexample(claim: Callable, domain: Sequence[tuple], *, trials: int
                 return result(x, tried, True)
         return dict(found=False, proved_for_domain=not error_count, cases=tried, exhaustive=True,
                     evaluation_errors=error_count, error_examples=errors,
-                    note='Proof for the finite domain only when all evaluations succeeded.')
+                    note='Exhaustive verification of the supplied predicate; mathematical proof requires faithful exact predicate evaluations.')
     rng = np.random.default_rng(seed)
     corners = [[s[1], s[2]] for s in domain]
     for x in itertools.islice(itertools.product(*corners), 256):
@@ -146,7 +150,8 @@ def test_conjecture(lhs: Callable, rhs: Callable, relation: str, bounds: Sequenc
     """Test lhs(*x) (relation) rhs(*x) at random points with mpmath at dps digits. relation: '==', '<=', '>='.
 
     lhs and rhs receive mpmath numbers; use mpmath functions (mp.sin, mp.exp...) inside them. An equation is judged
-    by the worst absolute difference, an inequality by the worst violation."""
+    by the worst absolute difference, an inequality by the worst violation.
+    High precision alone never certifies a mathematical counterexample."""
     if relation not in ('==', '<=', '>='):
         raise ValueError("relation must be '==', '<=' or '>='")
     if isinstance(points, bool) or not isinstance(points, (int, np.integer)) or points < 1:
@@ -170,7 +175,8 @@ def test_conjecture(lhs: Callable, rhs: Callable, relation: str, bounds: Sequenc
             if gap > worst:
                 worst, where = gap, [float(v) for v in x]
         if worst > tolerance:
-            return dict(holds=False, proved=True, worst_violation=float(worst), at=where)
+            return dict(holds=False, proved=False, evidence='numerical_candidate', worst_violation=float(worst), at=where,
+                        points=int(points), digits=int(dps), note='High-precision numerical violation; exact or certified verification is required to refute the claim.')
         return dict(holds=True, proved=False, points=points, digits=dps, note='Holds at every tested point; a conjecture, not a theorem.')
     finally:
         mp.mp.dps = old
@@ -223,7 +229,9 @@ def guess_polynomial(sequence: Sequence, max_degree: int = 8) -> dict:
 
 def _safe_eval(expression, scope):
     """Evaluate arithmetic on the names in scope; any other syntax (attribute access, subscripts, lambdas...) is rejected."""
-    tree = ast.parse(expression, mode='eval')
+    if any(k in RUNTIME_FUNCTIONS for k in scope):
+        raise ValueError('Reserved runtime names are not allowed')
+    tree = parse_bounded_expression(expression)
     allowed = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Load, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.USub, ast.UAdd)
     for node in ast.walk(tree):
         if isinstance(node, ast.Constant):
@@ -237,17 +245,23 @@ def _safe_eval(expression, scope):
                 raise ValueError('Only simple calls to the listed functions are allowed')
         elif not isinstance(node, allowed):
             raise ValueError(f'Disallowed syntax: {type(node).__name__}')
-    return eval(compile(tree, '<expression>', 'eval'), {'__builtins__': {}}, dict(scope))
+    return eval(compile_bounded_expression(tree, filename='<expression>'), {'__builtins__': {}}, {**scope, **RUNTIME_FUNCTIONS})
 
 
 def find_relation(value: str, constants: dict[str, str], *, dps: int = 50, max_coeff: int = 1000) -> dict:
     """Integer relation c0*value + sum ci*constant_i = 0 by PSLQ. value and constants are decimal strings or mpmath expressions
     (e.g. 'pi**2/6', 'zeta(2)'), evaluated at dps digits. A relation with small coefficients and a tiny residual is a strong hint
     but is not a proof; very long coefficient vectors mean 'no relation found'."""
+    if isinstance(dps, bool) or not isinstance(dps, int) or not 15 <= dps <= 1000:
+        raise ValueError('dps must be an integer between 15 and 1000')
+    if len(constants) > 32:
+        raise ValueError('At most 32 constants are allowed')
     old = mp.mp.dps
     mp.mp.dps = dps
     try:
         scope = {k: getattr(mp, k) for k in ('pi', 'e', 'euler', 'catalan', 'zeta', 'log', 'sqrt', 'exp', 'phi', 'sin', 'cos', 'atan')}
+        for name in ('pi', 'e', 'euler', 'catalan', 'phi'):
+            scope[name] = mp.mpf(scope[name])
         v = mp.mpmathify(_safe_eval(value, scope)) if not _is_number(value) else mp.mpf(value)
         values = [v] + [mp.mpmathify(_safe_eval(c, scope)) if not _is_number(c) else mp.mpf(c) for c in constants.values()]
         rel = mp.pslq(values, maxcoeff=max_coeff, maxsteps=100000)
@@ -261,11 +275,15 @@ def find_relation(value: str, constants: dict[str, str], *, dps: int = 50, max_c
 
 
 def _is_number(s):
+    if not isinstance(s, str) or len(s) > 4096:
+        raise ValueError('Numeric strings must have at most 4096 characters')
     try:
-        float(s)
-        return True
+        result = float(s)
     except ValueError:
         return False
+    if not math.isfinite(result):
+        raise ValueError('Numeric strings must be finite')
+    return True
 
 
 def check_linear_recurrence(sequence: Sequence, coefficients: Sequence, *, order_bound: int | None = None) -> dict:

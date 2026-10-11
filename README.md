@@ -167,6 +167,8 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。常规的 MATLAB 与 R 用法，Python 基本都能覆盖。
 
+数值违例先作为候选，支持的有理算术反例另做精确核验；拟合诊断未定义时给出原因，博弈枚举说明完整性边界。结果与执行限制见[工具结果契约](references/automation.md#数学工具的结果契约)，不会把运行成功当作数学保证。
+
 ## Agent 兼容
 
 同一套建模方法，按宿主生成对应插件或扩展。七个技能与核心计算代码共用，安装清单和路径变量由导出器适配；不必为不同 Agent 维护不同的建模流程。

@@ -164,6 +164,8 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
 | Data and free literature | `audit_data`, `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
+Numerical violations are candidates until independently certified. Supported rational witnesses receive an exact check; undefined fit diagnostics carry reasons, and game enumeration reports its completeness limits. The [result and execution contract](references/automation.md#数学工具的结果契约) explains these distinctions and the bounds on expression calls.
+
 Portable, Codex, Claude and Copilot exports also include the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. For paywalled journal papers the tools find legal free copies; the rest can come from a school library.
 
 When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). Python covers the ordinary uses of MATLAB and R.

@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修正数学接口证据与交付：数值违例不自动成为证明，有理候选单独精确核验；零残差及秩亏诊断保留结果并说明未定义项，Nash返回完整性边界。输入Schema与示例共用校验，修复最小费用流的节点类型；协议只协商实际支持版本，表达式入口共用大小／运算边界及外部调用超时。
+  Mathematical tools now separate numerical candidates from exact refutations, preserve valid fits with explicit diagnostic states, and qualify Nash enumeration. Shared input validation aligns schemas and examples, flow node labels follow JSON semantics, protocol negotiation advertises supported versions, and external expression calls have bounded workers.
+
 - 本地经验检索采用活动视图：重复记录复用身份，修订可显式替代旧条，退役保留原文但停止召回。外部建议保持候选证据，历史工作流的检索身份不回写；审查建议连接实际区分性检查与处理决定。
   Local lesson retrieval now excludes retired and superseded records without rewriting history. Duplicate additions reuse their identities, external proposals remain candidates, and frozen workflow retrievals stay unchanged. Important critiques lead to a bounded discriminating check and an evidence-based decision.
 

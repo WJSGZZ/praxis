@@ -10,7 +10,7 @@ def test_convexity_finds_witness_or_fails_to_refute():
     assert st.check_convexity(lambda x: x[0] ** 2 + abs(x[1]), [[-2, 2], [-2, 2]])['convex']
     assert st.check_convexity(lambda x: np.log(np.exp(x[0]) + np.exp(x[1])), [[-3, 3], [-3, 3]])['convex']
     bad = st.check_convexity(lambda x: np.sin(x[0]), [[0, 2 * np.pi]])
-    assert not bad['convex'] and bad['proved']
+    assert not bad['convex'] and not bad['proved'] and bad['evidence'] == 'numerical_candidate'
     assert st.check_convexity(lambda x: -x[0] ** 2, [[-1, 1]])['convex'] is False
     assert st.check_convexity(lambda x: 3 * x[0] + 1, [[-1, 1]])['concave_also']
 

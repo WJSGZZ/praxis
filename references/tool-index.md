@@ -24,12 +24,12 @@
 | `sir_fit` | infected*, population* | Fit SIR beta and gamma to daily infected counts; reports whether the data can separate them |
 | `gm11_forecast` | series*, horizon | Grey GM(1,1) forecast of a short finite positive series; posterior diagnostics are null for constant input |
 | `backtest_baselines` | series*, horizon*, min_train, season | Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines |
-| `probe_structure` | property*, expression*, names*, bounds*, variable, permutation, rhs | Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs |
+| `probe_structure` | property*, expression*, names*, bounds*, variable, permutation, rhs | Numerical probes for convexity, monotonicity, symmetry, power laws and invariants |
 | `dimensional_analysis` | matrix*, names* | Dimensionless groups (Buckingham Pi) from a dimension matrix: rows are base dimensions, columns are variables |
 | `check_total_unimodularity` | matrix* | Is a constraint matrix totally unimodular (integral LP vertices require integral right-hand sides and finite bounds)? Exact for incidence-type matrices and small matrices |
 | `route_graph` | graph, lessons_path, graph_file, question, mode, operations* | Keep the record of routes tried on a problem |
 | `route_to_lesson` | graph*, problem*, principle*, verified_by, tags | Draft a lesson from a finished route record (one chosen route); you supply the transferable principle |
-| `test_conjecture` | lhs*, rhs*, relation*, names*, bounds*, points, tolerance | Test lhs (==, <=, >=) rhs for random points in a box (double precision) |
+| `test_conjecture` | lhs*, rhs*, relation*, names*, bounds*, points, tolerance | Test lhs (==, <=, >=) rhs numerically in a box, then verify a found witness with exact rational arithmetic when supported |
 | `find_counterexample` | claim*, names*, domain*, trials, exhaustive_limit, shrink_budget | Search for a counterexample of a claim (arithmetic, comparisons, and/or, abs/min/max/gcd/isprime) over integer or real ranges |
 | `check_recurrence` | sequence*, coefficients*, order_bound | Check that a sequence satisfies a_n = c_1 a_{n-1} +  |
 | `guess_sequence` | sequence*, max_order, max_degree, holdout | Guess a constant-coefficient linear recurrence and a polynomial formula for a sequence of rationals (exact) |
@@ -44,12 +44,12 @@
 | `layered_diffusion_laplace` | layers*, times*, t_initial*, left*, right*, dps | Independent semi-analytic solution of the same layered conduction problem by transfer matrices in the Laplace domain (no mesh, no time step); the result a finite-volume solution must match |
 | `calibrate_curve` | expression*, parameters*, x*, y*, theta0*, bounds, holdout | Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation and an optional hold-out of the last points |
 | `sobol_convergence` | expression*, names*, bounds*, n, seed | Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged |
-| `bimatrix_nash` | A*, B* | All Nash equilibria (pure and mixed) of a two-player non-zero-sum game by support enumeration; payoff matrices A (row player) and B (column player), up to 6 actions each |
+| `bimatrix_nash` | A*, B* | Numerical equal-support Nash candidates for a two-player game, up to 6 actions each |
 | `markov_stationary` | matrix* | Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility |
 | `markov_absorption` | matrix*, absorbing* | Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states |
 | `minimize_nlp` | objective*, names*, bounds*, constraints, starts, seed, maximize | Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0) |
 | `knapsack` | values*, weights*, capacity*, copies | Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1) |
-| `min_cost_flow` | edges*, demand* | Minimum-cost flow on a simple directed graph (no duplicate edges); edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero |
+| `min_cost_flow` | edges*, demand* | Minimum-cost flow on a simple directed graph; edges [u, v, capacity, cost], demand {node: net demand} |
 | `robust_lp` | c*, A_ub*, b_ub*, delta*, gamma*, maximize | LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box |
 | `solve_mdp` | P*, R*, horizon, discount, terminal, maximize | Finite-state decision process: P[action][state][next state], R[state][action] |
 | `hypothesis_test` | kind*, a, b, groups, table, alpha | Test with effect size and assumption flags |

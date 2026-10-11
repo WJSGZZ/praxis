@@ -1,7 +1,7 @@
 """Numerical probes for mathematical structure: dimensions, convexity, monotonicity, symmetry, scaling, invariants, network matrices.
 
-A probe can refute a structural property (it returns a witness) or fail to refute it on the points tried. Failing to refute is
-evidence, not proof; each result says which of the two it is."""
+A probe returns numerical candidate violations or sampled supporting evidence.
+Neither floating-point arithmetic nor finite differences certify a refutation."""
 from __future__ import annotations
 
 import itertools
@@ -37,7 +37,7 @@ def _points(bounds, n, rng):
 
 
 def check_convexity(f: Callable, bounds: Sequence[Sequence[float]], *, trials: int = 4000, tol: float = 1e-9, seed: int = 2027) -> dict:
-    """Random midpoint/chord test of f(x) on a box. A violation proves the function is NOT convex on the box.
+    """Random midpoint/chord test of f(x) on a box. A violation is a numerical candidate, not a proof.
 
     Convex if f(t x + (1-t) y) <= t f(x) + (1-t) f(y) for all pairs; here only sampled pairs are tried."""
     f = _finite_function(f)
@@ -53,8 +53,8 @@ def check_convexity(f: Callable, bounds: Sequence[Sequence[float]], *, trials: i
     worst = int(np.argmax(excess))
     scale = max(1.0, float(np.abs(fx).max()))
     if excess[worst] > tol * scale:
-        return dict(convex=False, proved=True, witness=dict(x=x[worst].tolist(), y=y[worst].tolist(), t=float(t[worst])),
-                    violation=float(excess[worst]))
+        return dict(convex=False, proved=False, evidence='numerical_candidate', witness=dict(x=x[worst].tolist(), y=y[worst].tolist(), t=float(t[worst])),
+                    violation=float(excess[worst]), note='Recheck this chord with exact arithmetic or a certified error bound before refuting convexity.')
     fneg = -fm - (t * -fx + (1 - t) * -fy)
     concave = bool(fneg.max() <= tol * scale)
     return dict(convex=True, proved=False, concave_also=concave, max_excess=float(excess[worst]), pairs=int(trials),
@@ -81,11 +81,13 @@ def check_monotone(f: Callable, bounds: Sequence[Sequence[float]], variable: int
         kind = 'nonincreasing'
     else:
         kind = 'not monotone'
-    out = dict(kind=kind, proved=(kind == 'not monotone'), trials=int(trials),
-               note='A violation proves the function is not monotone; otherwise this is evidence on sampled points. Prove monotonicity by the sign of the derivative.')
+    out = dict(kind=kind, proved=False, evidence='numerical_candidate' if kind == 'not monotone' else 'sampled_evidence', trials=int(trials),
+               note='Sampled numerical changes are not a proof. Refuting monotonicity in both directions needs two certified violations; prove a direction by the derivative sign.')
     if kind == 'not monotone':
         i = int(np.argmax(np.abs(d)))
         out['witness'] = dict(low_point=base[i].tolist(), high_point=up[i].tolist(), change=float(d[i]))
+        out['direction_witnesses'] = {direction: dict(low_point=base[j].tolist(), high_point=up[j].tolist(), change=float(d[j]))
+                                     for direction, j in [('against_nondecreasing', int(np.argmin(d))), ('against_nonincreasing', int(np.argmax(d)))]}
     return out
 
 
@@ -105,7 +107,8 @@ def check_symmetry(f: Callable, bounds: Sequence[Sequence[float]], permutation: 
     worst = int(np.argmax(np.abs(d)))
     scale = max(1.0, float(np.abs([f(p) for p in x[:50]]).max()))
     if abs(d[worst]) > tol * scale:
-        return dict(symmetric=False, proved=True, witness=x[worst].tolist(), difference=float(d[worst]))
+        return dict(symmetric=False, proved=False, evidence='numerical_candidate', witness=x[worst].tolist(), difference=float(d[worst]),
+                    note='Numerical mismatch; exact arithmetic or certified error bounds are needed for a refutation.')
     return dict(symmetric=True, proved=False, trials=int(trials), note='No violation found; evidence, not proof.')
 
 
@@ -141,8 +144,8 @@ def check_power_law(f: Callable, bounds: Sequence[Sequence[float]], *, trials: i
     if (spread < tol).all():
         return dict(power_law=True, proved=False, exponents=[float(v) for v in ex.mean(0)], max_spread=float(spread.max()),
                     criterion=f'elasticities equal at all {trials} sampled points within {tol:g}')
-    return dict(power_law=False, proved=True, exponent_range=[[float(a), float(b)] for a, b in zip(ex.min(0), ex.max(0))],
-                criterion=f'elasticities equal at all {trials} sampled points within {tol:g}')
+    return dict(power_law=False, proved=False, evidence='numerical_candidate', exponent_range=[[float(a), float(b)] for a, b in zip(ex.min(0), ex.max(0))],
+                criterion=f'elasticities equal at all {trials} sampled points within {tol:g}', note='Finite-difference elasticities are numerical evidence, not a certified refutation.')
 
 
 def check_invariant(rhs: Callable, invariant: Callable, bounds: Sequence[Sequence[float]], *, trials: int = 500, step: float = 1e-6,
@@ -175,7 +178,8 @@ def check_invariant(rhs: Callable, invariant: Callable, bounds: Sequence[Sequenc
     if rel[worst] <= tol:
         return dict(conserved=True, proved=False, max_relative_rate=float(rel[worst]), trials=int(trials),
                     note='Rate of change is zero at every sampled state; evidence, not proof.')
-    return dict(conserved=False, proved=True, witness=x[worst].tolist(), rate=float(raw[worst]), relative_rate=float(rel[worst]))
+    return dict(conserved=False, proved=False, evidence='numerical_candidate', witness=x[worst].tolist(), rate=float(raw[worst]), relative_rate=float(rel[worst]),
+                note='The rate uses finite differences; certify the derivative and its error before refuting conservation.')
 
 
 def buckingham_pi(dimension_matrix: Sequence[Sequence[float]], names: Sequence[str]) -> dict:

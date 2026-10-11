@@ -132,14 +132,17 @@ def pareto_front(points, senses) -> dict:
 
 
 def bimatrix_nash(A, B, *, max_support: int = 6, tol: float = 1e-9) -> dict:
-    """All Nash equilibria of a two-player game (payoff matrices A for the row player, B for the column player) by support enumeration.
+    """Numerically enumerate equal-support Nash candidates of a two-player game.
 
-    Exact for nondegenerate games up to `max_support` actions per player; a degenerate game can have continua of equilibria, which
-    enumeration reports only through their extreme points on the supports it tries. Many games have several equilibria: say which one
+    Nondegenerate games have equal-support equilibria; degeneracy is not certified
+    here, singular systems are skipped, and continuous families are not represented.
+    Neither complete enumeration nor exact arithmetic is claimed. Say which one
     the players are expected to play and why, or give a guarantee that holds in all of them."""
     A, B = np.asarray(A, float), np.asarray(B, float)
-    if A.shape != B.shape:
-        raise ValueError('A and B must have the same shape')
+    if A.ndim != 2 or A.shape != B.shape or not all(A.shape) or not np.isfinite(A).all() or not np.isfinite(B).all():
+        raise ValueError('A and B must have the same nonempty finite matrix shape')
+    if not np.isfinite(tol) or tol < 0:
+        raise ValueError('tol must be finite and nonnegative')
     m, n = A.shape
     if max(m, n) > max_support:
         raise ValueError(f'Game too large for support enumeration (limit {max_support} actions per player)')
@@ -159,7 +162,10 @@ def bimatrix_nash(A, B, *, max_support: int = 6, tol: float = 1e-9) -> dict:
                 if not any(np.allclose(xf, e['row']) and np.allclose(yf, e['column']) for e in found):
                     found.append(dict(row=xf, column=yf, row_payoff=float(xf @ A @ yf), column_payoff=float(xf @ B @ yf)))
     return dict(equilibria=[dict(row=e['row'].tolist(), column=e['column'].tolist(), row_payoff=e['row_payoff'], column_payoff=e['column_payoff'],
-                                 pure=bool((e['row'] > 0).sum() == 1 and (e['column'] > 0).sum() == 1)) for e in found], count=len(found))
+                                 pure=bool((e['row'] > 0).sum() == 1 and (e['column'] > 0).sum() == 1)) for e in found], count=len(found),
+                completeness=dict(status='not_certified', count_scope='returned_candidates_only',
+                                  method='floating_point_equal_support_enumeration', tolerance=tol,
+                                  reason='Degeneracy is not certified; singular supports and continuous equilibrium families may be missed. Even nondegenerate results are subject to numerical tolerance.'))
 
 
 def _indifference(M: np.ndarray, k: int):

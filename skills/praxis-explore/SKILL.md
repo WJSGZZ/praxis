@@ -43,7 +43,7 @@ uv run --locked python -m scripts.mcp_server --call probe_structure '{"property"
 - 结构探测找不到反例只是当前范围的证据；找到并复核反例可推翻该性质，不能证明它成立。升级为“已推导”需解析推导或有适用前提的完整证明。
 - 探索有预算。证据足够就停，不为显得全面而增加路线。
 - 工具只记录和探测，不替人判断路线是否合适；选择及理由由人和 Agent 共同负责，必要时与用户按 [praxis-dialogue](../praxis-dialogue/SKILL.md) 讨论。
-- 工具的 `proved` 字段只在找到反例时为真，解释时要保留这个语义。路线记录与课程保存在用户项目中；共享边界见 learning-loop.md。
+- 先读 [数学工具结果契约](../../references/automation.md#数学工具的结果契约)：数值候选不等于严格反例，`holds` 不代表普遍命题；只有输出明确给出相称精确证据才允许按 `proved` 升级。路线记录与课程保存在用户项目中；共享边界见 learning-loop.md。
 
 ## 产出与交接
 

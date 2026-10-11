@@ -15,6 +15,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from modeling import calibrate, decision_models, dynamics, epidemic, experiment, forecast, graph, layered, lessons, nonlinear, optimize, pde, queueing, routes, structure, weights  # noqa: E402
+from modeling.expressions import parse_bounded_expression, compile_bounded_expression, RUNTIME_FUNCTIONS, bounded_isprime
+from modeling.schema_contracts import validate
 
 
 class _Lazy:
@@ -40,25 +42,20 @@ def _project_version():
 
 
 VERSION = _project_version()
+SUPPORTED_PROTOCOL_VERSIONS = ('2025-06-18',)
+EXPRESSION_TIMEOUT_SECONDS = 30
+EXPRESSION_TOOLS = frozenset({'sobol_sensitivity', 'sobol_convergence', 'probe_structure', 'test_conjecture',
+                             'find_counterexample', 'find_relation', 'calibrate_curve', 'solve_diffusion',
+                             'solve_ode', 'equilibria', 'minimize_nlp'})
 FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
              'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum}
 
 
-def _check_powers(tree):
-    """Reject powers that can run away: any power nested inside another power (9**9**9, (9**200)**200) or a constant exponent above 200."""
-    for node in ast.walk(tree):
-        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Pow):
-            for side in (node.left, node.right):
-                if any(isinstance(n, ast.BinOp) and isinstance(n.op, ast.Pow) for n in ast.walk(side)):
-                    raise ValueError('A power inside a power is not allowed')
-            if isinstance(node.right, ast.Constant) and abs(node.right.value) > 200:
-                raise ValueError('Constant exponents above 200 are not allowed')
-
-
 def _compile(expression, names):
     """Vectorised evaluation of an arithmetic expression; anything but arithmetic, names and a few functions is rejected."""
-    tree = ast.parse(expression, mode='eval')
-    _check_powers(tree)
+    if len(names) > 32 or len(set(names)) != len(names) or any(n in FUNCTIONS or n in RUNTIME_FUNCTIONS for n in names):
+        raise ValueError('At most 32 unique variable names, distinct from function names, are allowed')
+    tree = parse_bounded_expression(expression)
     for node in ast.walk(tree):
         ok = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Load, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.USub, ast.UAdd)
         if isinstance(node, ok):
@@ -72,10 +69,10 @@ def _compile(expression, names):
                 raise ValueError('Only simple calls to exp, log, sqrt, sin, cos, tan, abs, minimum, maximum are allowed')
         else:
             raise ValueError(f'Disallowed syntax: {type(node).__name__}')
-    code = compile(tree, '<expression>', 'eval')
+    code = compile_bounded_expression(tree, filename='<expression>')
 
     def model(x):
-        scope = {**FUNCTIONS, **{name: x[:, i] for i, name in enumerate(names)}}
+        scope = {**FUNCTIONS, **{name: x[:, i] for i, name in enumerate(names)}, **RUNTIME_FUNCTIONS}
         return np.asarray(eval(code, {'__builtins__': {}}, scope), float) * np.ones(len(x))
     return model
 
@@ -86,13 +83,14 @@ def _scalar(expression, names):
     return lambda x: float(model(np.atleast_2d(np.asarray(x, float)))[0])
 
 
-PREDICATE_FUNCTIONS = {'abs': abs, 'min': min, 'max': max, 'gcd': __import__('math').gcd, 'isprime': lambda n: bool(__import__('sympy').isprime(n))}
+PREDICATE_FUNCTIONS = {'abs': abs, 'min': min, 'max': max, 'gcd': __import__('math').gcd, 'isprime': bounded_isprime}
 
 
 def _predicate(expression, names):
     """Boolean function of integer or float arguments: arithmetic, comparisons, and/or/not and a few functions. Nothing else."""
-    tree = ast.parse(expression, mode='eval')
-    _check_powers(tree)
+    if len(names) > 32 or len(set(names)) != len(names) or any(n in PREDICATE_FUNCTIONS or n in RUNTIME_FUNCTIONS for n in names):
+        raise ValueError('At most 32 unique variable names, distinct from function names, are allowed')
+    tree = parse_bounded_expression(expression)
     arithmetic = (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod, ast.Pow, ast.USub, ast.UAdd, ast.Not, ast.And, ast.Or,
                   ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE)
     for node in ast.walk(tree):
@@ -109,8 +107,27 @@ def _predicate(expression, names):
                 raise ValueError('Only simple calls to abs, min, max, gcd, isprime are allowed')
         else:
             raise ValueError(f'Disallowed syntax: {type(node).__name__}')
-    code = compile(tree, '<predicate>', 'eval')
-    return lambda *args: bool(eval(code, {'__builtins__': {}}, {**PREDICATE_FUNCTIONS, **dict(zip(names, args))}))
+    code = compile_bounded_expression(tree, filename='<predicate>')
+    return lambda *args: bool(eval(code, {'__builtins__': {}}, {**PREDICATE_FUNCTIONS, **dict(zip(names, args)), **RUNTIME_FUNCTIONS}))
+
+
+def _counterexample(a):
+    predicate = _predicate(a['claim'], a['names'])
+    tree = parse_bounded_expression(a['claim'])
+    # Integer arithmetic/comparisons and the bounded integer functions are exact.
+    # Float literals, real variables and true division do not inherit that claim.
+    exact_integer = all(d[0] == 'int' for d in a['domain']) and not any(
+        isinstance(n, ast.Div) or isinstance(n, ast.Constant) and type(n.value) is float
+        or isinstance(n, ast.BinOp) and isinstance(n.op, ast.Pow) and not (
+            isinstance(n.right, ast.Constant) and type(n.right.value) is int and n.right.value >= 0)
+        for n in ast.walk(tree))
+    result = experiment.find_counterexample(predicate, [tuple(d) for d in a['domain']],
+        trials=a.get('trials', 20000), exhaustive_limit=a.get('exhaustive_limit', 200000), shrink_budget=a.get('shrink_budget', 1000))
+    result['evaluation_method'] = 'exact_integer_predicate' if exact_integer else 'numerical_predicate'
+    if not exact_integer:
+        result['proved_for_domain'] = False
+        result['note'] = 'Numerical predicate evaluations only, even when exhaustive. A found counterexample needs exact or certified verification before mathematical refutation.'
+    return result
 
 
 def _probe(a):
@@ -132,6 +149,8 @@ def _probe(a):
 
 def _calibrate(a):
     params = a['parameters']
+    if len(a['x']) > 10000:
+        raise ValueError('Expression calibration is limited to 10000 observations')
     model = _compile(a['expression'], ['x'] + params)
 
     def fn(theta, x):
@@ -139,6 +158,20 @@ def _calibrate(a):
         columns = np.column_stack([x] + [np.full(len(x), t) for t in theta])
         return model(columns)
     return calibrate.calibrate(fn, a['x'], a['y'], a['theta0'], bounds=a.get('bounds'), names=params, holdout=a.get('holdout', 0))
+
+
+def _min_cost_flow(a):
+    def canonical(node):
+        return node if isinstance(node, str) else str(int(node))
+    labels = {}
+    for edge in a['edges']:
+        for node in edge[:2]:
+            key = canonical(node)
+            identity = ('string', node) if isinstance(node, str) else ('integer', int(node))
+            if key in labels and labels[key] != identity:
+                raise ValueError('Ambiguous node labels: an integer and its string spelling cannot both be used')
+            labels[key] = identity
+    return nonlinear.min_cost_flow([[canonical(u), canonical(v), cap, cost] for u, v, cap, cost in a['edges']], a['demand'])
 
 
 def _route_graph(a):
@@ -162,8 +195,8 @@ def _conjecture(a):
     count = a.get('points', 5000)
     tol = a.get('tolerance', 1e-9)
     box = np.asarray(bounds, float)
-    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
-        raise ValueError('points must be a positive integer')
+    if isinstance(count, bool) or not isinstance(count, int) or not 1 <= count <= 100000:
+        raise ValueError('points must be a positive integer at most 100000')
     if not np.isfinite(tol) or tol < 0:
         raise ValueError('tolerance must be finite and nonnegative')
     if box.shape != (len(names), 2) or not len(names) or not np.isfinite(box).all() or (box[:, 0] > box[:, 1]).any():
@@ -184,8 +217,14 @@ def _conjecture(a):
             raise ValueError('Conjecture comparison exceeds finite numeric range')
         if gap > worst:
             worst, where = gap, x.tolist()
-    return dict(holds=worst <= tol, proved=worst > tol, worst_violation=worst, at=where, precision='double',
-                note='Double precision; use modeling.experiment.test_conjecture for high precision.' if worst <= tol else 'Violation found.')
+    from modeling.evidence import rational_witness
+    verification = rational_witness(a['lhs'], a['rhs'], names, where, a['relation'], bounds) if worst > tol else dict(status='not_attempted', reason='No numerical candidate was found')
+    refuted = verification['status'] == 'refuted'
+    return dict(holds=worst <= tol, numerical_holds=worst <= tol, proved=refuted,
+                claim_status='refuted' if refuted else 'unresolved',
+                evidence='exact_counterexample' if refuted else ('numerical_candidate' if worst > tol else 'sampled_evidence'),
+                verification=verification, worst_violation=worst, at=where, precision='double',
+                note='holds describes sampled arithmetic, not the universal claim. Only an exact rational witness upgrades a candidate to a refutation; high precision alone is not a proof.')
 
 
 def _profile(expression):
@@ -258,7 +297,7 @@ def _ode(a):
 
 def _tool(name, description, properties, required, function):
     return name, dict(description=description, function=function,
-                      schema={'type': 'object', 'properties': properties, 'required': required})
+                      schema={'type': 'object', 'properties': properties, 'required': required, 'additionalProperties': False})
 
 
 TOOLS = dict([
@@ -321,7 +360,7 @@ TOOLS = dict([
     _tool('backtest_baselines', 'Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines.',
           {'series': SERIES, 'horizon': {'type': 'integer'}, 'min_train': {'type': 'integer'}, 'season': {'type': 'integer'}}, ['series', 'horizon'],
           lambda a: forecast.rolling_origin(a['series'], a['horizon'], min_train=a.get('min_train'), season=a.get('season'))),
-    _tool('probe_structure', 'Probe an expression for structure: convexity, monotone, symmetry, power_law, or an invariant of dx/dt=rhs. A found violation is a proof; otherwise it is evidence on sampled points only. Read `proved` with the claim: proved=true next to holds=false (or convex=false etc.) means the claim is refuted; proved=false means only evidence.',
+    _tool('probe_structure', 'Numerical probes for convexity, monotonicity, symmetry, power laws and invariants. Violations are candidate counterexamples, never certified refutations; proved is false for these floating-point and finite-difference probes.',
           {'property': {'type': 'string', 'enum': ['convexity', 'monotone', 'symmetry', 'power_law', 'invariant']}, 'expression': {'type': 'string'},
            'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'variable': {'type': 'string'},
            'permutation': {'type': 'array', 'items': {'type': 'integer'}}, 'rhs': {'type': 'array', 'items': {'type': 'string'}, 'description': 'dx_i/dt expressions, for property=invariant'}},
@@ -337,7 +376,7 @@ TOOLS = dict([
     _tool('route_to_lesson', 'Draft a lesson from a finished route record (one chosen route); you supply the transferable principle. Pass the result to lesson_add.',
           {'graph': {'type': 'object'}, 'problem': {'type': 'string'}, 'principle': {'type': 'string'}, 'verified_by': {'type': 'string'}, 'tags': {'type': 'array', 'items': {'type': 'string'}}},
           ['graph', 'problem', 'principle'], lambda a: routes.draft_lesson(a['graph'], problem=a['problem'], principle=a['principle'], verified_by=a.get('verified_by', ''), tags=a.get('tags'))),
-    _tool('test_conjecture', 'Test lhs (==, <=, >=) rhs for random points in a box (double precision). A violation refutes the conjecture; passing is evidence only. proved=true with holds=false means the conjecture is refuted; proved=false means only evidence.',
+    _tool('test_conjecture', 'Test lhs (==, <=, >=) rhs numerically in a box, then verify a found witness with exact rational arithmetic when supported. holds describes sampled arithmetic; claim_status and verification distinguish an exact refutation from an unverified or rejected numerical candidate. Passing is not a proof.',
           {'lhs': {'type': 'string'}, 'rhs': {'type': 'string'}, 'relation': {'type': 'string', 'enum': ['==', '<=', '>=']},
            'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'points': {'type': 'integer'}, 'tolerance': _num()},
           ['lhs', 'rhs', 'relation', 'names', 'bounds'], _conjecture),
@@ -347,7 +386,7 @@ TOOLS = dict([
            'exhaustive_limit': {'type': 'integer', 'description': 'integer domains with at most this many cases are checked exhaustively (default 200000)'},
            'shrink_budget': {'type': 'integer', 'minimum': 0, 'description': 'Maximum predicate evaluations while shrinking (default 1000)'}},
           ['claim', 'names', 'domain'],
-          lambda a: experiment.find_counterexample(_predicate(a['claim'], a['names']), [tuple(d) for d in a['domain']], trials=a.get('trials', 20000), exhaustive_limit=a.get('exhaustive_limit', 200000), shrink_budget=a.get('shrink_budget', 1000))),
+          _counterexample),
     _tool('check_recurrence', 'Check that a sequence satisfies a_n = c_1 a_{n-1} + ... + c_d a_{n-d} and list failing indices; with order_bound (e.g. a transfer-matrix size) a clean check on order_bound + d terms is a complete proof.',
           {'sequence': SERIES, 'coefficients': SERIES, 'order_bound': {'type': 'integer'}}, ['sequence', 'coefficients'],
           lambda a: experiment.check_linear_recurrence(a['sequence'], a['coefficients'], order_bound=a.get('order_bound'))),
@@ -393,7 +432,7 @@ TOOLS = dict([
           {'expression': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}},
           ['expression', 'names', 'bounds'],
           lambda a: sensitivity.sobol_convergence(_compile(a['expression'], a['names']), a['names'], a['bounds'], n=a.get('n', 512), seed=a.get('seed', 2027))),
-    _tool('bimatrix_nash', 'All Nash equilibria (pure and mixed) of a two-player non-zero-sum game by support enumeration; payoff matrices A (row player) and B (column player), up to 6 actions each.',
+    _tool('bimatrix_nash', 'Numerical equal-support Nash candidates for a two-player game, up to 6 actions each. count counts returned candidates only; completeness is not certified, and degenerate games may have continuous or missed equilibria.',
           {'A': MATRIX, 'B': MATRIX}, ['A', 'B'], lambda a: decision_models.bimatrix_nash(a['A'], a['B'])),
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
@@ -404,8 +443,9 @@ TOOLS = dict([
     _tool('knapsack', 'Exact knapsack by dynamic programming (integer weights); copies gives a bound per item (default 0/1).',
           {'values': SERIES, 'weights': {'type': 'array', 'items': {'type': 'integer'}}, 'capacity': {'type': 'integer'}, 'copies': {'type': 'array', 'items': {'type': 'integer'}}}, ['values', 'weights', 'capacity'],
           lambda a: nonlinear.knapsack(a['values'], a['weights'], a['capacity'], copies=a.get('copies'))),
-    _tool('min_cost_flow', 'Minimum-cost flow on a simple directed graph (no duplicate edges); edges [u, v, capacity, cost]; demand {node: net demand}, negative for supply, summing to zero. Integer data give an integer flow.',
-          {'edges': MATRIX, 'demand': {'type': 'object'}}, ['edges', 'demand'], lambda a: nonlinear.min_cost_flow(a['edges'], a['demand'])),
+    _tool('min_cost_flow', 'Minimum-cost flow on a simple directed graph; edges [u, v, capacity, cost], demand {node: net demand}. JSON demand keys are strings; integer endpoints normalize to string spellings and ambiguous mixed labels are rejected. Demands sum to zero, negative for supply.',
+          {'edges': {'type': 'array', 'items': {'type': 'array', 'prefixItems': [{'type': ['string', 'integer']}, {'type': ['string', 'integer']}, {'type': 'number', 'minimum': 0}, {'type': 'number'}], 'items': False, 'minItems': 4, 'maxItems': 4}},
+           'demand': {'type': 'object', 'additionalProperties': {'type': 'number'}}}, ['edges', 'demand'], _min_cost_flow),
     _tool('robust_lp', 'LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box. Compare the objective across gamma to see the price of robustness.',
           {'c': SERIES, 'A_ub': MATRIX, 'b_ub': SERIES, 'delta': MATRIX, 'gamma': _num(), 'maximize': {'type': 'boolean'}}, ['c', 'A_ub', 'b_ub', 'delta', 'gamma'],
           lambda a: nonlinear.robust_lp(a['c'], a['A_ub'], a['b_ub'], a['delta'], a['gamma'], maximize=a.get('maximize', False))),
@@ -515,7 +555,19 @@ def call(name, arguments):
     if missing or unknown:
         raise ValueError(f'{name}: ' + (f'missing field(s) {missing}; ' if missing else '') + (f'unknown field(s) {unknown}; ' if unknown else '')
                          + f'required: {schema.get("required", [])}; all fields: {list(schema["properties"])}')
+    validate(given, schema)
     return TOOLS[name]['function'](given)
+
+
+def bounded_call(name, arguments):
+    """External expression calls have a killable deadline; internal call does not."""
+    if name not in EXPRESSION_TOOLS:
+        return call(name, arguments)
+    from scripts.bounded_execution import run_with_deadline
+    result = run_with_deadline([sys.executable, '-m', 'scripts.mcp_server', '--expression-worker'],
+                              _json(dict(name=name, arguments=arguments)), cwd=Path(__file__).resolve().parents[1],
+                              timeout=EXPRESSION_TIMEOUT_SECONDS)
+    return json.loads(result)
 
 
 def handle(message):
@@ -527,7 +579,8 @@ def handle(message):
     try:
         if method == 'initialize':
             requested = (message.get('params') or {}).get('protocolVersion', '2025-06-18')
-            result = dict(protocolVersion=requested, capabilities={'tools': {}}, serverInfo=dict(name='praxis-tools', version=VERSION))
+            negotiated = requested if requested in SUPPORTED_PROTOCOL_VERSIONS else SUPPORTED_PROTOCOL_VERSIONS[0]
+            result = dict(protocolVersion=negotiated, capabilities={'tools': {}}, serverInfo=dict(name='praxis-tools', version=VERSION))
         elif method == 'ping':
             result = {}
         elif method == 'tools/list':
@@ -535,7 +588,7 @@ def handle(message):
         elif method == 'tools/call':
             params = message.get('params') or {}
             try:
-                payload = _json(call(params.get('name'), params.get('arguments')))
+                payload = _json(bounded_call(params.get('name'), params.get('arguments')))
                 result = dict(content=[dict(type='text', text=payload)], isError=False)
             except Exception as error:  # a failed computation is a tool result, not a protocol error
                 result = dict(content=[dict(type='text', text=f'{type(error).__name__}: {error}')], isError=True)
@@ -565,8 +618,14 @@ def main():
     parser.add_argument('--filter', metavar='WORD', help='with --list: only tools whose name or description contains WORD (e.g. game, queue, diffusion)')
     parser.add_argument('--describe', metavar='TOOL', help='print one tool\'s full input schema')
     parser.add_argument('--call', nargs=2, metavar=('TOOL', 'JSON'))
+    parser.add_argument('--expression-worker', action='store_true', help=argparse.SUPPRESS)
     args = parser.parse_args()
-    if args.list:
+    if args.expression_worker:
+        request = json.loads(sys.stdin.read())
+        if request['name'] not in EXPRESSION_TOOLS:
+            raise ValueError('Worker only accepts registered expression tools')
+        print(_json(call(request['name'], request['arguments'])))
+    elif args.list:
         for name, tool in TOOLS.items():
             if args.filter and args.filter.lower() not in (name + ' ' + tool['description']).lower():
                 continue
@@ -577,7 +636,7 @@ def main():
         tool = TOOLS[args.describe]
         print(json.dumps(dict(name=args.describe, description=tool['description'], input=tool['schema']), ensure_ascii=False, indent=1))
     elif args.call:
-        print(_json(call(args.call[0], json.loads(args.call[1]))))
+        print(_json(bounded_call(args.call[0], json.loads(args.call[1]))))
     else:
         serve()
 
