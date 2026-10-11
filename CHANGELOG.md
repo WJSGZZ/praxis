@@ -5,6 +5,12 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 提供显式 Codex 导出记录选择器，保留真实消息与工具输入／输出的来源和快照边界；不重建缺失聊天或认证正式 AI 披露完整性。
+  An explicit Codex export selector preserves emitted messages and tool records with source hashes and snapshot limits, without reconstructing missing history or certifying disclosure completeness.
+
+- 新增薄 `praxis-review` 入口，完整作品的竞赛／研究评价与数学核验、写作修改明确交接；赛事标准、共享交付和研究六项定性标准按需读取，未知届次及无数值 profile 的研究生赛不默套其它规则。
+  A focused whole-work review skill separates contest and research judgments from claim verification and report editing. Criteria and delivery requirements load by purpose and edition; a graduate-contest review without a numerical profile remains qualitative.
+
 - 美赛新稿采用 v2 摘要组件：原题年份必须明确传入，题号与队号加大，首页不叠加运行页码。正文可按需要使用三级标题，目录深度由共享组件选择，保持统一字号与引线；检查器拒绝缺年份、重复目录和直接覆盖。冻结案例显式保留 v1，保存其真实生成源，并核对活动入口的完整论文复现。
   New MCM papers require the original contest year in a shared three-column summary header, with larger problem and team identifiers and no running page label on the summary sheet. Optional third-level sections and selectable contents depth share the same typography. Frozen cases keep an explicit v1 layout and their actual historical generator; complete regeneration is checked separately from the sealed PDF identity.
 

@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from evals.competitions import lookup
+from evals.aggregate import _award_view
 from scripts.contest_rules import evaluate
 
 
@@ -19,6 +20,25 @@ def test_graduate_invitation_and_format_have_separate_verified_sources():
     assert record['ai'] is None and record['format']['page_limit'] is None
     assert record['submission']['md5_window'][1] < record['submission']['pdf_window'][0]
     assert '三等奖' in record['award_system'] and 'defense' in record['defense']
+
+
+def test_historical_award_labels_do_not_certify_rules_or_calibration():
+    record = lookup('mcm', 'MCM', '2024')
+    assert record['status'] == {'rules': 'unconfirmed', 'workflow': 'not_validated', 'awards': 'uncalibrated'}
+    assert 'deliverables' not in record and 'ai' not in record
+    assert '2024_MCM_Problem_B_Results.pdf' in record['sources'][0]['url']
+    award = dict(contest='mcm', event='MCM', edition='2024', problem='B',
+        version='actual-version', scope='explicit review scope', target='Outstanding Winner',
+        most_likely='Finalist', range=['Meritorious', 'Finalist'], calibrated=False,
+        basis='Scoped reviewer judgment, no award probability', gaps=[], actions=[])
+    view = _award_view(award, 'mcm')
+    assert view['award_system_status'] == 'verified' and view['most_likely'] == 'Finalist'
+    assert view['calibrated'] is False
+    # A results record neither licenses another edition nor accepts foreign labels.
+    assert lookup('mcm', 'MCM', '2023')['status']['rules'] == 'unconfirmed'
+    assert _award_view(dict(award, edition='2099'), 'mcm')['most_likely'] is None
+    with pytest.raises(ValueError, match='exact contest edition'):
+        _award_view(dict(award, most_likely='全国一等奖'), 'mcm')
 
 
 @pytest.mark.parametrize('event,edition', [('main', '2027'), ('other', '2026'), ('main', None)])

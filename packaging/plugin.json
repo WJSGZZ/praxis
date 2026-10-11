@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "praxis",
   "version": "0.3.0",
-  "description": "A mathematical modeling Agent plugin combining seven skills, MCP computation tools and a reproducible evidence workflow, from problem analysis to independent checks and reports.",
+  "description": "A mathematical modeling Agent plugin combining eight skills, MCP computation tools and a reproducible evidence workflow, from problem analysis to independent checks and reports.",
   "author": {
     "name": "WJSGZZ"
   },
@@ -13,7 +13,7 @@
       "interface": {
         "displayName": "Praxis",
         "shortDescription": "数学建模，从问题到证据",
-        "longDescription": "Build mathematical models, run reproducible computations, independently check results, and write evidence-backed reports with seven coordinated skills and local MCP tools.",
+        "longDescription": "Build mathematical models, run reproducible computations, independently check results, review whole works, and write evidence-backed reports with eight coordinated skills and local MCP tools.",
         "developerName": "WJSGZZ",
         "category": "Productivity",
         "capabilities": [

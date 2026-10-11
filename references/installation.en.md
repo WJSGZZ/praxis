@@ -2,7 +2,7 @@
 
 [简体中文](installation.md)
 
-Choose your agent, build its package from the public repository, and install it using that agent's own plugin system. Every target carries the same seven skills and mathematical engine. Host adapters change metadata and path handling, not the modeling methodology. These instructions use source distribution; no marketplace listing is required.
+Choose your agent, build its package from the public repository, and install it using that agent's own plugin system. Every target carries the same eight skills and mathematical engine. Host adapters change metadata and path handling, not the modeling methodology. These instructions use source distribution; no marketplace listing is required.
 
 Install Git and [uv](https://docs.astral.sh/uv/), then clone the repository:
 
@@ -21,7 +21,7 @@ codex plugin marketplace add /absolute/path/to/praxis-dist/codex/praxis --json
 codex plugin add praxis@praxis-local --json
 ```
 
-The export includes its local marketplace catalog, so existing personal configuration need not be edited. If your CLI lacks these commands, use its supported local marketplace interface. Reload and look for `praxis@praxis-local` and seven `praxis:*` skills. An earlier personal-marketplace install may instead be identified as `praxis@personal`.
+The export includes its local marketplace catalog, so existing personal configuration need not be edited. If your CLI lacks these commands, use its supported local marketplace interface. Reload and look for `praxis@praxis-local` and eight `praxis:*` skills. An earlier personal-marketplace install may instead be identified as `praxis@personal`.
 
 Reference: [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins).
 
@@ -73,7 +73,7 @@ References: [local plugins](https://cursor.com/docs/plugins), [MCP variables](ht
 
 ## Runtime and maintenance
 
-Every target includes all seven skills and `praxis-tools`. Portable, Codex, Claude and Copilot packages additionally declare the pinned arXiv server. Gemini and Cursor leave that optional integration out because their storage variables differ; configure an external storage location separately if needed. OpenAlex, Unpaywall and Crossref remain available through the core service.
+Every target includes all eight skills and `praxis-tools`. Portable, Codex, Claude and Copilot packages additionally declare the pinned arXiv server. Gemini and Cursor leave that optional integration out because their storage variables differ; configure an external storage location separately if needed. OpenAlex, Unpaywall and Crossref remain available through the core service.
 
 To update, fetch the source, export to a fresh destination and update or reinstall through your host. Do not patch an installation cache or overwrite user configuration. Keep the old source ref and export if you need a rollback.
 

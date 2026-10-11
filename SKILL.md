@@ -24,7 +24,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 读 [references/methods.md](references/methods.md)：这是唯一的推理主线，定义各环节及自主质量循环。完整委托在授权预算内从基线主动识别重要缺口、择优改进、核验并同步全文，不以交出初稿代替停止判断；维护有效成果、待核验候选及可接续的下一行动。按当前请求进入和结束，小任务不默认全流程，不要求逐步审批。
 
-用 [references/capabilities.md](references/capabilities.md) 按实际缺口选择分析、文献、模型、计算、验证、图表或写作能力；它定义职责与交接，不是另一套流程。只读需要的专业参考，同一任务 ID、版本、单位和结论边界贯穿各能力。
+用 [references/capabilities.md](references/capabilities.md) 按实际缺口选择分析、文献、模型、计算、验证、图表或写作能力；它定义职责与交接，不是另一套流程。只读需要的专业参考，同一任务 ID、版本、单位和结论边界贯穿各能力。先接续交付用途（竞赛／研究／一般数学任务）、赛事—赛项—届次或研究目标，以及自主／协作／正式使用模式；未知信息只在影响当前行动时追问。竞赛规则与研究标准按需加载，未知届次或期刊不继承其它要求，题目难度与交付用途分开。
 
 - 涉及比赛、团队分工或限时完整交付时，先读 [references/context-and-team.md](references/context-and-team.md)，接续赛事／届次、实际人数、成员能力与可用时间；通用建模不默认套赛事规则，不默认用户单人。
 - 已确认单人且限时或强调先完成时，读 [references/solo-delivery.md](references/solo-delivery.md)。助手承担优先级、依赖与下一步协调，给用户一个当前事项；滚动形成完整稿，预算不足采用简化路线。
@@ -49,6 +49,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 | [praxis-model](skills/praxis-model/SKILL.md) | 读题、假设与参数依据、路线与模型选择 |
 | [praxis-compute](skills/praxis-compute/SKILL.md) | 数据审计、模型运行、可复现证据 |
 | [praxis-verify](skills/praxis-verify/SKILL.md) | 独立验证、敏感性、证据与结论强度审查 |
+| [praxis-review](skills/praxis-review/SKILL.md) | 完整竞赛或研究作品的分类评价、主要缺口与修改优先级 |
 | [praxis-explore](skills/praxis-explore/SKILL.md) | 结构发现、路径搜索、没有标准答案时的探索与经验沉淀 |
 | [praxis-dialogue](skills/praxis-dialogue/SKILL.md) | 向不懂数学的用户讲清模型、复盘与共同思考 |
 | [praxis-report](skills/praxis-report/SKILL.md) | 论文结构、图表、披露、PDF 检查与交付 |
@@ -63,4 +64,4 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 交付沿用用户已有文件与实际规范；LaTeX 使用当前宿主实际可用的编辑与编译工具，在已有源文件上修改；无编译能力时保留源文件并说明未验证，最终导出 PDF 另做视觉检查。真实使用的来源在报告使用处引用。程序日志不能冒充完整 AI 对话，缺失记录如实说明。公开、上传或提交需要明确授权。
 
-完整竞赛或研究作品的交付与重要修订，须按 [evals/judging.md](evals/judging.md) 回传当前版本的分类作品评价及理由；检查不足保留待评，不继承旧档次。结束说明结果、依据、限制和真正需要用户决定的事项；重要决定维护在工作项目已有唯一记录处。本次临时实验用 .session 并清理，有用的实际结果保留。
+完整竞赛或研究作品的交付与重要修订，交 [praxis-review](skills/praxis-review/SKILL.md) 按 [evals/judging.md](evals/judging.md) 回传当前版本的分类作品评价及理由；检查不足保留待评，不继承旧档次。结束说明结果、依据、限制和真正需要用户决定的事项；重要决定维护在工作项目已有唯一记录处。本次临时实验用 .session 并清理，有用的实际结果保留。

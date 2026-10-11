@@ -60,7 +60,7 @@ TREES = {
     'demos/collatz-research/reproduce/runs': {'.json'},
 }
 # Focused skills ship next to the core; all packaged Markdown links follow relocation.
-FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
+FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
 
 
 def export_path(relative: Path) -> Path:
@@ -172,8 +172,8 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
 This directory is generated from the maintained Praxis Agent plugin repository.
 The portable entry point is plugin.json; mcp.json starts the praxis-tools MCP server
 (computation tools, run with uv). skills/praxis/ is the core skill with
-all references and scripts; six sibling skills cover modeling, computation,
-verification, exploration, dialogue and reporting. All local Markdown links
+all references and scripts; seven sibling skills cover modeling, computation,
+verification, whole-work review, exploration, dialogue and reporting. All local Markdown links
 are relocated with their resources.
 
 Before running Python helpers, explicitly prepare their environment:

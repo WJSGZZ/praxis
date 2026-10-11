@@ -79,7 +79,7 @@ def test_export_rejects_links_to_external_content(tmp_path):
     assert not (tmp_path / 'plugin').exists()
 
 
-FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
+FOCUSED = ('praxis-model', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
 
 
 def _links(text):
@@ -221,7 +221,7 @@ def test_host_exports_launch_from_an_unrelated_directory(tmp_path, host, variabl
     assert receipt['host'] == host
     for name, digest in receipt['files_sha256'].items():
         assert hashlib.sha256((output / name).read_bytes()).hexdigest() == digest
-    assert len(list((output / 'skills').glob('*/SKILL.md'))) == 7
+    assert {p.parent.name for p in (output / 'skills').glob('*/SKILL.md')} == {'praxis', *FOCUSED}
     if host == 'claude':
         config = json.loads((output / '.mcp.json').read_text())
         native = json.loads((output / '.claude-plugin/plugin.json').read_text())

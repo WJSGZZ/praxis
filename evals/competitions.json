@@ -2,6 +2,33 @@
   "schema_version": 1,
   "records": [
     {
+      "contest": "mcm",
+      "event": "MCM",
+      "edition": "2024",
+      "title": "COMAP MCM 2024 — award labels only",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "award_system": [
+        "Successful Participant",
+        "Honorable Mention",
+        "Meritorious",
+        "Finalist",
+        "Outstanding Winner"
+      ],
+      "award_system_scope": "Successful submission designations in the official 2024 MCM results. Labels verified only; no historical rules, AI policy, full workflow or award calibration is established.",
+      "sources": [
+        {
+          "url": "https://www.contest.comap.org/undergraduate/contests/mcm/contests/2024/results/2024_MCM_Problem_B_Results.pdf",
+          "checked": "2026-10-11",
+          "scope": "Official May 3, 2024 press release, PDF page 1 statistics and page 2 designation spelling; award labels only, no solution papers or award calibration."
+        }
+      ],
+      "limits": "The results archive verifies names, not current work quality or edition-specific compliance. Unsuccessful/disqualified/not-judged statuses are not successful award levels."
+    },
+    {
       "contest": "cumcm",
       "event": "undergraduate",
       "edition": "2026",

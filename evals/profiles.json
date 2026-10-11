@@ -14,7 +14,7 @@
   "rules": null,
   "source": "ours",
   "checked": "2026-10-08",
-  "note": "没有对应赛事档案时使用；分数未按任何赛事校准。"
+  "note": "仅在任务显式选择通用竞赛数值诊断时使用；不是任何赛事的默认适配，研究生赛缺少profile不默套；不用于数学研究六项定性评价。分数未按任何赛事校准。"
  },
  "cumcm": {
   "title": "全国大学生数学建模竞赛（CUMCM）",
@@ -38,7 +38,7 @@
   "rules_source": "Official CUMCM 2026 paper-format specification and AI-use trial policy, checked 2026-10-09; exact coverage in competitions.json",
   "source": "criteria and rules: official documents; weights: ours",
   "checked": "2026-10-09",
-  "note": "附录缺少或不能运行的源程序可能被取消评奖资格，因此 V1 不只是加分项。",
+  "note": "附录缺少或不能运行的源程序可能被取消评奖资格，因此 V1 不只是加分项。 数值诊断只用于对应竞赛，实际赛事—赛项—届次要求由competitions.json核验；未知届次不继承已确认硬规则，不用于数学研究。",
   "rules_source_sha256": {
    "format2019.doc": "dd37ed2ab451daa4dca981298e6e54266e6eca9660a5a09fba11b11d51f12e74",
    "format2021.doc": "7979d1bd47db554d1ab03568e930b18160ea7cebdf4614a8167303fa19e99065",
@@ -71,7 +71,7 @@
   "rules_source": "COMAP 2027 instructions, checked 2026-10-08",
   "source": "rules and general judging guidance: official page; numerical rubric and weights: ours",
   "checked": "2026-10-08",
-  "note": "COMAP 强调摘要、清晰论证、假设理由和模型检验，未给百分制或奖项分数线；本项目的条目与权重是工作判断，未按真实获奖样本校准。",
+  "note": "COMAP 强调摘要、清晰论证、假设理由和模型检验，未给百分制或奖项分数线；本项目的条目与权重是工作判断，未按真实获奖样本校准。 数值诊断只用于对应竞赛，实际赛事—赛项—届次要求由competitions.json核验；未知届次不继承已确认硬规则，不用于数学研究。",
   "rules_source_url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php",
   "criteria_source_url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php"
  }
