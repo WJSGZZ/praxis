@@ -292,7 +292,17 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
                 old_source = demo / revision['previous_current_pdf']['generator_source']
                 next_source = (demo / revisions[index + 1]['previous_current_pdf']['generator_source']) if index + 1 < len(revisions) else new_source
                 assert scientific_tree(old_source) == scientific_tree(next_source)
-        assert record['target'] and record['review_scope'] and record['basis']
+        assert record['review_scope'] and record['basis']
+        if record['target'] is None:
+            # An exact-current review must not inherit a historical award when
+            # the original edition's award system remains unverified.
+            assert record['assessment_status'] == 'abstained_unverified_award_system'
+            assert record['award_system_status'] == 'unverified'
+            assert record['reference_center'] is None
+            assert record['adjacent_reference_range'] == []
+            assert record['qualitative_assessment']
+        else:
+            assert record['target']
         assert record['main_gap'] and record['highest_value_next_action']
         assert 'verification.json' in (demo / 'README.md').read_text()
         assert 'verification.json' in (demo / 'README.en.md').read_text()

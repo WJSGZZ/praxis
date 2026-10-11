@@ -399,7 +399,9 @@ def test_cumcm_figure_data_and_proofs_follow_archived_records():
         assert '(1.322,2)' in paper  # (20.1907639778 - 18.8683846154) percentage points
         assert '(0.971,3)' in paper  # (32.2899959934 - 31.3188019073) percentage points
         assert 'axis cs:20.191,-1' not in paper
-        assert paper.count(r'\begin{proof}') == paper.count(r'\end{proof}') == 3
+        # Three preserved forward proofs and the new inverse-target dual bound.
+        assert paper.count(r'\begin{proof}') == paper.count(r'\end{proof}') == 4
+        assert r'R\ge\frac{T-r_0-\lambda}{A(\lambda)}' in paper
         assert r'$\blacksquare$ 将' not in paper
         assert '∎' not in source
 

@@ -3,6 +3,14 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 未发布 · Unreleased
+
+- 投资案例新增“给定净收益目标，求原交易费与预算下的最小风险”，含六组精确原始／对偶证书、向上取分的充分资金门槛、银行边界、不可达目标和小资金反例。同步35页论文、32项支撑附件、预览及两个独立复现入口；历史几何拐点保留为条件示例，当前稿不继承未校准的旧奖项判断。
+  The investment Demo now converts an explicit return target into the least risk under the original fees and budget. Six exact primal/dual certificates, sufficient funding thresholds rounded up to cents, bank and unreachable boundaries, and a small-budget counterexample accompany the updated 35-page report, 32-file support archive and two reproduction entry points. Geometric knees remain conditional examples; the current report abstains from an unverified historical award assessment.
+
+- 方案比较先在原单位核对硬能力，再解释归一化分数；联合事件概率须核对边际、依赖与时间单位，不把加权绩效当作联合可靠性。上述条件融入原方法参考，不增加重复工作流。
+  Decision comparisons check hard capacity in original units before interpreting normalized scores. Joint-event probabilities require explicit marginals, dependence and time units; weighted performance is not joint reliability. These conditions extend the existing method references.
+
 ## 0.5.0 · 2026-10-11
 
 - 插件安装界面与输入框图标使用现有新版 Logo，与源码中的品牌资产共用来源并进入导出哈希；插件元数据不再保留过时的技能数量。保留原 `praxis` 身份，现有数学接口继续使用。

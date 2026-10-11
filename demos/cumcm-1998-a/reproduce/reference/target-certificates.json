@@ -1,0 +1,209 @@
+{
+  "format": "cumcm-return-target-certificates-v1",
+  "preference_source": "Illustrative input targets; no company preferences inferred.",
+  "risk_definition": "max_i(q_i*x_i)/initial_budget",
+  "bank_rate": "1/20",
+  "money_unit": "yuan",
+  "purchase_domain": "continuous real amounts, no integer-lot or cent-rounding constraint",
+  "groups": {
+    "four": {
+      "csv": "data/assets4.csv",
+      "csv_sha256": "2cb2c5b9cd548005521c9e33a7d87f7621f9870a7653859ed3eaa94bbae42a19",
+      "cases": [
+        {
+          "budget_yuan": "1000000",
+          "target_net_return": "1/5",
+          "lambda": "0",
+          "A": "2190269/85800",
+          "minimum_risk": "12870/2190269",
+          "investments_yuan": {
+            "S1": "514800000000/2190269",
+            "S2": "858000000000/2190269",
+            "S3": "234000000000/2190269",
+            "S4": "495000000000/2190269"
+          },
+          "bank_yuan": "23456000000/2190269"
+        },
+        {
+          "budget_yuan": "1000000",
+          "target_net_return": "11/50",
+          "lambda": "139/1020",
+          "A": "167/51",
+          "minimum_risk": "43/4175",
+          "investments_yuan": {
+            "S1": "68800000/167",
+            "S2": "95600000/167",
+            "S3": "0",
+            "S4": "0"
+          },
+          "bank_yuan": "0"
+        },
+        {
+          "budget_yuan": "1000000",
+          "target_net_return": "1/4",
+          "lambda": "139/1020",
+          "A": "167/51",
+          "minimum_risk": "13/668",
+          "investments_yuan": {
+            "S1": "130000000/167",
+            "S2": "35000000/167",
+            "S3": "0",
+            "S4": "0"
+          },
+          "bank_yuan": "0"
+        }
+      ],
+      "maximum": {
+        "budget_yuan": "1000000",
+        "maximum_return": "27/101",
+        "lambda": "439/2020",
+        "investments_yuan": {
+          "S1": "100000000/101",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "0"
+      },
+      "unreachable_targets": [
+        "27/100"
+      ]
+    },
+    "fifteen": {
+      "csv": "data/assets15.csv",
+      "csv_sha256": "9636dd3ba161d790a44d9c1432731196e04d49654f772965fedb09030c4bc350",
+      "cases": [
+        {
+          "budget_yuan": "1000000",
+          "target_net_return": "3/10",
+          "lambda": "169/1720",
+          "A": "35018317294663/14366802652800",
+          "minimum_risk": "2180078774640/35018317294663",
+          "investments_yuan": {
+            "S1": "0",
+            "S2": "3218335238900000000/105054951883989",
+            "S3": "3633464624400000000/35018317294663",
+            "S4": "36334646244000000000/245128221062641",
+            "S5": "0",
+            "S6": "0",
+            "S7": "3205998198000000000/35018317294663",
+            "S8": "6527181960000000000/35018317294663",
+            "S9": "4090204080000000000/35018317294663",
+            "S10": "5450196936600000000/35018317294663",
+            "S11": "0",
+            "S12": "0",
+            "S13": "4739301684000000000/35018317294663",
+            "S14": "0",
+            "S15": "0"
+          },
+          "bank_yuan": "0"
+        },
+        {
+          "budget_yuan": "1000000",
+          "target_net_return": "33/100",
+          "lambda": "4589/20620",
+          "A": "81136277107/128918095800",
+          "minimum_risk": "7406225814/81136277107",
+          "investments_yuan": {
+            "S1": "0",
+            "S2": "0",
+            "S3": "12343709690000000/81136277107",
+            "S4": "0",
+            "S5": "0",
+            "S6": "0",
+            "S7": "10891508550000000/81136277107",
+            "S8": "6491036935000000/81136277107",
+            "S9": "13895358000000000/81136277107",
+            "S10": "18515564535000000/81136277107",
+            "S11": "0",
+            "S12": "0",
+            "S13": "16100490900000000/81136277107",
+            "S14": "0",
+            "S15": "0"
+          },
+          "bank_yuan": "0"
+        },
+        {
+          "budget_yuan": "1000000",
+          "target_net_return": "19/50",
+          "lambda": "497/1760",
+          "A": "7187/52800",
+          "minimum_risk": "2514/7187",
+          "investments_yuan": {
+            "S1": "0",
+            "S2": "0",
+            "S3": "4190000000/7187",
+            "S4": "0",
+            "S5": "0",
+            "S6": "0",
+            "S7": "2600000000/7187",
+            "S8": "0",
+            "S9": "0",
+            "S10": "0",
+            "S11": "0",
+            "S12": "0",
+            "S13": "0",
+            "S14": "0",
+            "S15": "0"
+          },
+          "bank_yuan": "0"
+        }
+      ],
+      "maximum": {
+        "budget_yuan": "1000000",
+        "maximum_return": "217/530",
+        "lambda": "381/1060",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "50000000/53",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "0",
+          "S8": "0",
+          "S9": "0",
+          "S10": "0",
+          "S11": "0",
+          "S12": "0",
+          "S13": "0",
+          "S14": "0",
+          "S15": "0"
+        },
+        "bank_yuan": "0"
+      },
+      "unreachable_targets": [
+        "41/100"
+      ]
+    }
+  },
+  "small_budget_counterexample": {
+    "group": "four",
+    "budget_yuan": "100",
+    "target_net_return": "1/5",
+    "lambda": "0",
+    "relaxed_risk": "12870/2190269",
+    "maximum_profit_at_relaxed_risk_yuan": "57928792409/4380538000",
+    "feasible_only": {
+      "investments_yuan": {
+        "S1": "32163/460",
+        "S2": "0",
+        "S3": "0",
+        "S4": "0"
+      },
+      "bank_yuan": "16704/575",
+      "risk_rate": "32163/1840000"
+    },
+    "strictly_better_feasible": {
+      "investments_yuan": {
+        "S1": "45",
+        "S2": "0",
+        "S3": "0",
+        "S4": "47"
+      },
+      "bank_yuan": "783/200",
+      "risk_rate": "611/50000"
+    },
+    "claim": "The relaxation risk is unattainable under the original fees at this budget. The feasible_only example is strictly beaten; neither displayed feasible portfolio is certified as the exact original-model minimum."
+  }
+}

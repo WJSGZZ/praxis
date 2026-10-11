@@ -22,7 +22,7 @@
 <td width="50%" valign="top"><a href="mcm-2016-a/README.md"><img src="mcm-2016-a/assets/overview-zh.png" alt="美赛：空间水温与补水策略比较" width="100%"></a></td>
 </tr>
 <tr>
-<td valign="top"><strong>国赛 · 投资收益与风险</strong><br>1998 CUMCM A · 23 页中文报告<br><br>把最低交易费与风险约束放进一个优化模型，用费用分区和解析上界检查推荐方案。<br><br><a href="cumcm-1998-a/README.md">查看案例 →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">论文</a> · <a href="cumcm-1998-a/README.md#计算复现">复现</a></td>
+<td valign="top"><strong>国赛 · 投资收益与风险</strong><br>1998 CUMCM A · 35 页中文报告<br><br>最低交易费与预算共同约束投资；给定收益目标后反求最低风险，用原费方案和独立界检查最优性。<br><br><a href="cumcm-1998-a/README.md">查看案例 →</a> · <a href="cumcm-1998-a/deliverables/paper.pdf">论文</a> · <a href="cumcm-1998-a/README.md#计算复现">复现</a></td>
 <td valign="top"><strong>美赛 · A Hot Bath</strong><br>2016 MCM A · 26 页英文报告<br><br>从理想充分混合基线走到三维热网络，解释为什么平均水温足够高，局部仍可能太冷。<br><br><a href="mcm-2016-a/README.md">查看案例 →</a> · <a href="mcm-2016-a/paper.pdf">论文</a> · <a href="mcm-2016-a/README.md#计算复现">复现</a></td>
 </tr>
 </table>

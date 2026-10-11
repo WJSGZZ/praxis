@@ -1,0 +1,1034 @@
+{
+  "method": "stdlib Fraction: original-fee primal, proportional dual, full fixed-fee support enumeration",
+  "risk_definition": "max_i(q_i*x_i)/initial_budget",
+  "preference_source": "illustrative input targets, not company preferences",
+  "source_csv": {
+    "four": {
+      "csv": "data/assets4.csv",
+      "sha256": "2cb2c5b9cd548005521c9e33a7d87f7621f9870a7653859ed3eaa94bbae42a19"
+    },
+    "fifteen": {
+      "csv": "data/assets15.csv",
+      "sha256": "9636dd3ba161d790a44d9c1432731196e04d49654f772965fedb09030c4bc350"
+    }
+  },
+  "groups": {
+    "four": {
+      "target_cases": [
+        {
+          "status": "original_fee_exact_minimum",
+          "budget_yuan": "1000000",
+          "target_net_return": "1/5",
+          "minimum_risk": "12870/2190269",
+          "dual": {
+            "lambda": "0",
+            "A": "2190269/85800"
+          },
+          "portfolio": {
+            "investments_yuan": {
+              "S1": "514800000000/2190269",
+              "S2": "858000000000/2190269",
+              "S3": "234000000000/2190269",
+              "S4": "495000000000/2190269"
+            },
+            "fees_yuan": {
+              "S1": "5148000000/2190269",
+              "S2": "17160000000/2190269",
+              "S3": "10530000000/2190269",
+              "S4": "32175000000/2190269"
+            },
+            "bank_yuan": "23456000000/2190269",
+            "budget_residual_yuan": "0",
+            "profit_yuan": "200000",
+            "net_return": "1/5",
+            "risk_rate": "12870/2190269"
+          },
+          "funding_threshold_yuan": "6570807/13000",
+          "funding_boundary_checked": true
+        },
+        {
+          "status": "original_fee_exact_minimum",
+          "budget_yuan": "1000000",
+          "target_net_return": "11/50",
+          "minimum_risk": "43/4175",
+          "dual": {
+            "lambda": "139/1020",
+            "A": "167/51"
+          },
+          "portfolio": {
+            "investments_yuan": {
+              "S1": "68800000/167",
+              "S2": "95600000/167",
+              "S3": "0",
+              "S4": "0"
+            },
+            "fees_yuan": {
+              "S1": "688000/167",
+              "S2": "1912000/167",
+              "S3": "0",
+              "S4": "0"
+            },
+            "bank_yuan": "0",
+            "budget_residual_yuan": "0",
+            "profit_yuan": "220000",
+            "net_return": "11/50",
+            "risk_rate": "43/4175"
+          },
+          "funding_threshold_yuan": "82665/239",
+          "funding_boundary_checked": true
+        },
+        {
+          "status": "original_fee_exact_minimum",
+          "budget_yuan": "1000000",
+          "target_net_return": "1/4",
+          "minimum_risk": "13/668",
+          "dual": {
+            "lambda": "139/1020",
+            "A": "167/51"
+          },
+          "portfolio": {
+            "investments_yuan": {
+              "S1": "130000000/167",
+              "S2": "35000000/167",
+              "S3": "0",
+              "S4": "0"
+            },
+            "fees_yuan": {
+              "S1": "1300000/167",
+              "S2": "700000/167",
+              "S3": "0",
+              "S4": "0"
+            },
+            "bank_yuan": "0",
+            "budget_residual_yuan": "0",
+            "profit_yuan": "250000",
+            "net_return": "1/4",
+            "risk_rate": "13/668"
+          },
+          "funding_threshold_yuan": "33066/35",
+          "funding_boundary_checked": true
+        }
+      ],
+      "maximum": {
+        "budget_yuan": "1000000",
+        "maximum_return": "27/101",
+        "lambda": "439/2020",
+        "A": "0",
+        "original_fee_attainment": {
+          "investments_yuan": {
+            "S1": "100000000/101",
+            "S2": "0",
+            "S3": "0",
+            "S4": "0"
+          },
+          "fees_yuan": {
+            "S1": "1000000/101",
+            "S2": "0",
+            "S3": "0",
+            "S4": "0"
+          },
+          "bank_yuan": "0",
+          "budget_residual_yuan": "0",
+          "profit_yuan": "27000000/101",
+          "net_return": "27/101",
+          "risk_rate": "5/202"
+        }
+      },
+      "bank_boundaries": [
+        {
+          "target_net_return": "0",
+          "minimum_risk": "0",
+          "status": "bank_only_exact_minimum"
+        },
+        {
+          "target_net_return": "3/100",
+          "minimum_risk": "0",
+          "status": "bank_only_exact_minimum"
+        },
+        {
+          "target_net_return": "1/20",
+          "minimum_risk": "0",
+          "status": "bank_only_exact_minimum"
+        }
+      ],
+      "unreachable_targets": [
+        {
+          "target_net_return": "27/100",
+          "status": "infeasible",
+          "evidence": "strict global return upper bound"
+        },
+        {
+          "target_net_return": "27000101/101000000",
+          "status": "infeasible",
+          "evidence": "strict global return upper bound"
+        }
+      ]
+    },
+    "fifteen": {
+      "target_cases": [
+        {
+          "status": "original_fee_exact_minimum",
+          "budget_yuan": "1000000",
+          "target_net_return": "3/10",
+          "minimum_risk": "2180078774640/35018317294663",
+          "dual": {
+            "lambda": "169/1720",
+            "A": "35018317294663/14366802652800"
+          },
+          "portfolio": {
+            "investments_yuan": {
+              "S1": "0",
+              "S2": "3218335238900000000/105054951883989",
+              "S3": "3633464624400000000/35018317294663",
+              "S4": "36334646244000000000/245128221062641",
+              "S5": "0",
+              "S6": "0",
+              "S7": "3205998198000000000/35018317294663",
+              "S8": "6527181960000000000/35018317294663",
+              "S9": "4090204080000000000/35018317294663",
+              "S10": "5450196936600000000/35018317294663",
+              "S11": "0",
+              "S12": "0",
+              "S13": "4739301684000000000/35018317294663",
+              "S14": "0",
+              "S15": "0"
+            },
+            "fees_yuan": {
+              "S1": "0",
+              "S2": "102986727644800000/105054951883989",
+              "S3": "218007877464000000/35018317294663",
+              "S4": "545019693660000000/245128221062641",
+              "S5": "0",
+              "S6": "0",
+              "S7": "179535899088000000/35018317294663",
+              "S8": "202342640760000000/35018317294663",
+              "S9": "110435510160000000/35018317294663",
+              "S10": "158055711161400000/35018317294663",
+              "S11": "0",
+              "S12": "0",
+              "S13": "127961145468000000/35018317294663",
+              "S14": "0",
+              "S15": "0"
+            },
+            "bank_yuan": "0",
+            "budget_residual_yuan": "0",
+            "profit_yuan": "300000",
+            "net_return": "3/10",
+            "risk_rate": "2180078774640/35018317294663"
+          },
+          "funding_threshold_yuan": "42757365416783523/3218335238900",
+          "funding_boundary_checked": true
+        },
+        {
+          "status": "original_fee_exact_minimum",
+          "budget_yuan": "1000000",
+          "target_net_return": "33/100",
+          "minimum_risk": "7406225814/81136277107",
+          "dual": {
+            "lambda": "4589/20620",
+            "A": "81136277107/128918095800"
+          },
+          "portfolio": {
+            "investments_yuan": {
+              "S1": "0",
+              "S2": "0",
+              "S3": "12343709690000000/81136277107",
+              "S4": "0",
+              "S5": "0",
+              "S6": "0",
+              "S7": "10891508550000000/81136277107",
+              "S8": "6491036935000000/81136277107",
+              "S9": "13895358000000000/81136277107",
+              "S10": "18515564535000000/81136277107",
+              "S11": "0",
+              "S12": "0",
+              "S13": "16100490900000000/81136277107",
+              "S14": "0",
+              "S15": "0"
+            },
+            "fees_yuan": {
+              "S1": "0",
+              "S2": "0",
+              "S3": "740622581400000/81136277107",
+              "S4": "0",
+              "S5": "0",
+              "S6": "0",
+              "S7": "609924478800000/81136277107",
+              "S8": "201222144985000/81136277107",
+              "S9": "375174666000000/81136277107",
+              "S10": "536951371515000/81136277107",
+              "S11": "0",
+              "S12": "0",
+              "S13": "434713254300000/81136277107",
+              "S14": "0",
+              "S15": "0"
+            },
+            "bank_yuan": "0",
+            "budget_residual_yuan": "0",
+            "profit_yuan": "330000",
+            "net_return": "33/100",
+            "risk_rate": "7406225814/81136277107"
+          },
+          "funding_threshold_yuan": "17363163300898/6171854845",
+          "funding_boundary_checked": true
+        },
+        {
+          "status": "original_fee_exact_minimum",
+          "budget_yuan": "1000000",
+          "target_net_return": "19/50",
+          "minimum_risk": "2514/7187",
+          "dual": {
+            "lambda": "497/1760",
+            "A": "7187/52800"
+          },
+          "portfolio": {
+            "investments_yuan": {
+              "S1": "0",
+              "S2": "0",
+              "S3": "4190000000/7187",
+              "S4": "0",
+              "S5": "0",
+              "S6": "0",
+              "S7": "2600000000/7187",
+              "S8": "0",
+              "S9": "0",
+              "S10": "0",
+              "S11": "0",
+              "S12": "0",
+              "S13": "0",
+              "S14": "0",
+              "S15": "0"
+            },
+            "fees_yuan": {
+              "S1": "0",
+              "S2": "0",
+              "S3": "251400000/7187",
+              "S4": "0",
+              "S5": "0",
+              "S6": "0",
+              "S7": "145600000/7187",
+              "S8": "0",
+              "S9": "0",
+              "S10": "0",
+              "S11": "0",
+              "S12": "0",
+              "S13": "0",
+              "S14": "0",
+              "S15": "0"
+            },
+            "bank_yuan": "0",
+            "budget_residual_yuan": "0",
+            "profit_yuan": "380000",
+            "net_return": "19/50",
+            "risk_rate": "2514/7187"
+          },
+          "funding_threshold_yuan": "1538018/2095",
+          "funding_boundary_checked": true
+        }
+      ],
+      "maximum": {
+        "budget_yuan": "1000000",
+        "maximum_return": "217/530",
+        "lambda": "381/1060",
+        "A": "0",
+        "original_fee_attainment": {
+          "investments_yuan": {
+            "S1": "0",
+            "S2": "0",
+            "S3": "50000000/53",
+            "S4": "0",
+            "S5": "0",
+            "S6": "0",
+            "S7": "0",
+            "S8": "0",
+            "S9": "0",
+            "S10": "0",
+            "S11": "0",
+            "S12": "0",
+            "S13": "0",
+            "S14": "0",
+            "S15": "0"
+          },
+          "fees_yuan": {
+            "S1": "0",
+            "S2": "0",
+            "S3": "3000000/53",
+            "S4": "0",
+            "S5": "0",
+            "S6": "0",
+            "S7": "0",
+            "S8": "0",
+            "S9": "0",
+            "S10": "0",
+            "S11": "0",
+            "S12": "0",
+            "S13": "0",
+            "S14": "0",
+            "S15": "0"
+          },
+          "bank_yuan": "0",
+          "budget_residual_yuan": "0",
+          "profit_yuan": "21700000/53",
+          "net_return": "217/530",
+          "risk_rate": "30/53"
+        }
+      },
+      "bank_boundaries": [
+        {
+          "target_net_return": "0",
+          "minimum_risk": "0",
+          "status": "bank_only_exact_minimum"
+        },
+        {
+          "target_net_return": "3/100",
+          "minimum_risk": "0",
+          "status": "bank_only_exact_minimum"
+        },
+        {
+          "target_net_return": "1/20",
+          "minimum_risk": "0",
+          "status": "bank_only_exact_minimum"
+        }
+      ],
+      "unreachable_targets": [
+        {
+          "target_net_return": "41/100",
+          "status": "infeasible",
+          "evidence": "strict global return upper bound"
+        },
+        {
+          "target_net_return": "21700053/53000000",
+          "status": "infeasible",
+          "evidence": "strict global return upper bound"
+        }
+      ]
+    }
+  },
+  "small_budget_counterexample": {
+    "budget_yuan": "100",
+    "target_net_return": "1/5",
+    "relaxed_risk": "12870/2190269",
+    "support_count": 16,
+    "all_support_upper_bounds": [
+      {
+        "support": [],
+        "fixed_fees_yuan": "0",
+        "profit_upper_bound_yuan": "5",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "100",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S4"
+        ],
+        "fixed_fees_yuan": "13/5",
+        "profit_upper_bound_yuan": "1487191063/219026900",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "0",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "819161003/10951345",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S3"
+        ],
+        "fixed_fees_yuan": "117/50",
+        "profit_upper_bound_yuan": "9781854067/2190269000",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "23400000/2190269",
+          "S4": "0"
+        },
+        "bank_yuan": "9525083527/109513450",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S3",
+          "S4"
+        ],
+        "fixed_fees_yuan": "247/50",
+        "profit_upper_bound_yuan": "13702419697/2190269000",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "23400000/2190269",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "6765348557/109513450",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S2"
+        ],
+        "fixed_fees_yuan": "99/25",
+        "profit_upper_bound_yuan": "7786103249/1095134500",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "85800000/2190269",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "3113835869/54756725",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S2",
+          "S4"
+        ],
+        "fixed_fees_yuan": "164/25",
+        "profit_upper_bound_yuan": "2436596516/273783625",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "85800000/2190269",
+          "S3": "0",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "1733968384/54756725",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S2",
+          "S3"
+        ],
+        "fixed_fees_yuan": "63/10",
+        "profit_upper_bound_yuan": "2880543113/438053800",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "85800000/2190269",
+          "S3": "23400000/2190269",
+          "S4": "0"
+        },
+        "bank_yuan": "960282053/21902690",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "fixed_fees_yuan": "89/10",
+        "profit_upper_bound_yuan": "3664656239/438053800",
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "85800000/2190269",
+          "S3": "23400000/2190269",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "408335059/21902690",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1"
+        ],
+        "fixed_fees_yuan": "103/100",
+        "profit_upper_bound_yuan": "40845938153/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "16529092293/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S4"
+        ],
+        "fixed_fees_yuan": "363/100",
+        "profit_upper_bound_yuan": "48687069413/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "0",
+          "S3": "0",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "11009622353/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S3"
+        ],
+        "fixed_fees_yuan": "337/100",
+        "profit_upper_bound_yuan": "38506956287/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "0",
+          "S3": "23400000/2190269",
+          "S4": "0"
+        },
+        "bank_yuan": "13676569347/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S3",
+          "S4"
+        ],
+        "fixed_fees_yuan": "597/100",
+        "profit_upper_bound_yuan": "46348087547/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "0",
+          "S3": "23400000/2190269",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "8157099407/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S2"
+        ],
+        "fixed_fees_yuan": "499/100",
+        "profit_upper_bound_yuan": "50087661149/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "85800000/2190269",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "7081745769/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S2",
+          "S4"
+        ],
+        "fixed_fees_yuan": "759/100",
+        "profit_upper_bound_yuan": "57928792409/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "85800000/2190269",
+          "S3": "0",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "1562275829/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "fixed_fees_yuan": "733/100",
+        "profit_upper_bound_yuan": "47748679283/4380538000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "85800000/2190269",
+          "S3": "23400000/2190269",
+          "S4": "0"
+        },
+        "bank_yuan": "4229222823/219026900",
+        "support_attained": true
+      },
+      {
+        "support": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "fixed_fees_yuan": "993/100",
+        "profit_upper_bound_yuan": "257305098843/21902690000",
+        "investments_yuan": {
+          "S1": "51480000/2190269",
+          "S2": "7289752883/219026900",
+          "S3": "23400000/2190269",
+          "S4": "49500000/2190269"
+        },
+        "bank_yuan": "0",
+        "support_attained": true
+      }
+    ],
+    "maximum_profit_at_relaxed_risk_yuan": "57928792409/4380538000",
+    "strict_target_shortfall_yuan": "29681967591/4380538000",
+    "no_feasible_portfolio_at_or_below_relaxed_risk": true,
+    "feasible_only": {
+      "investments_yuan": {
+        "S1": "32163/460",
+        "S2": "0",
+        "S3": "0",
+        "S4": "0"
+      },
+      "fees_yuan": {
+        "S1": "103/100",
+        "S2": "0",
+        "S3": "0",
+        "S4": "0"
+      },
+      "bank_yuan": "16704/575",
+      "budget_residual_yuan": "0",
+      "profit_yuan": "20",
+      "net_return": "1/5",
+      "risk_rate": "32163/1840000",
+      "not_minimum_verified": true
+    },
+    "strictly_better_feasible": {
+      "investments_yuan": {
+        "S1": "45",
+        "S2": "0",
+        "S3": "0",
+        "S4": "47"
+      },
+      "fees_yuan": {
+        "S1": "103/100",
+        "S2": "0",
+        "S3": "0",
+        "S4": "611/200"
+      },
+      "bank_yuan": "783/200",
+      "budget_residual_yuan": "0",
+      "profit_yuan": "81843/4000",
+      "net_return": "81843/400000",
+      "risk_rate": "611/50000",
+      "minimum_verified": false
+    },
+    "exact_small_budget_minimum_claimed": false
+  },
+  "certificate_sha256": "801a1de3af7d94a9a514e697b2a41837367c1002298956eda4a9f4c8e57083e4",
+  "numerical_checks": [
+    {
+      "group": "four",
+      "budget_yuan": "1000000",
+      "target_net_return": "1/20",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0"
+        },
+        "fees_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "1000000",
+        "budget_residual_yuan": "0",
+        "profit_yuan": "50000",
+        "net_return": "1/20",
+        "risk_rate": "0"
+      }
+    },
+    {
+      "group": "four",
+      "budget_yuan": "1000000",
+      "target_net_return": "1/5",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "2350396229869481/10000000000",
+          "S2": "979331762445617/2500000000",
+          "S3": "5341809613339729/50000000000",
+          "S4": "11299981874372503/50000000000"
+        },
+        "fees_yuan": {
+          "S1": "2350396229869481/1000000000000",
+          "S2": "979331762445617/125000000000",
+          "S3": "48076286520057561/10000000000000",
+          "S4": "146899764366842539/10000000000000"
+        },
+        "bank_yuan": "5354593431217989/500000000000",
+        "budget_residual_yuan": "-11/200000000000",
+        "profit_yuan": "1999999999999999363/10000000000000",
+        "net_return": "1999999999999999363/10000000000000000000",
+        "risk_rate": "2350396229869481/400000000000000000"
+      }
+    },
+    {
+      "group": "four",
+      "budget_yuan": "1000000",
+      "target_net_return": "11/50",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "6437125748503/15625000",
+          "S2": "5724550898203589/10000000000",
+          "S3": "0",
+          "S4": "0"
+        },
+        "fees_yuan": {
+          "S1": "6437125748503/1562500000",
+          "S2": "5724550898203589/500000000000",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "-3637978807091713/1000000000000000000000000000",
+        "budget_residual_yuan": "-5637978807091713/1000000000000000000000000000",
+        "profit_yuan": "4400000000000000616362021192908287/20000000000000000000000000000",
+        "net_return": "4400000000000000616362021192908287/20000000000000000000000000000000000",
+        "risk_rate": "6437125748503/625000000000000"
+      }
+    },
+    {
+      "group": "four",
+      "budget_yuan": "1000000",
+      "target_net_return": "1/4",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "7784431137724537/10000000000",
+          "S2": "1047904191616773/5000000000",
+          "S3": "0",
+          "S4": "0"
+        },
+        "fees_yuan": {
+          "S1": "7784431137724537/1000000000000",
+          "S2": "1047904191616773/250000000000",
+          "S3": "0",
+          "S4": "0"
+        },
+        "bank_yuan": "2546585164964199/100000000000000000000000000",
+        "budget_residual_yuan": "-4553414835035801/100000000000000000000000000",
+        "profit_yuan": "499999999999999748546585164964199/2000000000000000000000000000",
+        "net_return": "499999999999999748546585164964199/2000000000000000000000000000000000",
+        "risk_rate": "7784431137724537/400000000000000000"
+      }
+    },
+    {
+      "group": "four",
+      "budget_yuan": "1000000",
+      "target_net_return": "27/100",
+      "status": "infeasible_by_exact_global_bound"
+    },
+    {
+      "group": "fifteen",
+      "budget_yuan": "1000000",
+      "target_net_return": "1/20",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "0",
+          "S8": "0",
+          "S9": "0",
+          "S10": "0",
+          "S11": "0",
+          "S12": "0",
+          "S13": "0",
+          "S14": "0",
+          "S15": "0"
+        },
+        "fees_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "0",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "0",
+          "S8": "0",
+          "S9": "0",
+          "S10": "0",
+          "S11": "0",
+          "S12": "0",
+          "S13": "0",
+          "S14": "0",
+          "S15": "0"
+        },
+        "bank_yuan": "1000000",
+        "budget_residual_yuan": "0",
+        "profit_yuan": "50000",
+        "net_return": "1/20",
+        "risk_rate": "0"
+      }
+    },
+    {
+      "group": "fifteen",
+      "budget_yuan": "1000000",
+      "target_net_return": "3/10",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "15317389524170527/500000000000",
+          "S3": "64849357870091/625000000",
+          "S4": "3705677592576629/25000000000",
+          "S5": "0",
+          "S6": "0",
+          "S7": "4577601732006423/50000000000",
+          "S8": "9319668196899307/50000000000",
+          "S9": "11680184531948851/100000000000",
+          "S10": "194548073610273/1250000000",
+          "S11": "0",
+          "S12": "0",
+          "S13": "6766889516879061/50000000000",
+          "S14": "0",
+          "S15": "0"
+        },
+        "fees_yuan": {
+          "S1": "0",
+          "S2": "15317389524170527/15625000000000",
+          "S3": "194548073610273/31250000000",
+          "S4": "11117032777729887/5000000000000",
+          "S5": "0",
+          "S6": "0",
+          "S7": "32043212124044961/6250000000000",
+          "S8": "288909714103878517/50000000000000",
+          "S9": "315364982362618977/100000000000000",
+          "S10": "5641894134697917/1250000000000",
+          "S11": "0",
+          "S12": "0",
+          "S13": "182706016955734647/50000000000000",
+          "S14": "0",
+          "S15": "0"
+        },
+        "bank_yuan": "-3637978807091713/25000000000000000000000000",
+        "budget_residual_yuan": "150471192908287/25000000000000000000000000",
+        "profit_yuan": "149999999999999938138021192908287/500000000000000000000000000",
+        "net_return": "149999999999999938138021192908287/500000000000000000000000000000000",
+        "risk_rate": "6225538355528737583/100000000000000000000"
+      }
+    },
+    {
+      "group": "fifteen",
+      "budget_yuan": "1000000",
+      "target_net_return": "33/100",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "1901693997144077/12500000000",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "6711861166390861/50000000000",
+          "S8": "8000166098870517/100000000000",
+          "S9": "1712594969285473/10000000000",
+          "S10": "5705081991432231/25000000000",
+          "S11": "0",
+          "S12": "0",
+          "S13": "9921881724229967/50000000000",
+          "S14": "0",
+          "S15": "0"
+        },
+        "fees_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "5705081991432231/625000000000",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "46983028164736027/6250000000000",
+          "S8": "248005149064986027/100000000000000",
+          "S9": "46240064170707771/10000000000000",
+          "S10": "165447377751534699/25000000000000",
+          "S11": "0",
+          "S12": "0",
+          "S13": "267890806554209109/50000000000000",
+          "S14": "0",
+          "S15": "0"
+        },
+        "bank_yuan": "-2546585164964199/50000000000000000000000000",
+        "budget_residual_yuan": "-3975085164964199/50000000000000000000000000",
+        "profit_yuan": "330000000000000102763414835035801/1000000000000000000000000000",
+        "net_return": "330000000000000102763414835035801/1000000000000000000000000000000000",
+        "risk_rate": "912813118629157109/10000000000000000000"
+      }
+    },
+    {
+      "group": "fifteen",
+      "budget_yuan": "1000000",
+      "target_net_return": "19/50",
+      "status": "matches_exact_minimum_with_tolerance",
+      "exact_minimum_verified": true,
+      "rate_and_relative_money_tolerance": "1/100000000",
+      "recomputed_original_fee_values": {
+        "investments_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "582997078057603/1000000000",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "1808821483233621/5000000000",
+          "S8": "0",
+          "S9": "0",
+          "S10": "0",
+          "S11": "0",
+          "S12": "0",
+          "S13": "0",
+          "S14": "0",
+          "S15": "0"
+        },
+        "fees_yuan": {
+          "S1": "0",
+          "S2": "0",
+          "S3": "1748991234172809/50000000000",
+          "S4": "0",
+          "S5": "0",
+          "S6": "0",
+          "S7": "12661750382635347/625000000000",
+          "S8": "0",
+          "S9": "0",
+          "S10": "0",
+          "S11": "0",
+          "S12": "0",
+          "S13": "0",
+          "S14": "0",
+          "S15": "0"
+        },
+        "bank_yuan": "6548361852765083/100000000000000000000000000",
+        "budget_residual_yuan": "68361852765083/100000000000000000000000000",
+        "profit_yuan": "759999999999999798948361852765083/2000000000000000000000000000",
+        "net_return": "759999999999999798948361852765083/2000000000000000000000000000000000",
+        "risk_rate": "1748991234172809/5000000000000000"
+      }
+    },
+    {
+      "group": "fifteen",
+      "budget_yuan": "1000000",
+      "target_net_return": "41/100",
+      "status": "infeasible_by_exact_global_bound"
+    }
+  ],
+  "numerical_source_sha256": "a5afb3dd4e73434916008aefc6be3145b33b1853e73df6ef877bfc10801a864a"
+}

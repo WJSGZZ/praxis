@@ -25,7 +25,16 @@ The representative calculations use **CNY 1,000,000**, with fees deducted from n
 
 The risk limit is the largest asset-level loss divided by capital. Different limits make these two rows unsuitable for ranking the datasets; the values are conditional optimization results.
 
-The full return–risk frontier exposes the choice facing the firm. Its geometric knees illustrate a **0.6%** limit with **20.19%** return for four assets and an **8%** limit with **32.29%** return for fifteen assets. They provide a transparent compromise rule; an investor's preferences still determine whether either is appropriate.
+With a specified minimum net return, the model instead finds the least risk under the original fees:
+
+| Dataset | Illustrative return target | Minimum risk, rounded |
+|---|---:|---:|
+| Four assets | 20% | **0.587599%** |
+| Fifteen assets | 33% | **9.128131%** |
+
+Six nontrivial targets have feasible original-fee portfolios attaining independently derived rational lower bounds. The bank achieves 5% at zero risk. Targets of 27% and 41% exceed the respective global return maxima and are unreachable. These inputs illustrate the method rather than a real firm's preferences. A CNY 100 example, checked over all 16 supports, shows why minimum fees can prevent the relaxed inverse from being attained.
+
+When preferences are absent, the report retains the frontier. Geometric knees remain examples: a **0.6%** limit with **20.19%** return for four assets, and an **8%** limit with **32.29%** return for fifteen assets. Their shape does not establish an investor's risk attitude.
 
 ## Model and argument
 
@@ -33,6 +42,7 @@ The full return–risk frontier exposes the choice facing the firm. Its geometri
 2. **Trace the frontier.** A mixed-integer linear program maximizes net return at each risk limit.
 3. **Establish a separate bound.** Removing the minimum fee yields a proportional-fee relaxation solved by ranking gain per unit of budget. A feasible original allocation reaching its bound is globally optimal.
 4. **Explain the role of scale.** At the representative limits, **CNY 339 and CNY 2,602** are sufficient capital thresholds for attaining the relaxed bound. They are not necessary thresholds.
+5. **Turn a goal into a decision.** Minimize risk subject to the return target, then check the original-fee portfolio against a dual bound. Sufficient capital thresholds are rounded upward to cents; rounding purchases requires another feasibility check.
 
 ## Verification and scope
 
@@ -48,20 +58,20 @@ Trial proportions describe the stated error scenarios, not real-world investment
 
 ## Review
 
-**Reference assessment: competitive at the lower edge of National First Prize, with a National Second–First Prize range.**
+**Current review: complete task coverage and exact optimality evidence for six return targets; award boundaries remain uncalibrated.**
 
-The strongest feature is the explanation of optimality: the paper distinguishes principal, fees and profit, covers both datasets, and uses an exchange argument and capital thresholds to show when a feasible allocation reaches a global bound. The reviewer independently checked eight representative allocations and two capital thresholds with rational arithmetic.
+The argument connects the original fee-inclusive budget to exchange proofs, capital thresholds and dual bounds. Prior checks of eight representative allocations and two thresholds remain archived. The new reviewer independently rebuilt six inverse answers, fee-inclusive portfolios, unreachable targets and the small-budget counterexample from the supplied data.
 
-The main weakness is the final choice of risk limit. Conditional optima are well supported, but the geometric knee does not establish a particular firm's preferences. A clearer preference-to-frontier argument would strengthen the recommendation.
+The inverse now explains how a return requirement determines risk. Actual firm preferences and capital are still unknown. The maximum single-asset loss remains a proxy; error scenarios are not empirically calibrated. A risk buffer alone does not guarantee the target return after execution error.
 
-This author-external AI review covers the current 23-page manuscript. It is non-blind and uncalibrated against award boundaries, rather than an official contest result. [Review record](verification.json)
+The current 35-page manuscript was reviewed by an AI outside the author role in a shared workspace. This is non-blind, without human review or award calibration. The earlier 23-page manuscript's prize-range opinion remains historical and is not rebound to this revision. [Version and scope](verification.json)
 
 ## Paper and deliverables
 
 | Resource | Contents |
 |---|---|
-| [The complete 23-page paper](deliverables/paper.pdf) | Chinese manuscript with models, proofs, verification, references and source appendix |
-| [Supporting ZIP](deliverables/supporting_materials.zip) | 26 files, including calculation code, LaTeX sources and AI-use details |
+| [The complete 35-page paper](deliverables/paper.pdf) | One abstract page, 14 pages of answers and references, and 20 appendix pages containing all nine programs |
+| [Supporting ZIP](deliverables/supporting_materials.zip) | 32 files: calculations, rational certificates, LaTeX sources and two-page AI-use details |
 | [Checksums](manifest.json) | File sizes, MD5 and SHA-256 for both deliverables |
 
 Only the PDF and ZIP sit in `deliverables/`. Presentation assets and reproduction records are separate. The manuscript uses the shared [CUMCM template](../../templates/cumcm-paper.tex) and [pinned fonts](../../templates/cumcm-fonts.json).
@@ -85,9 +95,11 @@ uv run --locked python demos/cumcm-1998-a/reproduce/check_capital_threshold.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_recommendation.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_robustness.py
 uv run --locked python demos/cumcm-1998-a/reproduce/check_alternatives.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_return_target.py
+uv run --locked python demos/cumcm-1998-a/reproduce/check_target_certificates.py --numeric demos/cumcm-1998-a/reproduce/reference/return-targets.json
 ```
 
-These cover capital thresholds, knee recommendations and bounds, error margins, alternative rules and risk interpretations. The supporting ZIP can also be reproduced independently using its included instructions.
+These cover capital thresholds, knee examples and bounds, error margins, alternative risk interpretations, inverse targets and independent rational certificates. Use `--group four --target 0.20 --budget 1000000` to select a target and budget. New outputs refuse to overwrite an existing result. The supporting ZIP also includes independent reproduction instructions.
 
 </details>
 
