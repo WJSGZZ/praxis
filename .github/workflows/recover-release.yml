@@ -1,0 +1,74 @@
+name: recover-existing-release-assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing frozen release tag (this recovery recipe accepts v0.5.0 only)
+        required: true
+        type: string
+        default: v0.5.0
+      expected_sha256s:
+        description: Complete six-line frozen SHA256SUMS; no missing or extra names
+        required: true
+        type: string
+        default: |
+          25bf5ac4f20c5f867fb69a9a1c6a87f825be93b4aa1f22ecad61eb9df66d875c  praxis-0.5.0-portable.zip
+          766564e557ff318e64096a2ae19463f94c6d420439786e4b9afead31d8516fe3  praxis-0.5.0-codex.zip
+          db2eecd374d0dfa302c2c80202960b5b8e910a0ebae43a7ef09e7c6864193dc0  praxis-0.5.0-claude.zip
+          3ee8958dbd53cc9d54f0650fdad23de373691160a857ac848610af3690073eea  praxis-0.5.0-copilot.zip
+          913f3d70e2c3b14572730a80748fdb6a9da285db15052bb64a84a6f2a18e1ddc  praxis-0.5.0-gemini.zip
+          195efbecc56997978c0169c1c4766c398fc9ed022a0897f93b403d9f50da39f2  praxis-0.5.0-cursor.zip
+
+permissions:
+  contents: write
+
+concurrency:
+  group: recover-release-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+      EXPECTED_SHA256SUMS: ${{ inputs.expected_sha256s }}
+    steps:
+      # Workflow/helper definition comes from the dispatched HEAD, not the tag.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: workflow
+          persist-credentials: false
+      # Product bytes come only from the explicit frozen tag.
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          path: release-source
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v5
+      - name: Build and verify all six frozen ZIP hashes
+        run: >-
+          uv run --locked --project release-source python
+          workflow/.github/scripts/recover_release.py build
+          --source release-source
+          --out "$RUNNER_TEMP/praxis-release-recovery"
+          --tag "$RELEASE_TAG"
+      - name: Resume verified assets on the existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          uv run --locked --project release-source python
+          workflow/.github/scripts/recover_release.py upload
+          --out "$RUNNER_TEMP/praxis-release-recovery"
+          --tag "$RELEASE_TAG"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-recovery-receipts
+          path: |
+            ${{ runner.temp }}/praxis-release-recovery/build-receipt.json
+            ${{ runner.temp }}/praxis-release-recovery/upload-receipt.json
+            ${{ runner.temp }}/praxis-release-recovery/SHA256SUMS.txt
+          if-no-files-found: ignore
