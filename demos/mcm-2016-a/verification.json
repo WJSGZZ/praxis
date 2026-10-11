@@ -41,6 +41,8 @@
   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
   "md5": "0f2dfb86055001f1fcaac8e1804355cd",
   "generator_sha256": "7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef",
+   "generator_source": "reproduce/reference/report-generator-fb622d.py",
+   "generator_source_note": "Retained actual source of the sealed PDF; the active entry now selects frozen layout v1 explicitly.",
   "tex_sha256": "1ca01e46b90814757d02ec9d6464ee132d2645986a3168625b0f7293011c7f92"
  },
  "model_checks": {

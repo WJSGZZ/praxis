@@ -67,7 +67,7 @@ The competition cases make the full workflow inspectable; they do not define the
 
 **[Browse all cases →](demos/README.en.md)** Explore mathematical research and decision studies, with papers, code, and checks.
 
-Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
+Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. New MCM reports require the problem edition explicitly and use the three-column summary header. Third-level headings and contents entries are available when they aid navigation; frozen cases retain their recorded layout unless separately revised. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
 
 Explore either case or bring your own problem. **Star Praxis** if you would like to follow its development.
 

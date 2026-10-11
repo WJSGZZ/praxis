@@ -20,7 +20,7 @@ def document(r, output):
     profile = Path(__file__).with_name('layout-profile.json')
     if profile.exists():
         expected = json.loads(profile.read_text(encoding='utf-8'))['style_sha256']
-        current = check_layout(preamble('7391857', 'Layout check') + summary_header('B'))['style_sha256']
+        current = check_layout(preamble('7391857', 'Layout check', layout_version=1) + summary_header('B', layout_version=1))['style_sha256']
         if current != expected:
             raise ValueError('Frozen research layout differs; explicitly revise the layout profile before rebuilding')
     cfg=r['config']; improved=r['phase']=='improved'; b=r['baseline']
@@ -46,9 +46,9 @@ def document(r, output):
     expanded=r['expansion'] if improved else None
     nomcap=nominal.get('capacities_vph',{}).get('nominal',b['capacity_vph'])
     robustcap=min(robust['capacities_vph'].values()) if improved else b['capacity_vph']
-    put(preamble('7391857', 'Paying for the Bottleneck: A Compatible-Flow Design for Toll-Plaza Merging'))
+    put(preamble('7391857', 'Paying for the Bottleneck: A Compatible-Flow Design for Toll-Plaza Merging', layout_version=1))
     put(r'\definecolor{green}{HTML}{009E73}\newtheorem{proposition}{Proposition}')
-    put(summary_header('B'))
+    put(summary_header('B', layout_version=1))
     put(r'\begin{center}{\LARGE\bfseries Paying for the Bottleneck:\\[4pt] A Compatible-Flow Design for Toll-Plaza Merging}\end{center}')
     put(r'\begin{center}{\Large\bfseries Summary}\end{center}')
     if improved:

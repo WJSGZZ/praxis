@@ -69,12 +69,21 @@ def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
             warnings.append('page 1 does not mention "Summary"; the Summary Sheet must be the first page')
         numbers = set()
         for i, r in enumerate(records[:counted]):
-            m = re.search(r'Team\s*(?:#|Control Number)?\s*(\d{4,8})', ' '.join(r['lines'][:3]))
+            top = ' '.join(r['lines'][:8] if i == 0 else r['lines'][:3])
+            m = re.search(r'Team\s*(?:#|Control Number)?\s*(\d{4,8})', top)
+            summary_metadata = i == 0 and bool(re.search(r'Problem Chosen', top)) and bool(re.search(r'Summary Sheet', top))
+            if not m and summary_metadata:
+                # PDF reading order may interleave the three independent columns.
+                m = re.search(r'(?<!\d)(\d{7})(?!\d)', top)
             if not m:
                 warnings.append(f'page {i + 1}: no team control number found at the top')
                 continue
             numbers.add(m.group(1))
-            if not re.search(r'Page\s*%d\b' % (i + 1), ' '.join(r['lines'][:3])):
+            if i == 0 and summary_metadata:
+                facts['summary_page_marks'] = 'official-style metadata; running page header omitted'
+                if edition is not None and not re.search(r'\b' + re.escape(str(edition)) + r'\b', top):
+                    errors.append(f'summary year does not match requested edition {edition}')
+            elif not re.search(r'Page\s*%d\b' % (i + 1), top):
                 warnings.append(f'page {i + 1}: page number not found at the top')
         if len(numbers) > 1:
             errors.append(f'different team numbers on different pages: {sorted(numbers)}')

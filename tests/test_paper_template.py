@@ -9,12 +9,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def paper():
-    return preamble('7391857', 'A title & a result') + summary_header('B') + r'Body.\end{document}'
+    return preamble('7391857', 'A title & a result') + summary_header('B', edition=2025) + r'Body.\end{document}'
 
 
 def test_shared_layout_accepts_content_and_local_reference_format():
     text = paper().replace('Body.', r'\begingroup\small\setlength{\parindent}{0pt}Reference.\endgroup')
-    assert check(text)['profile'] == 'praxis-mcm-v1'
+    assert check(text)['profile'] == 'praxis-mcm-v2'
     assert r'Team \# \PraxisTeam' in text
     assert r'Page \thepage{} of \pageref{LastPage}' in text
     assert r'A title \& a result' in text
@@ -66,7 +66,7 @@ def test_both_mcm_contents_levels_have_explicit_dot_leaders():
     style = (ROOT / 'templates/mcm-style.tex').read_text()
     assert r'\titlecontents{section}' in style
     assert r'\titlecontents{subsection}' in style
-    assert style.count(r'\titlerule*[.6pc]{.}\contentspage') == 2
+    assert style.count(r'\titlerule*[.6pc]{.}\contentspage') == 3
 
 
 def test_layout_gate_rejects_before_creating_final_snapshot(tmp_path):
@@ -105,7 +105,7 @@ def test_layout_gate_records_source_and_style(tmp_path):
         freeze(pdf, tmp_path/'stale.pdf', tex=source, contest='mcm', build_receipt=build)
     assert not (tmp_path/'stale.pdf').exists()
     assert receipt['layout']['tex_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
-    assert receipt['layout']['profile'] == 'praxis-mcm-v1'
+    assert receipt['layout']['profile'] == 'praxis-mcm-v2'
 
 
 def test_optional_components_and_archived_chinese_source():
@@ -198,22 +198,24 @@ def test_existing_mcm_generated_sources_and_chinese_skeleton_pass_new_frontmatte
     check((ROOT/'templates/cumcm-paper.tex').read_text(), 'cumcm')
     # Bath has a source generator rather than a checked-in generated paper.
     generator = (ROOT/'demos/mcm-2016-a/reproduce/build_report.py').read_text()
-    assert "tex.append(summary_header('A'))" in generator
+    assert "tex.append(summary_header('A', layout_version=1))" in generator
     assert 'tex.append(table_of_contents())' in generator
 
 
 def test_summary_integrates_metadata_without_duplicate_running_header():
-    header = summary_header('C')
+    header = summary_header('C', edition=2025)
     assert header.startswith(r'\thispagestyle{empty}')
-    assert r'Page \thepage{} of \pageref{LastPage}' in header
+    assert 'Page' not in header
+    assert r'\textbf{2025\\MCM/ICM\\Summary Sheet}' in header
     assert 'Team Control Number' in header
     check(paper())
     # Historical papers retain the former component; it does not reset pages.
-    check(paper().replace(summary_header('B'), summary_header('B', legacy=True)))
+    old = preamble('7391857', 'Archive', layout_version=1) + summary_header('B', layout_version=1, legacy=True) + r'Body.\end{document}'
+    assert check(old)['profile'] == 'praxis-mcm-v1'
     for altered in [paper().replace('Summary Sheet', 'Summary'),
-                    paper().replace('Body.', summary_header('A') + 'Body.'),
+                    paper().replace('Body.', summary_header('A', edition=2025) + 'Body.'),
                     paper().replace('Body.', r'\thispagestyle{empty}Body.'),
-                    paper().replace(summary_header('B'), r'\clearpage' + summary_header('B'))]:
+                    paper().replace(summary_header('B', edition=2025), r'\clearpage' + summary_header('B', edition=2025))]:
         with pytest.raises(ValueError):
             check(altered)
 
@@ -313,3 +315,48 @@ def test_caption_review_does_not_claim_macro_or_malformed_coverage():
     result = review_captions(r'\mycaption{Unexpanded text}\caption{Unclosed')
     assert result['captions'] == []
     assert 'no rendered-line or semantic' in result['scope']
+
+
+@pytest.mark.parametrize('edition', [None, '', '202A', '1300', '2025\\evil', 20250])
+def test_new_summary_refuses_missing_or_malformed_edition(edition):
+    with pytest.raises(ValueError, match='edition'):
+        summary_header('A', edition=edition)
+
+
+def test_third_level_numbering_and_optional_contents_depth():
+    for depth in (1, 2, 3):
+        body = (table_of_contents(depth=depth) + r'\section{Model}\subsection{Identification}'
+                r'\subsubsection{Rank condition}A result.\subsubsection{Scale ambiguity}A limit.')
+        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v2'
+    with pytest.raises(ValueError, match='depth'):
+        table_of_contents(depth=4)
+    with pytest.raises(ValueError, match='override'):
+        check(paper().replace('Body.', r'\setcounter{secnumdepth}{0}'))
+
+
+def test_v2_refuses_undated_archive_header_and_modified_metadata():
+    old = summary_header('B', layout_version=1)
+    with pytest.raises(ValueError, match='summary-page'):
+        check(paper().replace(summary_header('B', edition=2025), old))
+    for bad in [paper().replace('2025', '202A'),
+                paper().replace('Summary Sheet', 'Summary'),
+                paper().replace('Problem Chosen', 'Selected Problem')]:
+        with pytest.raises(ValueError, match='summary-page'):
+            check(bad)
+
+
+def test_frozen_toll_generator_preserves_the_complete_archived_source(tmp_path):
+    import importlib.util
+    import json
+    source = ROOT/'research/merge-after-toll/paper/build_report.py'
+    spec = importlib.util.spec_from_file_location('archived_toll_builder', source)
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    result = json.loads((ROOT/'research/merge-after-toll/reference/accepted.json').read_text())
+    generated = module.document(result, tmp_path/'reproduced')
+    assert generated.read_bytes() == (ROOT/'research/merge-after-toll/paper/paper.tex').read_bytes()
+
+
+def test_historical_editions_are_explicit_and_not_replaced_by_current_year():
+    text = preamble('7391857', 'A historical paper') + summary_header('C', edition=1999) + r'Body.\end{document}'
+    assert check(text)['profile'] == 'praxis-mcm-v2'
+    assert r'\textbf{1999\\MCM/ICM' in text

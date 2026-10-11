@@ -243,7 +243,7 @@ def figure(name,caption,height=None):
     if name in introductions: para(introductions[name])
     m=re.match(r'^Figure (\d+)\. (.*)$',caption,re.S);assert m,caption
     tex.append(texplot.figure_env(FIG[name],tx(m.group(2)),label='fig:'+name.replace('.png','')))
-PREAMBLE=preamble(TEAM_CONTROL_NUMBER, 'A Hot Bath: Conserving Water Without Losing Uniformity')
+PREAMBLE=preamble(TEAM_CONTROL_NUMBER, 'A Hot Bath: Conserving Water Without Losing Uniformity', layout_version=1)
 PREAMBLE=PREAMBLE.replace(r'\begin{document}', r'\usepackage{placeins}'+'\n'+r'\begin{document}')
 
 def compile_pdf(stem,title):
@@ -302,7 +302,7 @@ fb=texplot.Axis('Time (min)', 'Models retained',width='0.64\\linewidth',height='
 fb.line([x['time_s']/60 for x in FBZERO['steps']],[x['retained_models'] for x in FBZERO['steps']]).line([x['time_s']/60 for x in FBRANDOM['steps']],[x['retained_models'] for x in FBRANDOM['steps']],color='accent',style='dashed')
 FIG['feedback.png']=fa.tex()+'\n'+fb.tex()
 
-tex.append(summary_header('A'))
+tex.append(summary_header('A', layout_version=1))
 
 para('A Hot Bath: Conserving Water Without Losing Uniformity','title')
 para('Summary','heading')

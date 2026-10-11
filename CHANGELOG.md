@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 美赛新稿采用 v2 摘要组件：原题年份必须明确传入，题号与队号加大，首页不叠加运行页码。正文可按需要使用三级标题，目录深度由共享组件选择，保持统一字号与引线；检查器拒绝缺年份、重复目录和直接覆盖。冻结案例显式保留 v1，保存其真实生成源，并核对活动入口的完整论文复现。
+  New MCM papers require the original contest year in a shared three-column summary header, with larger problem and team identifiers and no running page label on the summary sheet. Optional third-level sections and selectable contents depth share the same typography. Frozen cases keep an explicit v1 layout and their actual historical generator; complete regeneration is checked separately from the sealed PDF identity.
+
 - 修正数学接口证据与交付：数值违例不自动成为证明，有理候选单独精确核验；零残差及秩亏诊断保留结果并说明未定义项，Nash返回完整性边界。输入Schema与示例共用校验，修复最小费用流的节点类型；协议只协商实际支持版本，表达式入口共用大小／运算边界及外部调用超时，补齐蒙特卡洛截止与所有当前表达式入口的独立覆盖回归。
   Mathematical tools now separate numerical candidates from exact refutations, preserve valid fits with explicit diagnostic states, and qualify Nash enumeration. Shared input validation aligns schemas and examples, flow node labels follow JSON semantics, and protocol negotiation advertises supported versions. External expression calls, including Monte Carlo propagation, run in bounded workers; coverage tests check every current expression consumer across MCP and CLI.
 

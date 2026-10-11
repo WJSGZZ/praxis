@@ -45,7 +45,10 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert revision['checks']==24 and revision['replays']==36
     # Historical revisions retain their own sources; only the active PDF binding
     # follows later report revisions.
-    assert meta['pdf']['generator_sha256']==hashlib.sha256((HERE/'build_report.py').read_bytes()).hexdigest()
+    source=demo/meta['pdf']['generator_source']
+    assert source.is_file()
+    assert meta['pdf']['generator_sha256']==hashlib.sha256(source.read_bytes()).hexdigest()
+    assert meta['pdf']['generator_sha256']=='7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef'
 
 
 def test_public_reading_copy_matches_numbered_submission_and_links():

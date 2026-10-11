@@ -197,3 +197,16 @@ def test_mcm_ai_tools_heading_and_contents_use_the_same_page_boundary():
     assert not rules['errors']
     assert rules['facts']['counted_pages'] == 25
     assert rules['facts']['ai_report_from_page'] == 26
+
+
+def test_official_style_summary_omits_running_page_but_later_pages_still_require_it():
+    records = [page('Problem Chosen 2025 Team Control Number\nA MCM/ICM 7391859\nSummary Sheet\nSummary'),
+               page('Team # 7391859 Page 2 of 3\nBody'),
+               page('Team # 7391859 Page 3 of 3\nReport on Use of AI')]
+    result = contest_rules.evaluate(records, 'mcm', edition=2025)
+    assert not result['errors']
+    assert not any('page number not found' in w for w in result['warnings'])
+    assert result['facts']['team_number'] == '7391859'
+    assert contest_rules.evaluate(records, 'mcm', edition=2024)['errors']
+    records[1] = page('Team # 7391859\nBody')
+    assert any('page 2: page number not found' in w for w in contest_rules.evaluate(records, 'mcm')['warnings'])

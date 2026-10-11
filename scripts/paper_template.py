@@ -11,17 +11,21 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 1, 'cumcm': 2, 'research': 1}
-BEGIN = '% BEGIN PRAXIS MCM STYLE v1\n'
+VERSIONS = {'mcm': 2, 'cumcm': 2, 'research': 1}
+BEGIN = '% BEGIN PRAXIS MCM STYLE v2\n'
 END = '% END PRAXIS MCM STYLE\n'
 
 
-def style_block(contest='mcm'):
+def style_block(contest='mcm', *, layout_version=None):
     if contest not in VERSIONS:
         raise ValueError('Unknown layout profile')
     name = contest.upper()
-    source = ROOT / f'templates/{contest}-style.tex'
-    return (f'% BEGIN PRAXIS {name} STYLE v{VERSIONS[contest]}\n' +
+    version = VERSIONS[contest] if layout_version is None else layout_version
+    if version != VERSIONS[contest] and not (contest == 'mcm' and version == 1):
+        raise ValueError('Unsupported archived layout version')
+    suffix = '-v1' if contest == 'mcm' and version == 1 else ''
+    source = ROOT / f'templates/{contest}-style{suffix}.tex'
+    return (f'% BEGIN PRAXIS {name} STYLE v{version}\n' +
             source.read_text(encoding='utf-8').replace('@@PLOTS@@', texplot.PREAMBLE) +
             f'% END PRAXIS {name} STYLE\n')
 
@@ -33,34 +37,47 @@ def escape(text):
     return ''.join(replacements.get(c, c) for c in text)
 
 
-def preamble(team, title, contest='mcm'):
+def preamble(team, title, contest='mcm', *, layout_version=None):
     if contest == 'mcm' and not re.fullmatch(r'[0-9]{1,12}', team):
         raise ValueError('Team number must contain digits only; use the assigned number for a real entry')
     return ((r'\newcommand{\PraxisTeam}{' + team + '}\n' if contest == 'mcm' else '') +
             r'\newcommand{\PraxisTitle}{' + escape(title) + '}\n' +
-            style_block(contest) + r'\begin{document}' + '\n')
+            style_block(contest, layout_version=layout_version) + r'\begin{document}' + '\n')
 
 
-def summary_header(problem, *, legacy=False):
-    """Summary metadata, without a duplicate running team header by default.
+def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
+    """Year-specific three-column summary metadata; running headers start later.
 
-    The team number and continuous page number stay at the top of page one.
-    ``legacy`` reproduces the earlier valid component for fixed archives;
-    new generators use the integrated component. Neither resets the counter.
+    Edition is explicit for new papers. Sizes are house style, not COMAP rules.
+    Version 1 is available only for deliberate frozen-archive reproduction.
     """
     if problem not in 'ABCDEF' or len(problem) != 1:
         raise ValueError('Choose an MCM/ICM problem letter A–F')
-    style = 'fancy' if legacy else 'empty'
-    middle = (r'\textbf{Summary Sheet}' if legacy else
-              r'\shortstack{\textbf{Summary Sheet}\\Page \thepage{} of \pageref{LastPage}}')
-    return (r'\thispagestyle{' + style + r'}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
-            r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\' + '\n' +
-            r'{\Large\textbf{' + problem + r'}}&' + middle + r'&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
+    version = VERSIONS['mcm'] if layout_version is None else layout_version
+    if version == 1:
+        style = 'fancy' if legacy else 'empty'
+        middle = (r'\textbf{Summary Sheet}' if legacy else
+                  r'\shortstack{\textbf{Summary Sheet}\\Page \thepage{} of \pageref{LastPage}}')
+        return (r'\thispagestyle{' + style + r'}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
+                r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\' + '\n' +
+                r'{\Large\textbf{' + problem + r'}}&' + middle + r'&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
+    if version != 2 or legacy:
+        raise ValueError('Legacy summary metadata requires explicit layout_version=1')
+    if not re.fullmatch(r'(?:19|20)[0-9]{2}', str(edition)):
+        raise ValueError('Supply the original contest edition (YYYY), not the current date')
+    return (r'\thispagestyle{empty}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
+            r'\parbox[t]{.30\linewidth}{\centering\textbf{Problem Chosen}\\[5pt]{\fontsize{26}{30}\selectfont\bfseries ' + problem + r'}}&' + '\n' +
+            r'\parbox[t]{.30\linewidth}{\centering\textbf{' + str(edition) + r'\\MCM/ICM\\Summary Sheet}}&' + '\n' +
+            r'\parbox[t]{.30\linewidth}{\centering\textbf{Team Control Number}\\[5pt]{\fontsize{26}{30}\selectfont\bfseries\PraxisTeam}}' + '\n' +
+            r'\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
 
 
-def table_of_contents():
-    """Optional MCM contents, isolated from the summary and scientific body."""
-    return r'\clearpage\tableofcontents\clearpage' + '\n'
+def table_of_contents(*, depth=2):
+    """Optional isolated contents with a selected useful navigation depth."""
+    if type(depth) is not int or depth not in (1, 2, 3):
+        raise ValueError('Contents depth must be 1, 2 or 3')
+    prefix = '' if depth == 2 else r'\setcounter{tocdepth}{' + str(depth) + r'}' + '\n'
+    return prefix + r'\clearpage\tableofcontents\clearpage' + '\n'
 
 
 def check(text, contest='mcm'):
@@ -69,8 +86,11 @@ def check(text, contest='mcm'):
     This static gate detects direct commands, not arbitrary TeX macro expansion.
     Actual rendered pagination still requires PDF inspection.
     """
-    block = style_block(contest)
-    begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v{VERSIONS[contest]}\n'
+    version = VERSIONS[contest]
+    if contest == 'mcm' and '% BEGIN PRAXIS MCM STYLE v1\n' in text:
+        version = 1
+    block = style_block(contest, layout_version=version)
+    begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v{version}\n'
     end = f'% END PRAXIS {contest.upper()} STYLE\n'
     if text.count(begin) != 1 or text.count(end) != 1 or block not in text:
         raise ValueError('Paper layout differs from the shared source; regenerate with scripts.paper_template')
@@ -87,8 +107,13 @@ def check(text, contest='mcm'):
     if contest == 'mcm':
         # Only this exact shared component may suppress the running header.
         # Accept the former component so historical papers remain reproducible.
-        headers = [summary_header(letter, legacy=legacy)
-                   for letter in 'ABCDEF' for legacy in (False, True)]
+        if version == 1:
+            headers = [summary_header(letter, layout_version=1, legacy=legacy)
+                       for letter in 'ABCDEF' for legacy in (False, True)]
+        else:
+            years = set(re.findall(r'\\textbf\{((?:19|20)[0-9]{2})\\\\MCM/ICM', rest))
+            headers = [summary_header(letter, edition=year)
+                       for letter in 'ABCDEF' for year in years]
         occurrences = sum(rest.count(header) for header in headers)
         if occurrences != 1:
             raise ValueError('Require exactly one shared summary-page header')
@@ -99,6 +124,10 @@ def check(text, contest='mcm'):
             raise ValueError('Summary metadata must start on the first document page')
         for header in headers:
             rest = rest.replace(header, '')
+    if contest == 'mcm':
+        components = [table_of_contents(depth=d) for d in (1, 2, 3)]
+        for component in components:
+            rest = rest.replace(component, r'\clearpage\tableofcontents\clearpage' + '\n')
     # Hanging references locally disable paragraph indentation; this does not
     # replace the document paragraph style.
     rest = re.sub(r'(\\begingroup\\small(?:\\sloppy)?(?:\\raggedright)?)\\setlength\{\\parindent\}\{0pt\}', r'\1', rest)
@@ -106,7 +135,7 @@ def check(text, contest='mcm'):
     # mathematical environments and bibliographic formatting remain content choices.
     prohibited = (r'\\(?:documentclass|geometry|newgeometry|restoregeometry|linespread|'
                   r'pagestyle|fancyhf|fancyhead|fancyfoot|captionsetup|titleformat|titlespacing|titlecontents|ctexset|setCJKmainfont|setmainfont|setsansfont|setmonofont|setCJKsansfont|setCJKmonofont|fontfamily|fontencoding)\b|'
-                  r'\\(?:setcounter|addtocounter)\s*\{tocdepth\}|'
+                  r'\\(?:setcounter|addtocounter)\s*\{(?:tocdepth|secnumdepth)\}|'
                   r'\\(?:renewcommand|def)\s*\{?\\(?:normalsize|familydefault|rmdefault|sfdefault|baselinestretch)\b|'
                   r'\\thispagestyle\s*\{(?:empty|plain)\}|'
                   r'\\setlength\s*\{\\(?:parindent|parskip|textwidth|textheight|headheight|oddsidemargin)\}|'
@@ -129,7 +158,7 @@ def check(text, contest='mcm'):
                 raise ValueError('Contents must precede the numbered scientific sections')
             if not re.search(r'\\clearpage\s*(?:\\renewcommand\{\\contentsname\}\{[^{}]*\}\s*)?$', before):
                 raise ValueError('Contents must begin on a separate page with clearpage')
-    return {'profile': f'praxis-{contest}-v{VERSIONS[contest]}', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
+    return {'profile': f'praxis-{contest}-v{version}', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
 
 
 def check_explicit_references(text):
