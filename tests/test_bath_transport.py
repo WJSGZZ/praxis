@@ -30,7 +30,11 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     pdf=demo/'deliverables/paper.pdf'
     meta=json.loads((demo/'verification.json').read_text())
     assert meta['pdf']['sha256']==hashlib.sha256(pdf.read_bytes()).hexdigest()
-    assert meta['current_award_assessment']['version_sha256']==meta['pdf']['sha256']
+    revision=meta['frontmatter_revision']
+    inheritance=revision['scientific_review_inheritance']
+    assert inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']==revision['previous_current_pdf']['sha256']
+    assert inheritance['current_pdf_sha256']==revision['current_pdf_sha256']==meta['pdf']['sha256']
+    assert inheritance['new_scientific_review'] is False and inheritance['new_award_assessment'] is False
     pages=PdfReader(pdf).pages
     assert len(pages)==26
     text=' '.join(' '.join(p.extract_text().split()) for p in pages)
@@ -48,7 +52,9 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     source=demo/meta['pdf']['generator_source']
     assert source.is_file()
     assert meta['pdf']['generator_sha256']==hashlib.sha256(source.read_bytes()).hexdigest()
-    assert meta['pdf']['generator_sha256']=='7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef'
+    previous=meta['frontmatter_revision']['previous_current_pdf']
+    old_source=demo/previous['generator_source']
+    assert hashlib.sha256(old_source.read_bytes()).hexdigest()==previous['generator_sha256']=='7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef'
 
 
 def test_public_reading_copy_matches_delivery_and_links():

@@ -198,15 +198,40 @@ def test_cumcm_national_awards_use_verified_labels_without_regional_inheritance(
             user_view(report([{**a, "most_likely": label}]), "cumcm")
 
 
-def test_flagship_award_assessments_bind_the_current_delivered_manuscript():
+def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheritance():
+    import ast
     import hashlib
     import json
     from pathlib import Path
     root = Path(__file__).resolve().parents[1]
     for slug, filename in [('cumcm-1998-a', 'paper.pdf'), ('mcm-2016-a', 'paper.pdf')]:
         demo = root / 'demos' / slug
-        record = json.loads((demo / 'verification.json').read_text())['current_award_assessment']
-        assert record['version_sha256'] == hashlib.sha256((demo / 'deliverables' / filename).read_bytes()).hexdigest()
+        meta = json.loads((demo / 'verification.json').read_text())
+        record = meta['current_award_assessment']
+        current_sha = hashlib.sha256((demo / 'deliverables' / filename).read_bytes()).hexdigest()
+        if record['version_sha256'] != current_sha:
+            revision = meta['frontmatter_revision']
+            inheritance = revision['scientific_review_inheritance']
+            previous = revision['previous_current_pdf']
+            assert inheritance['review_version_sha256'] == previous['sha256'] == record['version_sha256']
+            assert inheritance['current_pdf_sha256'] == revision['current_pdf_sha256'] == current_sha
+            assert inheritance['new_scientific_review'] is False
+            assert inheritance['new_award_assessment'] is False
+            old_source = demo / previous['generator_source']
+            new_source = demo / meta['pdf']['generator_source']
+            assert hashlib.sha256(old_source.read_bytes()).hexdigest() == previous['generator_sha256']
+            assert hashlib.sha256(new_source.read_bytes()).hexdigest() == meta['pdf']['generator_sha256']
+            # Independently compare all scientific generation logic and strings.
+            # Only explicit layout/version metadata may differ between these sources.
+            class NormalizeLayout(ast.NodeTransformer):
+                def visit_Call(self, node):
+                    self.generic_visit(node)
+                    if isinstance(node.func, ast.Name) and node.func.id in ('preamble', 'summary_header'):
+                        node.keywords = [k for k in node.keywords if k.arg not in ('layout_version', 'edition')]
+                    return node
+            def scientific_tree(path):
+                return ast.dump(NormalizeLayout().visit(ast.parse(path.read_text())), include_attributes=False)
+            assert scientific_tree(old_source) == scientific_tree(new_source)
         assert record['target'] and record['review_scope'] and record['basis']
         assert record['main_gap'] and record['highest_value_next_action']
         assert 'verification.json' in (demo / 'README.md').read_text()
