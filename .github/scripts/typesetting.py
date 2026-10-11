@@ -67,6 +67,17 @@ def check_mcm_pagination(records):
     return rules
 
 
+def check_cumcm_pagination(records, *, expected_total, expected_body):
+    """Compare the rebuilt paper with the current accepted version's page facts."""
+    rules = evaluate(records, 'cumcm')
+    if rules['errors']:
+        raise ValueError(rules['errors'])
+    facts = rules['facts']
+    if facts['total_pages'] != expected_total or facts['body_pages'] != expected_body:
+        raise ValueError('Unexpected pagination for current accepted CUMCM version')
+    return rules
+
+
 def main(compiler=None):
     OUT.mkdir(parents=True, exist_ok=False)
     executable = Path(compiler).resolve() if compiler else install()
@@ -112,10 +123,10 @@ def main(compiler=None):
             if not any('FandolSong' in f for f in faces): raise ValueError('Unexpected Chinese face')
             if any('Songti' in f or 'Heiti' in f for f in faces): raise ValueError('Platform font substituted')
         if name == 'main':
-            rules = evaluate(extract(pdf), 'cumcm')
-            if rules['errors']: raise ValueError(rules['errors'])
-            if report['total_pages'] != 23 or rules['facts']['body_pages'] != 12:
-                raise ValueError('Unexpected pagination')
+            accepted = json.loads((ROOT / 'demos/cumcm-1998-a/verification.json').read_text(encoding='utf-8'))
+            rules = check_cumcm_pagination(
+                extract(pdf), expected_total=accepted['report_pages'],
+                expected_body=accepted['target_inverse_revision']['answer_pages_excluding_abstract'])
             report['contest_rules'] = rules
         if name in {'bath', 'toll'}:
             rules = check_mcm_pagination(extract(pdf))

@@ -1,5 +1,6 @@
 """CI must distinguish a solution-page cap from historical PDF length."""
 import importlib.util
+import json
 from pathlib import Path
 import pytest
 
@@ -34,3 +35,23 @@ def test_solution_overflow_is_not_excused_by_ai_appendix():
 def test_ai_report_is_required_for_these_ai_assisted_demos():
     with pytest.raises(ValueError, match='missing its AI-use report'):
         ci.check_mcm_pagination(pages(25, 0))
+
+
+def current_cumcm_pages():
+    root = Path(__file__).resolve().parents[1]
+    return ci.extract(root / 'demos/cumcm-1998-a/deliverables/paper.pdf')
+
+
+def test_cumcm_ci_uses_current_accepted_pagination():
+    root = Path(__file__).resolve().parents[1]
+    accepted = json.loads((root / 'demos/cumcm-1998-a/verification.json').read_text())
+    rules = ci.check_cumcm_pagination(
+        current_cumcm_pages(), expected_total=accepted['report_pages'],
+        expected_body=accepted['target_inverse_revision']['answer_pages_excluding_abstract'])
+    assert (rules['facts']['total_pages'], rules['facts']['body_pages']) == (35, 14)
+
+
+@pytest.mark.parametrize('total,body', [(23, 12), (34, 14), (35, 13), (35, 15)])
+def test_cumcm_ci_rejects_stale_or_wrong_pagination(total, body):
+    with pytest.raises(ValueError, match='Unexpected pagination'):
+        ci.check_cumcm_pagination(current_cumcm_pages(), expected_total=total, expected_body=body)
