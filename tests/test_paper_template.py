@@ -321,7 +321,7 @@ def test_existing_mcm_generated_sources_and_chinese_skeleton_pass_new_frontmatte
     check((ROOT/'templates/cumcm-paper.tex').read_text(), 'cumcm')
     # Bath has a source generator rather than a checked-in generated paper.
     generator = (ROOT/'demos/mcm-2016-a/reproduce/build_report.py').read_text()
-    assert "tex.append(summary_header('A', layout_version=1))" in generator
+    assert "tex.append(summary_header('A', edition=2016))" in generator
     assert 'tex.append(table_of_contents())' in generator
 
 

@@ -68,7 +68,7 @@ The paper's strength is a complete decision argument. A proved ideal benchmark l
 
 Its principal limitation is the conditional transport closure. Observation and control results rely on synthetic scenarios and an offline-maintained model set. Connecting observable movement and mixing to effective transport parameters would most improve practical applicability.
 
-An author-external AI reviewed all 26 pages and the five scientific figures. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
+An author-external AI reviewed the preceding 26-page manuscript and its five scientific figures. The current copy inherits that assessment through a verified summary-layout migration with unchanged scientific content. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
 
 ## Paper and deliverables
 
@@ -78,7 +78,7 @@ An author-external AI reviewed all 26 pages and the five scientific figures. The
 | [Delivery PDF](deliverables/paper.pdf) | Identical to the reading copy; the manuscript retains placeholder team number 7391856 |
 | [Technical guide](reproduce/README.md) | Calculations, verification, certificates and report builds |
 
-The public archive uses `paper.pdf`, as do the other demos. A live submission must follow its edition's filename requirements. Reproduction resources remain separate. The paper uses the [shared MCM template](../../templates/mcm-paper.tex) and pinned Tectonic resources.
+The public archive uses `paper.pdf`, as do the other demos. A live submission must follow its edition's filename requirements. Reproduction resources remain separate. The paper uses the [shared MCM v2 template](../../templates/mcm-paper.tex) and pinned Tectonic resources, with the original 2016 edition on the summary sheet. Historical research archives retain their original layouts.
 
 ## Reproduction
 

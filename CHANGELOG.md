@@ -5,6 +5,12 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 当前浴缸案例的生成器、PDF和预览改用含原题年份的统一美赛首页；历史稿及其科学评阅绑定保留。未检出结论另核观测努力、检出概率与独立性，避免把零记录直接解释为不存在。
+  The active bath example now uses the shared MCM summary header with its original contest year, and its PDF and previews are synchronized. Historical review identities remain intact. Absence claims check observation effort, detectability and dependence before interpreting zero detections.
+
+- 作品评审在确定严重度前独立核对时点、单位、定义及阈值是否改变实际推荐或资格，并按同一根因追踪受影响主张；影响未核明不默认归为可选澄清。
+  Full-paper review checks how timing, units, definitions and thresholds affect the actual decision before assigning severity, and traces affected claims by root cause. Unchecked impact remains unresolved instead of becoming optional wording.
+
 - 共享论文组件明确连续与独立分页；美赛AI报告的生成、检查及冻结阻止混页和后置正文，国赛骨架补参考文献前的2026 AI声明及清晰的首附录边界，研究稿仍按目标要求选择。PDF计页不再把AI或附录标题前的正文／参考文献整页漏算。
   Shared paper components distinguish continuous sections from isolated parts. MCM disclosure boundaries are checked before build and freeze; the CUMCM skeleton places its 2026 declaration before references and isolates the first appendix. Research structure remains selectable. PDF counting no longer exempts solution or reference text on a shared disclosure/appendix page.
 
