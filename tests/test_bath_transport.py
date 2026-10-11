@@ -33,7 +33,13 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     revision=meta['frontmatter_revision']
     inheritance=revision['scientific_review_inheritance']
     assert inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']==revision['previous_current_pdf']['sha256']
-    assert inheritance['current_pdf_sha256']==revision['current_pdf_sha256']==meta['pdf']['sha256']
+    assert inheritance['current_pdf_sha256']==revision['current_pdf_sha256']
+    font_revision=meta['font_layout_revision']
+    assert font_revision['previous_current_pdf']['sha256']==revision['current_pdf_sha256']
+    font_inheritance=font_revision['scientific_review_inheritance']
+    assert font_inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']
+    assert font_inheritance['current_pdf_sha256']==font_revision['current_pdf_sha256']==meta['pdf']['sha256']
+    assert font_inheritance['new_scientific_review'] is False and font_inheritance['new_award_assessment'] is False
     assert inheritance['new_scientific_review'] is False and inheritance['new_award_assessment'] is False
     pages=PdfReader(pdf).pages
     assert len(pages)==26

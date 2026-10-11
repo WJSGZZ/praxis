@@ -11,8 +11,8 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 2, 'cumcm': 2, 'research': 1}
-BEGIN = '% BEGIN PRAXIS MCM STYLE v2\n'
+VERSIONS = {'mcm': 3, 'cumcm': 2, 'research': 1}
+BEGIN = '% BEGIN PRAXIS MCM STYLE v3\n'
 END = '% END PRAXIS MCM STYLE\n'
 
 
@@ -21,9 +21,10 @@ def style_block(contest='mcm', *, layout_version=None):
         raise ValueError('Unknown layout profile')
     name = contest.upper()
     version = VERSIONS[contest] if layout_version is None else layout_version
-    if version != VERSIONS[contest] and not (contest == 'mcm' and version == 1):
+    supported = (1, 2, 3) if contest == 'mcm' else (VERSIONS[contest],)
+    if type(version) is not int or version not in supported:
         raise ValueError('Unsupported archived layout version')
-    suffix = '-v1' if contest == 'mcm' and version == 1 else ''
+    suffix = f'-v{version}' if contest == 'mcm' and version != VERSIONS[contest] else ''
     source = ROOT / f'templates/{contest}-style{suffix}.tex'
     return (f'% BEGIN PRAXIS {name} STYLE v{version}\n' +
             source.read_text(encoding='utf-8').replace('@@PLOTS@@', texplot.PREAMBLE) +
@@ -49,7 +50,8 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
     """Year-specific three-column summary metadata; running headers start later.
 
     Edition is explicit for new papers. Sizes are house style, not COMAP rules.
-    Version 1 is available only for deliberate frozen-archive reproduction.
+    Versions 1 and 2 are available for deliberate frozen-archive reproduction.
+    Versions 2 and 3 share the same year-specific summary component.
     """
     if problem not in 'ABCDEF' or len(problem) != 1:
         raise ValueError('Choose an MCM/ICM problem letter A–F')
@@ -61,7 +63,7 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
         return (r'\thispagestyle{' + style + r'}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
                 r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\' + '\n' +
                 r'{\Large\textbf{' + problem + r'}}&' + middle + r'&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
-    if version != 2 or legacy:
+    if version not in (2, 3) or legacy:
         raise ValueError('Legacy summary metadata requires explicit layout_version=1')
     if not re.fullmatch(r'(?:19|20)[0-9]{2}', str(edition)):
         raise ValueError('Supply the original contest edition (YYYY), not the current date')
@@ -123,11 +125,15 @@ def check(text, contest='mcm'):
     """Reject missing/modified styles and explicit layout/page-counter overrides.
 
     This static gate detects direct commands, not arbitrary TeX macro expansion.
-    Actual rendered pagination still requires PDF inspection.
+    Local font commands in content (including captions) are not macro-expanded.
+    Actual rendered pagination and role-specific font sizes require PDF inspection.
     """
     version = VERSIONS[contest]
-    if contest == 'mcm' and '% BEGIN PRAXIS MCM STYLE v1\n' in text:
-        version = 1
+    if contest == 'mcm':
+        markers = re.findall(r'% BEGIN PRAXIS MCM STYLE v([0-9]+)\n', text)
+        if len(markers) != 1:
+            raise ValueError('Require exactly one shared MCM style version')
+        version = int(markers[0])
     block = style_block(contest, layout_version=version)
     begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v{version}\n'
     end = f'% END PRAXIS {contest.upper()} STYLE\n'
@@ -152,7 +158,7 @@ def check(text, contest='mcm'):
                        for letter in 'ABCDEF' for legacy in (False, True)]
         else:
             years = set(re.findall(r'\\textbf\{((?:19|20)[0-9]{2})\\\\MCM/ICM', rest))
-            headers = [summary_header(letter, edition=year)
+            headers = [summary_header(letter, edition=year, layout_version=version)
                        for letter in 'ABCDEF' for year in years]
         occurrences = sum(rest.count(header) for header in headers)
         if occurrences != 1:
@@ -170,7 +176,7 @@ def check(text, contest='mcm'):
             rest = rest.replace(component, r'\clearpage\tableofcontents\clearpage' + '\n')
     # Hanging references locally disable paragraph indentation; this does not
     # replace the document paragraph style.
-    rest = re.sub(r'(\\begingroup\\small(?:\\sloppy)?(?:\\raggedright)?)\\setlength\{\\parindent\}\{0pt\}', r'\1', rest)
+    rest = re.sub(r'(\\begingroup\\(?:small|normalsize)(?:\\sloppy)?(?:\\raggedright)?)\\setlength\{\\parindent\}\{0pt\}', r'\1', rest)
     # Covers the ways the two generators originally drifted. Local table widths,
     # mathematical environments and bibliographic formatting remain content choices.
     prohibited = (r'\\(?:documentclass|geometry|newgeometry|restoregeometry|linespread|'

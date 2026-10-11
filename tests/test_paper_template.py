@@ -14,7 +14,7 @@ def paper():
 
 def test_shared_layout_accepts_content_and_local_reference_format():
     text = paper().replace('Body.', r'\begingroup\small\setlength{\parindent}{0pt}Reference.\endgroup')
-    assert check(text)['profile'] == 'praxis-mcm-v2'
+    assert check(text)['profile'] == 'praxis-mcm-v3'
     assert r'Team \# \PraxisTeam' in text
     assert r'Page \thepage{} of \pageref{LastPage}' in text
     assert r'A title \& a result' in text
@@ -105,7 +105,7 @@ def test_layout_gate_records_source_and_style(tmp_path):
         freeze(pdf, tmp_path/'stale.pdf', tex=source, contest='mcm', build_receipt=build)
     assert not (tmp_path/'stale.pdf').exists()
     assert receipt['layout']['tex_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
-    assert receipt['layout']['profile'] == 'praxis-mcm-v2'
+    assert receipt['layout']['profile'] == 'praxis-mcm-v3'
 
 
 def test_optional_components_and_archived_chinese_source():
@@ -450,14 +450,14 @@ def test_third_level_numbering_and_optional_contents_depth():
     for depth in (1, 2, 3):
         body = (table_of_contents(depth=depth) + r'\section{Model}\subsection{Identification}'
                 r'\subsubsection{Rank condition}A result.\subsubsection{Scale ambiguity}A limit.')
-        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v2'
+        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v3'
     with pytest.raises(ValueError, match='depth'):
         table_of_contents(depth=4)
     with pytest.raises(ValueError, match='override'):
         check(paper().replace('Body.', r'\setcounter{secnumdepth}{0}'))
 
 
-def test_v2_refuses_undated_archive_header_and_modified_metadata():
+def test_current_profile_refuses_undated_archive_header_and_modified_metadata():
     old = summary_header('B', layout_version=1)
     with pytest.raises(ValueError, match='summary-page'):
         check(paper().replace(summary_header('B', edition=2025), old))
@@ -481,5 +481,16 @@ def test_frozen_toll_generator_preserves_the_complete_archived_source(tmp_path):
 
 def test_historical_editions_are_explicit_and_not_replaced_by_current_year():
     text = preamble('7391857', 'A historical paper') + summary_header('C', edition=1999) + r'Body.\end{document}'
-    assert check(text)['profile'] == 'praxis-mcm-v2'
+    assert check(text)['profile'] == 'praxis-mcm-v3'
     assert r'\textbf{1999\\MCM/ICM' in text
+
+
+def test_v2_archive_retains_its_actual_style_and_can_still_be_checked():
+    import hashlib
+    frozen = ROOT / 'templates/mcm-style-v2.tex'
+    assert hashlib.sha256(frozen.read_bytes()).hexdigest() == 'e8891a11120102f6f732f9c6d57b542a73eb9b38c06aef8c1eb08d0153725b68'
+    old = (preamble('7391857', 'Archived title', layout_version=2)
+           + summary_header('B', edition=2025, layout_version=2)
+           + r'Body.\end{document}')
+    assert check(old)['profile'] == 'praxis-mcm-v2'
+    assert 'letterpaper' in old and 'a4paper' not in old

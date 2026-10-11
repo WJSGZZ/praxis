@@ -52,14 +52,25 @@ def test_bar_chart_has_one_series_per_bar_with_labels():
 
 
 @pytest.mark.skipif(not (shutil.which("xelatex") or (Path.home() / ".local/bin/tectonic").exists()), reason="no TeX engine")
-def test_figure_compiles(tmp_path):
-    ax = texplot.Axis("x", "y", xmin=0, xmax=2, ymin=0, ymax=2).line([0, 1, 2], [0, 1, 0], label="a").band([0, 1, 2], [0, .5, 0], [1, 1.5, 1]).hline(1)
-    doc = "\\documentclass{article}\n" + texplot.PREAMBLE + "\\begin{document}\n" + texplot.figure_env(ax.tex(), "Test", label="fig:t") + "\\end{document}\n"
+@pytest.mark.parametrize("font_profile", [None, "mcm-v3"])
+def test_figure_compiles(tmp_path, font_profile):
+    ax = texplot.Axis("Time", "Density", xmin=0, xmax=2, ymin=0, ymax=2, font_profile=font_profile).line([0, 1, 2], [0, 1, 0], label="series").band([0, 1, 2], [0, .5, 0], [1, 1.5, 1]).hline(1).note(1, 1, "note").label(2, 0, "direct")
+    doc = "\\documentclass[12pt]{article}\n" + texplot.PREAMBLE + "\\begin{document}\n" + texplot.figure_env(ax.tex(), "Test", label="fig:t") + "\\end{document}\n"
     (tmp_path / "t.tex").write_text(doc)
     engine = [shutil.which("xelatex"), "-interaction=nonstopmode", "-halt-on-error"] if shutil.which("xelatex") else [str(Path.home() / ".local/bin/tectonic")]
     res = subprocess.run(engine + ["t.tex"], cwd=tmp_path, capture_output=True, text=True)
     assert res.returncode == 0, res.stdout[-800:] + res.stderr[-800:]
     assert (tmp_path / "t.pdf").exists()
+    if font_profile == 'mcm-v3':
+        from pypdf import PdfReader
+        measured = {}
+        def visitor(text, cm, tm, font, size):
+            for token in ('Time', 'Density', 'series', 'note', 'direct'):
+                if token in text:
+                    measured[token] = size * (cm[0] ** 2 + cm[1] ** 2) ** .5 * 72.27 / 72
+        PdfReader(tmp_path / 't.pdf').pages[0].extract_text(visitor_text=visitor)
+        assert set(measured) == {'Time', 'Density', 'series', 'note', 'direct'}
+        assert all(value == pytest.approx(12, abs=.02) for value in measured.values())
 
 
 def test_signed_bars_and_text_escaping():

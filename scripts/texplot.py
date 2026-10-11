@@ -10,6 +10,7 @@ from __future__ import annotations
 import warnings
 
 import math
+import re
 from typing import Iterable, Sequence
 
 PREAMBLE = r"""\usepackage{pgfplots}
@@ -29,6 +30,19 @@ PREAMBLE = r"""\usepackage{pgfplots}
 )
 
 DASH = {"solid": "", "dashed": "dashed", "dotted": "dotted", "dashdot": "dash pattern=on 4pt off 2pt on 1pt off 2pt"}
+
+
+def _font_profile(tex: str, profile: str | None) -> str:
+    """Select ordinary plot-text roles without changing archived defaults or data.
+
+    Final imported-figure scaling must still be checked in the paper PDF.
+    """
+    if profile is None:
+        return tex
+    if profile != 'mcm-v3':
+        raise ValueError('Unknown plot font profile')
+    return re.sub(r'font=\\(?:scriptsize|footnotesize|small)\b',
+                  lambda _: r'font=\normalsize', tex)
 
 
 def tex_text(s: str) -> str:
@@ -68,7 +82,9 @@ class Axis:
 
     def __init__(self, xlabel: str = "", ylabel: str = "", *, width: str = r"0.84\linewidth", height: str = "5.4cm",
                  xmin=None, xmax=None, ymin=None, ymax=None, legend: str | None = "above", legend_columns: int | None = None,
-                 extra: str = ""):
+                 extra: str = "", font_profile: str | None = None):
+        _font_profile('', font_profile)
+        self.font_profile = font_profile
         if (not xlabel or not ylabel) and "label" not in extra:
             warnings.warn("Axis without an x or y label: every axis needs a quantity and its unit, e.g. 'Time (s)'", stacklevel=2)
         self.opts = [f"width={width}", f"height={height}", "scale only axis", f"xlabel={{{xlabel}}}", f"ylabel={{{ylabel}}}",
@@ -151,7 +167,7 @@ class Axis:
         return self
 
     def tex(self) -> str:
-        return "\\begin{axis}[%s]\n%s\n\\end{axis}" % (",\n ".join(self.opts), "\n".join(self.body))
+        return _font_profile("\\begin{axis}[%s]\n%s\n\\end{axis}" % (",\n ".join(self.opts), "\n".join(self.body)), self.font_profile)
 
 
 def figure_env(axes_tex: str, caption: str, *, placement: str = "htbp", label: str | None = None) -> str:
@@ -161,7 +177,8 @@ def figure_env(axes_tex: str, caption: str, *, placement: str = "htbp", label: s
 
 
 def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[str], xlabel: str, *, width=r"0.66\linewidth",
-               height="5.4cm", xmax: float | None = None, xmin: float | None = None, unit: str = "L", decimals: int = 2) -> str:
+               height="5.4cm", xmax: float | None = None, xmin: float | None = None, unit: str = "L", decimals: int = 2,
+               font_profile: str | None = None) -> str:
     """Horizontal bar chart with value labels; labels are listed top to bottom. Negative values are drawn to the left of zero (tornado style)."""
     labels, values, colors = list(labels), list(values), list(colors)
     n = len(labels)
@@ -196,12 +213,13 @@ def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[
                     r"point meta=explicit symbolic] coordinates {(%s,%d) [%.*f\,%s]};" % (c, side, _fmt(v), i, decimals, v, unit))
     if bottom < 0:
         body.append(r"\draw[gray!70] ({axis cs:0,0}|-{rel axis cs:0,0}) -- ({axis cs:0,0}|-{rel axis cs:0,1});")
-    return "\\begin{axis}[%s]\n%s\n\\end{axis}" % (",\n ".join(opts), "\n".join(body))
+    return _font_profile("\\begin{axis}[%s]\n%s\n\\end{axis}" % (",\n ".join(opts), "\n".join(body)), font_profile)
 
 
 def heatmap_panels(cubes: Sequence[Sequence[Sequence[float]]], titles: Sequence[str], xlabel: str, ylabel: str,
                    extent: tuple[float, float], vmin: float, vmax: float, *, cbar_label: str = "",
-                   xticks: Sequence[float] = (), yticks: Sequence[float] = ()) -> str:
+                   xticks: Sequence[float] = (), yticks: Sequence[float] = (),
+                   font_profile: str | None = None) -> str:
     """Several matrix plots in one row sharing a colour scale. Each cube[i][j] is the value at x-index i, y-index j."""
     cubes = [[list(row) for row in cube] for cube in cubes]
     titles = list(titles)
@@ -240,10 +258,10 @@ def heatmap_panels(cubes: Sequence[Sequence[Sequence[float]]], titles: Sequence[
                r"xticklabel style={/pgf/number format/fixed,/pgf/number format/precision=1}}]" % (mid, _fmt(vmin), _fmt(vmax), cbar_label))
     out.append(r"\addplot[draw=none] coordinates {(0,0)};")
     out.append(r"\end{axis}")
-    return "\n".join(out)
+    return _font_profile("\n".join(out), font_profile)
 
 
-def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.22cm") -> str:
+def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.22cm", font_profile: str | None = None) -> str:
     """Left-to-right roadmap of boxes joined by arrows (TikZ)."""
     nodes = []
     for i, text in enumerate(boxes):
@@ -251,4 +269,4 @@ def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.22cm") -> str:
         nodes.append(r"\node[draw=teal,line width=0.7pt,rounded corners=2pt,align=center,text width=%s,minimum height=1.35cm,font=\footnotesize,%s] (n%d) {%s};" % (
             node_width, pos, i, text.replace("\n", r"\\ ")))
     arrows = [r"\draw[-{Stealth[length=2.2mm]},clay,line width=0.8pt] (n%d) -- (n%d);" % (i, i + 1) for i in range(len(boxes) - 1)]
-    return "\n".join(nodes + arrows)
+    return _font_profile("\n".join(nodes + arrows), font_profile)

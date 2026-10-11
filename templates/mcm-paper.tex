@@ -2,6 +2,8 @@
 % Reuse this layout for MCM reports; metadata/content may change, style overrides must be reviewed.
 % Run: uv run --locked python -m scripts.paper_template main.tex
 % Canonical build: uv run --locked python -m scripts.paper_template main.tex --contest mcm --compile --output-directory outputs/build-001
+% MCM v3: A4 project default; body, captions, bibliography and ordinary plot text are 12pt.
+% Titles and mathematical subscripts retain distinct roles; measure final imported figure text.
 % Layout profile is a project convention, not the official rules for any year.
 % Example edition 2027: replace with the actual problem edition, not the current date.
 % Before formal submission verify the selected edition's Summary Sheet, page limit,
@@ -9,9 +11,9 @@
 % Check layout: uv run --locked python -m scripts.paper_template main.tex
 \newcommand{\PraxisTeam}{0000000}
 \newcommand{\PraxisTitle}{Title: state the answer, not the topic}
-% BEGIN PRAXIS MCM STYLE v2
-% Praxis MCM house style v2. Layout source; assemble with scripts.paper_template.
-\documentclass[12pt,letterpaper]{article}
+% BEGIN PRAXIS MCM STYLE v3
+% Praxis MCM house style v3. Layout source; assemble with scripts.paper_template.
+\documentclass[12pt,a4paper]{article}
 \usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{newtxtext,newtxmath}
@@ -34,6 +36,11 @@
 \definecolor{clay}{HTML}{9E6440}
 \definecolor{slate}{HTML}{5D696E}
 \definecolor{sand}{HTML}{AAA69B}
+% A4 is the project default; the applicable edition may also permit US Letter.
+% Ordinary plot labels, ticks, legends and panel titles use the body size.
+% A generator's local size options need an explicit matching font profile;
+% imported standalone figures also require final-size PDF inspection.
+\pgfplotsset{tick label style={font=\normalsize},label style={font=\normalsize},legend style={font=\normalsize},title style={font=\normalsize}}
 \linespread{1.12}
 \setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
 \titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
@@ -43,7 +50,7 @@
 \titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
 \titlespacing*{\subsubsection}{0pt}{10pt plus 2pt}{5pt}
 \setcounter{secnumdepth}{3}
-\captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
+\captionsetup{font=normalsize,labelfont=bf,labelsep=period,justification=centering}
 \captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
 \setcounter{tocdepth}{2}
 \setlength{\emergencystretch}{3em}
@@ -51,7 +58,7 @@
 \fancyhead[L]{Team \# \PraxisTeam}\fancyhead[R]{Page \thepage{} of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.4pt}
 \makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
-\AtBeginEnvironment{thebibliography}{\small}
+\AtBeginEnvironment{thebibliography}{\normalsize}
 % Two TOC levels by default; a shared component can select three when useful.
 \titlecontents{section}[1.8em]{\addvspace{5pt}\bfseries}{\contentslabel{1.8em}}{}{\titlerule*[.6pc]{.}\contentspage}
 \titlecontents{subsection}[4.1em]{}{\contentslabel{2.3em}}{}{\titlerule*[.6pc]{.}\contentspage}
@@ -74,7 +81,7 @@ Each requirement of the problem statement maps to a result, a figure and a secti
 
 \section{Assumptions, data and parameters}
 Every assumption has a reason; every parameter has a source and a range.
-\begin{table}[htbp]\centering\small\caption{Parameters, sources and ranges}
+\begin{table}[htbp]\centering\caption{Parameters, sources and ranges}
 \begin{tabular}{llll}\toprule Symbol & Meaning & Value (range) & Source\\ \midrule $k$ & example & 1.0 (0.5--2) & [1]\\ \bottomrule\end{tabular}\end{table}
 
 \section{Model and results}
@@ -94,7 +101,7 @@ Compare with a simple baseline, perturb parameters and execution, and state what
 \section{Conclusions and recommendation}
 
 \section*{References}\addcontentsline{toc}{section}{References}
-\begingroup\small\setlength{\parindent}{0pt}\hangindent=1.5em
+\begingroup\normalsize\setlength{\parindent}{0pt}\hangindent=1.5em
 [1] Author. Title. Publisher, year. \url{https://example.org/}\par
 \endgroup
 % Assemble this full tail with scripts.paper_template.ai_report(body).

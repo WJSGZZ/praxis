@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 美赛共享v3默认A4，正文、图注、参考文献与普通图中文字用12pt。绘图API提供显式字体profile，独立图的完整边界与最终嵌入字号一并核验；旧v1/v2、历史评议和数值记录保留，原默认绘图输出不变。
+  The shared MCM v3 layout defaults to A4 with 12-point body text, captions, references and ordinary figure text. Plot generators select an explicit font profile, and imported figures are checked at their final displayed size. Archived v1/v2 layouts, review identities and numerical records remain intact; existing default plot output is preserved.
+
 - 当前浴缸案例的生成器、PDF和预览改用含原题年份的统一美赛首页；历史稿及其科学评阅绑定保留。未检出结论另核观测努力、检出概率与独立性，避免把零记录直接解释为不存在。
   The active bath example now uses the shared MCM summary header with its original contest year, and its PDF and previews are synchronized. Historical review identities remain intact. Absence claims check observation effort, detectability and dependence before interpreting zero detections.
 

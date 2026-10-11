@@ -181,7 +181,7 @@ def para(s,kind='body'):
     elif kind=='heading':
         if s=='Summary':tex.append(r'\begin{center}{\Large\bfseries Summary}\end{center}'+'\n')
         else:tex.append(r'\subsection*{'+tx(s)+'}\n')
-    elif kind=='ref':tex.append(r'\begingroup\small\setlength{\parindent}{0pt}\hangindent=1.5em '+tx(s,False)+r'\par\endgroup'+'\n')
+    elif kind=='ref':tex.append(r'\begingroup\normalsize\setlength{\parindent}{0pt}\hangindent=1.5em '+tx(s,False)+r'\par\endgroup'+'\n')
     else:tex.append(tx(s)+'\n\n')
 def page(title,hard=False):
     if hard:tex.append(r'\clearpage'+'\n')
@@ -224,7 +224,7 @@ def table(rows,widths=None,caption=None,label=None):
     if widths:cols='@{}'+''.join(r'>{\raggedright\arraybackslash}p{%.4f\dimexpr\linewidth-%d\tabcolsep\relax}'%(w/tot,2*(n-1)) for w in widths)+'@{}'
     else:cols='l'*n
     lines=[' & '.join(tx(c) for c in row) for row in rows]
-    tex.append(r'\begin{table}[htbp]\centering\small\caption{'+tx(caption,False)+'}'+r'\label{tab:'+label+'}'+'\n\\begin{tabular}{'+cols+'}\n\\toprule\n'+lines[0]+r' \\ \midrule'+'\n'+(r' \\ '+'\n').join(lines[1:])+r' \\ \bottomrule'+'\n\\end{tabular}\n\\end{table}\n')
+    tex.append(r'\begin{table}[htbp]\centering\normalsize\caption{'+tx(caption,False)+'}'+r'\label{tab:'+label+'}'+'\n\\begin{tabular}{'+cols+'}\n\\toprule\n'+lines[0]+r' \\ \midrule'+'\n'+(r' \\ '+'\n').join(lines[1:])+r' \\ \bottomrule'+'\n\\end{tabular}\n\\end{table}\n')
 def eq(s):
     global eqcount
     eqcount+=1;tex.append(r'\begin{equation}'+re.sub(r'\{\\rm ',r'{\\mathrm ',s)+r'\end{equation}'+'\n')
@@ -255,37 +255,41 @@ def compile_pdf(stem,title):
     compile_in_place(d/(stem+'.tex'), 'mcm')
     return d/(stem+'.pdf')
 
+def mcm_spatial_layout(axes):
+    """Keep twelve-point plot text while fitting the full three-panel figure."""
+    return axes.replace('width=4.1cm,height=2.6cm', 'width=3.8cm,height=2.6cm').replace('horizontal sep=0.9cm', 'horizontal sep=0.65cm').replace('yshift=-1.0cm', 'yshift=-1.25cm')
+
 # Figures are pgfplots/TikZ source built from the numerical record; fonts match the paper.
 FIG={}
 # Colour rules: blue = the quantity of interest, vermilion = the contrast (coldest cell, accepted-policy failures, constant-rate search), grey = bounds and context.
 t=z['t']/60;T=z['T'];mean=T@z['volume']/z['volume'].sum()
-ax=texplot.Axis('Time (min)','Temperature (°C)',height='5.0cm',xmin=0,xmax=30,ymin=38.85,ymax=p['ceiling']+.2)
+ax=texplot.Axis('Time (min)','Temperature (°C)',height='5.0cm',xmin=0,xmax=30,ymin=38.85,ymax=p['ceiling']+.2, font_profile='mcm-v3')
 Vn=model.view(model.network(p),T)
 ax.band(t,T.min(1),Vn.max(1),label='Spatial range').line(t,mean,label='Volume-weighted mean').line(t,T.min(1),color='accent',style='dashed',label='Coldest cell').hline(p['floor']).hline(p['ceiling'])
 FIG['temperature.png']=ax.tex().replace('°C','$^\\circ$C')
 labels=['Constant rate','Constant rate, fine grid','Optimized schedule','Perfect mixing','Energy bound'];values=[b['water_l'],r['mesh']['fine_policy']['water_l'],ctl['water_l'],a['mixed_optimum_l'],a['energy_lower_bound_l']]
-FIG['bounds.png']=texplot.hbar_chart(labels,values,['main','main','main','muted','muted'],'Added water over 30 min (L)',height='5.0cm',xmax=max(values)*1.3)
+FIG['bounds.png']=texplot.hbar_chart(labels,values,['main','main','main','muted','muted'],'Added water over 30 min (L)',height='5.0cm',xmax=max(values)*1.3, font_profile='mcm-v3')
 seg_min=ctl['segment_s']/60;edges=list(np.arange(len(ctl['flow_lpm'])+1)*seg_min)
 Yc=control.piecewise(p,model.network(p),ctl['flow_lpm'],5.);tc=np.linspace(0,30,len(Yc))
-a1=texplot.Axis('','Flow (L/min)',width='0.62\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend=None,extra='scale only axis,name=top,xticklabels={}')
+a1=texplot.Axis('','Flow (L/min)',width='0.62\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend=None,extra='scale only axis,name=top,xticklabels={}', font_profile='mcm-v3')
 a1.stairs(ctl['flow_lpm'],edges).line([0,30],[b['flow_lpm']]*2,color='muted',style='dashed')
 a1.label(30,ctl['flow_lpm'][-1]+0.0,'Optimized schedule',color='main').label(30,b['flow_lpm'],'Best constant rate',color='muted',dy='-6pt')
-a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.62\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend=None,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm')
+a2=texplot.Axis('Time (min)','Temp. ($^\\circ$C)',width='0.62\\linewidth',height='3.0cm',xmin=0,xmax=30,ymin=38.85,ymax=41.15,legend=None,extra='scale only axis,at={(top.south)},anchor=north,yshift=-0.35cm', font_profile='mcm-v3')
 Vc=model.view(model.network(p),Yc)
 a2.band(tc,Yc.min(1),Vc.max(1)).line(tc,Yc.min(1),color='accent',style='dashed').line(tc,Vc.max(1)).hline(p['floor']).hline(p['ceiling'])
 a2.label(25.5,float(np.interp(25.5,tc,Vc.max(1)))+0.1,'Hottest cell',color='main',anchor='south west',dx='0pt').label(8,float(np.interp(8,tc,Yc.min(1)))-0.03,'Coldest cell',color='accent',anchor='north',dx='0pt')
 FIG['control.png']=a1.tex()+'\n'+a2.tex()
 boxes=['Assumptions\nand anchors\n§2','Mixed benchmark\nand bound\n§3–4','Spatial network\nand solver\n§5–6','Rate, schedule,\nscenarios\n§7–9','Validation,\nranges, mesh\n§10–11','Conclusion,\nuser guide\n§12–13']
-FIG['roadmap.png']=texplot.flow_diagram(boxes,node_width='2.05cm')
+FIG['roadmap.png']=texplot.flow_diagram(boxes,node_width='2.05cm', font_profile='mcm-v3')
 rows_=lr['rows'];okr=[r_ for r_ in rows_ if r_['feasible']];bad=[r_ for r_ in rows_ if not r_['feasible']]
 top=max(r_['water_l'] for r_ in okr)*1.08
-ax=texplot.Axis('Surface coefficient (W/(m$^2$ K))','Added water (L)',height='5.0cm')
+ax=texplot.Axis('Surface coefficient (W/(m$^2$ K))','Added water (L)',height='5.0cm', font_profile='mcm-v3')
 ax.scatter([r_['inputs']['h_surface'] for r_ in okr],[r_['water_l'] for r_ in okr],label='Accepted policy')
 if bad:ax.scatter([r_['inputs']['h_surface'] for r_ in bad],[top]*len(bad),color='accent',mark='x',size=2.6,label='None accepted')
 ax.vline(p['h_surface'])
 FIG['ranges.png']=ax.tex()
 fr=E['frontier'];okf=[f_ for f_ in fr if f_['constant_l'] is not None]
-ax=texplot.Axis('Allowed temperature drop ($^\\circ$C)','Added water (L)',height='5.0cm',legend_columns=2)
+ax=texplot.Axis('Allowed temperature drop ($^\\circ$C)','Added water (L)',height='5.0cm',legend_columns=2, font_profile='mcm-v3')
 ax.line([f_['fall'] for f_ in fr],[f_['mixed_l'] for f_ in fr],label='Mixed optimum').line([f_['fall'] for f_ in fr],[f_['bound_l'] for f_ in fr],color='muted',style='dashed',width=0.9,label='Energy bound')
 ax.line([f_['fall'] for f_ in okf],[f_['constant_l'] for f_ in okf],color='accent',marks='*',label='Spatial constant rate')
 badf=[f_ for f_ in fr if f_['constant_l'] is None]
@@ -293,12 +297,13 @@ if badf:ax.scatter([f_['fall'] for f_ in badf],[0]*len(badf),color='accent',mark
 ax.vline(p['initial']-p['floor'])
 FIG['frontier.png']=ax.tex()
 cube=T[-1].reshape(tuple(r['grid']))
-FIG['spatial.png']=texplot.heatmap_panels([cube[:,:,k].tolist() for k in range(3)],['Bottom layer','Middle layer','Top layer'],'Length (m)','Width (m)',(p['L'],p['W']),float(T[-1].min()),float(T[-1].max()),cbar_label='Final cell-average temperature ($^\\circ$C)',xticks=[0,.75,1.5],yticks=[0,.325,.65])
+FIG['spatial.png']=texplot.heatmap_panels([cube[:,:,k].tolist() for k in range(3)],['Bottom layer','Middle layer','Top layer'],'Length (m)','Width (m)',(p['L'],p['W']),float(T[-1].min()),float(T[-1].max()),cbar_label='Final cell-average temperature ($^\\circ$C)',xticks=[0,.75,1.5],yticks=[0,.325,.65], font_profile='mcm-v3')
+FIG['spatial.png']=mcm_spatial_layout(FIG['spatial.png'])
 
 # Realized online policies: action timing and the retained finite ambiguity set.
-fa=texplot.Axis('', 'Flow (L/min)', width='0.64\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend_columns=3,extra='name=feedbacktop,xticklabels={}')
+fa=texplot.Axis('', 'Flow (L/min)', width='0.64\\linewidth',height='2.5cm',xmin=0,xmax=30,ymin=0,legend_columns=3,extra='name=feedbacktop,xticklabels={}', font_profile='mcm-v3')
 fa.stairs(FBZERO['flows'],list(range(31)),label='Zero noise').stairs(FBRANDOM['flows'],list(range(31)),color='accent',style='dashed',label='Random noise').stairs([x['baseline_flow_lpm'] for x in FBZERO['steps']],list(range(31)),color='muted',style='dotted',label='Backup')
-fb=texplot.Axis('Time (min)', 'Models retained',width='0.64\\linewidth',height='2.4cm',xmin=0,xmax=30,ymin=1,legend=None,extra='ymode=log,at={(feedbacktop.south)},anchor=north,yshift=-0.4cm')
+fb=texplot.Axis('Time (min)', 'Models retained',width='0.64\\linewidth',height='2.4cm',xmin=0,xmax=30,ymin=1,legend=None,extra='ymode=log,at={(feedbacktop.south)},anchor=north,yshift=-0.4cm', font_profile='mcm-v3')
 fb.line([x['time_s']/60 for x in FBZERO['steps']],[x['retained_models'] for x in FBZERO['steps']]).line([x['time_s']/60 for x in FBRANDOM['steps']],[x['retained_models'] for x in FBRANDOM['steps']],color='accent',style='dashed')
 FIG['feedback.png']=fa.tex()+'\n'+fb.tex()
 
@@ -412,7 +417,7 @@ rows.append([f'{ctl["segments"]} segments, accepted',f'{ctl["water_l"]:.2f}',f'{
 rows+=[['Perfect-mixing optimum',f'{a["mixed_optimum_l"]:.2f}','','',''],['Energy lower bound',f'{a["energy_lower_bound_l"]:.2f}','','','']]
 table(rows,[150,70,70,100,78])
 pseudo='''Input: network, limits, K, starting schedules\nfor each starting schedule x0:\n  minimize sum(x)*segment_time  over 0 <= x <= 3 L/min\n  subject to  min_i T_i(t) >= Tmin+reserve,\n              max_{i in Omega} T_i(t) <= Tmax,\n              spread over Omega <= span   (every 5 s)\nretain coarse candidates and buffered alternatives;\nreplay on three meshes with independent integration;\naccept only if continuous bounds meet all limits'''
-tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\small,framesep=4pt,xleftmargin=5pt,xrightmargin=5pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\par\\medskip\n')
+tex.append('\\noindent\\begin{minipage}{\\linewidth}\\begin{Verbatim}[frame=single,fontsize=\\normalsize,framesep=4pt,xleftmargin=5pt,xrightmargin=5pt]\n'+pseudo+'\n\\end{Verbatim}\n\\end{minipage}\\par\\medskip\n')
 
 figure('control.png',f'Figure 6. Buffered {K}-segment replenishment. Flow rates (top) and temperatures outside the inlet jet zone (bottom); dotted lines mark the limits.',height=176)
 para(f'The accepted {K}-segment policy is off for the first {lead*seg_min:.1f} minutes and last {trail*seg_min:.1f} minutes, with a peak flow of {max(flows):.2f} L/min. For consecutive {rv["segment_min"]:g}-minute intervals the rates, rounded to nine decimals, are {rv["flow_rates_text"]} L/min; the interval duration times their sum is {ctl["water_l"]:.6f} L. It adds {ctl["water_l"]:.2f} L, {save:.1f}% below the constant rate. Its {ctl["buffer_c"]:g}°C design margin sacrifices some water savings to protect the stated constraints. The remaining {ctl["water_l"]-a["energy_lower_bound_l"]:.2f} L gap to the energy bound is not an optimality certificate.')
@@ -619,7 +624,7 @@ names={'D':'D (m²/s)','Dz_ratio':'vertical/horizontal D ratio','h_surface':'sur
 items=list(sc.items())
 for part in range(1):
  if part==0:
-  page('Appendix A. Scenario definitions',True)
+  page('Appendix A. Scenario definitions')
   para('Each row changes only the listed baseline inputs. All unspecified inputs remain as stated in Section 2; geometry and conductance are then rebuilt. The equal-volume aspect-ratio cases retain the envelope volume of 0.22425 m³. Widths s describe a smooth displacement distribution, not measured anatomical semiaxes.')
   para('Accepted candidates are independently replayed on their scenario network at intervals of no more than five seconds. These scenario checks are sampled checks; continuous-time envelopes are reported for the baseline constant rate and the selected scheduled policy; the latter uses additional interval refinement when necessary. “None accepted” refers to the documented finite search and is not an infeasibility theorem.')
  rows=[['Scenario','Changed input(s)']]
@@ -629,18 +634,21 @@ for part in range(1):
  table(rows,[144,324])
 
 page('Report on Use of AI',True)
-para('Tool, task and scope','heading')
+# Disclosure paragraphs use a local list's natural paragraph separation, without changing body font or page margins.
+tex.append('\\begin{list}{}{\\setlength{\\leftmargin}{0pt}\\setlength{\\rightmargin}{0pt}\\setlength{\\parsep}{2.5pt}\\setlength{\\topsep}{0pt}\\setlength{\\itemsep}{0pt}}\\item[]\n')
+tex.append('\\textbf{Tool, task and scope}\\par\n')
 para('Codex (GPT-6-based) and Claude Sonnet 5.5 via Claude Code assisted modeling, computation, validation, figures and writing, 7–10 October 2026; exact builds are unverified. Post-seal learning used Outstanding papers 44845/54164 and COMAP commentary, without copying data/figures. This is not unseen-problem testing. AI sub-agents independently checked RHS/probes.')
-para('Outputs, corrections and verification','heading')
+tex.append('\\textbf{Outputs, corrections and verification}\\par\n')
 para('Independent integration rejected 19.35 L and accepted a buffered schedule; archived corrections and baseline optimization remain. Sources [1]–[4]/[6] and [10] Theorems 3/6 were read; [5]/[8] relations were checked indirectly. AI produced derivations/report from actual results.')
 para(f'AI compared schedules, trials, structures and failures: {FAIR["objects"]} common-reserve model-grid objects, {FAIR["independent_cases"]} independent extremal replays. Two reserve failures were repaired and preserved. Diffusion/inlet checks test discretization; producer versions and synthetic observation identities remain.')
 para('Finite-bank feedback gave nine complete services/18 replays; two shifts stopped at 660 s. Six external-bank truths gave two services/four refusals and ten envelope replays. Stored empty intervals were audited without inventing missing predictions. Exact-remainder bounds qualified narrow fixed-action boxes with 102 independent replays; the failed loose bound remains.')
 para('An exposed 54-point static catalog reconstructs four refusal histories from known initial states. A prequalified 60 s zero-flow bridge precedes constant tails; 57 three-grid sampled replays passed. The 0.70 L/min failure, increased costs and reduced reserves remain. Controlled tests/frozen-candidate replay verify late-result rejection and timeout preservation; revised code is not attributed to historic runs.')
 para('AI checked arbitrary-control certificates; the original windowed proof remains. Original 288-cell relaxations and three feedback failures give no verdict. Fixed-region certificates cover three networks. Signed functionals certify time limits and continuous parameter exclusion; variational checks test local timing; pulse qualification permits 780 s, while an archived-flux IEEE64 enclosure excludes waits ≥790 s at D=0.003; common-loss comparison extends both statements. Constant exclusion retains 125 centers/six analytic tests; a diagnostic passed 18 sampled paths. Feasible-control LP timed out; independent moments satisfy its matrix. No PDE or empirical claim follows.')
 para('AI derived/tested an axial closure with continuum solutions, independent flux integration and unchanged controls; outlet diagnostics revised the short-circuit interpretation. Source [11] was read; COMSOL was not run. This is a counterfactual, not an experiment.')
-para('Record limitations','heading')
+tex.append('\\textbf{Record limitations}\\par\n')
 para('Task/tool/scope records, code and numerical receipts remain; the complete transcript is unavailable. Human verification, live control, experiments and feedback-wide certification were not performed.')
 
+tex.append('\\end{list}\n')
 TOTAL=SEC[0]
 pdf=compile_pdf('paper','A Hot Bath')
 (ROOT/'submission').mkdir(exist_ok=True)

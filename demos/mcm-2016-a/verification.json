@@ -3,48 +3,48 @@
  "checked_on": "2026-10-11",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-    "sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
-    "bytes": 176906,
-    "pages_total": 26,
-    "solution_pages": 25,
-    "ai_pages": 1,
-    "text_bounds_checked": true,
-    "pages_rendered_and_visually_reviewed": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      18,
-      19,
-      20,
-      21,
-      22,
-      23,
-      24,
-      25,
-      26
-    ],
-    "visual_review_note": "All26 canonical pages rendered and contact-reviewed; pages1/2/7/26 additionally viewed at native size. Pages2–26 pixel- and text-identical to previous public fb622d; only summary metadata changed. Zero outside-page character boxes; canonical and desktop-native compile succeeded.",
-    "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-    "md5": "f2bf513e0cb10a96140893335faf0e52",
-    "generator_sha256": "b020ccc5c66ccf5fc402bff2c499bea22972b4d61780efc9c37096a9c97025ba",
-    "generator_source": "reproduce/build_report.py",
-    "generator_source_note": "Active generator uses default shared v2. This layout-only rebuild executed its three affected layout statements and reused the current frozen scientific/AI/figure TeX body byte-for-byte; full generator/model/plot routines were not rerun.",
-    "tex_sha256": "546d27dc535fb8f1a0e517ab6aca039c590a0dc7ad7d4e34b884a149a12f280b"
-  },
+  "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+  "bytes": 176362,
+  "pages_total": 26,
+  "solution_pages": 25,
+  "ai_pages": 1,
+  "text_bounds_checked": true,
+  "pages_rendered_and_visually_reviewed": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26
+  ],
+  "visual_review_note": "All26 canonical A4 pages rendered and contact-reviewed; table/page4, plot/page12 and AI/page26 viewed at full resolution. All5 plots independently rendered and examined. Actual ordinary table, plot, caption and reference text12TeXpt; zero outside-page glyphs. AI begins a new page26.",
+  "typesetting": "Tectonic0.17.0 pinnedv33; actual latest source also desktop-native compile success.",
+  "md5": "fd9697fe52d39587d063224d68d5114c",
+  "generator_sha256": "45fad1e200d51f907ae09f03be25498af140bc0c92b2e5e8e129e18cb1792e81",
+  "generator_source": "reproduce/build_report.py",
+  "generator_source_note": "Active shared-v3 generator. Affected layout components executed against frozen TeX/plot arrays; full generator and model solvers not rerun. Explicit source/AST and23array-block preservation verified.",
+  "tex_sha256": "01bc8dbab7121919a3b65e82db1cf75af8125ebb4801c32f057018809bd99432"
+ },
  "model_checks": {
   "total": 17,
   "passed": 17,
@@ -92,17 +92,17 @@
   "paper.pdf"
  ],
  "template_review": {
-    "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
-    "checked_on": "2026-10-11",
-    "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
-    "year_handling": "Original problem edition 2016 is explicit in the shared v2 summary header.",
-    "numbering": "Shared v2 summary metadata with problem A, original year 2016 and team7391856; no running summary-page header. Contents/body retain continuous Team/Page headers; no page counter reset.",
-    "not_identical_to_official_tex": true,
-    "team_control_number": "7391856",
-    "example_only": true,
-    "layout_profile": "praxis-mcm-v2",
-    "current_scope": "House layout migration only; does not certify every historical2016 submission rule."
-  },
+  "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
+  "checked_on": "2026-10-11",
+  "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
+  "year_handling": "Original problem2016 retained in shared-v3 header.",
+  "numbering": "Shared-v3 original2016 metadata/team7391856; continuous body Team/Page headers; AI independent page26.",
+  "not_identical_to_official_tex": true,
+  "team_control_number": "7391856",
+  "example_only": true,
+  "layout_profile": "praxis-mcm-v3",
+  "current_scope": "House layout/font migration; current mechanical25-counted-page gate passes, without claiming historical2016 rule certification."
+ },
  "publication_scope": "Curated historical case; report, reproduction sources and presentation assets only",
  "extended_analysis": {
   "script": "reproduce/run_extended.py",
@@ -1620,10 +1620,11 @@
   ]
  },
  "public_paper": {
-    "path": "paper.pdf",
-    "sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
-    "byte_identical_to": "deliverables/paper.pdf"
-  },
+  "path": "paper.pdf",
+  "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+  "byte_identical_to": "deliverables/paper.pdf",
+  "bytes": 176362
+ },
  "caption_naming_revision": {
   "previous_pdf": {
    "sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
@@ -2573,149 +2574,214 @@
   "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
   "scope": "Public archive naming only; PDF bytes, scientific results, team number and award assessment are unchanged. Historical revision records retain their recorded locations. Actual contest submission naming follows the applicable edition."
  },
-  "frontmatter_revision": {
-    "date": "2026-10-11",
-    "scope": "Pure shared-layout inheritance, current public reading/delivery copy only. Frozen research archives and old receipts unchanged.",
-    "previous_current_pdf": {
-      "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
-      "bytes": 176974,
-      "pages_total": 26,
-      "solution_pages": 25,
-      "ai_pages": 1,
-      "text_bounds_checked": true,
-      "pages_rendered_and_visually_reviewed": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26
-      ],
-      "visual_review_note": "Current26 pages rendered and overviewed; full1040-line text reread, root actual changed1/2/16–24 and reviewer1/2/8/10/11/12/16–24 including five scientific figures. Zero outside-page characters; pinned build and native source compiler succeeded. Numeric archives and complete FIG block unchanged.",
-      "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
-      "md5": "0f2dfb86055001f1fcaac8e1804355cd",
-      "generator_sha256": "7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef",
-      "generator_source": "reproduce/reference/report-generator-fb622d.py",
-      "generator_source_note": "Retained actual source of the sealed PDF; the active entry now selects frozen layout v1 explicitly.",
-      "tex_sha256": "1ca01e46b90814757d02ec9d6464ee132d2645986a3168625b0f7293011c7f92"
+ "frontmatter_revision": {
+  "date": "2026-10-11",
+  "scope": "Pure shared-layout inheritance, current public reading/delivery copy only. Frozen research archives and old receipts unchanged.",
+  "previous_current_pdf": {
+   "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+   "bytes": 176974,
+   "pages_total": 26,
+   "solution_pages": 25,
+   "ai_pages": 1,
+   "text_bounds_checked": true,
+   "pages_rendered_and_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "visual_review_note": "Current26 pages rendered and overviewed; full1040-line text reread, root actual changed1/2/16–24 and reviewer1/2/8/10/11/12/16–24 including five scientific figures. Zero outside-page characters; pinned build and native source compiler succeeded. Numeric archives and complete FIG block unchanged.",
+   "typesetting": "Tectonic 0.17.0 with pinned v33 bundle; desktop native source compile also succeeded",
+   "md5": "0f2dfb86055001f1fcaac8e1804355cd",
+   "generator_sha256": "7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef",
+   "generator_source": "reproduce/reference/report-generator-fb622d.py",
+   "generator_source_note": "Retained actual source of the sealed PDF; the active entry now selects frozen layout v1 explicitly.",
+   "tex_sha256": "1ca01e46b90814757d02ec9d6464ee132d2645986a3168625b0f7293011c7f92"
+  },
+  "previous_template_review": {
+   "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
+   "checked_on": "2026-10-09",
+   "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
+   "year_handling": "Year omitted for historical demo: official current sample comment says 2027 but visible heading says 2026",
+   "numbering": "Summary page: team once in the official three-column structure, Page 1 of total integrated in the centre column, no duplicate running header. Contents/body keep Team/Page running headers and continuous numbering. This reconciles current prose requirements with the official sample empty summary header; it does not copy the sample counter reset.",
+   "not_identical_to_official_tex": true,
+   "team_control_number": "7391856",
+   "example_only": true
+  },
+  "current_pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
+  "current_generator_sha256": "b020ccc5c66ccf5fc402bff2c499bea22972b4d61780efc9c37096a9c97025ba",
+  "canonical_build": {
+   "runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+   },
+   "layout": {
+    "profile": "praxis-mcm-v2",
+    "style_sha256": "03b0dcbfab6ae05303884d371a17597179807e1317bba0c9f3015dbec378a63c"
+   },
+   "source_name": "paper.tex",
+   "tex_sha256": "546d27dc535fb8f1a0e517ab6aca039c590a0dc7ad7d4e34b884a149a12f280b",
+   "pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
+   "visual_review_required": true
+  },
+  "native_compiler": "success",
+  "affected_generator_components_executed": 3,
+  "full_generator_run": false,
+  "new_optimization": false,
+  "numerical_rerun": false,
+  "frozen_scientific_ai_and_figure_body_byte_identical": true,
+  "frozen_body_sha256": "b6bff697f0d7991b3ba9b2d8910f4b2256f3230df6b5d624004f26d4c47cc409",
+  "figure_generator_block_unchanged": true,
+  "figures": 5,
+  "font_inventory_unchanged": true,
+  "pages": 26,
+  "solution_pages": 25,
+  "ai_pages": 1,
+  "ai_starts_new_page": true,
+  "changed_text_pages": [
+   1
+  ],
+  "changed_pixel_pages": [
+   1
+  ],
+  "all_pages_rendered_and_contact_reviewed": true,
+  "native_size_pages_reviewed": [
+   1,
+   2,
+   7,
+   26
+  ],
+  "outside_page_character_boxes": [],
+  "format_gate": {
+   "contest": "mcm",
+   "errors": [],
+   "warnings": [],
+   "facts": {
+    "total_pages": 26,
+    "counted_pages": 25,
+    "ai_report_from_page": 26,
+    "ai_report_heading_on_page": 26,
+    "ai_report_starts_new_page": true,
+    "summary_page_marks": "official-style metadata; running page header omitted",
+    "team_number": "7391856",
+    "has_table_of_contents": true,
+    "body_font_pt": 12.0
+   },
+   "passed": true,
+   "note": "Mechanical rules only; compare with the current official documents. Font sizes and the page number line are read from the PDF text and can be misjudged."
+  },
+  "previews": {
+   "pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
+   "scale": 1.6,
+   "previews": {
+    "report-summary.png": {
+     "page": 1,
+     "sha256": "c3a947332d1633cfe996cfb1cd90a0bcb09587c1927e7fea2b339833206b6c49"
     },
-    "previous_template_review": {
-      "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
-      "checked_on": "2026-10-09",
-      "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
-      "year_handling": "Year omitted for historical demo: official current sample comment says 2027 but visible heading says 2026",
-      "numbering": "Summary page: team once in the official three-column structure, Page 1 of total integrated in the centre column, no duplicate running header. Contents/body keep Team/Page running headers and continuous numbering. This reconciles current prose requirements with the official sample empty summary header; it does not copy the sample counter reset.",
-      "not_identical_to_official_tex": true,
-      "team_control_number": "7391856",
-      "example_only": true
-    },
-    "current_pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
-    "current_generator_sha256": "b020ccc5c66ccf5fc402bff2c499bea22972b4d61780efc9c37096a9c97025ba",
-    "canonical_build": {
-      "runtime": {
-        "profile": "praxis-typesetting-v1",
-        "compiler": "Tectonic 0.17.0",
-        "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
-        "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
-        "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
-      },
-      "layout": {
-        "profile": "praxis-mcm-v2",
-        "style_sha256": "03b0dcbfab6ae05303884d371a17597179807e1317bba0c9f3015dbec378a63c"
-      },
-      "source_name": "paper.tex",
-      "tex_sha256": "546d27dc535fb8f1a0e517ab6aca039c590a0dc7ad7d4e34b884a149a12f280b",
-      "pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
-      "visual_review_required": true
-    },
-    "native_compiler": "success",
-    "affected_generator_components_executed": 3,
-    "full_generator_run": false,
-    "new_optimization": false,
-    "numerical_rerun": false,
-    "frozen_scientific_ai_and_figure_body_byte_identical": true,
-    "frozen_body_sha256": "b6bff697f0d7991b3ba9b2d8910f4b2256f3230df6b5d624004f26d4c47cc409",
-    "figure_generator_block_unchanged": true,
-    "figures": 5,
-    "font_inventory_unchanged": true,
-    "pages": 26,
-    "solution_pages": 25,
-    "ai_pages": 1,
-    "ai_starts_new_page": true,
-    "changed_text_pages": [
-      1
-    ],
-    "changed_pixel_pages": [
-      1
-    ],
-    "all_pages_rendered_and_contact_reviewed": true,
-    "native_size_pages_reviewed": [
-      1,
-      2,
-      7,
-      26
-    ],
-    "outside_page_character_boxes": [],
-    "format_gate": {
-      "contest": "mcm",
-      "errors": [],
-      "warnings": [],
-      "facts": {
-        "total_pages": 26,
-        "counted_pages": 25,
-        "ai_report_from_page": 26,
-        "ai_report_heading_on_page": 26,
-        "ai_report_starts_new_page": true,
-        "summary_page_marks": "official-style metadata; running page header omitted",
-        "team_number": "7391856",
-        "has_table_of_contents": true,
-        "body_font_pt": 12.0
-      },
-      "passed": true,
-      "note": "Mechanical rules only; compare with the current official documents. Font sizes and the page number line are read from the PDF text and can be misjudged."
-    },
-    "previews": {
-      "pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
-      "scale": 1.6,
-      "previews": {
-        "report-summary.png": {
-          "page": 1,
-          "sha256": "c3a947332d1633cfe996cfb1cd90a0bcb09587c1927e7fea2b339833206b6c49"
-        },
-        "report-proof.png": {
-          "page": 7,
-          "sha256": "ead45318b412c66e4ba1451261b7a225e0fb29b87765a1a75136ce650f551430"
-        }
-      }
-    },
-    "scientific_review_inheritance": {
-      "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
-      "current_pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
-      "basis": "Exact scientific/AI/figure source preservation and pixel/text identity of pages2–26. Summary prose is unchanged; only metadata changed.",
-      "new_scientific_review": false,
-      "new_award_assessment": false,
-      "nonblind_uncalibrated_review_status_retained": true
-    },
-    "historical_reproduce_pdf_not_rebound": "Old local reproduce/paper and submission PDFs retain their4ad086 compiler build and old source/receipts; current public copy is bound by canonical_build above."
+    "report-proof.png": {
+     "page": 7,
+     "sha256": "ead45318b412c66e4ba1451261b7a225e0fb29b87765a1a75136ce650f551430"
+    }
+   }
+  },
+  "scientific_review_inheritance": {
+   "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+   "current_pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
+   "basis": "Exact scientific/AI/figure source preservation and pixel/text identity of pages2–26. Summary prose is unchanged; only metadata changed.",
+   "new_scientific_review": false,
+   "new_award_assessment": false,
+   "nonblind_uncalibrated_review_status_retained": true
+  },
+  "historical_reproduce_pdf_not_rebound": "Old local reproduce/paper and submission PDFs retain their4ad086 compiler build and old source/receipts; current public copy is bound by canonical_build above."
+ },
+ "font_layout_revision": {
+  "schema": 1,
+  "change": "SharedMCMv3 A4 and actual12TeXpt ordinary text: figures, tables, captions, references. No scientific or AI prose/data changes.",
+  "previous_pdf_sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
+  "current_pdf_sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+  "previous_layout_profile": "praxis-mcm-v2",
+  "current_layout_profile": "praxis-mcm-v3",
+  "previous_generator_sha256": "b020ccc5c66ccf5fc402bff2c499bea22972b4d61780efc9c37096a9c97025ba",
+  "historical_generator": "reproduce/reference/report-generator-79487a.py",
+  "current_generator_sha256": "45fad1e200d51f907ae09f03be25498af140bc0c92b2e5e8e129e18cb1792e81",
+  "current_tex_sha256": "01bc8dbab7121919a3b65e82db1cf75af8125ebb4801c32f057018809bd99432",
+  "shared_style_sha256": "955111ba2169ee2514af112c66048ebb21403511445853811f6c213e282bda1d",
+  "actual_pages": {
+   "total": 26,
+   "counted_solution": 25,
+   "ai": 1,
+   "ai_new_page": 26
+  },
+  "science_and_AI_source_preserved_after_explicit_layout_normalization": true,
+  "all23_plotted_array_blocks_samebyte": true,
+  "full_generator_or_model_recomputed": false,
+  "font_roles": {
+   "ordinary": "12TeXpt; actual11.95517PDFpt",
+   "code": "one Verbatim algorithm also12TeXpt",
+   "intrinsic_math": "superscripts, subscripts and degree glyphs smaller as mathematical typesetting"
+  },
+  "figures_complete_widths_pdf_pt": [
+   419.5842092154421,
+   439.7312677459527,
+   430.13966625155666,
+   426.74305354919056,
+   342.85912826899136
+  ],
+  "allowed_width_pdf_pt": 451.276,
+  "pagination_repairs": "Appendix uses natural pagination; AI uses a breakable list with2.5pt paragraph separation and three12pt bold paragraph labels. No negative space, no font shrinking or margin change.",
+  "previews": {
+   "report-summary.png": {
+    "page": 1,
+    "sha256": "ff146e1193c7c3ee93876546858816216a3da5b2d1de93d94d65f8ff17ea044f"
+   },
+   "report-proof.png": {
+    "page": 7,
+    "sha256": "305afbb161731db638ebfede1c8f556d4b879a96eaaa867d9c43c03ed06e7935"
+   }
+  },
+  "assessment_inheritance": {
+   "original_scientific_review_pdf_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+   "v2_frontmatter_receipt_retained": true,
+   "chain": "original scientific review -> unchanged science in v2 -> verified typography-only v3",
+   "new_scientific_or_award_review": false,
+   "limits": "Nonblind, uncalibrated historical reference opinion remains bound to its reviewed version."
+  },
+  "previous_current_pdf": {
+   "sha256": "79487a2552b3bcfafccf061872789f84c3e9c9bd93e620bc149a518f28cc39e8",
+   "generator_source": "reproduce/reference/report-generator-79487a.py",
+   "generator_sha256": "b020ccc5c66ccf5fc402bff2c499bea22972b4d61780efc9c37096a9c97025ba"
+  },
+  "scientific_review_inheritance": {
+   "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+   "current_pdf_sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+   "new_scientific_review": false,
+   "new_award_assessment": false,
+   "scope": "Both exact archived-generator comparisons and actual unchanged scientific/AI payload checks; original review remains bound to its original version."
   }
+ }
 }

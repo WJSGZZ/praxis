@@ -210,28 +210,75 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
         record = meta['current_award_assessment']
         current_sha = hashlib.sha256((demo / 'deliverables' / filename).read_bytes()).hexdigest()
         if record['version_sha256'] != current_sha:
-            revision = meta['frontmatter_revision']
-            inheritance = revision['scientific_review_inheritance']
-            previous = revision['previous_current_pdf']
-            assert inheritance['review_version_sha256'] == previous['sha256'] == record['version_sha256']
-            assert inheritance['current_pdf_sha256'] == revision['current_pdf_sha256'] == current_sha
-            assert inheritance['new_scientific_review'] is False
-            assert inheritance['new_award_assessment'] is False
-            old_source = demo / previous['generator_source']
+            first = meta['frontmatter_revision']
+            revisions = [first]
+            if 'font_layout_revision' in meta:
+                revisions.append(meta['font_layout_revision'])
+            expected_previous_sha = record['version_sha256']
+            for revision in revisions:
+                inheritance = revision['scientific_review_inheritance']
+                previous = revision['previous_current_pdf']
+                assert previous['sha256'] == expected_previous_sha
+                assert inheritance['review_version_sha256'] == record['version_sha256']
+                assert inheritance['current_pdf_sha256'] == revision['current_pdf_sha256']
+                assert inheritance['new_scientific_review'] is False
+                assert inheritance['new_award_assessment'] is False
+                old_source = demo / previous['generator_source']
+                assert hashlib.sha256(old_source.read_bytes()).hexdigest() == previous['generator_sha256']
+                expected_previous_sha = revision['current_pdf_sha256']
+            assert expected_previous_sha == current_sha
             new_source = demo / meta['pdf']['generator_source']
-            assert hashlib.sha256(old_source.read_bytes()).hexdigest() == previous['generator_sha256']
             assert hashlib.sha256(new_source.read_bytes()).hexdigest() == meta['pdf']['generator_sha256']
-            # Independently compare all scientific generation logic and strings.
-            # Only explicit layout/version metadata may differ between these sources.
+            # Preserve all scientific generation logic and strings. Each allowed
+            # change is a specific layout operation, never a data/limit override.
+            spatial_body = ast.parse("def mcm_spatial_layout(axes):\n    return axes.replace('width=4.1cm,height=2.6cm', 'width=3.8cm,height=2.6cm').replace('horizontal sep=0.9cm', 'horizontal sep=0.65cm').replace('yshift=-1.0cm', 'yshift=-1.25cm')").body[0]
+            ai_start = '\\begin{list}{}{\\setlength{\\leftmargin}{0pt}\\setlength{\\rightmargin}{0pt}\\setlength{\\parsep}{2.5pt}\\setlength{\\topsep}{0pt}\\setlength{\\itemsep}{0pt}}\\item[]\n'
+            ai_titles = ('Tool, task and scope', 'Outputs, corrections and verification', 'Record limitations')
             class NormalizeLayout(ast.NodeTransformer):
+                def visit_FunctionDef(self, node):
+                    if node.name == 'mcm_spatial_layout':
+                        body = node.body[1:] if isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant) else node.body
+                        assert ast.dump(ast.Module(body=body, type_ignores=[]), include_attributes=False) == ast.dump(ast.Module(body=spatial_body.body, type_ignores=[]), include_attributes=False)
+                        return None
+                    return self.generic_visit(node)
+                def visit_Constant(self, node):
+                    if isinstance(node.value, str):
+                        for before, after in [(r'\begingroup\normalsize\setlength{\parindent}{0pt}', r'\begingroup\small\setlength{\parindent}{0pt}'), (r'\centering\normalsize\caption', r'\centering\small\caption'), (r'fontsize=\normalsize', r'fontsize=\small')]:
+                            node.value = node.value.replace(before, after)
+                    return node
+                def visit_Assign(self, node):
+                    if isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == 'mcm_spatial_layout':
+                        assert ast.dump(node, include_attributes=False) == ast.dump(ast.parse("FIG['spatial.png']=mcm_spatial_layout(FIG['spatial.png'])").body[0], include_attributes=False)
+                        return None
+                    return self.generic_visit(node)
+                def visit_Expr(self, node):
+                    call = node.value
+                    if isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute) and isinstance(call.func.value, ast.Name) and call.func.value.id == 'tex' and call.func.attr == 'append' and len(call.args) == 1 and isinstance(call.args[0], ast.Constant):
+                        value = call.args[0].value
+                        if value in (ai_start, '\\end{list}\n'):
+                            return None
+                        for title in ai_titles:
+                            if value == '\\textbf{' + title + '}\\par\n':
+                                return ast.Expr(value=ast.Call(func=ast.Name(id='para', ctx=ast.Load()), args=[ast.Constant(value=title), ast.Constant(value='heading')], keywords=[]))
+                    return self.generic_visit(node)
                 def visit_Call(self, node):
                     self.generic_visit(node)
                     if isinstance(node.func, ast.Name) and node.func.id in ('preamble', 'summary_header'):
                         node.keywords = [k for k in node.keywords if k.arg not in ('layout_version', 'edition')]
+                    if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name) and node.func.value.id == 'texplot' and node.func.attr in ('Axis', 'hbar_chart', 'heatmap_panels', 'flow_diagram'):
+                        for keyword in node.keywords:
+                            if keyword.arg == 'font_profile':
+                                assert isinstance(keyword.value, ast.Constant) and keyword.value.value == 'mcm-v3'
+                        node.keywords = [k for k in node.keywords if k.arg != 'font_profile']
+                    if isinstance(node.func, ast.Name) and node.func.id == 'page' and len(node.args) == 1 and isinstance(node.args[0], ast.Constant) and node.args[0].value == 'Appendix A. Scenario definitions':
+                        node.args.append(ast.Constant(value=True))
                     return node
             def scientific_tree(path):
                 return ast.dump(NormalizeLayout().visit(ast.parse(path.read_text())), include_attributes=False)
-            assert scientific_tree(old_source) == scientific_tree(new_source)
+            for index, revision in enumerate(revisions):
+                old_source = demo / revision['previous_current_pdf']['generator_source']
+                next_source = (demo / revisions[index + 1]['previous_current_pdf']['generator_source']) if index + 1 < len(revisions) else new_source
+                assert scientific_tree(old_source) == scientific_tree(next_source)
         assert record['target'] and record['review_scope'] and record['basis']
         assert record['main_gap'] and record['highest_value_next_action']
         assert 'verification.json' in (demo / 'README.md').read_text()
