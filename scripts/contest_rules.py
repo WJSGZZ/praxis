@@ -49,6 +49,17 @@ def unreferenced_floats(records):
     return sorted(f'{k[0]} {k[1]}' for k in captions if mentions.get(k, 0) < 2)
 
 
+def _first_content_line(lines, *, mcm=False):
+    """Skip only recognized running headers, never arbitrary preceding prose."""
+    index = 0
+    header = re.compile(r'(?:Team\s*(?:#|Control Number)?\s*\d{1,12}'
+                        r'(?:\s+Page\s*\d+\s+of\s*\d+)?|Page\s*\d+\s+of\s*\d+)', re.I)
+    while index < len(lines) and (not lines[index].strip() or
+                                 (mcm and header.fullmatch(lines[index].strip()))):
+        index += 1
+    return index
+
+
 def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
     """Apply the rules to page records; returns errors (rule broken), warnings (probably broken or not checkable) and facts."""
     errors, warnings, facts = [], [], {}
@@ -59,9 +70,20 @@ def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
             errors.append(f'identifying text found: {item!r}')
     if contest == 'mcm':
         # a heading is a line that is only the title (a contents entry ends with a page number or dots)
-        ai_page = next((i for i, r in enumerate(records) if any(re.fullmatch(r'(?:\d+\s+)?Report on Use of AI(?: Tools)?\s*', line, re.I) for line in r['lines'])), None)
+        ai_headings = [(i, j) for i, r in enumerate(records) for j, line in enumerate(r['lines'])
+                       if re.fullmatch(r'(?:\d+\s+)?Report on Use of AI(?: Tools)?\s*', line, re.I)]
+        observed = ai_headings[0][0] if ai_headings else None
+        isolated = (len(ai_headings) == 1 and ai_headings[0][1] ==
+                    _first_content_line(records[observed]['lines'], mcm=True))
+        ai_page = observed if isolated else None
+        if len(ai_headings) > 1:
+            errors.append('multiple AI report headings: cannot identify an unambiguous excluded section')
+        elif ai_headings and not isolated:
+            errors.append('AI report must start on a separate page; preceding solution/reference content cannot be excluded')
         counted = ai_page if ai_page is not None else n
-        facts.update(total_pages=n, counted_pages=counted, ai_report_from_page=None if ai_page is None else ai_page + 1)
+        facts.update(total_pages=n, counted_pages=counted, ai_report_from_page=None if ai_page is None else ai_page + 1,
+                     ai_report_heading_on_page=None if observed is None else observed + 1,
+                     ai_report_starts_new_page=isolated if ai_headings else None)
         if counted > MCM_PAGE_LIMIT:
             errors.append(f'{counted} pages count toward the 25-page limit (summary sheet, text, contents, references, appendices, code)')
         first = records[0]['text'] if records else ''
@@ -89,7 +111,7 @@ def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
             errors.append(f'different team numbers on different pages: {sorted(numbers)}')
         facts['team_number'] = sorted(numbers)[0] if numbers else None
         facts['has_table_of_contents'] = any(re.fullmatch(r'(Table of )?Contents', line.strip(), re.I) for r in records[:3] for line in r['lines'][:6])
-        if ai_page is None:
+        if not ai_headings:
             warnings.append('no "Report on Use of AI" section: required only if AI tools were used')
         sizes = [r['body_size'] for r in records[:counted] if r['body_size']]
         facts['body_font_pt'] = collections.Counter(sizes).most_common(1)[0][0] if sizes else None
@@ -105,13 +127,22 @@ def evaluate(records, contest, *, margins=None, forbidden=(), edition=None):
         if toc:
             errors.append(f'a table of contents on page {toc}; the specification says not to include one')
         # an appendix heading is a short line that starts with 附录 and has no sentence punctuation; a line that merely begins with the word is body text
-        appendix = next((i for i, r in enumerate(records) if i > 0 and any(re.match(r'\s*附\s*录', line) and len(line) <= 30 and not re.search(r'[。，；,.;]', line) for line in r['lines'])), None)
-        before_appendix = appendix if appendix is not None else n
+        appendix_heading = next(((i, j) for i, r in enumerate(records) if i > 0 for j, line in enumerate(r['lines'])
+                                 if re.match(r'\s*附\s*录', line) and len(line) <= 30 and not re.search(r'[。，；,.;]', line)), None)
+        appendix = appendix_heading[0] if appendix_heading else None
+        isolated = (appendix_heading is not None and appendix_heading[1] ==
+                    _first_content_line(records[appendix]['lines']))
+        # A shared page still contains body text: count it, even though the
+        # appendix itself has no page limit. Continuous appendices are allowed.
+        before_appendix = (appendix + (not isolated)) if appendix is not None else n
         body = max(0, before_appendix - 1)  # Abstract is a separate dedicated page.
         facts.update(total_pages=n, body_pages=body, abstract_pages=1 if n else 0,
                      pages_before_appendix=before_appendix,
                      body_page_limit=CUMCM_BODY_PAGES, format_edition='2026',
-                     appendix_from_page=None if appendix is None else appendix + 1)
+                     appendix_from_page=None if appendix is None else appendix + 1,
+                     appendix_starts_new_page=isolated if appendix is not None else None)
+        if appendix is not None and not isolated:
+            warnings.append(f'page {appendix + 1} contains body content before the appendix; it counts toward the body limit')
         if body > CUMCM_BODY_PAGES:
             errors.append(f'the body has {body} pages; the 2026 specification permits at most 30, excluding the abstract and appendix')
         if appendix is None:

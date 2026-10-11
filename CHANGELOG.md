@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 共享论文组件明确连续与独立分页；美赛AI报告的生成、检查及冻结阻止混页和后置正文，国赛骨架补参考文献前的2026 AI声明及清晰的首附录边界，研究稿仍按目标要求选择。PDF计页不再把AI或附录标题前的正文／参考文献整页漏算。
+  Shared paper components distinguish continuous sections from isolated parts. MCM disclosure boundaries are checked before build and freeze; the CUMCM skeleton places its 2026 declaration before references and isolates the first appendix. Research structure remains selectable. PDF counting no longer exempts solution or reference text on a shared disclosure/appendix page.
+
 - 提供显式 Codex 导出记录选择器，保留真实消息与工具输入／输出的来源和快照边界；不重建缺失聊天或认证正式 AI 披露完整性。
   An explicit Codex export selector preserves emitted messages and tool records with source hashes and snapshot limits, without reconstructing missing history or certifying disclosure completeness.
 

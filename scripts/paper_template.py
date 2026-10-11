@@ -80,6 +80,45 @@ def table_of_contents(*, depth=2):
     return prefix + r'\clearpage\tableofcontents\clearpage' + '\n'
 
 
+SECTION_BEGIN = '% BEGIN PRAXIS SEPARATE SECTION v1\n'
+SECTION_END = '% END PRAXIS SEPARATE SECTION\n'
+
+
+def section_component(title, body, *, separate_page=False, in_contents=False):
+    """An optional unnumbered section, with explicit boundaries when selected.
+
+    The caller supplies truthful TeX content and chooses placement from the
+    applicable contest/journal policy. clearpage also flushes pending floats.
+    Ordinary declarations, references and later appendices can stay continuous.
+    """
+    heading = r'\section*{' + escape(title) + '}\n'
+    if in_contents:
+        heading += r'\addcontentsline{toc}{section}{' + escape(title) + '}\n'
+    content = heading + body.rstrip() + '\n'
+    if separate_page:
+        return SECTION_BEGIN + '\\clearpage\n' + content + '\\clearpage\n' + SECTION_END
+    return content
+
+
+def ai_report(body, *, title='Report on Use of AI', in_contents=True):
+    """Full, isolated disclosure report; not an inline CUMCM declaration."""
+    return section_component(title, body, separate_page=True, in_contents=in_contents)
+
+
+def _check_section_boundaries(text):
+    # Check markers before removing comments. Bare, already-correct historical
+    # sections remain supported; marked components must retain both boundaries.
+    tokens = list(re.finditer(re.escape(SECTION_BEGIN) + '|' + re.escape(SECTION_END), text))
+    if len(tokens) % 2:
+        raise ValueError('Incomplete separate-section component')
+    for start, end in zip(tokens[::2], tokens[1::2]):
+        if start.group() != SECTION_BEGIN or end.group() != SECTION_END:
+            raise ValueError('Nested or misplaced separate-section component')
+        body = re.sub(r'(?<!\\)%[^\n]*', '', text[start.end():end.start()])
+        if not re.match(r'\s*\\clearpage\b', body) or not re.search(r'\\clearpage\s*$', body):
+            raise ValueError('Separate-section component requires clearpage before and after its content')
+
+
 def check(text, contest='mcm'):
     """Reject missing/modified styles and explicit layout/page-counter overrides.
 
@@ -94,6 +133,7 @@ def check(text, contest='mcm'):
     end = f'% END PRAXIS {contest.upper()} STYLE\n'
     if text.count(begin) != 1 or text.count(end) != 1 or block not in text:
         raise ValueError('Paper layout differs from the shared source; regenerate with scripts.paper_template')
+    _check_section_boundaries(text)
     rest = text.replace(block, '')
     rest = re.sub(r'(?<!\\)%[^\n]*', '', rest)
     numbering_override = (
@@ -144,15 +184,40 @@ def check(text, contest='mcm'):
         raise ValueError('Direct layout override outside the shared style')
     if contest == 'research' and not re.search(r'\\title\s*\[[^\]\n]+\]', rest):
         raise ValueError('Research manuscripts need an explicit short running title')
-    if contest == 'cumcm' and r'\tableofcontents' in rest:
-        raise ValueError('CUMCM papers must not have a table of contents')
+    # Literal source/code in disclosure records is content, not an executed
+    # section or bibliography. Mask conventional verbatim blocks for this scan.
+    structure = re.sub(r'\\begin\s*\{(Verbatim|verbatim|lstlisting|minted)\}.*?\\end\s*\{\1\}',
+                       lambda m: ' ' * len(m.group()), rest, flags=re.S)
+    sections = list(re.finditer(r'\\section\s*\*?\s*(?:\[[^\]]*\]\s*)?\{([^{}]*)\}', structure))
+    if contest == 'cumcm':
+        if r'\tableofcontents' in structure:
+            raise ValueError('CUMCM papers must not have a table of contents')
+        declarations = [s for s in sections if s.group(1).strip() == 'AI工具使用声明']
+        references = [s.start() for s in sections if s.group(1).strip() == '参考文献']
+        references += [m.start() for m in re.finditer(r'\\begin\s*\{thebibliography\}', structure)]
+        if len(declarations) > 1:
+            raise ValueError('CUMCM AI declaration may appear at most once')
+        if declarations and references and declarations[0].start() > min(references):
+            raise ValueError('CUMCM AI declaration must precede the references')
     if contest == 'mcm':
-        if len(re.findall(r'\\tableofcontents\b', rest)) > 1:
+        reports = [s for s in sections if re.fullmatch(r'Report on Use of AI(?: Tools)?', s.group(1).strip(), re.I)]
+        if len(reports) > 1:
+            raise ValueError('AI report may appear at most once')
+        if reports:
+            report = reports[0]
+            if not re.search(r'\\clearpage\s*$', rest[:report.start()]):
+                raise ValueError('AI report must begin on a separate page with clearpage')
+            if any(s.start() > report.start() for s in sections):
+                raise ValueError('MCM AI report must follow all solution sections, references and appendices')
+            if re.search(r'\\begin\s*\{thebibliography\}|\\(?:bibliography|printbibliography|appendix|tableofcontents)\b',
+                         structure[report.end():]):
+                raise ValueError('MCM AI report must follow the bibliography, appendices and contents')
+        if len(re.findall(r'\\tableofcontents\b', structure)) > 1:
             raise ValueError('Contents may appear at most once')
-        for toc in re.finditer(r'\\tableofcontents\b', rest):
-            if not re.match(r'\s*\\clearpage\b', rest[toc.end():]):
+        for toc in re.finditer(r'\\tableofcontents\b', structure):
+            if not re.match(r'\s*\\clearpage\b', structure[toc.end():]):
                 raise ValueError('Contents must end with an explicit clearpage before the body')
-            before = rest[:toc.start()]
+            before = structure[:toc.start()]
             body_prefix = before[before.find(r'\begin{document}') + len(r'\begin{document}'):]
             if re.search(r'\\section\s*(?:\[[^\]]*\]\s*)?\{', body_prefix):
                 raise ValueError('Contents must precede the numbered scientific sections')

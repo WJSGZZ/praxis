@@ -53,6 +53,45 @@ def test_mcm_contents_entry_is_not_the_ai_heading():
     assert r['facts']['has_table_of_contents'] and r['facts']['ai_report_from_page'] is None
 
 
+def test_mcm_mixed_ai_page_cannot_remove_a_solution_or_reference_page():
+    pages = mcm_pages(26, ai_from=25)
+    pages[25] = page('Team # 1234567 Page 26 of 26\nReferences\n[1] A real source.\nReport on Use of AI\nActual tool record.')
+    report = contest_rules.evaluate(pages, 'mcm')
+    assert not report['passed']
+    assert report['facts']['counted_pages'] == 26
+    assert report['facts']['ai_report_heading_on_page'] == 26
+    assert report['facts']['ai_report_from_page'] is None
+    assert report['facts']['ai_report_starts_new_page'] is False
+    assert any('preceding solution/reference' in error for error in report['errors'])
+
+
+def test_ai_header_handling_is_narrow_and_duplicate_headings_are_ambiguous():
+    pages = mcm_pages(26, ai_from=25)
+    pages[25] = page('Team # 1234567\nPage 26 of26\nReport on Use of AI Tools\nActual record.')
+    assert contest_rules.evaluate(pages, 'mcm')['facts']['counted_pages'] == 25
+    # Do not ignore a short scientific line merely because it is at the top.
+    pages[25] = page('Team # 1234567\nPage 26 of 26\nResult\nReport on Use of AI\nActual record.')
+    assert contest_rules.evaluate(pages, 'mcm')['facts']['counted_pages'] == 26
+    pages = mcm_pages(27, ai_from=25)
+    pages[26] = page('Team # 1234567 Page 27 of 27\nReport on Use of AI\nSecond record.')
+    report = contest_rules.evaluate(pages, 'mcm')
+    assert not report['passed'] and report['facts']['counted_pages'] == 27
+
+
+def test_cumcm_shared_first_appendix_page_still_counts_as_body():
+    pages = cumcm_pages(body=31, appendix=1)
+    pages[-1] = page('正文结论：可执行方案仍需这一页。\n附录 A 支撑材料文件列表\n源程序\n32')
+    report = contest_rules.evaluate(pages, 'cumcm')
+    assert not report['passed'] and report['facts']['body_pages'] == 31
+    assert report['facts']['appendix_starts_new_page'] is False
+    assert any('at most 30' in error for error in report['errors'])
+    # Continuity itself is allowed when the correctly counted body fits.
+    short = cumcm_pages(body=4, appendix=1)
+    short[-1] = page('正文结论。\n附录 A 支撑材料文件列表\n源程序\n5')
+    report = contest_rules.evaluate(short, 'cumcm')
+    assert report['passed'] and report['facts']['body_pages'] == 4
+
+
 def test_cumcm_rules():
     assert contest_rules.evaluate(cumcm_pages(), 'cumcm')['passed']
     toc = cumcm_pages()

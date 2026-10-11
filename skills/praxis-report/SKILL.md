@@ -21,7 +21,7 @@ BUNDLE 指 `praxis` 技能目录。按当前请求读 [writing.md](../../referen
 - 来源与披露：参考文献不可省略——外部的参数、公式、方法、数据都在使用处标号并在文末列全；有 DOI 的条目运行 `scripts/check_references.py` 核对（它只证明记录存在、题名年份相符，不证明该文献支持这个论断）。需付费的文献请使用者通过学校图书馆或知网取得全文再引用，没读过的不引。真实使用的来源在使用处引用；AI 使用按实际写，不用程序日志冒充完整对话。同题资料按 [learning-loop.md](../../references/learning-loop.md) 的学习／封存／正式赛事用途处理，保持真实暴露记录，不将对照后的开发案例称盲测。
 - 一致性：报告数字与有效运行逐项对应；缺证据返回 praxis-verify 或 praxis-compute，不在写作中补造依据或把条件结论写成事实。
 - 执笔与贡献：助手负责整合成稿，按 [contributions.md](../../references/contributions.md) 从真实事件说明人的判断和AI承担的实际工作。发现关键人工判断／核验缺口时交 dialogue 组织共同研究，缺科学证据交上游检查；不以签字、复述或补聊天次数替代。后来新增贡献注明阶段，不改写旧稿来源。
-- 比赛或团队交付：按 [context-and-team.md](../../references/context-and-team.md) 接续实际赛事／届次，详细规则、编译与冻结按 [contest-delivery.md](../../references/contest-delivery.md) 和 [automation.md](../../references/automation.md)。AI 记录来源与缺日志按 [feedback.md](../../references/feedback.md)，披露要求按对应赛事档案，不用摘要或程序日志补造完整对话。真实页面检查与科学审阅分别验收，预检不等于合规认证。
+- 比赛或团队交付：按 [context-and-team.md](../../references/context-and-team.md) 接续实际赛事／届次，详细规则、组件边界、编译与冻结按 [contest-delivery.md](../../references/contest-delivery.md) 和 [automation.md](../../references/automation.md)。用共享组件生成需要独立的完整部分；字体块一致不能证明摘要、目录、正文与交付尾部的分页正确。AI 记录来源与缺日志按 [feedback.md](../../references/feedback.md)，披露位置与附件要求按对应赛事档案，不用摘要或程序日志补造完整对话，也不把美赛AI尾页套给国赛声明或研究稿。真实页面检查与科学审阅分别验收，预检不等于合规认证。
 
 ## 交接
 

@@ -33,6 +33,19 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None):
     doc = PdfReader(BytesIO(raw))
     if doc.is_encrypted or len(doc.pages) == 0:
         raise ValueError("PDF must be readable and nonempty")
+    boundaries = None
+    if layout is not None and contest in ('mcm', 'cumcm'):
+        from scripts.contest_rules import evaluate, extract
+        facts = evaluate(extract(source), contest)['facts']
+        if contest == 'mcm':
+            if facts['ai_report_heading_on_page'] is not None and not facts['ai_report_starts_new_page']:
+                raise ValueError('PDF AI-report boundary is mixed or ambiguous; preceding solution content cannot be excluded')
+            keys = ('total_pages', 'counted_pages', 'ai_report_from_page',
+                    'ai_report_heading_on_page', 'ai_report_starts_new_page')
+        else:
+            keys = ('total_pages', 'body_pages', 'appendix_from_page', 'appendix_starts_new_page')
+        # This is boundary evidence, not an edition-specific compliance pass.
+        boundaries = {key: facts[key] for key in keys}
     if destination.exists():
         raise FileExistsError(destination)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -43,7 +56,8 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None):
     if hashlib.sha256(destination.read_bytes()).hexdigest() != sha:
         raise RuntimeError("Snapshot integrity check failed")
     destination.chmod(0o444)
-    return {**({"layout": layout} if layout else {}), "source": str(source.resolve()), "snapshot": str(destination.resolve()),
+    return {**({"layout": layout} if layout else {}), **({"pdf_boundaries": boundaries} if boundaries else {}),
+            "source": str(source.resolve()), "snapshot": str(destination.resolve()),
             "sha256": sha, "bytes": len(raw), "created_utc": datetime.now(timezone.utc).isoformat(),
             "note": "Local snapshot only; not proof of contest deadline compliance or submission."}
 

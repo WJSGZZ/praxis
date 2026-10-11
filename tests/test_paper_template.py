@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.paper_template import check, preamble, summary_header, table_of_contents
+from scripts.paper_template import ai_report, check, preamble, section_component, summary_header, table_of_contents
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -125,6 +125,129 @@ def test_optional_contents_separates_summary_and_body():
         with pytest.raises(ValueError, match='Contents must'):
             check(paper().replace('Body.', bad))
     check(paper().replace('Body.', r'\clearpage\renewcommand{\contentsname}{Contents}\tableofcontents\clearpage'))
+
+
+def test_ai_report_is_optional_but_cannot_share_the_solution_page():
+    check(paper())
+    check(paper().replace('Body.', 'Body.\n' + ai_report('Actual tool record.')))
+    # Legacy documents retain explicit clearpage without needing new markers.
+    check(paper().replace('Body.', r'Body.\clearpage\section*{Report on Use of AI Tools}Actual record.'))
+    for boundary in ('', r'\newpage', r'\pagebreak', '% \\clearpage\n'):
+        with pytest.raises(ValueError, match='AI report must begin'):
+            check(paper().replace('Body.', r'\section*{References}A reference.' + boundary +
+                                  r'\section*{Report on Use of AI}Actual record.'))
+
+
+def test_ai_tail_cannot_hide_later_solution_sections_or_duplicate_reports():
+    for later, reason in [(ai_report('Another record.'), 'at most once'),
+                          (r'\section*{References}A reference.', 'must follow all'),
+                          (r'\section{A scientific result}A claim.', 'must follow all')]:
+        with pytest.raises(ValueError, match=reason):
+            check(paper().replace('Body.', ai_report('Actual record.') + later))
+    # A mention and its contents entry do not create another report.
+    check(paper().replace('Body.', table_of_contents() +
+                         'The Report on Use of AI records actual tools.\n' + ai_report('Actual record.')))
+
+
+@pytest.mark.parametrize('later', [
+    r'\begin{thebibliography}{1}\bibitem{late}A scientific reference.\end{thebibliography}',
+    r'\begin {thebibliography}{1}\bibitem{late}A scientific reference.\end{thebibliography}',
+    r'\bibliography{scientific-sources}', r'\printbibliography', r'\appendix',
+    r'\clearpage\tableofcontents\clearpage',
+])
+def test_direct_scientific_roots_cannot_follow_the_mcm_ai_report(later):
+    with pytest.raises(ValueError, match='must follow'):
+        check(paper().replace('Body.', ai_report('Actual record.') + later))
+
+
+def test_quoted_latex_in_ai_records_is_not_an_executed_scientific_tail():
+    quoted = (r'\begin{Verbatim}' + '\n' +
+              r'\section*{References}\begin{thebibliography}{1}\end{thebibliography}' + '\n' +
+              r'\end{Verbatim}')
+    check(paper().replace('Body.', 'Body.\n' + ai_report(quoted)))
+
+
+@pytest.mark.parametrize('contest', ['mcm', 'cumcm'])
+def test_quoted_contents_command_is_not_an_actual_contents_component(contest):
+    quoted = '\\begin{Verbatim}\n\\tableofcontents\n\\end{Verbatim}\n'
+    if contest == 'mcm':
+        source = paper().replace('Body.', table_of_contents() + 'Body.\n' + ai_report(quoted))
+    else:
+        source = preamble(None, '引用源码', 'cumcm') + quoted + r'\end{document}'
+    check(source, contest)
+
+
+@pytest.mark.parametrize('contest', ['mcm', 'cumcm', 'research'])
+@pytest.mark.parametrize('remove', ['before', 'after', 'end_marker'])
+def test_selected_separate_component_keeps_both_boundaries_in_every_profile(contest, remove):
+    base = paper() if contest == 'mcm' else preamble(None, 'A title', contest) + (
+        r'\title[Short]{A title}' if contest == 'research' else '') + r'Body.\end{document}'
+    component = section_component('Additional record', 'Actual evidence.', separate_page=True)
+    if remove == 'before':
+        component = component.replace('\\clearpage\n', '', 1)
+    elif remove == 'after':
+        pos = component.rfind('\\clearpage\n')
+        component = component[:pos] + component[pos + len('\\clearpage\n'):]
+    else:
+        component = component.replace('% END PRAXIS SEPARATE SECTION\n', '')
+    with pytest.raises(ValueError, match='component'):
+        check(base.replace('Body.', component), contest)
+
+
+def test_cumcm_declaration_is_inline_before_references_without_mcm_tail():
+    declaration = section_component('AI工具使用声明', '按真实记录填写。')
+    references = section_component('参考文献', '[1] 实际来源。')
+    base = preamble(None, '中文', 'cumcm')
+    check(base + declaration + references + r'\end{document}', 'cumcm')
+    assert r'\clearpage' not in declaration
+    with pytest.raises(ValueError, match='precede'):
+        check(base + references + declaration + r'\end{document}', 'cumcm')
+    with pytest.raises(ValueError, match='at most once'):
+        check(base + declaration + declaration + references + r'\end{document}', 'cumcm')
+    skeleton = (ROOT/'templates/cumcm-paper.tex').read_text()
+    assert skeleton.index(r'\section*{AI工具使用声明}') < skeleton.index(r'\section*{参考文献}')
+
+
+def test_missing_ai_boundary_is_rejected_before_freezing_any_pdf(tmp_path):
+    from scripts.freeze_pdf import freeze
+    source = tmp_path/'source.tex'
+    source.write_text(paper().replace('Body.', r'Body.\section*{Report on Use of AI}Record.'))
+    with pytest.raises(ValueError, match='AI report must begin'):
+        freeze(tmp_path/'not-read.pdf', tmp_path/'final.pdf', tex=source, contest='mcm')
+    assert not (tmp_path/'final.pdf').exists()
+
+
+def test_freeze_checks_actual_pdf_boundary_even_when_source_boundary_passes(tmp_path):
+    import hashlib
+    import json
+    from pypdf import PdfWriter
+    from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject
+    from scripts.freeze_pdf import freeze
+    source = tmp_path/'main.tex'
+    source.write_text(paper().replace('Body.', 'Body.\n' + ai_report('Actual record.')))
+    # A real readable one-page PDF with References preceding the AI heading.
+    # Its binding receipt is synthetic, as in the separate binding tests above;
+    # no compiler run or canonical provenance is claimed by this unit test.
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=612, height=792)
+    font = DictionaryObject({NameObject('/Type'): NameObject('/Font'),
+                             NameObject('/Subtype'): NameObject('/Type1'),
+                             NameObject('/BaseFont'): NameObject('/Times-Roman')})
+    page[NameObject('/Resources')] = DictionaryObject({NameObject('/Font'): DictionaryObject({NameObject('/F1'): writer._add_object(font)})})
+    stream = DecodedStreamObject()
+    stream.set_data(b'BT /F1 12 Tf 72 700 Td (References) Tj 0 -30 Td (Report on Use of AI) Tj ET')
+    page[NameObject('/Contents')] = writer._add_object(stream)
+    pdf = tmp_path/'mixed.pdf'
+    with pdf.open('wb') as handle:
+        writer.write(handle)
+    runtime = json.loads((ROOT/'templates/typesetting-runtime.json').read_text())
+    build = tmp_path/'synthetic-build.json'
+    build.write_text(json.dumps({'runtime': runtime, 'layout': check(source.read_text()),
+                                'tex_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+                                'pdf_sha256': hashlib.sha256(pdf.read_bytes()).hexdigest()}))
+    with pytest.raises(ValueError, match='PDF AI-report boundary'):
+        freeze(pdf, tmp_path/'final.pdf', tex=source, contest='mcm', build_receipt=build)
+    assert not (tmp_path/'final.pdf').exists()
 
 
 @pytest.mark.parametrize('override', [r'\setcounter{tocdepth}{3}', r'\renewcommand{\familydefault}{\sfdefault}'])
