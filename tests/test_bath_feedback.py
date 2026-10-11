@@ -157,7 +157,7 @@ def test_delivered_neighborhood_claims_match_the_bound_archive_and_retain_scope(
     record = json.loads((HERE.parent / 'verification.json').read_text())['continuous_parameter_revision']
     assert record['physical_outward_bounds_c'] == [lower, upper, spread]
     assert record['independent_cases'] == len(result['checks'])
-    text = '\n'.join(p.extract_text() for p in PdfReader(HERE.parent / 'deliverables/7391856.pdf').pages)
+    text = '\n'.join(p.extract_text() for p in PdfReader(HERE.parent / 'deliverables/paper.pdf').pages)
     for value in [lower, upper, spread]:
         assert f'{value:.4f}' in text
     normalized = ' '.join(text.split())

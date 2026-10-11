@@ -89,7 +89,7 @@
  },
  "scope": "Scenario heat-network validation with literature-anchored ranges; independent numerical checks of selected policies, not calibrated physical accuracy or a global spatial optimum. No bath experiment or award prediction.",
  "submission_files": [
-  "7391856.pdf"
+  "paper.pdf"
  ],
  "template_review": {
   "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
@@ -1620,7 +1620,7 @@
  "public_paper": {
   "path": "paper.pdf",
   "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
-  "byte_identical_to": "deliverables/7391856.pdf"
+  "byte_identical_to": "deliverables/paper.pdf"
  },
  "caption_naming_revision": {
   "previous_pdf": {
@@ -2563,5 +2563,12 @@
    "date": "2026-10-10",
    "scope": "779 passed,0failed,0skipped;3existingwarnings;166.93s. Final5236 common-loss transfer included; prior771 whole result remains historical."
   }
+ },
+ "publication_naming_revision": {
+  "checked_on": "2026-10-11",
+  "previous_path": "deliverables/7391856.pdf",
+  "current_path": "deliverables/paper.pdf",
+  "sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+  "scope": "Public archive naming only; PDF bytes, scientific results, team number and award assessment are unchanged. Historical revision records retain their recorded locations. Actual contest submission naming follows the applicable edition."
  }
 }

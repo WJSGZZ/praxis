@@ -184,7 +184,7 @@ def test_flagship_award_assessments_bind_the_current_delivered_manuscript():
     import json
     from pathlib import Path
     root = Path(__file__).resolve().parents[1]
-    for slug, filename in [('cumcm-1998-a', 'paper.pdf'), ('mcm-2016-a', '7391856.pdf')]:
+    for slug, filename in [('cumcm-1998-a', 'paper.pdf'), ('mcm-2016-a', 'paper.pdf')]:
         demo = root / 'demos' / slug
         record = json.loads((demo / 'verification.json').read_text())['current_award_assessment']
         assert record['version_sha256'] == hashlib.sha256((demo / 'deliverables' / filename).read_bytes()).hexdigest()

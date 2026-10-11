@@ -75,10 +75,10 @@
 | 资源 | 内容 |
 |---|---|
 | <a href="paper.pdf">完整 26 页英文论文</a> | 25 页解答，含使用者说明；另附 1 页 AI 使用披露 |
-| [提交文件](deliverables/7391856.pdf) | 与公开阅读版逐字节一致；7391856 为案例占位队号 |
+| [交付文件](deliverables/paper.pdf) | 与公开阅读版逐字节一致；论文内 7391856 为案例占位队号 |
 | [复现说明](reproduce/README.md) | 计算、专项验证、证书和论文构建入口 |
 
-提交目录只含一份 PDF；复现材料在外部单独提供。论文采用[共享美赛模板](../../templates/mcm-paper.tex)与固定 Tectonic 资源环境。
+公开交付目录只含一份 `paper.pdf`，与其他 Demo 命名一致；正式参赛按当届要求命名提交文件。复现材料单独提供。论文采用[共享美赛模板](../../templates/mcm-paper.tex)与固定 Tectonic 资源环境。
 
 ## 计算复现
 
@@ -97,7 +97,7 @@ uv run --locked python demos/mcm-2016-a/reproduce/run_demo.py
 
 ```text
 paper.pdf                     公开阅读版
-deliverables/7391856.pdf       单文件提交版
+deliverables/paper.pdf         交付论文
 reproduce/                    计算、验证、证据与论文构建
 assets/                       案例展示图片
 sources.json                  来源记录

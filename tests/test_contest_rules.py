@@ -101,7 +101,7 @@ def test_shipped_templates_satisfy_their_own_contest_rules(template, contest):
 
 
 def test_demo_papers_satisfy_their_contest_rules():
-    mcm = ROOT / 'demos/mcm-2016-a/deliverables/7391856.pdf'
+    mcm = ROOT / 'demos/mcm-2016-a/deliverables/paper.pdf'
     cumcm = ROOT / 'demos/cumcm-1998-a/deliverables/paper.pdf'
     from scripts.check_pdf import margin_report
     assert contest_rules.evaluate(contest_rules.extract(mcm), 'mcm')['passed']
@@ -141,10 +141,10 @@ def test_float_references_can_start_a_paragraph_and_cross_a_line_break():
 
 
 def test_demo_figures_and_tables_have_reader_callouts():
-    for relative in ['demos/mcm-2016-a/deliverables/7391856.pdf',
+    for relative in ['demos/mcm-2016-a/deliverables/paper.pdf',
                      'demos/cumcm-1998-a/deliverables/paper.pdf']:
         assert contest_rules.unreferenced_floats(contest_rules.extract(ROOT / relative)) == []
-    mcm = contest_rules.extract(ROOT / 'demos/mcm-2016-a/deliverables/7391856.pdf')
+    mcm = contest_rules.extract(ROOT / 'demos/mcm-2016-a/deliverables/paper.pdf')
     guide = [r for r in mcm if 'A guide for the person in the bathtub' in r['text']]
     # A one-page nontechnical guide is required; its subsection wording is optional.
     assert len(guide) == 1
@@ -184,7 +184,7 @@ def test_demo_delivery_metadata_matches_actual_pdf_and_archive_bytes():
                 assert hashlib.sha256(raw).hexdigest() == declared['sha256']
             assert len(PdfReader(directory / 'deliverables/paper.pdf').pages) == verification['report_pages']
         else:
-            pdf = directory / 'deliverables/7391856.pdf'
+            pdf = directory / 'deliverables/paper.pdf'
             assert len(PdfReader(pdf).pages) == verification['pdf']['pages_total']
             assert hashlib.sha256(pdf.read_bytes()).hexdigest() == verification['pdf']['sha256']
 

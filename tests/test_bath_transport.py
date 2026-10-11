@@ -27,7 +27,7 @@ def test_frozen_study_separates_failure_selection_and_energy():
 def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     from pypdf import PdfReader
     demo=HERE.parent
-    pdf=demo/'deliverables/7391856.pdf'
+    pdf=demo/'deliverables/paper.pdf'
     meta=json.loads((demo/'verification.json').read_text())
     assert meta['pdf']['sha256']==hashlib.sha256(pdf.read_bytes()).hexdigest()
     assert meta['current_award_assessment']['version_sha256']==meta['pdf']['sha256']
@@ -51,17 +51,19 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert meta['pdf']['generator_sha256']=='7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef'
 
 
-def test_public_reading_copy_matches_numbered_submission_and_links():
+def test_public_reading_copy_matches_delivery_and_links():
     demo=HERE.parent
     reading=demo/'paper.pdf'
-    submission=demo/'deliverables/7391856.pdf'
-    assert reading.read_bytes()==submission.read_bytes()
+    delivery=demo/'deliverables/paper.pdf'
+    assert reading.read_bytes()==delivery.read_bytes()
     meta=json.loads((demo/'verification.json').read_text())
     assert meta['public_paper']['sha256']==hashlib.sha256(reading.read_bytes()).hexdigest()
+    assert meta['public_paper']['byte_identical_to']=='deliverables/paper.pdf'
+    assert meta['submission_files']==['paper.pdf']
     for language in ['README.md','README.en.md']:
         text=(demo/language).read_text()
         assert '(paper.pdf)' in text and 'href="paper.pdf"' in text
-    assert sorted(p.name for p in (demo/'deliverables').iterdir())==['7391856.pdf']
+    assert sorted(p.name for p in (demo/'deliverables').iterdir())==['paper.pdf']
 
 
 @pytest.mark.parametrize('defect',['stale','coverage','failed','water','refinement','outlet'])

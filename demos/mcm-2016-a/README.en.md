@@ -75,10 +75,10 @@ An author-external AI reviewed all 26 pages and the five scientific figures. The
 | Resource | Contents |
 |---|---|
 | <a href="paper.pdf">The complete 26-page paper</a> | English; 25 solution pages including user advice, followed by one AI-use page |
-| [Submission copy](deliverables/7391856.pdf) | Byte-identical to the reading copy; 7391856 is the case's placeholder team number |
+| [Delivery PDF](deliverables/paper.pdf) | Identical to the reading copy; the manuscript retains placeholder team number 7391856 |
 | [Technical guide](reproduce/README.md) | Calculations, verification, certificates and report builds |
 
-The submission directory contains one PDF. Reproduction resources are provided separately. The paper uses the [shared MCM template](../../templates/mcm-paper.tex) and pinned Tectonic resources.
+The public archive uses `paper.pdf`, as do the other demos. A live submission must follow its edition's filename requirements. Reproduction resources remain separate. The paper uses the [shared MCM template](../../templates/mcm-paper.tex) and pinned Tectonic resources.
 
 ## Reproduction
 
@@ -97,7 +97,7 @@ Use the [specialist reproduction index](reproduce/README.md#复现索引) to cho
 
 ```text
 paper.pdf                     Public reading copy
-deliverables/7391856.pdf       Single-file submission copy
+deliverables/paper.pdf         Archived report
 reproduce/                    Calculations, checks, evidence and report builds
 assets/                       Presentation images
 sources.json                  Provenance

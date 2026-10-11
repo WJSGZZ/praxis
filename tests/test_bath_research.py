@@ -53,7 +53,7 @@ def test_rehashing_cannot_promote_bad_research(tmp_path,defect):
 
 def test_manuscript_retains_the_actual_sampling_scope_and_strategy_quantifiers():
     from pypdf import PdfReader
-    pdf=ROOT.parent/'deliverables/7391856.pdf'
+    pdf=ROOT.parent/'deliverables/paper.pdf'
     import unicodedata
     text=unicodedata.normalize('NFKC', ' '.join(p.extract_text() for p in PdfReader(pdf).pages))
     compact=''.join(text.replace('- ', '').split())
@@ -208,7 +208,7 @@ def test_exact_certificate_replay_rejects_independent_corruptions(tmp_path,defec
 def test_active_report_has_parallel_numbered_subsections_and_resolved_references():
     from pypdf import PdfReader
     import re
-    pages=PdfReader(ROOT.parent/'deliverables/7391856.pdf').pages
+    pages=PdfReader(ROOT.parent/'deliverables/paper.pdf').pages
     contents=pages[1].extract_text()
     groups={}
     for parent,child in re.findall(r'(?m)^\s*(\d+)\.(\d+)\s',contents):
