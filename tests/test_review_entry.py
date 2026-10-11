@@ -13,7 +13,7 @@ from scripts.build_plugin import BUNDLE, build_plugin
 def test_review_is_a_new_discoverable_skill_without_removing_old_entries(tmp_path):
     output = tmp_path / 'plugin'
     build_plugin(output, host='codex')
-    expected = {'praxis', 'praxis-model', 'praxis-compute', 'praxis-verify',
+    expected = {'praxis', 'praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify',
                 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report'}
     paths = list((output / 'skills').glob('*/SKILL.md'))
     assert {p.parent.name for p in paths} == expected

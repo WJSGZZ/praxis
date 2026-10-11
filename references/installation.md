@@ -2,7 +2,7 @@
 
 [English](installation.en.md)
 
-从 GitHub 获取源码，按你的 Agent 导出插件，再使用宿主的安装入口。每种包共用八个技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式。以下是源码分发方式，不依赖任何官方商店收录。
+从 GitHub 获取源码，按你的 Agent 导出插件，再使用宿主的安装入口。每种包共用九个技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式。以下是源码分发方式，不依赖任何官方商店收录。
 
 先安装 Git、[uv](https://docs.astral.sh/uv/)，再获取仓库：
 
@@ -21,7 +21,7 @@ codex plugin marketplace add /absolute/path/to/praxis-dist/codex/praxis --json
 codex plugin add praxis@praxis-local --json
 ```
 
-将 `/absolute/path/to` 替换为实际绝对路径。导出包自带 `.agents/plugins/marketplace.json`，不必手写或覆盖个人 marketplace。CLI 不提供这些命令时，使用该版本支持的本地 marketplace 安装界面。重载后确认 `praxis@praxis-local` 及八个 `praxis:*` 技能；此前通过个人 marketplace 安装的同一插件可能显示为 `praxis@personal`。
+将 `/absolute/path/to` 替换为实际绝对路径。导出包自带 `.agents/plugins/marketplace.json`，不必手写或覆盖个人 marketplace。CLI 不提供这些命令时，使用该版本支持的本地 marketplace 安装界面。重载后确认 `praxis@praxis-local` 及九个 `praxis:*` 技能；此前通过个人 marketplace 安装的同一插件可能显示为 `praxis@personal`。
 
 依据：[OpenAI 插件打包](https://developers.openai.com/plugins/build/plugins)。
 
@@ -45,7 +45,7 @@ gemini extensions install /absolute/path/to/praxis-dist/gemini/praxis
 gemini extensions list
 ```
 
-使用原生 `gemini-extension.json`，由扩展加载八个技能及 `praxis-tools`，路径使用 `${extensionPath}`。安装后重启 CLI 会话。
+使用原生 `gemini-extension.json`，由扩展加载九个技能及 `praxis-tools`，路径使用 `${extensionPath}`。安装后重启 CLI 会话。
 
 依据：[Gemini 扩展参考](https://geminicli.com/docs/extensions/reference/)。
 
@@ -73,11 +73,11 @@ uv run --locked python -m scripts.build_plugin --host cursor --output ~/.cursor/
 
 ## 工具、更新与排查
 
-所有包都包含八个技能和 `praxis-tools`。通用、Codex、Claude 和 Copilot 包另带固定版本的 arXiv 服务；Gemini、Cursor 包不自动配置它，因为其存储目录变量不同。核心工具中的 OpenAlex、Unpaywall、Crossref 检索不受此影响；需要额外 arXiv 服务时按宿主配置外部存储路径，勿写入安装目录。
+所有包都包含九个技能和 `praxis-tools`。通用、Codex、Claude 和 Copilot 包另带固定版本的 arXiv 服务；Gemini、Cursor 包不自动配置它，因为其存储目录变量不同。核心工具中的 OpenAlex、Unpaywall、Crossref 检索不受此影响；需要额外 arXiv 服务时按宿主配置外部存储路径，勿写入安装目录。
 
 更新时先更新源码，再导出到新的目录，通过宿主更新或重新安装。直接修改源码不保证安装缓存同步；不要手改缓存，不覆盖旧导出目录或用户配置。需要退回旧版时，保留旧源码 ref 和原导出包。
 
-重载后检查三件事：Praxis 出现在插件／扩展列表；八个技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。可从任意目录检查底层服务（替换路径）：
+重载后检查三件事：Praxis 出现在插件／扩展列表；九个技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。可从任意目录检查底层服务（替换路径）：
 
 ```bash
 uv run --locked --directory /absolute/path/to/plugin/skills/praxis python -m scripts.mcp_server --list

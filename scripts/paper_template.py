@@ -347,9 +347,18 @@ def main():
     parser.add_argument('--compile', action='store_true', help='Compile with the pinned canonical runtime')
     parser.add_argument('--output-directory', type=Path, help='New output directory for canonical build artifacts')
     parser.add_argument('--compiler', help='Path to Tectonic 0.17.0')
-    parser.add_argument('--review-captions', action='store_true',
-                        help='List literal captions and advisory length candidates; not a quality certification')
+    reviews = parser.add_mutually_exclusive_group()
+    reviews.add_argument('--review-captions', action='store_true',
+                         help='List literal captions and advisory length candidates; not a quality certification')
+    reviews.add_argument('--review-structure', action='store_true',
+                         help='Inspect literal heading hierarchy and require reasons for sole numbered children')
+    parser.add_argument('--structure-review', type=Path,
+                        help='Exact-source-bound JSON reasons, used with --review-structure')
     args = parser.parse_args()
+    if args.structure_review is not None and not args.review_structure:
+        parser.error('--structure-review requires --review-structure')
+    if args.compile and (args.review_structure or args.review_captions):
+        parser.error('Compile and review are separate actions; review the resulting source before freezing')
     try:
         if args.compile:
             if args.output_directory is None:
@@ -360,7 +369,14 @@ def main():
         result = check(args.tex.read_text(encoding='utf-8'), args.contest)
     except ValueError as exc:
         parser.exit(1, str(exc) + '\n')
-    if args.review_captions:
+    if args.review_structure:
+        import json
+        from scripts.paper_structure import inspect_structure
+        structure = inspect_structure(args.tex.read_bytes().decode('utf-8'), args.structure_review)
+        print(json.dumps(structure, ensure_ascii=False, indent=2))
+        if not structure['passed']:
+            parser.exit(1)
+    elif args.review_captions:
         import json
         print(json.dumps(review_captions(args.tex.read_text(encoding='utf-8')), ensure_ascii=False, indent=2))
     else:

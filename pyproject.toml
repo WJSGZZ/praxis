@@ -17,6 +17,7 @@ dependencies = [
   "salib>=1.5,<2",
   "pymcdm>=1.3,<2",
   "pypdfium2>=4,<6",
+  "pylatexenc>=2.10,<3",
 ]
 [dependency-groups]
 dev = ["pytest>=8,<10"]

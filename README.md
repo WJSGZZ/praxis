@@ -20,7 +20,7 @@
 
 </div>
 
-**Praxis 是面向通用数学建模的 Agent 插件**：八个技能（一个负责整题，七个各管一类请求）加一组可直接调用的数学工具，并带着证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查模型、验证结果或改进论文。
+**Praxis 是面向通用数学建模的 Agent 插件**：九个技能（一个负责整题，八个各管一类请求）加一组可直接调用的数学工具，并带着证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查假设与模型、验证结果或改进论文。
 
 研究、课程、比赛，以及资源分配、环境分析、公共服务和工程决策等现实问题，都可以使用这套工作方式。先明确目标、约束与数据，再建立可解释的基线，按需要增加复杂度；遇到陌生问题，先找出它背后的数学结构，比较几条不同的路线并留下记录；没有标准答案时，用猜想、反例和高精度检验产出带把握等级的结论；让需求、计算、验证和报告中的结论彼此对应，减少整理、重复计算与协作交接的负担，把精力留给关键判断。
 
@@ -75,7 +75,7 @@
 
 ### 1. 选择你的 Agent
 
-**安装完整插件：八个技能 + 数学工具 + 证据工作流。** 从公开仓库获取源码，按宿主生成安装包：
+**安装完整插件：九个技能 + 数学工具 + 证据工作流。** 从公开仓库获取源码，按宿主生成安装包：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -133,8 +133,9 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | [`praxis-explore`](skills/praxis-explore/SKILL.md) | “这题属于什么类型”“还有没有别的路”“没有标准答案怎么办” | 结构发现、路径搜索与淘汰、实验数学、经验沉淀；`route_graph` 与结构探测工具 |
 | [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | “给我讲讲这个模型”“我觉得哪里不对” | 解释模型，把直觉转成检查，复盘结果并保留真实参与记录 |
 | [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 中英文语言优化、论文与图表、引用及 AI 披露、PDF 检查与交付 |
+| [`praxis-assumptions`](skills/praxis-assumptions/SKILL.md) | “假设合理吗、补理由、查隐含前提” | 前提性质与依据、实际用途、失效影响及检查设计 |
 
-八个技能共用 [统一方法](references/methods.md) 和同一份任务记录；能力之间的交接见 [能力分工](references/capabilities.md)。
+九个技能共用 [统一方法](references/methods.md) 和同一份任务记录。主技能按目标、用途与届次选择专业模块，比赛特有规则按档案加载；能力之间的交接见 [能力分工](references/capabilities.md)。
 
 ### 比赛是一个使用场景
 
@@ -172,7 +173,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## Agent 兼容
 
-同一套建模方法，按宿主生成对应插件或扩展。八个技能与核心计算代码共用，安装清单和路径变量由导出器适配；不必为不同 Agent 维护不同的建模流程。
+同一套建模方法，按宿主生成对应插件或扩展。九个技能与核心计算代码共用，安装清单和路径变量由导出器适配；不必为不同 Agent 维护不同的建模流程。
 
 推荐从[完整插件安装](references/installation.md)开始；仅支持技能的环境仍可使用 [Agent Skills 入口](references/installation.md#仅安装技能)。桌面与 CLI 的本地安装不会自动配置网页会话、云端 Agent 或远程机器。
 
@@ -217,7 +218,7 @@ praxis-plugin/
   # 其他宿主由 --host 生成对应清单
   skills/
     praxis/                 # 入口技能，带全部参考、脚本与工具代码
-    praxis-model/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
+    praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
 ```
 
 用户的题目、数据与案例继续保存在你的工作区，不进入插件。

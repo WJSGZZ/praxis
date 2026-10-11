@@ -24,7 +24,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 读 [references/methods.md](references/methods.md)：这是唯一的推理主线，定义各环节及自主质量循环。完整委托在授权预算内从基线主动识别重要缺口、择优改进、核验并同步全文，不以交出初稿代替停止判断；维护有效成果、待核验候选及可接续的下一行动。按当前请求进入和结束，小任务不默认全流程，不要求逐步审批。
 
-用 [references/capabilities.md](references/capabilities.md) 按实际缺口选择分析、文献、模型、计算、验证、图表或写作能力；它定义职责与交接，不是另一套流程。只读需要的专业参考，同一任务 ID、版本、单位和结论边界贯穿各能力。先接续交付用途（竞赛／研究／一般数学任务）、赛事—赛项—届次或研究目标，以及自主／协作／正式使用模式；未知信息只在影响当前行动时追问。竞赛规则与研究标准按需加载，未知届次或期刊不继承其它要求，题目难度与交付用途分开。
+用 [references/capabilities.md](references/capabilities.md) 按实际缺口选择分析、来源、假设、模型、计算、验证、图表、写作与评审职责；同一任务 ID、版本、单位和结论边界贯穿交接。先接续用途（竞赛／研究／一般数学任务）、赛事—赛项—届次或研究目标，以及自主／协作／正式使用模式，再加载对应规则与当前需要的模块。美赛、国赛等复用专业技能；特有规则和交付流程由对应届次档案与专属参考提供，不复制整套数学方法。未知届次或期刊不继承其它要求，题目难度与交付用途分开。
 
 - 涉及比赛、团队分工或限时完整交付时，先读 [references/context-and-team.md](references/context-and-team.md)，接续赛事／届次、实际人数、成员能力与可用时间；通用建模不默认套赛事规则，不默认用户单人。
 - 已确认单人且限时或强调先完成时，读 [references/solo-delivery.md](references/solo-delivery.md)。助手承担优先级、依赖与下一步协调，给用户一个当前事项；滚动形成完整稿，预算不足采用简化路线。
@@ -47,6 +47,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 | 技能 | 用于 |
 |---|---|
 | [praxis-model](skills/praxis-model/SKILL.md) | 读题、假设与参数依据、路线与模型选择 |
+| [praxis-assumptions](skills/praxis-assumptions/SKILL.md) | 显式／隐含前提、理由、实际用途、失效影响与结论范围 |
 | [praxis-compute](skills/praxis-compute/SKILL.md) | 数据审计、模型运行、可复现证据 |
 | [praxis-verify](skills/praxis-verify/SKILL.md) | 独立验证、敏感性、证据与结论强度审查 |
 | [praxis-review](skills/praxis-review/SKILL.md) | 完整竞赛或研究作品的分类评价、主要缺口与修改优先级 |
@@ -54,7 +55,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 | [praxis-dialogue](skills/praxis-dialogue/SKILL.md) | 向不懂数学的用户讲清模型、复盘与共同思考 |
 | [praxis-report](skills/praxis-report/SKILL.md) | 论文结构、图表、披露、PDF 检查与交付 |
 
-整题推进、团队与限时协调、跨环节交接由本技能负责。计算类工作可调用 `praxis-tools`（插件里的 MCP 服务，或 `python -m scripts.mcp_server --call 工具名 'JSON'`）；方法清单见 [model-library.md](references/model-library.md)。
+整题推进、比赛／研究用途路由、团队与限时协调、跨环节交接由本技能负责。每项工作选择一个当前主责，相关能力按缺口协作；不要求每个模块都启动、不把章节逐个当成技能，也不要求用户管理技能名。计算类工作可调用 `praxis-tools`（插件里的 MCP 服务，或 `python -m scripts.mcp_server --call 工具名 'JSON'`）；方法清单见 [model-library.md](references/model-library.md)。
 
 ## 执行边界
 

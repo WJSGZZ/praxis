@@ -15,7 +15,7 @@ BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.
 ## 做什么
 
 - 计算是否符合模型：另一种推导、手算、解析解、穷举、守恒量、约束；重复同一程序只说明运行一致。
-- 模型是否回答现实问题：核对目标、机制、定义、可用信息、替代解释。
+- 模型是否回答现实问题：核对目标、机制、定义、可用信息、替代解释；按 methods.md 的“假设、理由与结论范围”检查实际前提及其影响，区分模型内正确与现实假设获证，不按假设条数判断。
 - 建议是否稳健：只扰动有依据且可能改变建议的因素。全局敏感性与方案评价工具的条件见 methods.md 末尾；Sobol 只适合独立均匀输入与确定性标量输出。
 - 最优性：可行解与证明界分开报告，最大化用上界、最小化用下界；受限决策族只能称族内最优，须用更宽的族检验差距。见 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的“结构、松弛与界”。
 - 不确定性、数值收敛与统计检验的规范见 [scientific-foundations.md](../../references/scientific-foundations.md)。

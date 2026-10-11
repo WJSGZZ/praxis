@@ -1,5 +1,19 @@
 [
   {
+    "package": "pylatexenc",
+    "installed_version": "2.11",
+    "license": "MIT",
+    "repository": "https://github.com/phfaist/pylatexenc",
+    "release": "https://pypi.org/project/pylatexenc/2.11/",
+    "reuse": "installed dependency; original static heading review adapters use the documented parser API; no implementation vendored",
+    "license_files": [
+      {
+        "file": "third_party/licenses/pylatexenc-LICENSE.txt",
+        "sha256": "90b6f8fc23cb0328a9678562627fb2ebc5f9c871712fad698d781869eb02862c"
+      }
+    ]
+  },
+  {
     "package": "SALib",
     "installed_version": "1.6.0",
     "license_files": [

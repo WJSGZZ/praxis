@@ -5,6 +5,15 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 章节结构用 pylatexenc 的语法树预检，并接入带源码的最终冻结；孤立编号子标题须整理或给出当前源码绑定的具体保留理由。整稿审阅连接题意、前提、模型、证据和条件答案，学习按多个维度记录实际应用与未验证部分，不以阅读篇数认证掌握。
+  Heading review uses pylatexenc and is enforced when freezing a source-bound paper. Sole numbered child headings need a revision or a documented reason tied to the exact source. Whole-paper review follows the question, premises, model, evidence and scoped answer; learning records distinguish observation, application and verification across dimensions.
+
+- 新增薄 `praxis-assumptions` 入口，专管显式／隐含前提、依据、用途与失效影响；主技能按用途及届次选择共享专业模块，比赛规则保持单一档案，导出共含九个技能。
+  A focused assumptions skill reviews premises, reasons, uses and failure effects. The core selects shared capabilities by task and contest edition; event-specific rules stay in their existing registry, and exports contain nine skills.
+
+- 假设按实际用途、理由、关键影响与结论范围评审，明确最小模型不等于少列前提；重要共同假设通常集中成章，局部条件随模型交代，数量不作质量判据。规则依据COMAP说明、参赛指南与历年评委经验，保留现有诊断权重及历史评价。
+  Assumptions are reviewed for their role, justification, effect on key conclusions and scope. A minimal model still states all relevant premises. Substantial shared assumptions usually receive a dedicated section, with local conditions explained alongside each model. Counts do not determine quality; guidance draws on COMAP instructions and judges' advice while preserving diagnostic weights and historical assessments.
+
 - 最终字号预检测量PDF变换后的文字，较小数学字形须逐项审阅并绑定当前PDF；冻结入口可在写文件前执行同一检查。国赛2026显式届次检查AI声明位置，研究生赛区分匿名报告与保留封面的完整提交；其2026 AI政策按用途核验。目录标题约束与当前浴缸稿的四处范围标题同步，历史稿及科学评阅保持。
   Final-size inspection measures transformed PDF text, with individually reviewed mathematical exceptions bound to the current PDF; snapshot creation can enforce the same check before writing. Explicit CUMCM 2026 checks validate the disclosure position, while graduate checks distinguish an anonymous report from a submission with its official cover. Its 2026 AI policy is tracked by use. Contents-heading guidance and four scoped bath headings are synchronized; historical papers and scientific reviews remain intact.
 

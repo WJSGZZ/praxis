@@ -9,12 +9,15 @@ from pypdf import PdfReader
 
 
 def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
-           minimum_font_tex_pt=None, font_review=None):
+           minimum_font_tex_pt=None, font_review=None, structure_review=None):
     layout = None
+    structure = None
     if (tex is None) != (contest is None):
         raise ValueError("Supply both TeX source and contest for a layout-gated snapshot")
     if build_receipt is not None and tex is None:
         raise ValueError("Build receipts require TeX source and contest")
+    if structure_review is not None and tex is None:
+        raise ValueError('A structure review requires TeX source and contest')
     if tex is not None:
         from scripts.paper_template import check
         layout = check(tex.read_text(encoding='utf-8'), contest)
@@ -31,6 +34,12 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
         layout['tex_sha256'] = hashlib.sha256(tex.read_bytes()).hexdigest()
         layout['runtime_profile'] = runtime['profile']
         layout['build_receipt_sha256'] = hashlib.sha256(Path(build_receipt).read_bytes()).hexdigest()
+        from scripts.paper_structure import inspect_structure
+        structure = inspect_structure(tex.read_bytes().decode('utf-8'), structure_review)
+        if not structure['passed']:
+            raise ValueError('Heading structure review failed: resolve single-child headings '
+                             'or supply an exact-source-bound review with specific reasons; '
+                             'inspect with python -m scripts.paper_structure')
     doc = PdfReader(BytesIO(raw))
     if doc.is_encrypted or len(doc.pages) == 0:
         raise ValueError("PDF must be readable and nonempty")
@@ -66,6 +75,7 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
         raise RuntimeError("Snapshot integrity check failed")
     destination.chmod(0o444)
     return {**({"layout": layout} if layout else {}), **({"pdf_boundaries": boundaries} if boundaries else {}),
+            **({"heading_structure_review": structure} if structure is not None else {}),
             **({"font_size_review": sizes} if sizes is not None else {}),
             "source": str(source.resolve()), "snapshot": str(destination.resolve()),
             "sha256": sha, "bytes": len(raw), "created_utc": datetime.now(timezone.utc).isoformat(),
@@ -81,12 +91,14 @@ def main():
     parser.add_argument("--contest", choices=["mcm", "cumcm", "research"])
     parser.add_argument("--minimum-font-tex-pt", type=float, help="Reject undersized final text before snapshot creation")
     parser.add_argument("--font-review", type=Path, help="Exact-PDF-bound review of smaller mathematical text")
+    parser.add_argument("--structure-review", type=Path, help="Exact-source-bound reasons for retaining single-child headings")
     args = parser.parse_args()
     receipt_path = args.destination.with_suffix(".pdf.receipt.json")
     if receipt_path.exists():
         parser.error("Receipt already exists; choose a new destination")
     receipt = freeze(args.source, args.destination, tex=args.tex, contest=args.contest, build_receipt=args.build_receipt,
-                     minimum_font_tex_pt=args.minimum_font_tex_pt, font_review=args.font_review)
+                     minimum_font_tex_pt=args.minimum_font_tex_pt, font_review=args.font_review,
+                     structure_review=args.structure_review)
     # Receipt has its own name, never replaces the PDF or an earlier receipt.
     with receipt_path.open("x", encoding="utf-8") as stream:
         json.dump(receipt, stream, indent=2)

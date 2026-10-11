@@ -89,6 +89,10 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
 
 正式论文先用 scripts.paper_template 的 --compile 入口核验 templates/typesetting-runtime.json 固定的编译器及完整资源包；scripts/freeze_pdf.py 的 --tex／--contest 门禁还必须提供同次 --build-receipt，核对实际源码、PDF与资源版本后创建字节一致的新副本。美赛v3成品冻结还应传 `--minimum-font-tex-pt 12`，有合法较小数学文字时同时传 `--font-review`；字号门禁在创建新PDF前拒绝未解决候选，并在冻结收据保存实际复核结果。未传该配置的历史／通用冻结仍保留旧用途，不能声称通过最终字号验收。通用快照不等于论文通过门禁，构建记录也不是正式提交回执。
 
+章节结构由 `python -m scripts.paper_template main.tex --contest mcm --review-structure` 预检，或单独运行 `python -m scripts.paper_structure main.tex`。采用 pylatexenc 的语法树，检查字面 chapter／section／subsection／subsubsection 的直接父子关系；注释、代码示例、数学内容和宏定义不作为实际标题。带 `--tex`／`--contest` 的最终冻结同样检查，未解决候选或解析失败时在写PDF前停止，另将结果保存在冻结收据；原构建收据的版式身份不变。它是编辑复查入口，不是官方子节数量规则或完整TeX解析认证：不展开宏、不读取 input／include、不执行条件分支；未覆盖的结构仍以实际目录和正文为准。合法的复杂TeX也可能触发解析失败，先查看诊断，不因此判论文错误，也不绕过成品审查。没有源码的通用快照保持原用途，不认证章节结构。
+
+只有一个编号子节时，默认合并无独立作用的层级。确需保留者保存JSON：`tex_sha256` 为当前UTF-8源码字节的SHA256，`approved_single_child_nodes` 为 `[{"id":"预检给出的候选id","reason":"该子节实际承担的独立导航或规定职责"}]`。预检追加 `--structure-review /绝对路径/structure-review.json`，单独脚本用 `--review`，最终冻结也传 `--structure-review`。过期哈希、未知／重复id和空理由拒绝；不能用批量理由或增加无内容标题凑数。记录保存实际判断，不能自动证明理由正确。预检与编译分开调用，最后查看同次编译的目录、正文与交叉引用。
+
 scripts/check_references.py 读取每行一条的参考文献文本，用 Crossref 免费接口核对其中的 DOI 是否存在、题名与年份是否与引文相符，输出 verified / mismatch / not_found / network_error / no_doi。需要联网；没有 DOI 的书、标准和网页只报告 no_doi，必须手工核对。通过只说明记录存在，不说明该文献支持所引论断。
 
 

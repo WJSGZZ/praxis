@@ -1,6 +1,6 @@
 ---
 name: praxis-model
-description: 把原题变成可回答的任务和最小可验证的模型：读题与定义、变量与假设、没有数据时怎样给参数找依据、路线与模型选择、可辨识性／尺度／优化结构判断。用于“这题怎么做、用什么模型、假设合不合理、参数怎么定”。不负责大规模计算或写论文；整题推进用 praxis。
+description: 把原题变成可回答的任务和最小可验证的模型：读题与定义、变量与候选假设、没有数据时怎样给参数找依据、路线与模型选择、可辨识性／尺度／优化结构判断。用于“这题怎么做、用什么模型、参数怎么定”。单独梳理或审查假设交 praxis-assumptions，不负责大规模计算或写论文；整题推进用 praxis。
 license: MIT
 ---
 
@@ -14,7 +14,7 @@ BUNDLE 指 `praxis` 技能目录（仓库根目录，或插件里的同级 `prax
 
 ## 做什么
 
-把请求转成任务 Q1、Q2……每项都有目标量、单位、约束、成功条件，再给出能回答它的最小模型、假设及其依据、验证设计。读 [methods.md](../../references/methods.md) 的“明确问题”“形成路线”“模型与验证一起选择”。
+把请求转成任务 Q1、Q2……每项都有目标量、单位、约束、成功条件，再给出能回答它的最小模型、假设及其依据、验证设计。读 [methods.md](../../references/methods.md) 的“明确问题”“形成路线”“模型与验证一起选择”和“假设、理由与结论范围”；最小模型不指少列前提，实际依赖的隐含条件也须说明。
 
 - 只有会改变答案的歧义才读 [definition-review.md](../../references/definition-review.md)；其余写成假设并说明影响。
 - 参数可辨识性、量纲、优化保证、概率区间、干预结论需要判断时，读 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的对应分支。
@@ -27,4 +27,4 @@ BUNDLE 指 `praxis` 技能目录（仓库根目录，或插件里的同级 `prax
 
 ## 产出与交接
 
-持续任务按 [tasks-template.md](../../references/tasks-template.md) 更新已有任务记录，写入任务、基线、假设与路线取舍。模型、参数输入和验证设计明确后交给 praxis-compute 实现与运行；需要判断结论强度时交给 praxis-verify。题意或机制被推翻时，从这里重开，不在下游悄悄改假设。
+持续任务按 [tasks-template.md](../../references/tasks-template.md) 更新已有任务记录，写入任务、基线、假设与路线取舍。专门梳理或审查前提、理由与失效影响时，带已有题目和候选模型交 [praxis-assumptions](../praxis-assumptions/SKILL.md)，不要求每题另做一轮。模型、参数输入和验证设计明确后交给 praxis-compute 实现与运行；需要判断结论强度时交给 praxis-verify。题意或机制被推翻时，从这里重开，不在下游悄悄改假设。
