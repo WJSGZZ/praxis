@@ -1,9 +1,9 @@
-% Praxis MCM house style v3. Layout source; assemble with scripts.paper_template.
+% Praxis MCM house style v4. Layout source; assemble with scripts.paper_template.
 \documentclass[12pt,a4paper]{article}
 \usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{newtxtext,newtxmath}
-\usepackage{booktabs,array,graphicx,xcolor,caption,float,etoolbox,fvextra,fancyhdr,lastpage,titlesec,titletoc,needspace}
+\usepackage{booktabs,array,graphicx,xcolor,caption,float,etoolbox,fvextra,fancyhdr,lastpage,titlesec,titletoc,needspace,indentfirst}
 \usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
 \urlstyle{same}\Urlmuskip=0mu plus 1mu
 @@PLOTS@@
@@ -13,14 +13,19 @@
 % imported standalone figures also require final-size PDF inspection.
 \pgfplotsset{tick label style={font=\normalsize},label style={font=\normalsize},legend style={font=\normalsize},title style={font=\normalsize}}
 \linespread{1.12}
-\setlength{\parindent}{1.5em}\setlength{\parskip}{3pt}
+\setlength{\parindent}{2em}\setlength{\parskip}{3pt}
 \titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
 \titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
 \titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
-\titlespacing*{\section}{0pt}{16pt plus 3pt}{8pt}
-\titlespacing*{\subsection}{0pt}{12pt plus 2pt}{6pt}
-\titlespacing*{\subsubsection}{0pt}{10pt plus 2pt}{5pt}
+\titlespacing{\section}{0pt}{16pt plus 3pt}{8pt}
+\titlespacing{\subsection}{0pt}{12pt plus 2pt}{6pt}
+\titlespacing{\subsubsection}{0pt}{10pt plus 2pt}{5pt}
 \setcounter{secnumdepth}{3}
+% A dedicated summary heading restores ordinary paragraph indentation after
+% the centered heading; other centered content, lists and captions keep their roles.
+\makeatletter
+\newcommand{\PraxisSummaryHeading}[1]{\begin{center}{\Large\bfseries #1}\end{center}\@afterindenttrue\@afterheading}
+\makeatother
 \captionsetup{font=normalsize,labelfont=bf,labelsep=period,justification=centering}
 \captionsetup[table]{position=above,skip=5pt}\captionsetup[figure]{position=below,skip=7pt}
 \setcounter{tocdepth}{2}

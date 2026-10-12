@@ -8,7 +8,7 @@
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Version](https://img.shields.io/badge/Version-0.6.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.6.1-263B9B?style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -76,7 +76,7 @@ Explore either case or bring your own problem. **Star Praxis** if you would like
 
 ### 1. Install for your agent
 
-Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [0.6.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.0), or export the current source:
+Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [0.6.1 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.1), or export the current source:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git

@@ -11,8 +11,8 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 3, 'cumcm': 2, 'research': 1}
-BEGIN = '% BEGIN PRAXIS MCM STYLE v3\n'
+VERSIONS = {'mcm': 4, 'cumcm': 2, 'research': 1}
+BEGIN = '% BEGIN PRAXIS MCM STYLE v4\n'
 END = '% END PRAXIS MCM STYLE\n'
 
 
@@ -21,7 +21,7 @@ def style_block(contest='mcm', *, layout_version=None):
         raise ValueError('Unknown layout profile')
     name = contest.upper()
     version = VERSIONS[contest] if layout_version is None else layout_version
-    supported = (1, 2, 3) if contest == 'mcm' else (VERSIONS[contest],)
+    supported = (1, 2, 3, 4) if contest == 'mcm' else (VERSIONS[contest],)
     if type(version) is not int or version not in supported:
         raise ValueError('Unsupported archived layout version')
     suffix = f'-v{version}' if contest == 'mcm' and version != VERSIONS[contest] else ''
@@ -50,8 +50,8 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
     """Year-specific three-column summary metadata; running headers start later.
 
     Edition is explicit for new papers. Sizes are house style, not COMAP rules.
-    Versions 1 and 2 are available for deliberate frozen-archive reproduction.
-    Versions 2 and 3 share the same year-specific summary component.
+    Versions 1, 2 and 3 are available for deliberate frozen-archive reproduction.
+    Versions 2 through 4 share the same year-specific summary metadata.
     """
     if problem not in 'ABCDEF' or len(problem) != 1:
         raise ValueError('Choose an MCM/ICM problem letter A–F')
@@ -63,7 +63,7 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
         return (r'\thispagestyle{' + style + r'}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
                 r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\' + '\n' +
                 r'{\Large\textbf{' + problem + r'}}&' + middle + r'&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
-    if version not in (2, 3) or legacy:
+    if version not in (2, 3, 4) or legacy:
         raise ValueError('Legacy summary metadata requires explicit layout_version=1')
     if not re.fullmatch(r'(?:19|20)[0-9]{2}', str(edition)):
         raise ValueError('Supply the original contest edition (YYYY), not the current date')
@@ -72,6 +72,21 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
             r'\parbox[t]{.30\linewidth}{\centering\textbf{' + str(edition) + r'\\MCM/ICM\\Summary Sheet}}&' + '\n' +
             r'\parbox[t]{.30\linewidth}{\centering\textbf{Team Control Number}\\[5pt]{\fontsize{26}{30}\selectfont\bfseries\PraxisTeam}}' + '\n' +
             r'\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
+
+
+def summary_heading(title='Summary', *, layout_version=None):
+    """Centered summary title followed by ordinary, indented body paragraphs.
+
+    MCM v4 uses the shared heading macro and LaTeX's heading transition.
+    Historical versions keep their exact former center-environment behavior.
+    Metadata, titles, lists, captions and letter salutations are separate roles.
+    """
+    version = VERSIONS['mcm'] if layout_version is None else layout_version
+    if type(version) is not int or version not in (1, 2, 3, 4):
+        raise ValueError('Unsupported archived layout version')
+    if version < 4:
+        return r'\begin{center}{\Large\bfseries ' + escape(title) + r'}\end{center}' + '\n'
+    return r'\PraxisSummaryHeading{' + escape(title) + '}\n'
 
 
 def table_of_contents(*, depth=2):

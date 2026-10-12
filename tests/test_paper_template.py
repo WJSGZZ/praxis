@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.paper_template import ai_report, check, preamble, section_component, summary_header, table_of_contents
+from scripts.paper_template import ai_report, check, preamble, section_component, summary_header, summary_heading, table_of_contents
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,7 +14,7 @@ def paper():
 
 def test_shared_layout_accepts_content_and_local_reference_format():
     text = paper().replace('Body.', r'\begingroup\small\setlength{\parindent}{0pt}Reference.\endgroup')
-    assert check(text)['profile'] == 'praxis-mcm-v3'
+    assert check(text)['profile'] == 'praxis-mcm-v4'
     assert r'Team \# \PraxisTeam' in text
     assert r'Page \thepage{} of \pageref{LastPage}' in text
     assert r'A title \& a result' in text
@@ -50,7 +50,8 @@ def test_skeleton_and_active_mcm_reports_use_current_profile():
 def test_export_contains_style_and_checker():
     from scripts.build_plugin import public_files
     paths = {str(p.relative_to(ROOT)) for p in public_files(ROOT)}
-    assert {'templates/mcm-style.tex', 'templates/cumcm-style.tex', 'scripts/paper_template.py'} <= paths
+    assert {'templates/mcm-style.tex', 'templates/mcm-style-v1.tex', 'templates/mcm-style-v2.tex',
+            'templates/mcm-style-v3.tex', 'templates/cumcm-style.tex', 'scripts/paper_template.py'} <= paths
 
 
 def test_chinese_profile_keeps_its_own_layout_and_rejects_contents():
@@ -105,7 +106,7 @@ def test_layout_gate_records_source_and_style(tmp_path):
         freeze(pdf, tmp_path/'stale.pdf', tex=source, contest='mcm', build_receipt=build)
     assert not (tmp_path/'stale.pdf').exists()
     assert receipt['layout']['tex_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
-    assert receipt['layout']['profile'] == 'praxis-mcm-v3'
+    assert receipt['layout']['profile'] == 'praxis-mcm-v4'
 
 
 def test_optional_components_and_archived_chinese_source():
@@ -452,7 +453,7 @@ def test_third_level_numbering_and_optional_contents_depth():
     for depth in (1, 2, 3):
         body = (table_of_contents(depth=depth) + r'\section{Model}\subsection{Identification}'
                 r'\subsubsection{Rank condition}A result.\subsubsection{Scale ambiguity}A limit.')
-        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v3'
+        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v4'
     with pytest.raises(ValueError, match='depth'):
         table_of_contents(depth=4)
     with pytest.raises(ValueError, match='override'):
@@ -483,7 +484,7 @@ def test_frozen_toll_generator_preserves_the_complete_archived_source(tmp_path):
 
 def test_historical_editions_are_explicit_and_not_replaced_by_current_year():
     text = preamble('7391857', 'A historical paper') + summary_header('C', edition=1999) + r'Body.\end{document}'
-    assert check(text)['profile'] == 'praxis-mcm-v3'
+    assert check(text)['profile'] == 'praxis-mcm-v4'
     assert r'\textbf{1999\\MCM/ICM' in text
 
 
@@ -496,3 +497,24 @@ def test_v2_archive_retains_its_actual_style_and_can_still_be_checked():
            + r'Body.\end{document}')
     assert check(old)['profile'] == 'praxis-mcm-v2'
     assert 'letterpaper' in old and 'a4paper' not in old
+
+
+def test_v3_archive_keeps_its_exact_style_and_summary_behavior():
+    import hashlib
+    from scripts.paper_template import style_block
+    # This previous source version is an archive, not a regenerated substitute.
+    assert hashlib.sha256((ROOT / 'templates/mcm-style-v3.tex').read_bytes()).hexdigest() == '8c9f09bbc2d7fce3ee235b7f331b28d28084cb1b3e01dcc7aeba9e0fcb559087'
+    old = (preamble('7391857', 'Archived v3 title', layout_version=3)
+           + summary_header('B', edition=2025, layout_version=3)
+           + summary_heading(layout_version=3) + r'Body.\end{document}')
+    assert check(old)['profile'] == 'praxis-mcm-v3'
+    assert r'\setlength{\parindent}{1.5em}' in style_block(layout_version=3)
+    assert r'\titlespacing*{\section}' in old
+    assert summary_heading(layout_version=3) == '\\begin{center}{\\Large\\bfseries Summary}\\end{center}\n'
+
+
+def test_current_summary_heading_uses_shared_component_and_escapes_title():
+    assert summary_heading() == '\\PraxisSummaryHeading{Summary}\n'
+    assert summary_heading('A & B') == '\\PraxisSummaryHeading{A \\& B}\n'
+    with pytest.raises(ValueError, match='version'):
+        summary_heading(layout_version=5)

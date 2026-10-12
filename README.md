@@ -8,7 +8,7 @@
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.6.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.6.1-263B9B?style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -76,7 +76,7 @@
 
 ### 1. 选择你的 Agent
 
-**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [0.6.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.0) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
+**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [0.6.1 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.1) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git

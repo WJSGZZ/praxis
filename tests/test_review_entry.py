@@ -48,8 +48,8 @@ def test_new_authorities_relocate_in_both_directions(tmp_path):
     assert '国赛可按其章程四标准' in contest
     assert '美赛按 COMAP' in contest
     # Detailed edition/template rules have one owner, while writing retains navigation.
-    assert 'MCM v3 | CUMCM v2' not in writing
-    assert 'MCM v3 | CUMCM v2' in delivery
+    assert 'MCM v4 | CUMCM v2' not in writing
+    assert 'MCM v4 | CUMCM v2' in delivery
     assert '[contest-delivery.md](contest-delivery.md)' in writing
 
 

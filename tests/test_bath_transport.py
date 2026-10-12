@@ -45,8 +45,14 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert heading_revision['previous_current_pdf']['sha256']==font_revision['current_pdf_sha256']
     heading_inheritance=heading_revision['scientific_review_inheritance']
     assert heading_inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']
-    assert heading_inheritance['current_pdf_sha256']==heading_revision['current_pdf_sha256']==meta['pdf']['sha256']
+    assert heading_inheritance['current_pdf_sha256']==heading_revision['current_pdf_sha256']
     assert heading_inheritance['new_scientific_review'] is False and heading_inheritance['new_award_assessment'] is False
+    indentation=meta['indentation_revision']
+    assert indentation['previous_current_pdf']['sha256']==heading_revision['current_pdf_sha256']
+    indentation_inheritance=indentation['scientific_review_inheritance']
+    assert indentation_inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']
+    assert indentation_inheritance['current_pdf_sha256']==indentation['current_pdf_sha256']==meta['pdf']['sha256']
+    assert indentation_inheritance['new_scientific_review'] is False and indentation_inheritance['new_award_assessment'] is False
     pages=PdfReader(pdf).pages
     assert len(pages)==26
     text=' '.join(' '.join(p.extract_text().split()) for p in pages)
@@ -69,11 +75,11 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert hashlib.sha256(old_source.read_bytes()).hexdigest()==previous['generator_sha256']=='7b271509cff03e48856f9cfc6aa2a929d036ed64d3d8ee3f1ba836c2a0dc07ef'
 
 
-def test_three_layout_edges_keep_actual_archived_generator_sources():
+def test_four_layout_edges_keep_actual_archived_generator_sources():
     """Compare whole sources after reversing only the recorded layout edits."""
     demo=HERE.parent
     meta=json.loads((demo/'verification.json').read_text())
-    revisions=[meta[name] for name in ['frontmatter_revision','font_layout_revision','heading_layout_revision']]
+    revisions=[meta[name] for name in ['frontmatter_revision','font_layout_revision','heading_layout_revision','indentation_revision']]
     old=[]
     for revision in revisions:
         binding=revision['previous_current_pdf']
@@ -109,15 +115,23 @@ def test_three_layout_edges_keep_actual_archived_generator_sources():
     v3=replace(v3,r"tex.append('\\end{list}\n')"+'\n','')
     assert v3==old[1]
 
-    # v3 -> current: four exact page-title literals, no prose/data exclusions.
+    # v3 -> clarified headings: four exact literals, no prose/data exclusions.
+    heading=old[3]
     for before,after in [
         ('4. Optimality and energy bounds','4. Mixed-model optimum and spatial energy bound'),
         ('7.4 Observation-conditioned decisions','7.4 Supply decisions from temperature probes'),
         ('11.3 Continuous-parameter transfer bounds','11.3 Parameter changes and fixed-policy bounds'),
         ('11.4 Transport comparison and infeasibility','11.4 Transport comparison and network infeasibility'),
     ]:
-        current=replace(current,"page('"+after+"')","page('"+before+"')")
-    assert current==old[2]
+        heading=replace(heading,"page('"+after+"')","page('"+before+"')")
+    assert heading==old[2]
+
+    # Clarified v3 -> v4: only the exact shared Summary component import/call.
+    current=replace(current,'from scripts.paper_template import table_of_contents, summary_heading',
+                    'from scripts.paper_template import table_of_contents')
+    current=replace(current,"if s=='Summary':tex.append(summary_heading())",
+                    "if s=='Summary':tex.append(r'\\begin{center}{\\Large\\bfseries Summary}\\end{center}'+'\\n')")
+    assert current==old[3]
 
 
 def test_public_reading_copy_matches_delivery_and_links():

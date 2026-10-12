@@ -68,7 +68,7 @@ The paper's strength is a complete decision argument. A proved ideal benchmark l
 
 Its principal limitation is the conditional transport closure. Observation and control results rely on synthetic scenarios and an offline-maintained model set. Connecting observable movement and mixing to effective transport parameters would most improve practical applicability.
 
-An author-external AI reviewed the preceding 26-page manuscript and its five scientific figures. Three recorded revisions connect that reviewed version to the current copy: the unified summary sheet, A4 with 12-point ordinary text in tables, figures, captions and references, and four clearer section titles in the contents and body. Scientific and AI-disclosure content remains unchanged. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
+An author-external AI reviewed the preceding 26-page manuscript and its five scientific figures. Four recorded layout revisions connect that reviewed version to the current copy: the unified summary sheet, A4 with 12-point ordinary text, four clearer section titles, and consistent two-em first-line indentation after the Summary and section headings. Scientific and AI-disclosure content remains unchanged. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
 
 ## Paper and deliverables
 
@@ -78,7 +78,7 @@ An author-external AI reviewed the preceding 26-page manuscript and its five sci
 | [Delivery PDF](deliverables/paper.pdf) | Identical to the reading copy; the manuscript retains placeholder team number 7391856 |
 | [Technical guide](reproduce/README.md) | Calculations, verification, certificates and report builds |
 
-The public archive uses `paper.pdf`, as do the other demos. A live submission must follow its edition's filename requirements. Reproduction resources remain separate. The paper uses the [shared MCM v3 template](../../templates/mcm-paper.tex) and pinned Tectonic resources, with the original 2016 edition on the summary sheet. The actual copy has25 counted solution pages and a separate one-page AI report. Complete figure widths and final text sizes were measured; code and mathematical scripts retain their own type roles. Historical research archives retain their original layouts.
+The public archive uses `paper.pdf`, as do the other demos. A live submission must follow its edition's filename requirements. Reproduction resources remain separate. The paper uses the [shared MCM v4 template](../../templates/mcm-paper.tex) and pinned Tectonic resources, with the original 2016 edition on the summary sheet. The actual copy has25 counted solution pages and a separate one-page AI report. The recorded figure-width and prior font-role checks are retained. Current font roles are checked separately against the new PDF; an old receipt does not certify the new layout. Code and mathematical scripts retain their own type roles. Historical research archives retain their original layouts.
 
 ## Reproduction
 

@@ -216,6 +216,8 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
                 revisions.append(meta['font_layout_revision'])
             if 'heading_layout_revision' in meta:
                 revisions.append(meta['heading_layout_revision'])
+            if 'indentation_revision' in meta:
+                revisions.append(meta['indentation_revision'])
             expected_previous_sha = record['version_sha256']
             for revision in revisions:
                 inheritance = revision['scientific_review_inheritance']
@@ -237,6 +239,13 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
             ai_start = '\\begin{list}{}{\\setlength{\\leftmargin}{0pt}\\setlength{\\rightmargin}{0pt}\\setlength{\\parsep}{2.5pt}\\setlength{\\topsep}{0pt}\\setlength{\\itemsep}{0pt}}\\item[]\n'
             ai_titles = ('Tool, task and scope', 'Outputs, corrections and verification', 'Record limitations')
             class NormalizeLayout(ast.NodeTransformer):
+                def visit_ImportFrom(self, node):
+                    if node.module == 'scripts.paper_template':
+                        for alias in node.names:
+                            if alias.name == 'summary_heading':
+                                assert alias.asname is None
+                        node.names = [alias for alias in node.names if alias.name != 'summary_heading']
+                    return node if node.names else None
                 def visit_FunctionDef(self, node):
                     if node.name == 'mcm_spatial_layout':
                         body = node.body[1:] if isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant) else node.body
@@ -265,6 +274,12 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
                     return self.generic_visit(node)
                 def visit_Call(self, node):
                     self.generic_visit(node)
+                    if isinstance(node.func, ast.Name) and node.func.id == 'summary_heading':
+                        # Only the fixed Summary heading changes here; arbitrary
+                        # content and other centered blocks remain protected.
+                        assert not node.args and not node.keywords
+                        return ast.BinOp(left=ast.Constant(value=r'\begin{center}{\Large\bfseries Summary}\end{center}'),
+                                         op=ast.Add(), right=ast.Constant(value='\n'))
                     if (isinstance(node.func, ast.Name) and node.func.id == 'page'
                             and node.args and isinstance(node.args[0], ast.Constant)):
                         # Four exact editorial labels; do not exclude general

@@ -3,6 +3,14 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 0.6.1 · 2026-10-12
+
+- 共享美赛模板升级为v4：摘要和三级标题后的首段与普通正文统一缩进2em。独立摘要组件沿用LaTeX机制，实际PDF字框核验；旧v1/v2/v3样式继续支持明确的归档复编。公开浴缸论文、生成源及预览同步，数学数据和历史评议身份保持。
+  The shared MCM v4 layout indents the summary and paragraphs following all three heading levels by 2em, matching ordinary prose. A shared summary component uses standard LaTeX behavior and is checked in rendered PDFs. Explicit archived v1/v2/v3 layouts remain reproducible; the bath paper and previews are synchronized without changing its mathematical evidence or historical reviews.
+
+- 文本到行动的分析先区分对象、属性和评价方向，并保留上下文、重叠及比较分母；非线性回归的形状解释核实际编码、链接、导数和观测域。共用现有专业入口与数学工具。
+  Text-based actions distinguish the object, attribute and evaluation direction, retaining context, overlap and comparison denominators. Nonlinear interpretations check coding, links, derivatives and the observed domain. Existing specialist routes and tool interfaces remain in use.
+
 ## 0.6.0 · 2026-10-12
 
 - 新增六个专业入口：数据分析、统计推断、文本分析、时间序列、因果分析与科研绘图。主技能按问题调用十五个入口，复用现有成熟库与共享规范，不以技能数量认证能力。

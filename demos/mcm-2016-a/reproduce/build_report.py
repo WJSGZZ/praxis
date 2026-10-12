@@ -133,7 +133,7 @@ sys.path.insert(0,str(ROOT.parents[2]))
 import subprocess,shutil
 from scripts import texplot
 from scripts.paper_template import preamble, summary_header, check as check_layout
-from scripts.paper_template import table_of_contents
+from scripts.paper_template import table_of_contents, summary_heading
 escape=lambda s:s
 tex=[];eqcount=0;tabcount=0;table_total=0;SEC=[0]
 CAPS=['Where each requirement is answered','Modeling options compared','Baseline inputs','Coefficient anchors and the values used','Symbols',
@@ -179,7 +179,7 @@ def tx(s,math=True):
 def para(s,kind='body'):
     if kind=='title':tex.append(r'\begin{center}{\LARGE\bfseries '+tx(s)+r'}\end{center}'+'\n')
     elif kind=='heading':
-        if s=='Summary':tex.append(r'\begin{center}{\Large\bfseries Summary}\end{center}'+'\n')
+        if s=='Summary':tex.append(summary_heading())
         else:tex.append(r'\subsection*{'+tx(s)+'}\n')
     elif kind=='ref':tex.append(r'\begingroup\normalsize\setlength{\parindent}{0pt}\hangindent=1.5em '+tx(s,False)+r'\par\endgroup'+'\n')
     else:tex.append(tx(s)+'\n\n')

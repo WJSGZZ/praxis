@@ -1,50 +1,50 @@
 {
  "schema": 1,
- "checked_on": "2026-10-11",
+ "checked_on": "2026-10-12",
  "status": "local-reviewed-case; not a real contest submission",
  "pdf": {
-    "sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
-    "bytes": 176430,
-    "pages_total": 26,
-    "solution_pages": 25,
-    "ai_pages": 1,
-    "text_bounds_checked": true,
-    "pages_rendered_and_visually_reviewed": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      18,
-      19,
-      20,
-      21,
-      22,
-      23,
-      24,
-      25,
-      26
-    ],
-    "visual_review_note": "All26 pages contact-reviewed. Contents page and all four affected body headings viewed at native page size; each title fits a single line, with no new overflow or orphan headings.",
-    "typesetting": "Tectonic0.17.0 pinnedv33 canonical build; actual desktop-native compiler success.",
-    "md5": "b3fb6ebf0b65809006658ef0aaba9874",
-    "generator_sha256": "f3b5418cf30f23f8e228da4c49b70bcb24ee124f8b622cef26e6f29b553e0d43",
-    "generator_source": "reproduce/build_report.py",
-    "generator_source_note": "Actual current generator --run reference rebuilt the report from fixed records and retained its short accepted-policy trajectory replay; no optimization or long study rerun. Four page-title source literals changed;23 plotted array blocks and scientific/AI content preserved, with one explicitly reported terminal TeX blank-line move.",
-    "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84"
-  },
+  "sha256": "1c1ebfebf8abb0b8eda342c755eb0df55f56df93a6f1243d45db7afc578a3ba1",
+  "bytes": 176578,
+  "pages_total": 26,
+  "solution_pages": 25,
+  "ai_pages": 1,
+  "text_bounds_checked": false,
+  "pages_rendered_and_visually_reviewed": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26
+  ],
+  "visual_review_note": "All 26 pages were rendered in contact sheets and actually viewed; page 20 was also inspected at native raster size. Section 11.3 opening paragraph visibly has a two-em first-line indent. No clipping or overflow found. Automated check_pdf still flags page 6 in a horizontal-centering heuristic; the contact sheet did not show clipping, and the flag remains disclosed.",
+  "typesetting": "Canonical build recorded in reproduce/paper/paper.build.json (Tectonic 0.17.0 pinned v33; praxis-mcm-v4 layout); previews rendered separately.",
+  "md5": "c3fe65764973291c8ee6c0f046b0e1cf",
+  "generator_sha256": "401ed2b0ad011adbf52d5ec073773997976d1e0df5f069b0a61ed9cf67940193",
+  "generator_source": "reproduce/build_report.py",
+  "generator_source_note": "Actual current build_report.py --run reference rebuilt from fixed records and retained the existing short accepted-policy trajectory replay; no optimization or long study rerun. Generator and all 105 fixed reference/code inputs remained byte-identical during this build. Layout/template and summary-heading changes only.",
+  "tex_sha256": "412f623dd8d08befa5224303c1109f35e28fd90ebdedbef45a1990c945f153f7"
+ },
  "model_checks": {
   "total": 17,
   "passed": 17,
@@ -95,13 +95,14 @@
   "source": "https://www.contest.comap.org/undergraduate/contests/mcm/flyer/MCM-ICM_Summary.tex",
   "checked_on": "2026-10-11",
   "summary_hierarchy": "Three-column problem/summary/control-number block precedes title and abstract",
-  "year_handling": "Original problem2016 retained in shared-v3 header.",
-  "numbering": "Shared-v3 original2016 metadata/team7391856; continuous body Team/Page headers; AI independent page26.",
+  "year_handling": "Original problem2016 retained in shared-v4 header.",
+  "numbering": "Shared-v4 original2016 metadata/team7391856; continuous body Team/Page headers; AI independent page26.",
   "not_identical_to_official_tex": true,
   "team_control_number": "7391856",
   "example_only": true,
-  "layout_profile": "praxis-mcm-v3",
-  "current_scope": "House layout/font migration; current mechanical25-counted-page gate passes, without claiming historical2016 rule certification."
+  "layout_profile": "praxis-mcm-v4",
+  "current_scope": "House layout/font migration; current mechanical25-counted-page gate passes, without claiming historical2016 rule certification.",
+  "current_layout_verified_on": "2026-10-12"
  },
  "publication_scope": "Curated historical case; report, reproduction sources and presentation assets only",
  "extended_analysis": {
@@ -1620,11 +1621,12 @@
   ]
  },
  "public_paper": {
-    "path": "paper.pdf",
-    "sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
-    "byte_identical_to": "deliverables/paper.pdf",
-    "bytes": 176430
-  },
+  "path": "paper.pdf",
+  "sha256": "1c1ebfebf8abb0b8eda342c755eb0df55f56df93a6f1243d45db7afc578a3ba1",
+  "byte_identical_to": "deliverables/paper.pdf",
+  "bytes": 176578,
+  "generated_submission_copy_note": "The local generated submission copy was also checked; it is not an additional published deliverable."
+ },
  "caption_naming_revision": {
   "previous_pdf": {
    "sha256": "466a8525a0f1073bab3dda563799986f6b6b282c9df3c9a4a3666acb16f8361c",
@@ -2785,142 +2787,261 @@
   }
  },
   "heading_layout_revision": {
-    "schema": 1,
-    "created_at_utc": "2026-10-11T13:05:59.150239+00:00",
-    "change": "Four section titles clarified in contents and body; scientific/AI words, equations, captions and23 plotted arrays unchanged.",
-    "previous_pdf_sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
-    "current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
-    "previous_current_pdf": {
-      "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
-      "generator_source": "reproduce/reference/report-generator-9a05b2.py",
-      "generator_sha256": "45fad1e200d51f907ae09f03be25498af140bc0c92b2e5e8e129e18cb1792e81",
-      "tex_sha256": "01bc8dbab7121919a3b65e82db1cf75af8125ebb4801c32f057018809bd99432"
-    },
-    "current_generator_source": "reproduce/build_report.py",
-    "current_generator_sha256": "f3b5418cf30f23f8e228da4c49b70bcb24ee124f8b622cef26e6f29b553e0d43",
-    "current_tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84",
-    "title_changes": [
-      {
-        "old": "4. Optimality and energy bounds",
-        "new": "4. Mixed-model optimum and spatial energy bound",
-        "body_page": 7
-      },
-      {
-        "old": "7.4 Observation-conditioned decisions",
-        "new": "7.4 Supply decisions from temperature probes",
-        "body_page": 13
-      },
-      {
-        "old": "11.3 Continuous-parameter transfer bounds",
-        "new": "11.3 Parameter changes and fixed-policy bounds",
-        "body_page": 20
-      },
-      {
-        "old": "11.4 Transport comparison and infeasibility",
-        "new": "11.4 Transport comparison and network infeasibility",
-        "body_page": 21
-      }
-    ],
-    "actual_pages": {
-      "total": 26,
-      "counted_solution": 25,
-      "ai": 1,
-      "ai_new_page": 26
-    },
-    "source_only_four_page_title_literals_changed": true,
-    "science_and_AI_content_preserved_after_explicit_layout_normalization": true,
-    "all23_plotted_array_blocks_samebyte": true,
-    "tex_after_only_title_reversion_byte_identical": false,
-    "reported_non_title_tex_difference": {
-      "present": true,
-      "meaning": "one blank line moved from before the closing AI list to after it",
-      "parent_notified_before_normalizing": true,
-      "old_exact_suffix": "\n\n\n\\end{list}\n\\end{document}\n",
-      "new_exact_suffix": "\n\n\\end{list}\n\n\\end{document}\n",
-      "residual_unified_diff_after_title_reversions": "--- old tex\n+++ new tex with four titles reverted\n@@ -937,6 +937,6 @@\n \\textbf{Record limitations}\\par\n Task/tool/scope records, code and numerical receipts remain; the complete transcript is unavailable. Human verification, live control, experiments and feedback-wide certification were not performed.\n \n-\n \\end{list}\n+\n \\end{document}\n",
-      "allowed_normalization": "replace only the exact terminal new suffix with the exact old suffix; no generic source whitespace normalization"
-    },
-    "actual_execution": "Current build_report.py --run reference; fixed numerical records read and existing short six-segment trajectory propagated. No new optimization or long research run.",
-    "canonical_build": {
-      "runtime": {
-        "profile": "praxis-typesetting-v1",
-        "compiler": "Tectonic 0.17.0",
-        "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
-        "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
-        "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
-      },
-      "layout": {
-        "profile": "praxis-mcm-v3",
-        "style_sha256": "955111ba2169ee2514af112c66048ebb21403511445853811f6c213e282bda1d"
-      },
-      "source_name": "paper.tex",
-      "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84",
-      "pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
-      "visual_review_required": true
-    },
-    "desktop_compile": {
-      "kind": "success",
-      "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84"
-    },
-    "visual_review": {
-      "schema": 1,
-      "saved_at_utc": "2026-10-11T13:05:58.876044+00:00",
-      "pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
-      "pages_total": 26,
-      "contact_pages_actually_viewed": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26
-      ],
-      "native_page_images_actually_viewed": [
-        2,
-        7,
-        13,
-        20,
-        21
-      ],
-      "finding": "All26 pages contact-reviewed. Contents page and all four affected body headings viewed at native page size; each title fits a single line, with no new overflow or orphan headings.",
-      "source": "Existing render-receipt.json binds every page image to this exact canonical PDF."
-    },
-    "previews": {
-      "report-summary.png": {
-        "page": 1,
-        "sha256": "c89089e595ce3f37ff5a7602ede6f584604f750ec0335728424fcd1231a938ba"
-      },
-      "report-proof.png": {
-        "page": 7,
-        "sha256": "1e7330b2628ece5fc62d5d1d0d143285e44f7dec38e67e06ce70bf8615609ea2"
-      }
-    },
-    "scientific_review_inheritance": {
-      "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
-      "current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
-      "new_scientific_review": false,
-      "new_award_assessment": false,
-      "scope": "Original reviewed report -> edition-aware frontmatter -> shared-v3 typography -> four clarified titles. Actual old generator retained for every edge; whole-source equivalence is tested after reversing only each edge's explicit layout edits. Historical nonblind and uncalibrated award opinion retains its original version identity."
-    }
+  "schema": 1,
+  "created_at_utc": "2026-10-11T13:05:59.150239+00:00",
+  "change": "Four section titles clarified in contents and body; scientific/AI words, equations, captions and23 plotted arrays unchanged.",
+  "previous_pdf_sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+  "current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+  "previous_current_pdf": {
+   "sha256": "9a05b2279f68f6eb4971285fec53cbadc79c4c7ac3973cafe93aaaecb0a1c422",
+   "generator_source": "reproduce/reference/report-generator-9a05b2.py",
+   "generator_sha256": "45fad1e200d51f907ae09f03be25498af140bc0c92b2e5e8e129e18cb1792e81",
+   "tex_sha256": "01bc8dbab7121919a3b65e82db1cf75af8125ebb4801c32f057018809bd99432"
+  },
+  "current_generator_source": "reproduce/reference/report-generator-bb0f46.py",
+  "current_generator_sha256": "f3b5418cf30f23f8e228da4c49b70bcb24ee124f8b622cef26e6f29b553e0d43",
+  "current_tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84",
+  "title_changes": [
+   {
+    "old": "4. Optimality and energy bounds",
+    "new": "4. Mixed-model optimum and spatial energy bound",
+    "body_page": 7
+   },
+   {
+    "old": "7.4 Observation-conditioned decisions",
+    "new": "7.4 Supply decisions from temperature probes",
+    "body_page": 13
+   },
+   {
+    "old": "11.3 Continuous-parameter transfer bounds",
+    "new": "11.3 Parameter changes and fixed-policy bounds",
+    "body_page": 20
+   },
+   {
+    "old": "11.4 Transport comparison and infeasibility",
+    "new": "11.4 Transport comparison and network infeasibility",
+    "body_page": 21
+   }
+  ],
+  "actual_pages": {
+   "total": 26,
+   "counted_solution": 25,
+   "ai": 1,
+   "ai_new_page": 26
+  },
+  "source_only_four_page_title_literals_changed": true,
+  "science_and_AI_content_preserved_after_explicit_layout_normalization": true,
+  "all23_plotted_array_blocks_samebyte": true,
+  "tex_after_only_title_reversion_byte_identical": false,
+  "reported_non_title_tex_difference": {
+   "present": true,
+   "meaning": "one blank line moved from before the closing AI list to after it",
+   "parent_notified_before_normalizing": true,
+   "old_exact_suffix": "\n\n\n\\end{list}\n\\end{document}\n",
+   "new_exact_suffix": "\n\n\\end{list}\n\n\\end{document}\n",
+   "residual_unified_diff_after_title_reversions": "--- old tex\n+++ new tex with four titles reverted\n@@ -937,6 +937,6 @@\n \\textbf{Record limitations}\\par\n Task/tool/scope records, code and numerical receipts remain; the complete transcript is unavailable. Human verification, live control, experiments and feedback-wide certification were not performed.\n \n-\n \\end{list}\n+\n \\end{document}\n",
+   "allowed_normalization": "replace only the exact terminal new suffix with the exact old suffix; no generic source whitespace normalization"
+  },
+  "actual_execution": "Current build_report.py --run reference; fixed numerical records read and existing short six-segment trajectory propagated. No new optimization or long research run.",
+  "canonical_build": {
+   "runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+   },
+   "layout": {
+    "profile": "praxis-mcm-v3",
+    "style_sha256": "955111ba2169ee2514af112c66048ebb21403511445853811f6c213e282bda1d"
+   },
+   "source_name": "paper.tex",
+   "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84",
+   "pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+   "visual_review_required": true
+  },
+  "desktop_compile": {
+   "kind": "success",
+   "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84"
+  },
+  "visual_review": {
+   "schema": 1,
+   "saved_at_utc": "2026-10-11T13:05:58.876044+00:00",
+   "pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+   "pages_total": 26,
+   "contact_pages_actually_viewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "native_page_images_actually_viewed": [
+    2,
+    7,
+    13,
+    20,
+    21
+   ],
+   "finding": "All26 pages contact-reviewed. Contents page and all four affected body headings viewed at native page size; each title fits a single line, with no new overflow or orphan headings.",
+   "source": "Existing render-receipt.json binds every page image to this exact canonical PDF."
+  },
+  "previews": {
+   "report-summary.png": {
+    "page": 1,
+    "sha256": "c89089e595ce3f37ff5a7602ede6f584604f750ec0335728424fcd1231a938ba"
+   },
+   "report-proof.png": {
+    "page": 7,
+    "sha256": "1e7330b2628ece5fc62d5d1d0d143285e44f7dec38e67e06ce70bf8615609ea2"
+   }
+  },
+  "scientific_review_inheritance": {
+   "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+   "current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+   "new_scientific_review": false,
+   "new_award_assessment": false,
+   "scope": "Original reviewed report -> edition-aware frontmatter -> shared-v3 typography -> four clarified titles. Actual old generator retained for every edge; whole-source equivalence is tested after reversing only each edge's explicit layout edits. Historical nonblind and uncalibrated award opinion retains its original version identity."
+  },
+  "current_generator_source_note": "Historical current generator retained from its actual Git blob, not rewritten to select a later helper. Snapshot identity and compatible old-helper reproduction are distinct."
+ },
+ "indentation_revision": {
+  "schema": 1,
+  "created_at_utc": "2026-10-12T14:13:11+00:00",
+  "previous_current_pdf_sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+  "current_pdf_sha256": "1c1ebfebf8abb0b8eda342c755eb0df55f56df93a6f1243d45db7afc578a3ba1",
+  "current_tex_sha256": "412f623dd8d08befa5224303c1109f35e28fd90ebdedbef45a1990c945f153f7",
+  "current_build_record_sha256": "9255c97f966bcd951a3f60e6e70d5ccefa1fe8ff1e5cf2e45640b773aad07053",
+  "current_generator_sha256": "401ed2b0ad011adbf52d5ec073773997976d1e0df5f069b0a61ed9cf67940193",
+  "current_generator_source": "reproduce/build_report.py",
+  "layout_profile": "praxis-mcm-v4",
+  "actual_pages": {
+   "total": 26,
+   "counted_solution": 25,
+   "ai": 1,
+   "ai_starts_new_page": true
+  },
+  "visual_review": {
+   "contact_pages_actually_viewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "native_page_images_actually_viewed": [
+    20
+   ],
+   "finding": "Two-em first-line indent is visible in first paragraph under §11.3; no clipping/overflow seen in rendered pages. See output contact sheets and page-20.png."
+  },
+  "content_basis": "The 105 original fixed reference/code inputs retain the root-verified hashes. The current generator stayed byte-identical during the rebuild; relative to the previous layout source, only the exact Summary component import/call changed. Whole-source reverse comparisons verify all scientific/AI prose, figure and model calls. The added historical generator snapshot is provenance, not a new mathematical input. No scientific or award review was repeated.",
+  "prior_scientific_and_award_review_identity": "Preserved in heading_layout_revision and current_award_assessment, still bound to prior assessed PDF; no hash or review claim overwritten.",
+  "pdf_identity_relation": "New typeset PDF; prior review inheritance only at unchanged scientific generator/input scope, not an assertion that the new PDF was independently award-reviewed.",
+  "automated_font_findings": {
+   "unresolved_small_runs": 365,
+   "candidate_tex_pt_sizes": [
+    6.60001,
+    8.80001
+   ],
+   "unmapped_glyphs": 1,
+   "classification": "Current source/role review passes; 365 mathematical runs plus1 delimiter, no ordinary-text exemption. See public current-font-review.json.",
+   "previous_role_review_sha256": "269994680458bcdfb6fbae81da4f7064ae42b507d3965a3d52d24659837248df",
+   "previous_reviewed_role_counts": {
+    "math_script": 355,
+    "math_notation": 10
+   },
+   "exact_run_id_matches": 59,
+   "same_page_and_text_matches": 356,
+   "known_page_moved_candidates": 9,
+   "unmapped_glyph_previous_role": "math_notation, equation 19 enlarged left delimiter; current extraction remains on page 14 with shifted index",
+   "current_classification": "No new semantic role classification asserted; parent review needed for any new waiver."
+  },
+  "pdf_text_equivalence_test": {
+   "created_at_utc": "2026-10-12T14:11:00Z",
+   "old_pdf_sha256": "4ad086c0107227a4193d161299035b39d93f5c641aadf176de75e459f8031e57",
+   "new_pdf_sha256": "1c1ebfebf8abb0b8eda342c755eb0df55f56df93a6f1243d45db7afc578a3ba1",
+   "old_pages": 26,
+   "new_pages": 26,
+   "normalized_extracted_text_equal": false,
+   "normalized_text_sha256_old": "04dbc812d110702f62d9df93d92f2f5a0b58a9c4839960fb8ff825ad354293fd",
+   "normalized_text_sha256_new": "907ebc71dec4cefd5c36ee16754e1369f025c95e90f47e9ab39e9b8fd64316d9",
+   "normalization": "Unicode soft hyphen removed; line-end word-break hyphens joined; whitespace collapsed; no wording edited"
+  },
+  "previous_current_pdf": {
+   "sha256": "bb0f465e8261a267a56dd3a725c56d99a29b59c245d34b87b833a00a07f3a808",
+   "generator_source": "reproduce/reference/report-generator-bb0f46.py",
+   "generator_sha256": "f3b5418cf30f23f8e228da4c49b70bcb24ee124f8b622cef26e6f29b553e0d43",
+   "source_snapshot_git_commit": "ad2e35f99ea3e4a001d1404c69a3c36c99d618b4",
+   "source_snapshot_note": "Exact original Git blob; bytes preserved. Recompiling under the new default helper would produce a different layout. Historical v3 reproduction needs the matching old helper environment or an explicit v3 wrapper without changing this snapshot.",
+   "tex_sha256": "1a2cb6551ce628345e4bd06ec8d112d9155af36647ffd940bb908de15d943c84"
+  },
+  "scientific_review_inheritance": {
+   "review_version_sha256": "fb622dd7fb54d853e80d82a9492a2b873d8a4931dc38bf96d57c55c1062992fa",
+   "current_pdf_sha256": "1c1ebfebf8abb0b8eda342c755eb0df55f56df93a6f1243d45db7afc578a3ba1",
+   "new_scientific_review": false,
+   "new_award_assessment": false,
+   "scope": "Fourth layout-only edge: ordinary and after-heading paragraphs use two-em indentation; Summary uses shared heading transition. Whole generator equivalence is checked by reversing only the exact Summary import/call replacement. All prior scientific/AI prose, figure/model calls and original review identity remain bound to their actual versions."
+  },
+  "font_size_candidates_evidence": {
+   "sha256": "42618cbfcbe82d0c1e7f105b4803b9974edb6af3fa9276ef5aebeb7cf85b3253",
+   "public_path": null,
+   "scope": "Local development evidence; not a published file or current semantic font-role review. Current public role artifact must be independently bound to this PDF before a waiver can be asserted."
+  },
+  "font_role_carryover_evidence": {
+   "sha256": "51e575689d029fd48aa50ce9c91cd929a92e5d45723a49b489a8c9d3e4a505a6",
+   "public_path": null,
+   "scope": "Local development evidence; not a published file or current semantic font-role review. Current public role artifact must be independently bound to this PDF before a waiver can be asserted."
+  },
+  "current_font_review": {
+   "file": "current-font-review.json",
+   "sha256": "747d13bf7cf9ef59aef6052f992362238c3c6caec66ede7e1ad7a46022dd496e",
+   "minimum_font_tex_pt": 12,
+   "all_365_prior_math_roles_carried_and_4_current_source_roles_explicitly_checked": true,
+   "unmapped_math_delimiter_current_checked": true,
+   "new_full_math_or_award_review": false,
+   "human_review": false
   }
+ }
 }
