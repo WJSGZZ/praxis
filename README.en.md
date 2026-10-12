@@ -8,7 +8,8 @@
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Version](https://img.shields.io/badge/Version-0.3.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.5.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
 [![Paper](https://img.shields.io/badge/Paper-LaTeX-C8533B?style=flat-square)](templates/)
@@ -75,7 +76,7 @@ Explore either case or bring your own problem. **Star Praxis** if you would like
 
 ### 1. Install for your agent
 
-Get all nine skills, mathematical tools and the evidence workflow as one plugin. Clone the public source and choose a target:
+Get all nine skills, mathematical tools and the evidence workflow as one plugin. Download a verified host package from the [0.5.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.5.0), or build from source:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -118,6 +119,8 @@ Or start with a focused request:
 > We have three team members. Organize tasks around our skills and available time, prioritizing a complete report.
 
 **The skill directory stores reusable capabilities. Your workspace stores problems, data, cases, and reports.** Scripts handle execution and traceability; the agent handles interpretation, method selection, and scientific judgment.
+
+Before a competition, check its current AI and submission policy and disclose the tools and uses actually involved; see [contest delivery](references/contest-delivery.md). Inspect generated or unfamiliar Python before running it, and read the [execution and isolation boundaries](SECURITY.md).
 
 ## Skills
 
@@ -236,7 +239,7 @@ The agent coordinates the work using deterministic scripts and your project's ru
 
 ## Reliability
 
-- 550+ automated tests cover analytical answers, input protection, failed and stale results, PDF helpers, the math tools, and plugin export.
+- [Continuous integration](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml) checks analytical answers, input protection, failed and stale evidence, PDF helpers, mathematical tools and plugin export. Each run records its actual passes, failures and skips.
 - Both complete cases ship independent checks and runnable reproduction code; every number traces back to the report.
 - Each conclusion states its basis and the conditions it holds under; failed runs are kept, not rewritten.
 

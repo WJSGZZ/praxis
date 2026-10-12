@@ -14,7 +14,7 @@ from urllib.parse import unquote, urlsplit
 from scripts.plugin_hosts import HOSTS, host_files
 
 BUNDLE = Path(__file__).resolve().parents[1]
-FILES = ('SKILL.md', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
+FILES = ('SKILL.md', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'SECURITY.md', 'THIRD_PARTY_NOTICES.md',
          'pyproject.toml', 'uv.lock', 'demos/mcm-2016-a/paper.pdf')
 # Explicit public resources, never the repository, environment or user cases.
 TREES = {

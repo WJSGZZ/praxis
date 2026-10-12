@@ -1,6 +1,6 @@
 ---
 name: praxis-assumptions
-description: 梳理和审查数学模型的显式与隐含假设，区分题面事实、定义、模型前提和参数情景，说明依据、实际用途及失效影响。用于“这题需要哪些假设、假设合理吗、补假设及理由、检查隐含前提”。不凭假设条数或章节判断质量；数值核验交 praxis-verify，纯论文排版交 praxis-report，整题设计与协调交 praxis-model／praxis。
+description: 梳理和审查数学模型的显式与隐含假设，区分题面事实、定义、模型前提和参数情景，说明依据、实际用途及失效影响。用于“这题需要哪些假设、假设合理吗、补假设及理由、检查隐含前提”。不凭假设条数或章节判断质量；数值核验交 praxis-verify，纯论文排版交 praxis-report，整题设计与协调交 praxis-model／praxis。 Identify and review explicit or implicit model assumptions, reasons, uses and failure effects.
 license: MIT
 ---
 

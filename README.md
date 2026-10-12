@@ -8,7 +8,8 @@
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.3.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.5.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
 [![Paper](https://img.shields.io/badge/Paper-LaTeX-C8533B?style=flat-square)](templates/)
@@ -75,7 +76,7 @@
 
 ### 1. 选择你的 Agent
 
-**安装完整插件：九个技能 + 数学工具 + 证据工作流。** 从公开仓库获取源码，按宿主生成安装包：
+**安装完整插件：九个技能 + 数学工具 + 证据工作流。** 可从 [0.5.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.5.0) 下载对应宿主包并核对校验和，也可从源码导出：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -119,9 +120,11 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 **技能目录保存可复用能力，你的工作区保存题目、数据、案例和论文。** 程序负责执行与追溯，助手负责题意、选择和科学判断。
 
+参赛前核对当届赛事的AI使用与提交要求，并如实披露实际工具和用途，见[赛事交付](references/contest-delivery.md)。运行助手编写或外来Python代码前审查内容；权限与隔离边界见 [SECURITY.md](SECURITY.md)。
+
 ## 技能一览
 
-一个入口负责整题，七个专项各管一类请求。只想做一件事时，直接调用对应技能，不必走完整流程。
+一个入口负责整题，八个专项各管一类请求。只想做一件事时，直接调用对应技能，不必走完整流程。
 
 | 技能 | 适合的请求 | 内容 |
 |---|---|---|
@@ -235,7 +238,7 @@ praxis-plugin/
 
 ## 可靠性
 
-- 550 余项自动测试，覆盖解析答案、输入保护、失败与过期结果、PDF 辅助、数学工具与插件导出。
+- [持续集成](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml) 验证解析答案、输入保护、失败与过期结果、PDF辅助、数学工具与插件导出；以具体运行的通过、失败及跳过记录为准。
 - 两份完整案例都带独立检查与可运行的复现代码，数字可对回报告。
 - 每个结论标明依据与适用条件；失败的运行保留，不改写。
 

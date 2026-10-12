@@ -2,7 +2,15 @@
 
 [简体中文](installation.md)
 
-Choose your agent, build its package from the public repository, and install it using that agent's own plugin system. Every target carries the same eight skills and mathematical engine. Host adapters change metadata and path handling, not the modeling methodology. These instructions use source distribution; no marketplace listing is required.
+Download a released package for your host or build one from source, then use that host's plugin installer. Each target includes the same nine skills and mathematical engine. The adapter supplies the host metadata and paths; no marketplace listing is required.
+
+## Released packages
+
+The [0.5.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.5.0) contains ZIPs for [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-codex.zip), [Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-claude.zip), [Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-gemini.zip), [Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-copilot.zip), [Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-cursor.zip), and [portable use](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-portable.zip). Compare your chosen ZIP's SHA-256 with its entry in [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/SHA256SUMS.txt): use `Get-FileHash filename.zip -Algorithm SHA256` in PowerShell, `shasum -a 256 filename.zip` on macOS, or `sha256sum filename.zip` on Linux.
+
+Extract into a fresh directory. Skip cloning and building, and use the matching installation command below with the extracted bundle root. The computational resource is its `skills/praxis` directory. These packages include the locked Python project, not a Python environment; tools still need uv and its prepared dependencies. A fixed release remains separate from subsequent changes on main.
+
+## Build from source
 
 Install Git and [uv](https://docs.astral.sh/uv/), then clone the repository:
 
@@ -21,7 +29,7 @@ codex plugin marketplace add /absolute/path/to/praxis-dist/codex/praxis --json
 codex plugin add praxis@praxis-local --json
 ```
 
-The export includes its local marketplace catalog, so existing personal configuration need not be edited. If your CLI lacks these commands, use its supported local marketplace interface. Reload and look for `praxis@praxis-local` and eight `praxis:*` skills. An earlier personal-marketplace install may instead be identified as `praxis@personal`.
+The export includes its local marketplace catalog, so existing personal configuration need not be edited. If your CLI lacks these commands, use its supported local marketplace interface. Reload and look for `praxis@praxis-local` and nine `praxis:*` skills. An earlier personal-marketplace install may instead be identified as `praxis@personal`.
 
 Reference: [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins).
 
@@ -73,7 +81,7 @@ References: [local plugins](https://cursor.com/docs/plugins), [MCP variables](ht
 
 ## Runtime and maintenance
 
-Every target includes all eight skills and `praxis-tools`. Portable, Codex, Claude and Copilot packages additionally declare the pinned arXiv server. Gemini and Cursor leave that optional integration out because their storage variables differ; configure an external storage location separately if needed. OpenAlex, Unpaywall and Crossref remain available through the core service.
+Every target includes all nine skills and `praxis-tools`. Portable, Codex, Claude and Copilot packages additionally declare the pinned arXiv server. Gemini and Cursor leave that optional integration out because their storage variables differ; configure an external storage location separately if needed. OpenAlex, Unpaywall and Crossref remain available through the core service.
 
 To update, fetch the source, export to a fresh destination and update or reinstall through your host. Do not patch an installation cache or overwrite user configuration. Keep the old source ref and export if you need a rollback.
 
@@ -84,6 +92,20 @@ uv run --locked --directory /absolute/path/to/plugin/skills/praxis python -m scr
 ```
 
 This checks the service rather than host loading. Host permissions still apply. Store problems, data, papers and run outputs in your project workspace.
+
+## Windows PowerShell
+
+Point these variables at your extracted computational resource and a separate user workspace. uv selects the environment without requiring a platform-specific virtualenv executable path, including when your current directory is elsewhere:
+
+```powershell
+$Bundle = "C:/Tools/praxis/skills/praxis"
+$Workspace = "C:/Modeling/my project"
+uv sync --locked --project "$Bundle"
+uv run --locked --directory "$Bundle" python -m scripts.mcp_server --list
+uv run --locked --project "$Bundle" python "$Bundle/scripts/pipeline.py" --workspace "$Workspace" status --case "$Workspace/cases/example"
+```
+
+Create a case with `init` before requesting its status; see the [runtime contract](automation.md) for subcommands. The uv arguments also work in POSIX shells. `--project` selects dependencies but leaves Python's module-search working directory unchanged: use an absolute script path, or use `--directory` with `python -m scripts...`. Host manifests already select the bundle's working directory.
 
 ## Skills-only option
 

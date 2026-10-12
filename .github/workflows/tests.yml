@@ -12,3 +12,30 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - run: uv run --locked python -m pytest -q
+
+  runtime-contract:
+    name: runtime-contract (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Prepare the locked Python environment
+        run: uv sync --locked
+      - name: Run numerical pipeline and MCP contract
+        run: uv run --locked --no-sync python .github/scripts/runtime_contract.py --bundle . --work ".session/Runtime contract with spaces" --receipt .session/runtime-contract.json
+      - name: Check transport limits and worker deadlines
+        run: uv run --locked --no-sync python -m pytest -q tests/test_mcp_request_limits.py tests/test_bounded_execution.py --basetemp=.session/runtime-focused-pytest --junitxml=.session/runtime-focused.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-contract-${{ matrix.os }}
+          path: |
+            .session/runtime-contract*.json
+            .session/runtime-focused.xml
+            .session/Runtime contract with spaces/**
+          include-hidden-files: true

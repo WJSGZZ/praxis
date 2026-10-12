@@ -5,6 +5,15 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 证据JSON拒绝重复键；案例版本仅接收已支持的整数1或旧稿缺省v1；声明检查名称须为字符串列表。工作流状态与经验入口沿同一重复键门禁，不再静默接受歧义预算／结论。正常历史v1、共用定义及合法独立核验保留，不把独立声明升级为认证。
+  Evidence readers refuse duplicate JSON keys, unsupported case versions and claim-check references that are not string lists. Workflow budgets and lesson intake use the same duplicate-key check. Legacy v1 and legitimate shared definitions remain supported; independence labels remain declarations requiring methodological review.
+
+- MCP超限帧排空拒绝，重复键、非法UTF-8与过深JSON解析后仍可处理下一请求；注册表达式工作进程有限捕获stdout／stderr，超限拒绝并回收直接子进程。补公开安全政策和实际私密漏洞报告渠道，明确这不是CPU／内存、文件／网络或子进程树沙箱。
+  MCP refuses oversized, ambiguous or invalid frames and recovers for the next request. Expression workers capture finite stdout/stderr and reject overflow, killing and reaping the direct child. A security policy and private reporting channel describe the protection and its limits; neither is a resource or permission sandbox.
+
+- 安装指南增加已发布的六种宿主ZIP与校验入口、PowerShell和通用uv路径示例；同步九技能与0.5.0状态，首页测试覆盖改指实际CI记录。
+  Installation guides link the six released host packages and checksums and provide PowerShell and portable uv invocation examples. Skill/version descriptions are synchronized, and test coverage links to actual CI records.
+
 - 投资案例新增“给定净收益目标，求原交易费与预算下的最小风险”，含六组精确原始／对偶证书、向上取分的充分资金门槛、银行边界、不可达目标和小资金反例。同步35页论文、32项支撑附件、预览及两个独立复现入口；历史几何拐点保留为条件示例，当前稿不继承未校准的旧奖项判断。
   The investment Demo now converts an explicit return target into the least risk under the original fees and budget. Six exact primal/dual certificates, sufficient funding thresholds rounded up to cents, bank and unreachable boundaries, and a small-budget counterexample accompany the updated 35-page report, 32-file support archive and two reproduction entry points. Geometric knees remain conditional examples; the current report abstains from an unverified historical award assessment.
 

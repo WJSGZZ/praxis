@@ -1,6 +1,6 @@
 ---
 name: praxis-dialogue
-description: 和不太懂数学、但懂常理的用户一起想：讲清模型、共同质疑和取舍，将直觉变成可检验的问题；按实际作品教选手答辩、做模拟追问和补弱训练。用于“给我讲讲这个模型”“我觉得哪里不对”“我们来讨论一下”“教我答辩”。不替代计算与验证；结论仍由 praxis-verify 的证据决定。
+description: 和不太懂数学、但懂常理的用户一起想：讲清模型、共同质疑和取舍，将直觉变成可检验的问题；按实际作品教选手答辩、做模拟追问和补弱训练。用于“给我讲讲这个模型”“我觉得哪里不对”“我们来讨论一下”“教我答辩”。不替代计算与验证；结论仍由 praxis-verify 的证据决定。 Explain and discuss a model, turn user questions into checks and coach defense using real work.
 license: MIT
 ---
 

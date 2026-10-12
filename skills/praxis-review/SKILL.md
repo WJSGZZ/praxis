@@ -1,6 +1,6 @@
 ---
 name: praxis-review
-description: 评阅完整竞赛论文或数学研究作品的质量、主要缺口与修改优先级。用于“整篇论文到什么水平、奖项竞争力怎样、研究贡献够不够、整稿该改哪里”。竞赛按对应赛事—赛项—届次，研究按正确性与研究价值分类；局部结论核验交 praxis-verify，仅写作润色或查版面交 praxis-report。
+description: 评阅完整竞赛论文或数学研究作品的质量、主要缺口与修改优先级。用于“整篇论文到什么水平、奖项竞争力怎样、研究贡献够不够、整稿该改哪里”。竞赛按对应赛事—赛项—届次，研究按正确性与研究价值分类；局部结论核验交 praxis-verify，仅写作润色或查版面交 praxis-report。 Review a complete competition paper or research work, its quality, major gaps and revision priorities.
 license: MIT
 ---
 

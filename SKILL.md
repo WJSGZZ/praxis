@@ -1,7 +1,7 @@
 ---
 name: praxis
 license: MIT
-description: 将问题与数据推进为可解释、可复现的数学模型、独立验证与报告证据。用于建模任务拆解、模型选择、实现、敏感性分析和论文协作；无需用户预先指定算法。单个数学概念问答不必启动完整流程。
+description: 将问题与数据推进为可解释、可复现的数学模型、独立验证与报告证据。用于建模任务拆解、模型选择、实现、敏感性分析和论文协作；无需用户预先指定算法。单个数学概念问答不必启动完整流程。 Mathematical modeling from problem and data to independent validation and a report; model selection, sensitivity analysis and team delivery.
 ---
 
 # Praxis

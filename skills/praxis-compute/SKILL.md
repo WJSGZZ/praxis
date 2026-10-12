@@ -1,6 +1,6 @@
 ---
 name: praxis-compute
-description: 把已确定的模型变成可复现的计算：数据文件接收与审计、原件保全、模型与独立验证器的执行、运行快照、结果过期检测和任务证据索引。用于“跑一下这个模型、检查这份数据、保存可复现的结果”。不决定模型是否适用，也不写论文。
+description: 把已确定的模型变成可复现的计算：数据文件接收与审计、原件保全、模型与独立验证器的执行、运行快照、结果过期检测和任务证据索引。用于“跑一下这个模型、检查这份数据、保存可复现的结果”。不决定模型是否适用，也不写论文。 Execute models and validators, audit input files and retain reproducible runs and evidence.
 license: MIT
 ---
 

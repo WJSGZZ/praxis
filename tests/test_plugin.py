@@ -14,6 +14,7 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
     build_plugin(output)
     receipt = json.loads((output / 'build-receipt.json').read_text())
     assert json.loads((output / 'plugin.json').read_text())['name'] == 'praxis'
+    assert (output / 'skills/praxis/SECURITY.md').read_bytes() == (BUNDLE / 'SECURITY.md').read_bytes()
     for name, digest in receipt['files_sha256'].items():
         assert hashlib.sha256((output / name).read_bytes()).hexdigest() == digest
     assert not any(part in {'.git', '.venv', '.session', 'cases', 'outputs', '__pycache__'}

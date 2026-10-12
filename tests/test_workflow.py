@@ -100,6 +100,29 @@ def test_cross_process_next_and_cli_bad_input_are_read_only(case):
     assert (case/'planning/progress.md').read_bytes()==before
 
 
+def test_ambiguous_workflow_budget_is_refused_before_any_attempt(case):
+    initialise(case)
+    path = case / 'planning/progress.md'
+    text = path.read_text(encoding='utf-8')
+    path.write_text(text.replace('"budget_seconds": 120', '"budget_seconds": 1, "budget_seconds": 120', 1), encoding='utf-8')
+    before = path.read_bytes()
+    with pytest.raises(ValueError, match='Duplicate JSON key: budget_seconds'):
+        w.next(case)
+    assert path.read_bytes() == before
+    assert not list((case / 'runs').iterdir())
+
+
+def test_ambiguous_lesson_json_is_refused_before_initialisation(case):
+    path = w.pipeline.PROJECT / 'planning/ambiguous-lessons.jsonl'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text('{"id":"first","id":"second"}\n', encoding='utf-8')
+    progress = case / 'planning/progress.md'
+    before = progress.read_bytes()
+    with pytest.raises(ValueError, match='Duplicate JSON key: id'):
+        initialise(case, lessons_path=path)
+    assert progress.read_bytes() == before
+
+
 @pytest.mark.parametrize('name,value', [('budget_seconds',True),('budget_seconds',float('nan')),('budget_seconds',float('inf')),('budget_seconds',0),('max_attempts',False),('max_attempts',-1),('per_run_timeout',1.5),('per_run_timeout',3601)])
 def test_invalid_budget_never_creates_block(case,name,value):
     before=(case/'planning/progress.md').read_bytes()

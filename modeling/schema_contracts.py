@@ -13,6 +13,16 @@ class ContractError(ValueError):
     """The input or schema is outside the audited registry contract."""
 
 
+def unique_object_pairs(pairs):
+    """Decode one JSON object without silently replacing a repeated name."""
+    result = {}
+    for name, value in pairs:
+        if name in result:
+            raise ValueError(f'Duplicate JSON key: {name}')
+        result[name] = value
+    return result
+
+
 KEYWORDS = {
     "$schema", "type", "properties", "required", "additionalProperties",
     "items", "prefixItems", "minItems", "maxItems", "minimum", "maximum",

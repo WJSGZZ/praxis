@@ -21,6 +21,7 @@ BUNDLE = Path(__file__).resolve().parents[1]
 PROJECT = Path.cwd().resolve()
 sys.path.insert(0, str(BUNDLE))
 from scripts.audit_data import audit
+from modeling.schema_contracts import unique_object_pairs
 import pandas as pd
 from pypdf import PdfReader
 
@@ -50,7 +51,22 @@ def finite_json_float(value):
 
 
 def read_json(path):
-    return json.loads(path.read_text(encoding='utf-8'), parse_constant=reject_nonfinite, parse_float=finite_json_float)
+    return json.loads(path.read_text(encoding='utf-8'), parse_constant=reject_nonfinite,
+                      parse_float=finite_json_float, object_pairs_hook=unique_object_pairs)
+
+
+def read_case_config(case):
+    """Read the known intake format; an absent legacy marker still means v1.
+
+    The original writer has always emitted integer schema 1. Older readers also
+    accepted its absence, so retain that compatibility without rewriting files.
+    Any explicitly supplied marker must be the supported integer, never bool.
+    """
+    config = read_json(case / 'case.json')
+    schema = config.get('schema', 1) if isinstance(config, dict) else None
+    if type(schema) is not int or schema != 1:
+        raise ValueError('Unsupported case schema; expected integer 1 or a missing legacy marker')
+    return config
 
 
 def save(path, value):
@@ -186,7 +202,7 @@ def environment_snapshot():
 
 def run_case(case, model='code/model.py', validator='code/validate.py', timeout=120):
     case = under_project(case)
-    config = read_json(case / 'case.json')
+    config = read_case_config(case)
     if not config.get('intake_complete') or input_changes(case, config):
         raise ValueError('Intake incomplete or raw inputs changed; do not use stale materials')
     if type(timeout) is not int or not 1 <= timeout <= 3600:
@@ -237,7 +253,7 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
                or not c['name'].strip() or not isinstance(c.get('evidence'), str) or not c['evidence'].strip()
                for c in checks):
             raise ValueError('Checks must individually pass with names and concrete evidence')
-        if read_json(case / 'case.json')['inputs'] != receipt['inputs'] or input_changes(case, config) or source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes:
+        if read_case_config(case)['inputs'] != receipt['inputs'] or input_changes(case, config) or source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes:
             raise ValueError('Inputs or reviewed code changed during execution')
         receipt['outputs'] = {}
         for path in (list(out.rglob('*')) + [attempt / 'checks.json']
@@ -284,7 +300,7 @@ def run_order(path, receipt):
 
 def status(case):
     case = under_project(case)
-    config = read_json(case / 'case.json')
+    config = read_case_config(case)
     changes = input_changes(case, config)
     runs = [(path, read_json(path)) for path in (case / 'runs').glob('*/receipt.json')]
     runs.sort(key=lambda item: run_order(*item))
@@ -364,6 +380,10 @@ def claim_problems(requirements, claims, lookup, results):
             problems.append(f'claim {cid!r}: needs a unique id, text, a requirement id from the list and strength computed|checked|independent')
             continue
         seen.add(cid)
+        names = claim.get('checks', [])
+        if not isinstance(names, list) or any(not isinstance(name, str) or not name.strip() for name in names):
+            problems.append(f'claim {cid}: checks must be a list of nonempty strings')
+            continue
         want = CLAIM_STRENGTH[claim['strength']]
         have = 0
         pointer = claim.get('result_pointer')
@@ -373,8 +393,8 @@ def claim_problems(requirements, claims, lookup, results):
                 have = 1
             except ValueError:
                 problems.append(f'claim {cid}: result_pointer {pointer!r} does not resolve')
-        linked = [lookup[n] for n in claim.get('checks', []) if n in lookup]
-        missing = [n for n in claim.get('checks', []) if n not in lookup]
+        linked = [lookup[n] for n in names if n in lookup]
+        missing = [n for n in names if n not in lookup]
         if missing:
             problems.append(f'claim {cid}: unknown check(s) {missing}')
         if any(c['passed'] for c in linked):

@@ -16,7 +16,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from modeling import calibrate, decision_models, dynamics, epidemic, experiment, forecast, graph, layered, lessons, nonlinear, optimize, pde, queueing, routes, structure, weights  # noqa: E402
 from modeling.expressions import parse_bounded_expression, compile_bounded_expression, RUNTIME_FUNCTIONS, bounded_isprime
-from modeling.schema_contracts import validate
+from modeling.schema_contracts import unique_object_pairs, validate
 
 
 class _Lazy:
@@ -44,6 +44,7 @@ def _project_version():
 VERSION = _project_version()
 SUPPORTED_PROTOCOL_VERSIONS = ('2025-06-18',)
 EXPRESSION_TIMEOUT_SECONDS = 30
+MAX_MCP_REQUEST_BYTES = 8 * 1024 * 1024
 # Coverage tests trace compiler/evaluator consumers from TOOLS independently of
 # this roster, then exercise both external routes with a controlled short cutoff.
 EXPRESSION_TOOLS = frozenset({'sobol_sensitivity', 'sobol_convergence', 'probe_structure', 'test_conjecture',
@@ -569,7 +570,7 @@ def bounded_call(name, arguments):
     result = run_with_deadline([sys.executable, '-m', 'scripts.mcp_server', '--expression-worker'],
                               _json(dict(name=name, arguments=arguments)), cwd=Path(__file__).resolve().parents[1],
                               timeout=EXPRESSION_TIMEOUT_SECONDS)
-    return json.loads(result)
+    return json.loads(result, object_pairs_hook=unique_object_pairs)
 
 
 def handle(message):
@@ -601,14 +602,40 @@ def handle(message):
     return dict(jsonrpc='2.0', id=identifier, result=result)
 
 
+def _request_lines(stream, limit):
+    """Read bounded frames and drain oversized ones without parsing their JSON.
+
+    Actual stdio uses byte reads. The text fallback supports embedded/test
+    streams, with both a bounded character read and a UTF-8 byte check.
+    """
+    reader = getattr(stream, 'buffer', stream)
+    while True:
+        line = reader.readline(limit + 1)
+        if not line:
+            return
+        newline = b'\n' if isinstance(line, bytes) else '\n'
+        size = len(line) if isinstance(line, bytes) else len(line.encode('utf-8'))
+        if size > limit:
+            while line and not line.endswith(newline):
+                line = reader.readline(65536)
+            yield None
+        else:
+            yield line
+
+
 def serve():
-    for line in sys.stdin:
-        if not line.strip():
-            continue
-        try:
-            reply = handle(json.loads(line))
-        except json.JSONDecodeError:
-            reply = dict(jsonrpc='2.0', id=None, error=dict(code=-32700, message='Parse error'))
+    for raw in _request_lines(sys.stdin, MAX_MCP_REQUEST_BYTES):
+        if raw is None:
+            reply = dict(jsonrpc='2.0', id=None, error=dict(
+                code=-32600, message='MCP request exceeds the 8 MiB UTF-8 line limit; no tool executed'))
+        else:
+            try:
+                line = raw.decode('utf-8') if isinstance(raw, bytes) else raw
+                if not line.strip():
+                    continue
+                reply = handle(json.loads(line, object_pairs_hook=unique_object_pairs))
+            except (ValueError, RecursionError):
+                reply = dict(jsonrpc='2.0', id=None, error=dict(code=-32700, message='Parse error'))
         if reply is not None:
             sys.stdout.write(json.dumps(reply, ensure_ascii=False) + '\n')
             sys.stdout.flush()
@@ -623,7 +650,7 @@ def main():
     parser.add_argument('--expression-worker', action='store_true', help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.expression_worker:
-        request = json.loads(sys.stdin.read())
+        request = json.loads(sys.stdin.read(), object_pairs_hook=unique_object_pairs)
         if request['name'] not in EXPRESSION_TOOLS:
             raise ValueError('Worker only accepts registered expression tools')
         print(_json(call(request['name'], request['arguments'])))
@@ -638,7 +665,7 @@ def main():
         tool = TOOLS[args.describe]
         print(json.dumps(dict(name=args.describe, description=tool['description'], input=tool['schema']), ensure_ascii=False, indent=1))
     elif args.call:
-        print(_json(bounded_call(args.call[0], json.loads(args.call[1]))))
+        print(_json(bounded_call(args.call[0], json.loads(args.call[1], object_pairs_hook=unique_object_pairs))))
     else:
         serve()
 

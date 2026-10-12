@@ -1,6 +1,6 @@
 ---
 name: praxis-report
-description: 把有效结果写成读者能核查的论文或报告：摘要、章节顺序、命题与证明、模型验证写法、图表选择与图注、数字与引用一致、AI 使用披露、PDF 逐页检查与冻结。用于“写论文、改摘要、中文润色、英文科研表达、审文字表达、检查 PDF”。不替代建模与验证，缺证据时返回上游；整稿质量、奖项或研究贡献评价交 praxis-review。
+description: 把有效结果写成读者能核查的论文或报告：摘要、章节顺序、命题与证明、模型验证写法、图表选择与图注、数字与引用一致、AI 使用披露、PDF 逐页检查与冻结。用于“写论文、改摘要、中文润色、英文科研表达、审文字表达、检查 PDF”。不替代建模与验证，缺证据时返回上游；整稿质量、奖项或研究贡献评价交 praxis-review。 Write or revise a modeling paper, abstract, figures, citations, AI disclosure and final PDF.
 license: MIT
 ---
 

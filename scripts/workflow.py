@@ -112,7 +112,7 @@ def read_state(case):
     if not body.startswith('```json\n') or not body.endswith('\n```'):
         raise ValueError('Workflow state must be one marked JSON block')
     state = json.loads(body[8:-4], parse_constant=pipeline.reject_nonfinite,
-                       parse_float=pipeline.finite_json_float)
+                       parse_float=pipeline.finite_json_float, object_pairs_hook=pipeline.unique_object_pairs)
     return validate_state(state), before, after
 
 
@@ -154,7 +154,8 @@ def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attem
     if knowledge.exists():
         for line in knowledge.read_text(encoding='utf-8').splitlines():
             if line.strip():
-                json.loads(line, parse_constant=pipeline.reject_nonfinite, parse_float=pipeline.finite_json_float)
+                json.loads(line, parse_constant=pipeline.reject_nonfinite, parse_float=pipeline.finite_json_float,
+                           object_pairs_hook=pipeline.unique_object_pairs)
     retrieved = lessons.search_lessons(knowledge, query, limit=3)
     state = {'schema': 1, 'goal': goal, 'started_utc': start.isoformat(),
              'deadline_utc': (start + timedelta(seconds=budget_seconds)).isoformat(),

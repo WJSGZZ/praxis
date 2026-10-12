@@ -1,6 +1,6 @@
 # Sources and third-party notices
 
-Praxis assembles an agent workflow and locally authored adapters; it does not claim to invent mathematical modeling or the upstream algorithms. LICENSE applies to the locally authored code and documentation. Dependencies retain their own licenses; no third-party library implementation, paper, dataset or binary is bundled here.
+Praxis assembles an agent workflow and locally authored adapters; it does not claim to invent mathematical modeling or the upstream algorithms. LICENSE applies to the locally authored code and documentation. Dependencies retain their own licenses; their implementations are installed separately, not vendored. Curated demos include attributed numerical problem parameters and project-created solutions, reports and generated data as described below; organizer papers and other teams' solutions are not redistributed.
 
 - [MathModelHub](https://github.com/Jaxon1216/MathModelHub), © 2026 MathModelHub, MIT. Workflow inspiration from [modeling lifecycle](https://github.com/Jaxon1216/MathModelHub/blob/8460b39b62480352de50d354bb86b11997b1cc6d/docs/guides/modeling-lifecycle.md) and [evidence and reproducibility](https://github.com/Jaxon1216/MathModelHub/blob/8460b39b62480352de50d354bb86b11997b1cc6d/docs/guides/evidence-and-reproducibility.md). Its full skill is not included or installed. Copyright and permission retained in third_party/licenses/MathModelHub-LICENSE.
 - [SALib](https://github.com/SALib/SALib), MIT. Installed dependency for Sobol sampling and analysis; local wrapper adds input contracts and evaluation budgets. License retained in third_party/licenses/SALib-LICENSE.md. Follow upstream citation guidance when using the method in research.
@@ -36,6 +36,7 @@ Writing guidance briefly adapts general reader-oriented principles from Brett Me
 Public demonstration:
 
 - CUMCM 1998 A parameter tables are transcribed from page 11 of the organizer's [official historical problem collection](https://www.mcm.edu.cn/upload_cn/node/1/SkAh1A7Q6f2dd01e58aa621f920e79f45cd5d255.pdf). Numerical problem parameters retain this attribution; the official PDF and others' solutions are not redistributed.
+- MCM 2016 A, “A Hot Bath,” is attributed to the [COMAP original problem](https://www.contest.comap.com/undergraduate/contests/mcm/contests/2016/problems/2016_MCM_Problem_A.pdf). The demo presents a project-created model and solution; the original problem PDF and reference teams' papers are not redistributed. Their rights remain with their authors and publishers.
 - The demo's solution, code, report text, figures, and page previews are project-created materials. No official showcase paper text or images are copied. PDF font programs embedded for displaying the report are not standalone font distributions and are not relicensed by the repository MIT license.
 - Original modeling code calls NumPy, SciPy/HiGHS, and Matplotlib; these dependencies are not vendored. The support archive includes original code and generated artifacts, not third-party library implementations.
 

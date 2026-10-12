@@ -2,7 +2,15 @@
 
 [English](installation.en.md)
 
-从 GitHub 获取源码，按你的 Agent 导出插件，再使用宿主的安装入口。每种包共用九个技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式。以下是源码分发方式，不依赖任何官方商店收录。
+可以直接下载已发布的宿主安装包，或从源码导出，再使用宿主的安装入口。每种包共用九个技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式，不依赖官方商店收录。
+
+## 下载已发布的安装包
+
+[0.5.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.5.0) 提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/praxis-0.5.0-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.5.0/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
+
+解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定Release与后续main改动分别保留，下载0.5.0不会自动带入未发布修复。
+
+## 从源码导出
 
 先安装 Git、[uv](https://docs.astral.sh/uv/)，再获取仓库：
 
@@ -84,6 +92,20 @@ uv run --locked --directory /absolute/path/to/plugin/skills/praxis python -m scr
 ```
 
 这只验证工具服务，不代表宿主加载成功。完整计算和写入权限由宿主控制，题目、数据、论文与运行输出放在用户工作区。
+
+## Windows PowerShell
+
+使用已解压包中的实际路径；题目、数据与产物保存在独立工作区。以下uv入口无需直接调用Windows的 `.venv/Scripts/python.exe`，从无关目录也可运行：
+
+```powershell
+$Bundle = "C:/Tools/praxis/skills/praxis"
+$Workspace = "C:/Modeling/my project"
+uv sync --locked --project "$Bundle"
+uv run --locked --directory "$Bundle" python -m scripts.mcp_server --list
+uv run --locked --project "$Bundle" python "$Bundle/scripts/pipeline.py" --workspace "$Workspace" status --case "$Workspace/cases/example"
+```
+
+先用 `init` 建立案例再查询实际case路径；全部子命令见[数值工作流](automation.md)。POSIX终端也可使用相同uv参数。`--project`选择依赖环境，不改变Python模块搜索的当前目录；绝对脚本路径可从任意目录调用，使用 `python -m scripts...` 时应传 `--directory`。宿主MCP清单通过自己的根目录变量设置工作目录，不能把只指定 `--project` 的裸module命令当作安装失败。
 
 ## 仅安装技能
 

@@ -1,6 +1,6 @@
 ---
 name: praxis-verify
-description: 判断模型结果能支持多强的结论：独立验证（手算、解析解、穷举、界、不变量）、敏感性与稳健性、已有模型或论文中具体主张的证据审查、失败回退。用于“这个结果可信吗、结论说得过头了吗、帮我审查模型”。不重新设计模型；定义有误时回 praxis-model，整稿水平与奖项／研究价值评价交 praxis-review。
+description: 判断模型结果能支持多强的结论：独立验证（手算、解析解、穷举、界、不变量）、敏感性与稳健性、已有模型或论文中具体主张的证据审查、失败回退。用于“这个结果可信吗、结论说得过头了吗、帮我审查模型”。不重新设计模型；定义有误时回 praxis-model，整稿水平与奖项／研究价值评价交 praxis-review。 Validate mathematical claims independently; check constraints, sensitivity, robustness and evidence strength.
 license: MIT
 ---
 
