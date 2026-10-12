@@ -14,6 +14,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 - 安装指南增加已发布的六种宿主ZIP与校验入口、PowerShell和通用uv路径示例；同步九技能与0.5.0状态，首页测试覆盖改指实际CI记录。
   Installation guides link the six released host packages and checksums and provide PowerShell and portable uv invocation examples. Skill/version descriptions are synchronized, and test coverage links to actual CI records.
 
+- 表达式工作进程固定UTF-8文本协议，接受输出前复核墙钟截止；MCP拒绝未配对Unicode代理字符与非有限协议值，回复和pipeline路径JSON不依赖系统代码页。三OS小数值合同同时使用含空格及中文的工作区。
+  Python expression workers use a fixed UTF-8 channel and recheck the deadline before accepting output. MCP refuses unpaired Unicode surrogates and non-finite protocol values; JSON replies and pipeline paths survive legacy code pages. The three-OS runtime contract includes spaces and Chinese workspace names.
+
 - 投资案例新增“给定净收益目标，求原交易费与预算下的最小风险”，含六组精确原始／对偶证书、向上取分的充分资金门槛、银行边界、不可达目标和小资金反例。同步35页论文、32项支撑附件、预览及两个独立复现入口；历史几何拐点保留为条件示例，当前稿不继承未校准的旧奖项判断。
   The investment Demo now converts an explicit return target into the least risk under the original fees and budget. Six exact primal/dual certificates, sufficient funding thresholds rounded up to cents, bank and unreachable boundaries, and a small-budget counterexample accompany the updated 35-page report, 32-file support archive and two reproduction entry points. Geometric knees remain conditional examples; the current report abstains from an unverified historical award assessment.
 

@@ -72,3 +72,32 @@ def test_ambiguous_or_excessively_nested_json_is_refused_then_next_request_runs(
     replies = [json.loads(line) for line in out.getvalue().splitlines()]
     assert replies[0]['error']['code'] == -32700
     assert replies[1] == {'jsonrpc': '2.0', 'id': 7, 'result': {}}
+
+
+@pytest.mark.parametrize('bad_frame', [
+    r'{"id":"\ud800","method":"ping"}',
+    r'{"id":1,"method":"ping","params":{"\udfff":"x"}}',
+    '{"id":NaN,"method":"ping"}',
+    '{"id":1e400,"method":"ping"}',
+])
+def test_invalid_scalar_values_are_refused_without_crashing_real_utf8_output(monkeypatch, bad_frame):
+    output_bytes = io.BytesIO()
+    out = io.TextIOWrapper(output_bytes, encoding='utf-8')
+    monkeypatch.setattr(server.sys, 'stdin', io.BytesIO((bad_frame + '\n{"id":7,"method":"ping"}\n').encode()))
+    monkeypatch.setattr(server.sys, 'stdout', out)
+    server.serve()
+    replies = [json.loads(line) for line in output_bytes.getvalue().decode().splitlines()]
+    assert replies[0]['error']['code'] == -32700
+    assert replies[1] == {'jsonrpc': '2.0', 'id': 7, 'result': {}}
+
+
+@pytest.mark.parametrize('encoding', ['utf-8', 'ascii'])
+def test_valid_unicode_is_preserved_even_with_a_nonunicode_stdout_locale(monkeypatch, encoding):
+    output_bytes = io.BytesIO()
+    out = io.TextIOWrapper(output_bytes, encoding=encoding)
+    request = {'id': '中文 🌱', 'method': 'ping'}
+    monkeypatch.setattr(server.sys, 'stdin', io.BytesIO((json.dumps(request) + '\n').encode()))
+    monkeypatch.setattr(server.sys, 'stdout', out)
+    server.serve()
+    reply = json.loads(output_bytes.getvalue().decode('utf-8'))
+    assert reply == {'jsonrpc': '2.0', 'id': request['id'], 'result': {}}

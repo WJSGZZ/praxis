@@ -3,7 +3,6 @@
 This is not a process-tree, CPU, memory, filesystem, or network sandbox.
 """
 import codecs
-import locale
 import os
 import subprocess
 import threading
@@ -90,10 +89,14 @@ def run_with_deadline(command, payload, *, cwd, timeout):
     """
     if payload is not None and not isinstance(payload, str):
         raise TypeError('text input payload must be a string or None')
-    encoding = locale.getpreferredencoding(False)
+    encoding = 'utf-8'
+    environment = os.environ.copy()
+    # These are Python expression workers with a UTF-8 text/JSON protocol,
+    # independent of the parent's locale and inherited stream overrides.
+    environment['PYTHONIOENCODING'] = 'utf-8'
     process = subprocess.Popen(command, cwd=cwd, text=False,
                                stdin=subprocess.PIPE if payload is not None else None, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, bufsize=0)
+                               stderr=subprocess.PIPE, bufsize=0, env=environment)
     deadline = time.monotonic() + timeout
     overflow = threading.Event()
     stdout_state = {'data': b'', 'error': None, 'over_limit': False, 'done': threading.Event()}
@@ -148,6 +151,8 @@ def run_with_deadline(command, payload, *, cwd, timeout):
             _join_bounded([writer])
         if not input_state['done'].is_set():
             raise TimeoutError(f'Expression worker input exceeded its {timeout:g}-second deadline; no result accepted')
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f'Expression worker exceeded its {timeout:g}-second deadline; no result accepted')
         if input_state['error'] is not None:
             error = input_state['error']
             raise ValueError(f'Expression worker input could not be encoded or written: {error}') from error
@@ -155,8 +160,10 @@ def run_with_deadline(command, payload, *, cwd, timeout):
             stderr = stderr_state['data'].decode(encoding)
             raise ValueError(f'Expression worker failed: {stderr[-4000:]}')
 
-        # Match subprocess text mode's locale decoding and universal newlines.
+        # The worker channel is UTF-8; retain text mode's universal newlines.
         stdout = stdout_state['data'].decode(encoding)
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f'Expression worker exceeded its {timeout:g}-second deadline; no result accepted')
         return stdout.replace('\r\n', '\n').replace('\r', '\n')
     except BaseException:
         if process.poll() is None:

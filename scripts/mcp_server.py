@@ -633,15 +633,22 @@ def serve():
                 line = raw.decode('utf-8') if isinstance(raw, bytes) else raw
                 if not line.strip():
                     continue
-                reply = handle(json.loads(line, object_pairs_hook=unique_object_pairs))
+                message = json.loads(line, object_pairs_hook=unique_object_pairs)
+                validate(message, True)
+                reply = handle(message)
             except (ValueError, RecursionError):
                 reply = dict(jsonrpc='2.0', id=None, error=dict(code=-32700, message='Parse error'))
         if reply is not None:
-            sys.stdout.write(json.dumps(reply, ensure_ascii=False) + '\n')
+            sys.stdout.write(json.dumps(reply, ensure_ascii=True, allow_nan=False) + '\n')
             sys.stdout.flush()
 
 
 def main():
+    # CLI JSON and the hidden Python worker use UTF-8 independently of the
+    # platform code page. MCP's outer JSON frames are ASCII-safe UTF-8.
+    for stream in (sys.stdin, sys.stdout):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--list', action='store_true', help='list tools with their fields (* = required)')
     parser.add_argument('--filter', metavar='WORD', help='with --list: only tools whose name or description contains WORD (e.g. game, queue, diffusion)')

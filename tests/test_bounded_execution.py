@@ -93,13 +93,17 @@ def test_nonzero_exit_is_preserved_with_bounded_error_text():
                           '', cwd=ROOT, timeout=5)
 
 
-def test_input_encoding_failure_is_not_hidden_by_a_child_result(monkeypatch):
-    import scripts.bounded_execution as execution
-
-    monkeypatch.setattr(execution.locale, 'getpreferredencoding', lambda _do_setlocale=False: 'ascii')
+def test_input_encoding_failure_is_not_hidden_by_a_child_result():
     with pytest.raises(ValueError, match='input could not be encoded or written'):
         run_with_deadline(python('import sys; sys.stdin.read(); print("incorrect result")'),
-                          '中文', cwd=ROOT, timeout=5)
+                          '\ud800', cwd=ROOT, timeout=5)
+
+
+def test_worker_utf8_overrides_an_inherited_ascii_stream_setting(monkeypatch):
+    monkeypatch.setenv('PYTHONIOENCODING', 'ascii')
+    expected = '中文 🌱'
+    actual = run_with_deadline(python('import sys; print(sys.stdin.read())'), expected, cwd=ROOT, timeout=5)
+    assert actual == expected + '\n'
 
 
 def test_wall_clock_cutoff_includes_a_blocked_stdin_writer_and_next_call_recovers():
@@ -115,3 +119,24 @@ def test_timeout_does_not_accept_child_output():
     with pytest.raises(TimeoutError, match='deadline; no result accepted'):
         run_with_deadline(python('import time; print("late", flush=True); time.sleep(5)'),
                           '', cwd=ROOT, timeout=0.1)
+
+
+def test_late_completion_after_delayed_parent_poll_is_refused(monkeypatch):
+    import scripts.bounded_execution as execution
+    original_popen = execution.subprocess.Popen
+
+    def delayed_poll_process(*args, **kwargs):
+        process = original_popen(*args, **kwargs)
+        original_poll = process.poll
+
+        def delayed_poll():
+            time.sleep(0.2)
+            return original_poll()
+
+        process.poll = delayed_poll
+        return process
+
+    monkeypatch.setattr(execution.subprocess, 'Popen', delayed_poll_process)
+    with pytest.raises(TimeoutError, match='deadline; no result accepted'):
+        run_with_deadline(python('import time; time.sleep(0.06); print("late result")'),
+                          '', cwd=ROOT, timeout=0.03)

@@ -519,7 +519,9 @@ def main():
             # The full receipt (every dependency hash) is on disk in the run directory; print only what a person needs to see.
             keys = ('run', 'status', 'started_utc', 'ended_utc', 'checks_passed', 'checks_total')
             result = {**{k: result[k] for k in keys if k in result}, 'receipt': str(Path(result['run']) / 'receipt.json'), 'steps': [{k: s.get(k) for k in ('stage', 'exit_code')} for s in result.get('steps', [])], 'outputs': sorted(result.get('outputs', {}))}
-        print(json.dumps(result,ensure_ascii=False,indent=2))
+        # ASCII JSON is valid UTF-8 and preserves Unicode paths after decoding,
+        # including on Windows consoles and pipes with a legacy code page.
+        print(json.dumps(result,ensure_ascii=True,indent=2,allow_nan=False))
         if result.get('status') in ['failed', 'evidence-incomplete']:
             raise SystemExit(1)
     except (ValueError, FileExistsError, FileNotFoundError, json.JSONDecodeError) as exc:

@@ -36,7 +36,13 @@ def _number(value):
 
 
 def _json_value(value, path):
-    if value is None or type(value) in (str, bool, int):
+    if type(value) is str:
+        try:
+            value.encode('utf-8')
+        except UnicodeEncodeError as error:
+            raise ContractError(f'{path}: expected a Unicode scalar string, not an unpaired surrogate') from error
+        return
+    if value is None or type(value) in (bool, int):
         return
     if type(value) is float and math.isfinite(value):
         return
@@ -48,6 +54,7 @@ def _json_value(value, path):
         for name, child in value.items():
             if not isinstance(name, str):
                 raise ContractError(f"{path}: JSON object keys must be strings")
+            _json_value(name, f'{path} key')
             _json_value(child, f"{path}.{name}")
         return
     raise ContractError(f"{path}: expected a finite JSON value, got {type(value).__name__}")

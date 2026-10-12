@@ -2,6 +2,9 @@
 import json
 from pathlib import Path
 import textwrap
+import os
+import subprocess
+import sys
 
 import pytest
 
@@ -142,3 +145,20 @@ def test_shared_definition_import_and_same_method_family_still_allow_known_answe
     assert results['method_family'] == checks[0]['method_family']
     report = pipeline.evidence_index(case)
     assert report['status'] == 'evidence-linked' and not report['paper_ready']
+
+
+def test_pipeline_cli_unicode_workspace_does_not_depend_on_stdout_codepage(tmp_path):
+    workspace = tmp_path / '研究 work space'
+    workspace.mkdir()
+    problem = workspace / '题目.md'
+    problem.write_text('Original tiny Unicode-path intake contract.', encoding='utf-8')
+    environment = os.environ.copy()
+    environment['PYTHONIOENCODING'] = 'ascii'
+    result = subprocess.run([sys.executable, str(pipeline.BUNDLE / 'scripts/pipeline.py'),
+                             '--workspace', str(workspace), 'init', '--name', 'unicode-case',
+                             '--problem', str(problem)], cwd=tmp_path, env=environment,
+                            capture_output=True, text=True, encoding='utf-8')
+    assert result.returncode == 0, result.stderr
+    case = Path(json.loads(result.stdout)['case'])
+    assert case.parent == workspace / 'cases'
+    assert case.is_dir()

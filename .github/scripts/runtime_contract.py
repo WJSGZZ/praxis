@@ -106,7 +106,7 @@ class Contract:
         self.receipt = receipt.absolute()
         self.partial = self.receipt.with_suffix(".partial.json")
         self.cwd = self.work / "Unrelated working directory"
-        self.workspace = self.work / "User model workspace"
+        self.workspace = self.work / "User model workspace 研究"
         self.environment = os.environ.copy()
         self.environment.pop("PYTHONPATH", None)
         self.started = time.monotonic()
