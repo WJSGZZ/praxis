@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "praxis",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A mathematical modeling Agent plugin combining professional skills, MCP computation tools and a reproducible evidence workflow, from problem analysis to independent checks and reports.",
   "author": {
     "name": "WJSGZZ"
