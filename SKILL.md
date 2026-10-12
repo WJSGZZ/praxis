@@ -48,11 +48,17 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 |---|---|
 | [praxis-model](skills/praxis-model/SKILL.md) | 读题、假设与参数依据、路线与模型选择 |
 | [praxis-assumptions](skills/praxis-assumptions/SKILL.md) | 显式／隐含前提、理由、实际用途、失效影响与结论范围 |
+| [praxis-data-analysis](skills/praxis-data-analysis/SKILL.md) | 数据探索、质量诊断、观测单位、分母及关联表口径 |
+| [praxis-statistics](skills/praxis-statistics/SKILL.md) | 估计对象、样本设计、区间、检验、多重比较与聚类推断 |
+| [praxis-text-analysis](skills/praxis-text-analysis/SKILL.md) | 语料定义、文本特征、标注与抽查、语义误差及信息边界 |
+| [praxis-time-series](skills/praxis-time-series/SKILL.md) | 时间与面板预测、滚动基线、可用信息、预测区间与误差 |
+| [praxis-causal-analysis](skills/praxis-causal-analysis/SKILL.md) | 干预问题、识别条件、混杂及替代解释、可支持的效应 |
 | [praxis-compute](skills/praxis-compute/SKILL.md) | 数据审计、模型运行、可复现证据 |
 | [praxis-verify](skills/praxis-verify/SKILL.md) | 独立验证、敏感性、证据与结论强度审查 |
 | [praxis-review](skills/praxis-review/SKILL.md) | 完整竞赛或研究作品的分类评价、主要缺口与修改优先级 |
 | [praxis-explore](skills/praxis-explore/SKILL.md) | 结构发现、路径搜索、没有标准答案时的探索与经验沉淀 |
 | [praxis-dialogue](skills/praxis-dialogue/SKILL.md) | 向不懂数学的用户讲清模型、复盘与共同思考 |
+| [praxis-visualization](skills/praxis-visualization/SKILL.md) | 根据读者问题选图，由有效数组生成并核对科研图成品 |
 | [praxis-report](skills/praxis-report/SKILL.md) | 论文结构、图表、披露、PDF 检查与交付 |
 
 整题推进、比赛／研究用途路由、团队与限时协调、跨环节交接由本技能负责。每项工作选择一个当前主责，相关能力按缺口协作；不要求每个模块都启动、不把章节逐个当成技能，也不要求用户管理技能名。计算类工作可调用 `praxis-tools`（插件里的 MCP 服务，或 `python -m scripts.mcp_server --call 工具名 'JSON'`）；方法清单见 [model-library.md](references/model-library.md)。

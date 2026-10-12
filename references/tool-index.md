@@ -4,7 +4,8 @@
 
 | 工具 | 字段 | 做什么 |
 |---|---|---|
-| `audit_data` | path*, sheet | Read-only audit of a CSV/Excel file: shape, missing values, duplicates, column types; hashes the original |
+| `audit_data` | path*, sheet, encoding, sep, contract, max_rows, missing_values, keep_default_na | Read-only audit of CSV/TSV/Excel: original and parsed headers, missingness, duplicates, declared data contract and scan coverage; hashes the original |
+| `audit_join` | left*, right*, on*, how, relationship, null_policy, max_output_rows | Audit a declared table join using Pandas cardinality validation and an explicit null-key policy; returns aggregate coverage and row expansion, without joined records |
 | `check_references` | references*, mailto | Check each reference line with a DOI against Crossref (title and year); lines without a DOI are reported as no_doi |
 | `solve_lp` | c*, A_ub, b_ub, A_ge, b_ge, A_eq, b_eq, bounds, maximize | Linear program (HiGHS) with a duality-gap certificate |
 | `solve_milp` | c*, A_ub, b_ub, A_ge, b_ge, A_eq, b_eq, bounds, integrality, maximize, time_limit | Mixed-integer linear program (HiGHS) with proved bound and gap |
@@ -38,7 +39,7 @@
 | `lesson_search` | path*, query, tags, limit | Search the project memory for lessons by keywords and tags before starting a new problem; also returns recurring structures |
 | `solve_diffusion` | length*, cells, k*, rho_c*, initial*, t_end*, steps, left, right, source, theta, points | One-dimensional heat/diffusion equation rho_c u_t = (k u_x)_x + s by finite volumes (theta scheme), with an energy account |
 | `grid_convergence_index` | f_fine*, f_medium*, f_coarse*, refinement_ratio*, safety_factor | Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity |
-| `ols_report` | X*, y*, names, add_constant, alpha | Ordinary least squares with confidence intervals and diagnostics (normality, heteroscedasticity, autocorrelation, VIF, influential rows); `flags` lists every problem found |
+| `ols_report` | X*, y*, names, add_constant, alpha, covariance, groups | Ordinary least squares with confidence intervals and diagnostics; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters |
 | `compare_models` | X*, y*, scheme, folds | Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting with fold standard errors; a model beats the baseline only by more than one standard error |
 | `solve_layered_diffusion` | layers*, t_end*, t_initial*, left*, right*, times, cells_per_layer | Heat conduction through layers in series (1-D): finite volumes with a stiff integrator |
 | `layered_diffusion_laplace` | layers*, times*, t_initial*, left*, right*, dps | Independent semi-analytic solution of the same layered conduction problem by transfer matrices in the Laplace domain (no mesh, no time step); the result a finite-volume solution must match |
@@ -53,6 +54,7 @@
 | `robust_lp` | c*, A_ub*, b_ub*, delta*, gamma*, maximize | LP with x >= 0 and uncertain constraint coefficients A +/- delta, at most gamma per row at their worst (Bertsimas-Sim budget); gamma 0 is nominal, gamma = columns is the full box |
 | `solve_mdp` | P*, R*, horizon, discount, terminal, maximize | Finite-state decision process: P[action][state][next state], R[state][action] |
 | `hypothesis_test` | kind*, a, b, groups, table, alpha | Test with effect size and assumption flags |
+| `adjust_pvalues` | pvalues*, hypothesis_ids*, family_id*, method, alpha, effects, effect_definition | Adjust a complete named hypothesis family by Holm/Bonferroni (FWER) or BH/BY (FDR), preserving original p-values and order; records dependence conditions and caller-supplied effects |
 | `bootstrap_ci` | data*, statistic, n_resamples, confidence, seed, method | Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations |
 | `monte_carlo` | expression*, distributions*, n, seed, threshold | Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check |
 | `solve_ode` | rhs*, names*, y0*, t_span*, t_eval, method, rtol | Integrate dy/dt = rhs(t, y) for expressions in t and the named states; compares dense interpolants with 100 times tighter tolerance at common times before either run terminates |
@@ -67,4 +69,4 @@
 | `equilibria` | rhs*, names*, bounds*, starts | Equilibria of dx/dt = rhs(x) inside a box, classified by Jacobian eigenvalues (random multi-start; completeness not guaranteed) |
 | `kalman_filter` | F*, H*, Q*, R*, x0*, P0*, observations* | Linear-Gaussian Kalman filter: state x_{t+1}=F x_t+w (cov Q), observation y_t=H x_t+v (cov R); returns filtered means, covariances and the log-likelihood |
 
-调用方式：`uv run --locked python -m scripts.mcp_server --call 工具名 '{"字段": 值}'`；Python 入口见 [praxis-explore](../skills/praxis-explore/SKILL.md) 的对照表。
+调用方式：`uv run --locked python -m scripts.mcp_server --call 工具名 '{"字段": 值}'`。工具名与 Python 函数名不保证相同；需要直接 Python 时核对[实际注册适配](../scripts/mcp_server.py)，不要按类别猜 import。

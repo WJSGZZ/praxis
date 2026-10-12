@@ -16,7 +16,9 @@ def test_review_is_a_new_discoverable_skill_without_removing_old_entries(tmp_pat
     expected = {'praxis', 'praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify',
                 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report'}
     paths = list((output / 'skills').glob('*/SKILL.md'))
-    assert {p.parent.name for p in paths} == expected
+    # The review entry must preserve all previous skills as new specialist
+    # entries are added; test_plugin checks the complete current export set.
+    assert expected <= {p.parent.name for p in paths}
     for path in paths:
         header = path.read_text().split('---')[1]
         assert f'name: {path.parent.name}\n' in header

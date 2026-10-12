@@ -8,7 +8,7 @@
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.5.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.6.0-263B9B?style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -21,7 +21,7 @@
 
 </div>
 
-**Praxis 是面向通用数学建模的 Agent 插件**：九个技能（一个负责整题，八个各管一类请求）加一组可直接调用的数学工具，并带着证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于分析问题、审查假设与模型、验证结果或改进论文。
+**Praxis 是面向通用数学建模的 Agent 插件**：一个入口协调专业技能，可直接调用数学工具，并带着证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于数据分析、统计推断、审查假设与模型、验证结果或改进论文。
 
 研究、课程、比赛，以及资源分配、环境分析、公共服务和工程决策等现实问题，都可以使用这套工作方式。先明确目标、约束与数据，再建立可解释的基线，按需要增加复杂度；遇到陌生问题，先找出它背后的数学结构，比较几条不同的路线并留下记录；没有标准答案时，用猜想、反例和高精度检验产出带把握等级的结论；让需求、计算、验证和报告中的结论彼此对应，减少整理、重复计算与协作交接的负担，把精力留给关键判断。
 
@@ -76,7 +76,7 @@
 
 ### 1. 选择你的 Agent
 
-**安装完整插件：九个技能 + 数学工具 + 证据工作流。** 可从 [0.5.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.5.0) 下载对应宿主包并核对校验和，也可从源码导出：
+**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [0.6.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.0) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -124,21 +124,27 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 技能一览
 
-一个入口负责整题，八个专项各管一类请求。只想做一件事时，直接调用对应技能，不必走完整流程。
+一个入口负责整题，十四个专项处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
 
 | 技能 | 适合的请求 | 内容 |
 |---|---|---|
 | [`praxis`](SKILL.md) | “把这道题做完” | 统一主线、任务记录、团队与限时协调、环节交接 |
 | [`praxis-model`](skills/praxis-model/SKILL.md) | “这题怎么做？参数怎么定？” | 读题与定义、假设和参数依据、路线与模型选择、可辨识性与优化结构 |
+| [`praxis-data-analysis`](skills/praxis-data-analysis/SKILL.md) | “分析这几张表，看看数据能说明什么” | 数据质量、观测单位、缺失与覆盖、关联基数、分母和探索结果 |
+| [`praxis-statistics`](skills/praxis-statistics/SKILL.md) | “差异有多大？重复测量应该怎样检验？” | 估计对象、区间和效应、配对与聚类、多重比较及统计条件 |
+| [`praxis-text-analysis`](skills/praxis-text-analysis/SKILL.md) | “评论主要谈什么？文本特征可信吗？” | 语料与标注、特征、抽查与语义误差、训练和留出边界 |
+| [`praxis-time-series`](skills/praxis-time-series/SKILL.md) | “预测未来几期，和简单基线比一比” | 时间与实体、可用信息、预测跨度、滚动验证与误差 |
+| [`praxis-causal-analysis`](skills/praxis-causal-analysis/SKILL.md) | “改变这个因素会改善结果吗？” | 干预问题、识别依据、混杂与替代解释、可回答的效应范围 |
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | “跑一下，保存可复现的结果” | CSV／Excel 审计、原件保全、模型与验证器执行、过期检测、证据索引 |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | “结果可信吗？结论说过头了吗？” | 独立检查、界与最优性、敏感性、证据与结论强度审查 |
 | [`praxis-review`](skills/praxis-review/SKILL.md) | “整篇到什么水平？该改哪里？” | 竞赛／研究分类作品评审、主要答案与证据、奖项参考或研究价值、修改优先级 |
 | [`praxis-explore`](skills/praxis-explore/SKILL.md) | “这题属于什么类型”“还有没有别的路”“没有标准答案怎么办” | 结构发现、路径搜索与淘汰、实验数学、经验沉淀；`route_graph` 与结构探测工具 |
 | [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | “给我讲讲这个模型”“我觉得哪里不对” | 解释模型，把直觉转成检查，复盘结果并保留真实参与记录 |
+| [`praxis-visualization`](skills/praxis-visualization/SKILL.md) | “做科研图，检查图例、单位和最终字体” | 选图、由有效数组生成、区间与分母、实际图形及图例对应 |
 | [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 中英文语言优化、论文与图表、引用及 AI 披露、PDF 检查与交付 |
 | [`praxis-assumptions`](skills/praxis-assumptions/SKILL.md) | “假设合理吗、补理由、查隐含前提” | 前提性质与依据、实际用途、失效影响及检查设计 |
 
-九个技能共用 [统一方法](references/methods.md) 和同一份任务记录。主技能按目标、用途与届次选择专业模块，比赛特有规则按档案加载；能力之间的交接见 [能力分工](references/capabilities.md)。
+这些技能共用 [统一方法](references/methods.md) 和同一份任务记录。主技能按目标、用途与届次选择专业模块，比赛特有规则按档案加载；能力之间的交接见 [能力分工](references/capabilities.md)。
 
 ### 比赛是一个使用场景
 
@@ -160,13 +166,13 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 |---|---|
 | 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
 | 非线性与稳健优化 | `minimize_nlp`（多起点，区分收敛候选与失败可行点）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（精确逆向递推或值迭代） |
-| 回归、检验与统计 | `ols_report`（置信区间与诊断）、`compare_models`（对基线的交叉验证比较）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
+| 回归、检验与统计 | `ols_report`（常规或显式按组的区间与诊断）、`adjust_pvalues`（Holm、BH、BY、Bonferroni及比较族声明）、`compare_models`（对基线的交叉验证比较）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |
 | 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
 | 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（有限核对证明）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
 | 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
-| 数据与文献（均免费） | `audit_data`、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
+| 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
 通用、Codex、Claude 和 Copilot 安装包还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
 
@@ -176,7 +182,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## Agent 兼容
 
-同一套建模方法，按宿主生成对应插件或扩展。九个技能与核心计算代码共用，安装清单和路径变量由导出器适配；不必为不同 Agent 维护不同的建模流程。
+同一套建模方法，按宿主生成对应插件或扩展。专业技能与核心计算代码共用，安装清单和路径变量由导出器适配；不必为不同 Agent 维护不同的建模流程。
 
 推荐从[完整插件安装](references/installation.md)开始；仅支持技能的环境仍可使用 [Agent Skills 入口](references/installation.md#仅安装技能)。桌面与 CLI 的本地安装不会自动配置网页会话、云端 Agent 或远程机器。
 
@@ -222,6 +228,8 @@ praxis-plugin/
   skills/
     praxis/                 # 入口技能，带全部参考、脚本与工具代码
     praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
+    praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
+    praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
 ```
 
 用户的题目、数据与案例继续保存在你的工作区，不进入插件。

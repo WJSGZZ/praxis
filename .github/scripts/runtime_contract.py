@@ -118,13 +118,14 @@ class Contract:
             "contract_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "dependency_installation_performed": False,
             "commands": [], "MCP": {"messages": []},
-            "scope": "Actual recorded OS only; one tiny LP/pipeline/stdio contract, not all tools or desktop-host installation.",
+            "scope": "Actual recorded OS only; tiny LP/pipeline/stdio and three professional arithmetic checks, not all tools, sampling validity or desktop-host installation.",
         }
         self.save()
 
     def bind_source(self):
         files = ["pyproject.toml", "uv.lock", "scripts/pipeline.py", "scripts/mcp_server.py",
-                 "scripts/bounded_execution.py", "modeling/optimize.py", "modeling/schema_contracts.py"]
+                 "scripts/bounded_execution.py", "modeling/optimize.py", "modeling/schema_contracts.py",
+                 "modeling/data_analysis.py", "modeling/inference.py", "modeling/regression.py", "scripts/audit_data.py"]
         for name in files:
             self.record["source_sha256"][name] = hashlib.sha256((self.bundle / name).read_bytes()).hexdigest()
         self.save()
@@ -218,8 +219,35 @@ class Contract:
             if client.request(5, "ping").get("result") != {}:
                 raise ValueError("Ping did not recover after the invalid request")
             check_lp(client.request(6, "tools/call", {"name": "solve_lp", "arguments": LP}))
+            def call(identity, name, arguments):
+                reply = client.request(identity, "tools/call", {"name": name, "arguments": arguments})
+                if reply["result"].get("isError"):
+                    raise ValueError(f"Professional smoke {name} returned an error")
+                return json.loads(reply["result"]["content"][0]["text"])
+            adjusted = call(7, "adjust_pvalues", {
+                "pvalues": [.01, .04, .03, .2], "hypothesis_ids": ["h1", "h2", "h3", "h4"],
+                "method": "holm", "family_id": "runtime-four-tests"})
+            expected = [Fraction(1, 25), Fraction(9, 100), Fraction(9, 100), Fraction(1, 5)]
+            if (adjusted["family_size"] != 4 or len(adjusted["hypotheses"]) != 4 or
+                    any(abs(row["adjusted_p_value"] - float(value)) > 1e-14
+                        for row, value in zip(adjusted["hypotheses"], expected))):
+                raise ValueError("Holm smoke disagrees with exact four-test arithmetic")
+            joined = call(8, "audit_join", {"left": [{"id": 1}, {"id": 1}, {"id": 2}, {"id": 3}],
+                                          "right": [{"id": 1}, {"id": 2}], "on": "id",
+                                          "how": "left", "relationship": "many_to_one"})
+            if joined["output_rows"] != 4 or joined["left"]["matched_input_rows"] != 3:
+                raise ValueError("Join smoke disagrees with enumerated key counts")
+            clustered = call(9, "ols_report", {
+                "X": [[1]] * 12, "y": [value for value in range(1, 7) for _ in range(2)],
+                "add_constant": False, "covariance": "cluster",
+                "groups": [str(value) for value in range(1, 7) for _ in range(2)]})
+            if (abs(clustered["coefficients"][0]["estimate"] - 3.5) > 1e-12 or
+                    abs(clustered["covariance"]["matrix"][0][0] - float(Fraction(7, 12))) > 1e-12 or
+                    clustered["covariance"]["df_inference"] != 5):
+                raise ValueError("Cluster smoke disagrees with the six-group mean variance 7/12")
             self.record["MCP"].update(server_info=initialized["result"]["serverInfo"],
                                       tools=len(tools), LP_optimum=10,
+                                      professional_arithmetic={"holm": True, "join": True, "cluster_mean_variance": "7/12"},
                                       invalid_then_ping_and_LP_recovery=True)
             self.save()
 

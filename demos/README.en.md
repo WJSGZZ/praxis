@@ -8,7 +8,7 @@ Contest reports, mathematical arguments, and decision studies—with the evidenc
 
 [简体中文](README.md) · **English** · [Back to Praxis](../README.en.md)
 
-[Contest modeling](#contest-modeling) · [Mathematical research](#mathematical-research) · [Decision studies](#decision-studies)
+[Contest modeling](#contest-modeling) · [Data analysis](#data-analysis) · [Mathematical research](#mathematical-research) · [Decision studies](#decision-studies)
 
 </div>
 
@@ -26,6 +26,10 @@ Explore two complete solutions with different mathematical demands: investment a
 <td valign="top"><strong>MCM · A Hot Bath</strong><br>2016 Problem A · 26-page English report<br><br>A proved well-mixed benchmark meets a three-dimensional thermal network: local temperatures change the water-saving strategy.<br><br><a href="mcm-2016-a/README.en.md">Explore →</a> · <a href="mcm-2016-a/paper.pdf">Report</a> · <a href="mcm-2016-a/README.en.md#reproduction">Reproduce</a></td>
 </tr>
 </table>
+
+## Data analysis
+
+**[Repeated observations, defensible comparisons →](data-analysis/README.en.md)** Follow forty-eight weekly observations from twelve synthetic stores through explicit data declarations, join cardinality, clustered inference, Holm adjustment and separate arithmetic checks. The runnable example retains inputs and rejected joins; its associations are not evidence about real stores or causal effects.
 
 ## Mathematical research
 

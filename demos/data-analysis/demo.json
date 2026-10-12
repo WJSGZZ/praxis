@@ -1,0 +1,233 @@
+{
+  "scope": "Locally constructed deterministic store-week demonstration; no real stores, causal identification or interval coverage certified",
+  "observations": 48,
+  "stores": 12,
+  "weeks_per_store": 4,
+  "original_input_sha256": {
+    "observations.csv": "e514b2f9bad9a15246d16fc5671c9757987e12eefca8326a2b63d262156f37c3",
+    "stores.csv": "f7a86e510cf6c66d9be93a09c339eff61f8ffa060c0a2967b4f92f801607362d"
+  },
+  "model": "sales = intercept + campaign * coefficient + (week - 2.5) * coefficient + error",
+  "covariance": "One-way store cluster CRV1, G-1 Student-t reference",
+  "coefficients": [
+    {
+      "name": "const",
+      "estimate": 50.00000000000003,
+      "inference": {
+        "status": "computed"
+      },
+      "std_error": 1.4884516167777238,
+      "p_value": 1.9456648971086916e-12,
+      "ci_low": 46.72394007995785,
+      "ci_high": 53.27605992004221
+    },
+    {
+      "name": "campaign",
+      "estimate": 7.000000000000007,
+      "inference": {
+        "status": "computed"
+      },
+      "std_error": 1.8658728470829653,
+      "p_value": 0.003201039177386423,
+      "ci_low": 2.8932415529524658,
+      "ci_high": 11.106758447047548
+    },
+    {
+      "name": "week_centered",
+      "estimate": 2.0000000000000053,
+      "inference": {
+        "status": "computed"
+      },
+      "std_error": 0.26592779582546977,
+      "p_value": 1.1693168720703563e-05,
+      "ci_low": 1.414696867732267,
+      "ci_high": 2.5853031322677436
+    }
+  ],
+  "comparison_family": {
+    "family_id": "store_sales_two_associations",
+    "family_size": 2,
+    "method": "holm",
+    "alpha": 0.05,
+    "error_control": "FWER",
+    "error_control_definition": "Probability of at least one false rejection in the family",
+    "hypotheses": [
+      {
+        "hypothesis_id": "campaign_association",
+        "p_value": 0.003201039177386423,
+        "adjusted_p_value": 0.003201039177386423,
+        "reject": true,
+        "effect_estimate": 7.000000000000007,
+        "effect_status": "caller_supplied"
+      },
+      {
+        "hypothesis_id": "weekly_trend",
+        "p_value": 1.1693168720703563e-05,
+        "adjusted_p_value": 2.3386337441407125e-05,
+        "reject": true,
+        "effect_estimate": 2.0000000000000053,
+        "effect_status": "caller_supplied"
+      }
+    ],
+    "effect_definition": "Campaign: sales units per indicator; weekly trend: sales units per calendar week. Both are conditional associations, not causal effects.",
+    "conditions": [
+      "Strong family-wise error rate control under arbitrary dependence, provided each null p-value is valid.",
+      "Supply the complete prespecified family, including nonsignificant tests; this tool cannot check omitted tests or the sampling design."
+    ],
+    "backend": {
+      "name": "statsmodels.stats.multitest.multipletests",
+      "version": "0.15.0",
+      "method": "holm"
+    },
+    "note": "Adjustment does not repair invalid p-values, data selection, confounding or a wrong statistical model. Adjusted p-values are not probabilities that hypotheses are false; effect estimates remain caller supplied."
+  },
+  "verification": {
+    "status": "passed",
+    "known_coefficients": [
+      50.0,
+      7.0,
+      2.0
+    ],
+    "coefficient_absolute_errors": [
+      2.842170943040401e-14,
+      7.105427357601002e-15,
+      5.329070518200751e-15
+    ],
+    "cluster_covariance_oracle": [
+      [
+        2.2154882154882154,
+        -2.2154882154882154,
+        0.2769360269360269
+      ],
+      [
+        -2.2154882154882154,
+        3.4814814814814814,
+        -0.0712121212121212
+      ],
+      [
+        0.276936026936027,
+        -0.07121212121212127,
+        0.07071759259259258
+      ]
+    ],
+    "cluster_covariance_max_absolute_error": 9.325873406851315e-15,
+    "crv1_correction_exact": "188/165",
+    "campaign_variance_exact": "94/27",
+    "holm_two_hypothesis_oracle": [
+      0.003201039177386423,
+      2.3386337441407125e-05
+    ],
+    "scope": "Specific deterministic fixture and API arithmetic only; no real-data design, causal identification or repeated-sampling coverage validation",
+    "original_inputs_preserved": true
+  },
+  "implementation_sha256": {
+    "examples/data_analysis_demo.py": "9075482c4dfb04e883a0dae273b6062aac9731361278c10e28d2a851db35aed6",
+    "scripts/audit_data.py": "3f27d550ba28a56af5529d7df90f5268be530d8eb614e633fa6874c710782f57",
+    "modeling/data_analysis.py": "f7ef0927f00e9b27b2d7b22a18c643229229385286cd08ff3f2cd1ce81ce2b5c",
+    "modeling/regression.py": "01d62aed43246d4e432e8a20b70848392d34cae096a9e5d0a9e9f34528725be8",
+    "modeling/inference.py": "0e4d09f216d8c209c4e80d077100b845b754830da8328202e4051c3cea24ce92"
+  },
+  "figure": {
+    "source_summary_sha256": "08f4e606ed7a7f7991d633b1d2110d156e3fbe0782b31f35786b9e35396777bd",
+    "run_input_sha256": {
+      "observations.csv": "e514b2f9bad9a15246d16fc5671c9757987e12eefca8326a2b63d262156f37c3",
+      "stores.csv": "f7a86e510cf6c66d9be93a09c339eff61f8ffa060c0a2967b4f92f801607362d"
+    },
+    "series": [
+      {
+        "label": "No campaign",
+        "store_ids": [
+          "store_01",
+          "store_03",
+          "store_05",
+          "store_07",
+          "store_09",
+          "store_11"
+        ],
+        "x": [
+          -0.08750000000000001,
+          -0.052500000000000005,
+          -0.0175,
+          0.0175,
+          0.052500000000000005,
+          0.08750000000000001
+        ],
+        "y": [
+          45.0,
+          47.0,
+          49.0,
+          51.0,
+          53.0,
+          55.0
+        ],
+        "color": "main",
+        "mark": "*",
+        "observations_per_point": 4
+      },
+      {
+        "label": "Campaign",
+        "store_ids": [
+          "store_02",
+          "store_04",
+          "store_06",
+          "store_08",
+          "store_10",
+          "store_12"
+        ],
+        "x": [
+          0.9125,
+          0.9475,
+          0.9825,
+          1.0175,
+          1.0525,
+          1.0875
+        ],
+        "y": [
+          53.0,
+          55.0,
+          57.0,
+          57.0,
+          59.0,
+          61.0
+        ],
+        "color": "accent",
+        "mark": "square*",
+        "observations_per_point": 4
+      }
+    ],
+    "x_offset": "Deterministic visual separation of six stores; has no quantitative meaning",
+    "reference_lines": "Within-category store means, not confidence intervals",
+    "caption": "Store means over four weeks. Each point is one synthetic store; six stores per category. Grey dashes show category means. These synthetic associations do not identify a causal campaign effect.",
+    "pdf_sha256": "3c9995f8121adc8a3f0b5f6931db21e9100228b28df2f02e11bd93befc715320",
+    "visual_review": "required"
+  },
+  "figure_generator_sha256": "9c26df26ffedf96593608b3ab60378c184138eddf3fb69a6bf952958abff5238",
+  "figure_runtime": {
+    "profile": "praxis-typesetting-v1",
+    "compiler": "Tectonic 0.17.0",
+    "bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+    "bundle_sha256": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+    "scope": "Canonical paper output; other compilers may be used for previews but are not layout-equivalent. Resource changes require explicit profile migration and full visual review."
+  },
+  "figure_review": {
+    "actual_png_viewed": true,
+    "first_and_validated_rasters_equal": true,
+    "ordinary_font_min_TeXpt": 12.0,
+    "all_12_store_means_recomputed_from_original_csv": true,
+    "pdf_text_equal": true,
+    "all_fonts_embedded": true,
+    "renderer": "PDFium 156.0.8076.0 via pypdfium2 5.14.0",
+    "png_pixel_dimensions": [
+      1053,
+      688
+    ]
+  },
+  "artifact_sha256": {
+    "store-means.png": "4f04bc72826f90a767e3f24e87d47247c8d1478a21283704d26a772920537cf5",
+    "store-means.pdf": "3c9995f8121adc8a3f0b5f6931db21e9100228b28df2f02e11bd93befc715320"
+  },
+  "figure_implementation_sha256": {
+    "demos/data-analysis/build_figure.py": "9c26df26ffedf96593608b3ab60378c184138eddf3fb69a6bf952958abff5238",
+    "scripts/texplot.py": "18b8dc499398de7e08d4d12e04f504cb303411aee2fa4f7ecd5b643f3d38c165"
+  }
+}

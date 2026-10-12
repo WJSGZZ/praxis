@@ -8,15 +8,22 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 | 文献与来源 | 待核验的机制、参数、方法或论断 | 支持具体用途的第一手来源，记录位置、条件与许可，不把引用数量当证据 | writing.md 的来源部分；实际研究领域的原始论文与官方数据 |
 | 假设与适用条件 | 原题、模型／数据及拟写结论；前提是否充分、实际使用、合理？ | 显式与隐含前提、依据、作用位置及失效影响；明确检查和未验证条件 | [praxis-assumptions](../skills/praxis-assumptions/SKILL.md)；[methods.md](methods.md#假设理由与结论范围) |
 | 模型设计 | 任务定义、机制、数据能力 | 基线与必要扩展、假设和验证设计；组合关系明确 | mathematical-reasoning.md；SymPy、CVXPY、PyMC 等条件路线 |
-| 数据与计算 | 已明确模型、原始输入、参数 | 可复现处理与实际运行；变换遵守信息边界 | data-computing.md；scikit-learn、SciPy；执行用 automation.md |
+| 数据分析 | 原始表、观测单位、实体和时间口径；数据能回答什么？ | 只读审计、覆盖与缺失、明确分母、关联基数和可回答范围 | [praxis-data-analysis](../skills/praxis-data-analysis/SKILL.md)；Pandas；`audit_data`、`audit_join` |
+| 统计推断 | 估计对象、采样／配对／组结构、预先选择的比较族 | 效应与区间、实际假设、聚类或多重比较、不可推断的条件 | [praxis-statistics](../skills/praxis-statistics/SKILL.md)；Statsmodels、SciPy；`adjust_pvalues`、`ols_report` |
+| 文本分析 | 语料、语言、分析单位、标签或待测主张 | 可追溯特征与实例、标注定义、误差和验证边界 | [praxis-text-analysis](../skills/praxis-text-analysis/SKILL.md)；scikit-learn 的条件路线 |
+| 时间序列 | 时间／实体、可用信息、预测起点与跨度、日历 | 同一评价口径下的滚动基线、误差、区间与外推条件 | [praxis-time-series](../skills/praxis-time-series/SKILL.md)；`backtest_baselines`、`arima_forecast` |
+| 因果分析 | 干预、目标人群、估计对象和识别依据 | 识别论证及敏感性，或无法识别的证据与可回答的关联 | [praxis-causal-analysis](../skills/praxis-causal-analysis/SKILL.md)；实际设计优先于估计器 |
+| 数据与计算 | 已明确模型、原始输入、参数 | 可复现处理与实际运行；变换遵守信息边界 | [praxis-compute](../skills/praxis-compute/SKILL.md)；data-computing.md；执行用 automation.md |
 | 独立验证 | 原始目标、模型、有效结果及拟写结论 | 与结论强度相称的对照、界、失败或限制 | methods.md 的证据与反馈；现有解析演练、SALib 和 DoWhy 的条件参考 |
 | 作品评审 | 原题／研究问题、当前完整稿与有效证据、目标与版本 | 按交付用途评价主要答案、证据、作品质量与修改优先级；竞赛和研究标准分开 | [praxis-review](../skills/praxis-review/SKILL.md)；[judging.md](../evals/judging.md) 分类导航 |
-| 图表表达 | 有效结果、单位、不确定性与需要表达的判断 | 回指数据版本的图与图注，读者可判断比较依据 | visualization.md；Matplotlib、Seaborn |
+| 图表表达 | 有效结果、单位、不确定性与需要表达的判断 | 回指数据版本的图与图注，实际数组、曲线与图例对应，最终尺寸可读 | [praxis-visualization](../skills/praxis-visualization/SKILL.md)；唯一规范 visualization.md |
 | 论文与报告 | 任务答案、有效证据、图表和来源 | 读者能理解的论证，数字与引用一致，符合实际规范 | writing.md；Mensh/Kording 的论文结构建议、Manubot 的引用追溯思路 |
 
 ## 主技能、专业模块与用途适配
 
 主技能接续目标、预算、当前状态和依赖，选择本次主责并组织交接。专业模块以能单独完成的一类任务为边界：有明确输入、专业判断、成品和验收。一个职责可以先由共享参考支持，真实独立请求或重复失败需要专门入口时再拆成技能；不是每个流程动作或论文标题都必须新增技能。假设审查归 assumptions，整题设计中的候选前提仍由 model 负责，数值检查归 verify，组织假设章归 report；已有入口交接输入，不让用户重讲题目。
+
+数据分析负责观测单位、数据诊断和探索，compute负责已设计计算的执行及快照；统计推断负责抽样结构与估计，verify核对结论的独立依据。时间预测与因果效应分别按未来可用信息和识别条件判断，拟合分数不能替代二者。科研绘图由 visualization负责选型、生成和实际图检查，report把已验图表放入全文并核对文字与版面。专业技能可调用现有成熟库；可选方法尚未实测时明确其状态，不把参考清单当功能认证。
 
 | 用途 | 复用的专业能力 | 按需加载的特有规则与流程 |
 |---|---|---|

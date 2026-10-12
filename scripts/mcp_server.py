@@ -33,6 +33,7 @@ class _Lazy:
 
 
 decision, regression, sensitivity, inference = _Lazy('modeling.decision'), _Lazy('modeling.regression'), _Lazy('modeling.sensitivity'), _Lazy('modeling.inference')
+data_analysis = _Lazy('modeling.data_analysis')
 audit_data, check_references, literature = _Lazy('scripts.audit_data'), _Lazy('scripts.check_references'), _Lazy('scripts.literature')
 
 def _project_version():
@@ -304,9 +305,17 @@ def _tool(name, description, properties, required, function):
 
 
 TOOLS = dict([
-    _tool('audit_data', 'Read-only audit of a CSV/Excel file: shape, missing values, duplicates, column types; hashes the original.',
-          {'path': {'type': 'string'}, 'sheet': {'type': 'string'}}, ['path'],
-          lambda a: audit_data.audit(Path(a['path']), sheet=a.get('sheet', 0))),
+    _tool('audit_data', 'Read-only audit of CSV/TSV/Excel: original and parsed headers, missingness, duplicates, declared data contract and scan coverage; hashes the original.',
+          {'path': {'type': 'string'}, 'sheet': {'type': ['string', 'integer']}, 'encoding': {'type': 'string'}, 'sep': {'type': 'string'},
+           'contract': {'type': 'object'}, 'max_rows': {'type': 'integer', 'minimum': 1}, 'missing_values': {'type': 'array'}, 'keep_default_na': {'type': 'boolean'}}, ['path'],
+          lambda a: audit_data.audit(Path(a['path']), **{k: v for k, v in a.items() if k != 'path'})),
+    _tool('audit_join', 'Audit a declared table join using Pandas cardinality validation and an explicit null-key policy; returns aggregate coverage and row expansion, without joined records.',
+          {'left': {'type': 'array', 'items': {'type': 'object'}}, 'right': {'type': 'array', 'items': {'type': 'object'}},
+           'on': {'type': ['string', 'array'], 'items': {'type': 'string'}, 'minItems': 1},
+           'how': {'type': 'string', 'enum': ['inner', 'left', 'right', 'outer']},
+           'relationship': {'type': 'string', 'enum': ['one_to_one', 'one_to_many', 'many_to_one', 'many_to_many']},
+           'null_policy': {'type': 'string', 'enum': ['reject', 'drop', 'match']}, 'max_output_rows': {'type': 'integer', 'minimum': 1}}, ['left', 'right', 'on'],
+          lambda a: data_analysis.audit_join(**a)),
     _tool('check_references', 'Check each reference line with a DOI against Crossref (title and year); lines without a DOI are reported as no_doi. Needs internet.',
           {'references': {'type': 'array', 'items': {'type': 'string'}}, 'mailto': {'type': 'string'}}, ['references'],
           lambda a: check_references.check(a['references'], a.get('mailto', 'unknown@example.org'))),
@@ -414,10 +423,11 @@ TOOLS = dict([
     _tool('grid_convergence_index', 'Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity.',
           {'f_fine': _num(), 'f_medium': _num(), 'f_coarse': _num(), 'refinement_ratio': _num(), 'safety_factor': _num()}, ['f_fine', 'f_medium', 'f_coarse', 'refinement_ratio'],
           lambda a: pde.grid_convergence_index(a['f_fine'], a['f_medium'], a['f_coarse'], a['refinement_ratio'], safety_factor=a.get('safety_factor', 1.25))),
-    _tool('ols_report', 'Ordinary least squares with confidence intervals and diagnostics (normality, heteroscedasticity, autocorrelation, VIF, influential rows); `flags` lists every problem found.',
-          {'X': MATRIX, 'y': SERIES, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'add_constant': {'type': 'boolean'}, 'alpha': _num()}, ['X', 'y'],
-          lambda a: regression.ols_report(a['X'], a['y'], names=a.get('names'), add_constant=a.get('add_constant', True), alpha=a.get('alpha', .05))),
-    _tool('compare_models', 'Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting with fold standard errors; a model beats the baseline only by more than one standard error. scheme: kfold or time (rows in time order).',
+    _tool('ols_report', 'Ordinary least squares with confidence intervals and diagnostics; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters.',
+          {'X': MATRIX, 'y': SERIES, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'add_constant': {'type': 'boolean'}, 'alpha': _num(),
+           'covariance': {'type': 'string', 'enum': ['nonrobust', 'cluster']}, 'groups': {'type': 'array', 'items': {'type': ['string', 'integer']}}}, ['X', 'y'],
+          lambda a: regression.ols_report(**a)),
+    _tool('compare_models', 'Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting with fold standard errors; a model beats the baseline only by more than one standard error. scheme: kfold or time (rows in time order); time uses fixed training origins and a constant last-training-value baseline over each whole test block.',
           {'X': MATRIX, 'y': SERIES, 'scheme': {'type': 'string', 'enum': ['kfold', 'time']}, 'folds': {'type': 'integer'}}, ['X', 'y'],
           lambda a: regression.compare_models(a['X'], a['y'], scheme=a.get('scheme', 'kfold'), folds=a.get('folds', 5))),
     _tool('solve_layered_diffusion', 'Heat conduction through layers in series (1-D): finite volumes with a stiff integrator. layers: [{thickness, k, rho_c}] from the left surface; left/right: ["robin", h, T_env] or ["dirichlet", T]; uniform initial temperature. Returns surface and interface temperatures over time.',
@@ -458,6 +468,12 @@ TOOLS = dict([
     _tool('hypothesis_test', 'Test with effect size and assumption flags. kind: welch_t, paired_t, mann_whitney, ks_2samp, correlation (a, b); anova, kruskal (groups); chi2_independence (table); shapiro (a).',
           {'kind': {'type': 'string'}, 'a': SERIES, 'b': SERIES, 'groups': MATRIX, 'table': MATRIX, 'alpha': _num()}, ['kind'],
           lambda a: inference.hypothesis_test(a['kind'], a.get('a'), a.get('b'), table=a.get('table'), alpha=a.get('alpha', .05), groups=a.get('groups'))),
+    _tool('adjust_pvalues', 'Adjust a complete named hypothesis family by Holm/Bonferroni (FWER) or BH/BY (FDR), preserving original p-values and order; records dependence conditions and caller-supplied effects.',
+          {'pvalues': {'type': 'array', 'items': {'type': 'number', 'minimum': 0, 'maximum': 1}, 'minItems': 1},
+           'hypothesis_ids': {'type': 'array', 'items': {'type': 'string'}, 'minItems': 1}, 'family_id': {'type': 'string'},
+           'method': {'type': 'string', 'enum': ['holm', 'bonferroni', 'bh', 'by']}, 'alpha': {'type': 'number', 'minimum': 0, 'maximum': 1, 'description': 'Strictly between zero and one; the statistical input contract rejects either endpoint.'},
+           'effects': {'type': 'array', 'items': {'type': ['number', 'null']}}, 'effect_definition': {'type': 'string'}},
+          ['pvalues', 'hypothesis_ids', 'family_id'], lambda a: inference.adjust_pvalues(**a)),
     _tool('bootstrap_ci', 'Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations.',
           {'data': SERIES, 'statistic': {'type': 'string'}, 'n_resamples': {'type': 'integer'}, 'confidence': _num(), 'seed': {'type': 'integer'}, 'method': {'type': 'string'}}, ['data'],
           lambda a: inference.bootstrap_ci(a['data'], a.get('statistic', 'mean'), n_resamples=a.get('n_resamples', 5000), confidence=a.get('confidence', .95), seed=a.get('seed', 2027), method=a.get('method', 'BCa'))),
@@ -495,6 +511,9 @@ TOOLS = dict([
 
 # One minimal, runnable call per tool that needs a shape to be guessed; a test calls every example, so they stay correct.
 EXAMPLES = {
+    'audit_join': dict(left=[dict(id=1, value=10), dict(id=2, value=20), dict(id=3, value=30)],
+                      right=[dict(id=1, group='A'), dict(id=3, group='B')], on='id', relationship='many_to_one'),
+    'adjust_pvalues': dict(pvalues=[.01, .04, .03, .2], hypothesis_ids=['h1', 'h2', 'h3', 'h4'], family_id='planned-effects', method='bh'),
     'solve_lp': dict(c=[2, 3], A_ge=[[1, 1]], b_ge=[4]),
     'solve_milp': dict(c=[-1, -1], A_ub=[[2, 2]], b_ub=[5], integrality=[1, 1], bounds=[[0, 10], [0, 10]]),
     'probe_structure': dict(property='convexity', expression='x**2 + y**2', names=['x', 'y'], bounds=[[-1, 1], [-1, 1]]),

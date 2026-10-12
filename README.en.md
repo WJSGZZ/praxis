@@ -8,7 +8,7 @@
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Version](https://img.shields.io/badge/Version-0.5.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.6.0-263B9B?style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -21,7 +21,7 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 </div>
 
-**Praxis is an agent plugin for mathematical modeling**: nine skills (one coordinating whole problems and eight focused on particular requests), mathematical tools your agent can call, and an evidence workflow behind them. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused capability to examine assumptions, validate a result, or improve a draft.
+**Praxis is an agent plugin for mathematical modeling**. Its core coordinates specialist skills, callable mathematical tools and a shared evidence workflow. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused skill for data analysis, statistical inference, assumptions, validation or writing.
 
 Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. On an unfamiliar problem it looks for the mathematical structure first and compares several different routes on record; with no answer key it produces conclusions labelled by how sure they are, through conjectures, counterexample searches and high-precision checks. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
 
@@ -76,7 +76,7 @@ Explore either case or bring your own problem. **Star Praxis** if you would like
 
 ### 1. Install for your agent
 
-Get all nine skills, mathematical tools and the evidence workflow as one plugin. Download a verified host package from the [0.5.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.5.0), or build from source:
+Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [0.6.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.0), or export the current source:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -130,15 +130,21 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 |---|---|---|
 | [`praxis`](SKILL.md) | "Take this problem all the way" | The shared line of reasoning, the task record, team and deadline coordination, handoffs |
 | [`praxis-model`](skills/praxis-model/SKILL.md) | "How should I model this? Where do the parameters come from?" | Problem definition, assumptions and parameter grounding, route and model choice, identifiability and optimization structure |
+| [`praxis-data-analysis`](skills/praxis-data-analysis/SKILL.md) | "What can these tables tell us?" | Observation units, coverage, missingness, join cardinality, denominators and exploratory findings |
+| [`praxis-statistics`](skills/praxis-statistics/SKILL.md) | "How large is the difference? Are these observations independent?" | Estimands, effects and intervals, paired or clustered designs, multiple comparisons and assumptions |
+| [`praxis-text-analysis`](skills/praxis-text-analysis/SKILL.md) | "What are people discussing? Can I trust these text features?" | Corpus and label definitions, features, inspected examples, semantic errors and held-out evaluation |
+| [`praxis-time-series`](skills/praxis-time-series/SKILL.md) | "Forecast the next periods and compare simple baselines" | Entities and calendars, information available at each origin, horizons, rolling evaluation and forecast errors |
+| [`praxis-causal-analysis`](skills/praxis-causal-analysis/SKILL.md) | "Would changing this factor improve the outcome?" | Interventions, identification, confounding, alternative explanations and the effect the design can support |
 | [`praxis-compute`](skills/praxis-compute/SKILL.md) | "Run it and keep it reproducible" | CSV/Excel audit, preserved inputs, model and validator runs, stale-result detection, evidence links |
 | [`praxis-verify`](skills/praxis-verify/SKILL.md) | "Can I trust this? Did I claim too much?" | Independent checks, bounds and optimality, sensitivity, strength of each claim |
 | [`praxis-review`](skills/praxis-review/SKILL.md) | "How strong is this paper? What should change?" | Whole-work review under contest or research standards, critical claims, scoped quality judgments, and revision priorities |
 | [`praxis-explore`](skills/praxis-explore/SKILL.md) | "What kind of problem is this?", "Is there another way?", "There is no answer key" | Structure discovery, route search and elimination, experimental mathematics, lessons that carry over; `route_graph` and structure probes |
 | [`praxis-dialogue`](skills/praxis-dialogue/SKILL.md) | "Explain this model", "something feels off" | Explain the model, turn objections into checks, and trace meaningful user contributions |
+| [`praxis-visualization`](skills/praxis-visualization/SKILL.md) | "Make a scientific figure; check its units, legend and fonts" | Figure choice, real input arrays, uncertainty, denominators and inspected graphical objects |
 | [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Natural Chinese and English, paper and figure editing, references, AI disclosure, and PDF delivery |
 | [`praxis-assumptions`](skills/praxis-assumptions/SKILL.md) | "Are these assumptions justified? What is implicit?" | Premises, supporting reasons, actual uses, failure effects and checks |
 
-The nine skills share one [methodology](references/methods.md) and task record. The core selects capabilities for the goal and delivery purpose, loading contest-specific rules by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
+The core and fourteen specialists share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
 
 
 ### Competitions are one application
@@ -161,13 +167,13 @@ For solo work under time pressure, Praxis defaults to one current user action an
 |---|---|
 | Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `knapsack` (exact), `shortest_path`, `max_flow` (with the minimum cut), `min_cost_flow`, `minimum_spanning_tree` |
 | Nonlinear and robust optimisation | `minimize_nlp` (multi-start, distinguishes converged candidates from failed feasible points), `robust_lp` (budgeted robustness with its price), `solve_mdp` (exact backward induction or value iteration) |
-| Regression, tests and statistics | `ols_report` (intervals and diagnostics), `compare_models` (cross-validated against a baseline), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
+| Regression, tests and statistics | `ols_report` (ordinary or explicitly clustered inference), `adjust_pvalues` (Holm, BH, BY and Bonferroni with a declared comparison family), `compare_models` (cross-validated against a baseline), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_ode` (re-run at tighter tolerance), `solve_layered_diffusion` with the independent `layered_diffusion_laplace`, `grid_convergence_index`, `solve_diffusion` (finite volumes with an energy account) |
 | Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `bimatrix_nash`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |
 | Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `check_recurrence` (finite-check proof), `find_relation`, `route_to_lesson`, `lesson_add`, `lesson_search` |
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
-| Data and free literature | `audit_data`, `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
+| Data and free literature | `audit_data` (original headers, parsing and data quality), `audit_join` (cardinality, null keys, unmatched rows and expansion limits), `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
 Numerical violations are candidates until independently certified. Supported rational witnesses receive an exact check; undefined fit diagnostics carry reasons, and game enumeration reports its completeness limits. The [result and execution contract](references/automation.md#数学工具的结果契约) explains these distinctions and the bounds on expression calls.
 
@@ -177,7 +183,7 @@ When to use each method, what to check, and the usual misuse are in the [method 
 
 ## Agent compatibility
 
-Praxis keeps its modeling logic shared across agents. Host-specific exports supply the manifests and path variables each agent expects, while all nine skills and the core engine come from the same source.
+Praxis keeps its modeling logic shared across agents. Host-specific exports supply the manifests and path variables each agent expects; specialist skills and the core engine come from the same source.
 
 Start with the [plugin installation guide](references/installation.en.md), or use the [standalone skill](references/installation.en.md#skills-only-option) where appropriate. Installing on a desktop or CLI does not provision browser-only sessions, cloud agents or remote machines.
 
@@ -223,6 +229,8 @@ praxis-plugin/
   skills/
     praxis/                 # entry skill, with all references, scripts and tool code
     praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
+    praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
+    praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
 ```
 
 Your problems, data, and cases stay in your own workspace, never in the plugin.

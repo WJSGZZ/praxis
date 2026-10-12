@@ -56,7 +56,7 @@ def tex_text(s: str) -> str:
 
 
 def _fmt(v: float) -> str:
-    if v is None or (isinstance(v, float) and (math.isnan(v) or math.isinf(v))):
+    if v is None or not math.isfinite(v):
         raise ValueError("non-finite value in plotted data")
     return "%.6g" % v
 
@@ -78,7 +78,10 @@ def _coords(x: Iterable[float], y: Iterable[float], limit: int | None = None) ->
 
 
 class Axis:
-    """One pgfplots axis with line, band, step, scatter and reference-line series."""
+    """One pgfplots axis; only series with an explicit label enter its legend.
+
+    Unlabelled context must not consume PGFplots' deferred legend-image queue.
+    """
 
     def __init__(self, xlabel: str = "", ylabel: str = "", *, width: str = r"0.84\linewidth", height: str = "5.4cm",
                  xmin=None, xmax=None, ymin=None, ymax=None, legend: str | None = "above", legend_columns: int | None = None,
@@ -87,7 +90,7 @@ class Axis:
         self.font_profile = font_profile
         if (not xlabel or not ylabel) and "label" not in extra:
             warnings.warn("Axis without an x or y label: every axis needs a quantity and its unit, e.g. 'Time (s)'", stacklevel=2)
-        self.opts = [f"width={width}", f"height={height}", "scale only axis", f"xlabel={{{xlabel}}}", f"ylabel={{{ylabel}}}",
+        self.opts = [f"width={width}", f"height={height}", "scale only axis", f"xlabel={{{tex_text(str(xlabel))}}}", f"ylabel={{{tex_text(str(ylabel))}}}",
                      "axis lines=left", "axis line style={gray!70}", "grid=major", "grid style={gray!18}",
                      "tick label style={font=\\footnotesize}", "label style={font=\\small}",
                      "every axis plot/.append style={line cap=round}", "clip=false"]
@@ -117,8 +120,10 @@ class Axis:
             opt += [f"mark={marks}", "mark size=1.8pt"]
         else:
             opt.append("no marks")
+        if not label:
+            opt.append("forget plot")
         self.body.append(r"\addplot[%s] coordinates {%s};" % (",".join(opt), _coords(x, y))
-                         + (r"\addlegendentry{%s}" % label if label else ""))
+                         + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
 
     def band(self, x, lo, hi, color="main", opacity=0.14, label=None):
@@ -126,8 +131,11 @@ class Axis:
         a, b = f"lo{self._band}", f"hi{self._band}"
         self.body.append(r"\addplot[name path=%s,draw=none,forget plot] coordinates {%s};" % (a, _coords(x, lo)))
         self.body.append(r"\addplot[name path=%s,draw=none,forget plot] coordinates {%s};" % (b, _coords(x, hi)))
-        self.body.append(r"\addplot[%s,fill opacity=%s] fill between[of=%s and %s];" % (f"fill={color}", opacity, a, b)
-                         + (r"\addlegendentry{%s}" % label if label else ""))
+        opt = [f"fill={color}", f"fill opacity={opacity}"]
+        if not label:
+            opt.append("forget plot")
+        self.body.append(r"\addplot[%s] fill between[of=%s and %s];" % (",".join(opt), a, b)
+                         + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
 
     def stairs(self, values: Sequence[float], edges: Sequence[float], color="main", width=1.3, label=None, style="solid"):
@@ -138,13 +146,18 @@ class Axis:
         for i, v in enumerate(values):
             pts += [(edges[i], v), (edges[i + 1], v)]
         opt = [f"color={color}", f"line width={width}pt", "no marks"] + ([DASH[style]] if DASH[style] else [])
+        if not label:
+            opt.append("forget plot")
         self.body.append(r"\addplot[%s] coordinates {%s};" % (",".join(opt), " ".join("(%s,%s)" % (_fmt(a), _fmt(b)) for a, b in pts))
-                         + (r"\addlegendentry{%s}" % label if label else ""))
+                         + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
 
     def scatter(self, x, y, color="main", mark="*", size=2.0, label=None):
-        self.body.append(r"\addplot[only marks,mark=%s,mark size=%spt,color=%s] coordinates {%s};" % (mark, size, color, _coords(x, y, limit=5000))
-                         + (r"\addlegendentry{%s}" % label if label else ""))
+        opt = ["only marks", f"mark={mark}", f"mark size={size}pt", f"color={color}"]
+        if not label:
+            opt.append("forget plot")
+        self.body.append(r"\addplot[%s] coordinates {%s};" % (",".join(opt), _coords(x, y, limit=5000))
+                         + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
 
     def hline(self, y, style="dotted", color="black", width=0.8):

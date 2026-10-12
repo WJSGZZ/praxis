@@ -58,9 +58,13 @@ TREES = {
     'demos/collatz-research/reproduce/code': {'.py'},
     'demos/collatz-research/reproduce/paper': {'.tex'},
     'demos/collatz-research/reproduce/runs': {'.json'},
+    'demos/data-analysis': {'.md', '.py', '.json'},
+    'demos/data-analysis/assets': {'.png', '.pdf'},
 }
 # Focused skills ship next to the core; all packaged Markdown links follow relocation.
-FOCUSED = ('praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report')
+FOCUSED = ('praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report',
+           'praxis-data-analysis', 'praxis-statistics', 'praxis-text-analysis',
+           'praxis-visualization', 'praxis-time-series', 'praxis-causal-analysis')
 # Use the maintained brand asset for native presentation; reports keep their
 # scientific typography and do not acquire the plugin logo.
 VISUAL_ASSETS = {'assets/praxis-logo.png': 'demos/assets_src/praxis-logo.png'}
@@ -180,8 +184,10 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
 This directory is generated from the maintained Praxis Agent plugin repository.
 The portable entry point is plugin.json; mcp.json starts the praxis-tools MCP server
 (computation tools, run with uv). skills/praxis/ is the core skill with
-all references and scripts; eight sibling skills cover modeling, assumptions,
-computation, verification, whole-work review, exploration, dialogue and reporting. All local Markdown links
+all references and scripts; focused sibling skills cover modeling, assumptions,
+computation, verification, whole-work review, exploration, dialogue, reporting,
+data analysis, statistical inference, text analysis, scientific graphics,
+time-series forecasting and causal analysis. All local Markdown links
 are relocated with their resources.
 
 Before running Python helpers, explicitly prepare their environment:

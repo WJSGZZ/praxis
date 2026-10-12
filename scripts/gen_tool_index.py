@@ -21,7 +21,7 @@ def render() -> str:
         fields = ', '.join(f'{k}*' if k in required else k for k in schema['properties'])
         description = tool['description'].split('. ')[0].rstrip('.').replace('|', '/')
         lines.append(f'| `{name}` | {fields} | {description} |')
-    lines += ['', '调用方式：`uv run --locked python -m scripts.mcp_server --call 工具名 \'{"字段": 值}\'`；Python 入口见 [praxis-explore](../skills/praxis-explore/SKILL.md) 的对照表。', '']
+    lines += ['', '调用方式：`uv run --locked python -m scripts.mcp_server --call 工具名 \'{"字段": 值}\'`。工具名与 Python 函数名不保证相同；需要直接 Python 时核对[实际注册适配](../scripts/mcp_server.py)，不要按类别猜 import。', '']
     return '\n'.join(lines)
 
 

@@ -30,6 +30,16 @@ Capability references:
 
 Matplotlib, Seaborn, scikit-learn, and Manubot are cited as concept/tool references for data processing, graphics and citation traceability. No source code, tutorial text or figures are included through this review; no new dependency is installed. Matplotlib and scikit-learn remain existing dependencies with their own distribution licenses.
 
+Professional analysis guidance also draws on the following reviewed upstream
+projects. The specialist skills and wrappers are locally authored; no upstream
+skill, implementation, dataset or generated profile is bundled through this review.
+
+- [K-Dense scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills/tree/a1043ef544e3a100c28e70a736b6cf32554d0677), MIT, reviewed at `a1043ef544e3a100c28e70a736b6cf32554d0677`: exploratory-data-analysis, statistical-analysis and scientific-visualization informed decisions about observation units, estimands, diagnostic pretests, multiple comparisons and figure verification. The former claude-scientific-skills repository redirects here. Neither the skill collection nor its advertised external services is installed.
+- [Pandera](https://github.com/unionai-oss/pandera/tree/77179030949a87bb52336cc14a7c93f401f1f156), MIT, reviewed at `77179030949a87bb52336cc14a7c93f401f1f156`: schema, column uniqueness and aggregated error reporting were examined as an optional data-validation route. Pandera is not an installed dependency, and no Pandera implementation is included.
+- [fg-data-profiling](https://github.com/Data-Centric-AI-Community/fg-data-profiling/tree/98b1abaf5b629d31fcfe6b0cb85c4ca9782e21a0), MIT, reviewed at `98b1abaf5b629d31fcfe6b0cb85c4ca9782e21a0` after the ydata-profiling redirect. Selected reporting, export and deserialization code was inspected; the package is not installed or adopted as the core auditor. No profiling report or external service is invoked.
+- [Statsmodels](https://github.com/statsmodels/statsmodels/tree/35a8e0b7483211f5be7e60926be082136263cac3), BSD-3-Clause: multiple-testing and grouped-inference APIs were reviewed at `35a8e0b7483211f5be7e60926be082136263cac3`. The wrappers call the existing locked installed release, not that repository snapshot. Local input validation and independently derived numerical checks address the actual installed behavior. Pandas remains the existing dependency used for join cardinality and indicators.
+- [PGFplots manual, forget plot](https://tikz.dev/pgfplots/reference-miscellaneous) explains its deferred legend-image state. The original `texplot.Axis` adapter excludes unlabelled plots from that state; no manual examples are copied. PGFplots is supplied by the separately pinned TeX resource bundle.
+
 Writing guidance briefly adapts general reader-oriented principles from Brett Mensh and Konrad Kording, “Ten simple rules for structuring papers” (2017), DOI 10.1371/journal.pcbi.1005619, with attribution and a link in references/writing.md. The publisher states Creative Commons Attribution; no full article text or figures are reproduced. Praxis's original task handoffs and guidance are locally authored.
 
 

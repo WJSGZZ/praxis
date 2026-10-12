@@ -3,7 +3,27 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
-## 未发布 · Unreleased
+## 0.6.0 · 2026-10-12
+
+- 新增六个专业入口：数据分析、统计推断、文本分析、时间序列、因果分析与科研绘图。主技能按问题调用十五个入口，复用现有成熟库与共享规范，不以技能数量认证能力。
+  Six focused skills cover data analysis, statistical inference, text analysis, time series, causal reasoning and scientific visualization. The core routes to fifteen skills using established libraries and shared guidance; skill counts are not a capability certificate.
+
+- 新增 `audit_join` 和 `adjust_pvalues`，工具共64项。连接审计声明键类型、基数、空值政策、覆盖与展开上限；多重检验声明完整比较族及FWER／FDR条件。OLS可显式使用分组稳健协方差与G−1参考，自采样设计和因果识别仍须另审。
+  The 64-tool registry adds cardinality-aware join audits and family-aware multiplicity adjustments. OLS supports explicitly requested one-way cluster covariance with a G−1 reference; sampling validity and causal identification still need separate review.
+
+- 数据审计保留原始表头、重复名及重命名位置，区分缺失、非有限原值与统计溢出；CLI拒绝覆盖原数据或源契约的直接路径、符号链接及硬链接。新合成门店Demo连接48条记录与12个独立组，核对有理协方差、Holm结果、原CSV和实际图形；不声称真实经营收益或因果效果。
+  Data audits disclose raw headers and parser renaming, distinguish missing/non-finite observations from summary overflow, and refuse source-data or contract aliases as output targets. A synthetic 48-record, 12-store Demo checks rational covariance, Holm arithmetic, original inputs and the rendered figure without claiming real commercial or causal benefits.
+
+- 共享PGF绘图把未命名辅助曲线排除出图例，拒绝NumPy非有限坐标，转义普通文字中的TeX特殊字符。实际图例反例、新Demo与原美赛26页逐页文字／栅格复现核对；原冻结稿及数值证据保留。
+  Shared PGF figures exclude unnamed helper series from legends, reject NumPy non-finite coordinates and escape plain-text TeX characters. A real legend counterexample, the new Demo and a page-by-page 26-page MCM replay check the correction; archived outputs and numerical evidence remain intact.
+
+### 不兼容变化 · Breaking changes
+
+- `compare_models(scheme="time")` 的持久性基线改为每个测试块只用训练末值，与其它模型共享预测起点；过去逐步读取测试真实值的基线成绩会改变。历史结果不重写。
+  The persistence baseline in time-based model comparisons now uses the last training observation for the entire test block. Scores change where the previous baseline read later test outcomes; historical results are not rewritten.
+
+- 同一显示名对应多个不同类型表头时，旧的按名称汇总项返回 `null` 加原因，完整逐位置画像保留；源契约须解决歧义后才能匹配。
+  When differently typed headers share a display name, legacy name-keyed summaries return `null` with a reason while positional profiles remain complete. Source contracts must resolve the ambiguity before matching.
 
 - 证据JSON拒绝重复键；案例版本仅接收已支持的整数1或旧稿缺省v1；声明检查名称须为字符串列表。工作流状态与经验入口沿同一重复键门禁，不再静默接受歧义预算／结论。正常历史v1、共用定义及合法独立核验保留，不把独立声明升级为认证。
   Evidence readers refuse duplicate JSON keys, unsupported case versions and claim-check references that are not string lists. Workflow budgets and lesson intake use the same duplicate-key check. Legacy v1 and legitimate shared definitions remain supported; independence labels remain declarations requiring methodological review.
@@ -11,7 +31,7 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 - MCP超限帧排空拒绝，重复键、非法UTF-8与过深JSON解析后仍可处理下一请求；注册表达式工作进程有限捕获stdout／stderr，超限拒绝并回收直接子进程。补公开安全政策和实际私密漏洞报告渠道，明确这不是CPU／内存、文件／网络或子进程树沙箱。
   MCP refuses oversized, ambiguous or invalid frames and recovers for the next request. Expression workers capture finite stdout/stderr and reject overflow, killing and reaping the direct child. A security policy and private reporting channel describe the protection and its limits; neither is a resource or permission sandbox.
 
-- 安装指南增加已发布的六种宿主ZIP与校验入口、PowerShell和通用uv路径示例；同步九技能与0.5.0状态，首页测试覆盖改指实际CI记录。
+- 安装指南提供六种宿主ZIP与校验入口、PowerShell和通用uv路径示例；同步十五技能与0.6.0状态，首页测试覆盖指向实际CI记录。
   Installation guides link the six released host packages and checksums and provide PowerShell and portable uv invocation examples. Skill/version descriptions are synchronized, and test coverage links to actual CI records.
 
 - 表达式工作进程固定UTF-8文本协议，接受输出前复核墙钟截止；MCP拒绝未配对Unicode代理字符与非有限协议值，回复和pipeline路径JSON不依赖系统代码页。三OS小数值合同同时使用含空格及中文的工作区。

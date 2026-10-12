@@ -15,6 +15,7 @@ BUNDLE 指 `praxis` 技能目录；脚本在 `BUNDLE/scripts/`。需要 Python 3
 ## 做什么
 
 - 数据：先读 [data-computing.md](../../references/data-computing.md)。接收文件后保留原件，用 `scripts/audit_data.py` 做只读的 CSV／Excel 审计（不推断单位、不静默修复），再决定怎样处理；变换只使用允许的信息，时间序列的开发目标与最终留出目标分开。
+- 不确定观测单位、缺失和关联口径时，把现有输入交 [praxis-data-analysis](../praxis-data-analysis/SKILL.md)；重复测量的统计设计交 [praxis-statistics](../praxis-statistics/SKILL.md)，预测时点与跨度交 [praxis-time-series](../praxis-time-series/SKILL.md)。接续其计算定义再执行，不以审计成功代替设计判断。
 - 运行：模型与独立验证器写完并审核后，才用 `scripts/pipeline.py` 执行。命令、产物布局和过期规则见 [automation.md](../../references/automation.md)。参数、种子、失败运行保留，不覆盖。
 - 证据：任务清单与 planning/tasks.md 使用同一组 ID。evidence 只证明已记录的连接，不证明题目被完整覆盖；程序检查、科学判断和人工核验分别表述。
 

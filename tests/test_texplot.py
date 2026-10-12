@@ -17,6 +17,35 @@ def test_axis_collects_series_in_order():
     assert tex.index("(0,0) (1,1) (2,0)") < tex.index("fill between")
 
 
+@pytest.mark.parametrize("kind", ["line", "band", "stairs", "scatter"])
+@pytest.mark.parametrize("label", [None, ""])
+def test_context_series_does_not_take_the_next_named_legend_image(kind, label):
+    ax = texplot.Axis("Time (s)", "Value (m)")
+    if kind == "band":
+        ax.band([0, 1], [0, 0], [1, 1], color="muted", label=label)
+    elif kind == "stairs":
+        ax.stairs([0, 1], [0, .5, 1], color="muted", label=label)
+    else:
+        getattr(ax, kind)([0, 1], [0, 0], color="muted", label=label)
+    ax.line([0, 1], [1, 2], color="main", label="Measured")
+    # PGFplots associates legend text with remembered plots, not with its
+    # adjacent addplot. The grey reference and both band bounds are excluded.
+    remembered = [plot for plot in ax.body if r"\addplot[" in plot
+                  and "forget plot" not in plot]
+    assert len(remembered) == 1
+    assert "color=main" in remembered[0]
+    assert r"\addlegendentry{Measured}" in remembered[0]
+
+
+def test_named_band_keeps_its_fill_legend_but_not_its_hidden_bounds():
+    ax = texplot.Axis("Time (s)", "Value (m)")
+    ax.band([0, 1], [0, 0], [1, 1], color="accent", label="Range")
+    remembered = [plot for plot in ax.body if "forget plot" not in plot]
+    assert len(remembered) == 1
+    assert "fill=accent" in remembered[0]
+    assert r"\addlegendentry{Range}" in remembered[0]
+
+
 def test_rejects_non_finite_and_mismatched_data():
     with pytest.raises(ValueError):
         texplot.Axis().line([0, 1], [0, math.nan])
@@ -35,6 +64,27 @@ def test_long_series_preserves_narrow_peak_and_all_points():
     assert pts[0] == "(0,0)" and pts[-1] == "(4999,0)"
     with pytest.raises(ValueError, match='silent thinning'):
         texplot._coords(range(n), y, limit=700)
+
+
+@pytest.mark.parametrize("value", [math.nan, math.inf, -math.inf])
+def test_numpy_single_precision_nonfinite_values_are_rejected_in_steps(value):
+    import numpy as np
+    with pytest.raises(ValueError, match="non-finite"):
+        texplot.Axis("Time (s)", "Value (m)").stairs([np.float32(value)], [0, 1])
+
+
+@pytest.mark.skipif(not (shutil.which("xelatex") or (Path.home() / ".local/bin/tectonic").exists()), reason="no TeX engine")
+def test_plain_axis_and_legend_labels_compile_as_literal_text(tmp_path):
+    ax = texplot.Axis("x_1 (%)", "Flow & count").line([0, 1], [0, 1], label="group#1")
+    doc = "\\documentclass[12pt]{article}\n" + texplot.PREAMBLE + "\\begin{document}\n" + texplot.figure_env(ax.tex(), "Literal labels") + "\\end{document}\n"
+    source = tmp_path / "labels.tex"
+    source.write_text(doc)
+    engine = [shutil.which("xelatex"), "-interaction=nonstopmode", "-halt-on-error"] if shutil.which("xelatex") else [str(Path.home() / ".local/bin/tectonic")]
+    result = subprocess.run(engine + [source.name], cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout[-800:] + result.stderr[-800:]
+    from pypdf import PdfReader
+    text = PdfReader(tmp_path / "labels.pdf").pages[0].extract_text()
+    assert all(token in text for token in ("x_1 (%)", "Flow & count", "group#1"))
 
 
 def test_plot_rejects_empty_series_and_invalid_unsampled_point():

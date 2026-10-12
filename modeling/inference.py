@@ -5,10 +5,86 @@ Each result carries the assumptions it relies on; a p-value alone is never the o
 from __future__ import annotations
 
 import warnings
+from numbers import Real
 from typing import Callable, Sequence
 
 import numpy as np
 from scipy import stats
+
+
+def adjust_pvalues(pvalues: Sequence[float], *, hypothesis_ids: Sequence[str], family_id: str,
+                   method: str = 'holm', alpha: float = 0.05, effects: Sequence[float | None] | None = None,
+                   effect_definition: str | None = None) -> dict:
+    """Adjust a complete hypothesis family using Statsmodels, preserving input order.
+
+    Holm/Bonferroni control FWER; BH/BY control FDR under the returned conditions.
+    Effect estimates, when supplied, are caller measurements and are not recomputed
+    or validated scientifically by a p-value correction. No observations are read.
+    """
+    from importlib.metadata import version
+    from statsmodels.stats.multitest import multipletests
+
+    def finite_number(value, name):
+        if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
+            raise ValueError(f'{name} must contain finite real numbers, not booleans')
+        try:
+            result = float(value)
+        except (ValueError, TypeError, OverflowError) as error:
+            raise ValueError(f'{name} must contain finite real numbers') from error
+        if not np.isfinite(result):
+            raise ValueError(f'{name} must contain finite real numbers')
+        return result
+
+    if not isinstance(method, str) or method not in ('holm', 'bonferroni', 'bh', 'by'):
+        raise ValueError('method must be holm, bonferroni, bh or by')
+    level = finite_number(alpha, 'alpha')
+    if not 0 < level < 1:
+        raise ValueError('alpha must be strictly between zero and one')
+    raw = np.asarray(pvalues, dtype=object)
+    if raw.ndim != 1 or not len(raw):
+        raise ValueError('pvalues must be a nonempty one-dimensional sequence')
+    p = np.array([finite_number(value, 'pvalues') for value in raw])
+    if ((p < 0) | (p > 1)).any():
+        raise ValueError('pvalues must be probabilities in [0, 1]')
+    if not isinstance(family_id, str) or not family_id.strip():
+        raise ValueError('family_id must be a nonempty string')
+    if hypothesis_ids is None or isinstance(hypothesis_ids, (str, bytes)):
+        raise ValueError('hypothesis_ids must be one unique nonempty string per p-value')
+    try:
+        ids = list(hypothesis_ids)
+    except TypeError as error:
+        raise ValueError('hypothesis_ids must be one unique nonempty string per p-value') from error
+    if len(ids) != len(p) or any(not isinstance(item, str) or not item.strip() for item in ids) or len(set(ids)) != len(ids):
+        raise ValueError('hypothesis_ids must be one unique nonempty string per p-value')
+    estimates = [None] * len(p)
+    if effects is not None:
+        values = np.asarray(effects, dtype=object)
+        if values.ndim != 1 or len(values) != len(p):
+            raise ValueError('effects must contain exactly one estimate or null per hypothesis')
+        if not isinstance(effect_definition, str) or not effect_definition.strip():
+            raise ValueError('effect_definition must describe the supplied effects and their units')
+        estimates = [None if value is None else finite_number(value, 'effects') for value in values]
+    elif effect_definition is not None:
+        raise ValueError('effect_definition requires effects')
+    backend_method = {'holm': 'holm', 'bonferroni': 'bonferroni', 'bh': 'fdr_bh', 'by': 'fdr_by'}[method]
+    reject, adjusted, _, _ = multipletests(p, alpha=level, method=backend_method, is_sorted=False)
+    conditions = {
+        'holm': 'Strong family-wise error rate control under arbitrary dependence, provided each null p-value is valid.',
+        'bonferroni': 'Family-wise error rate control under arbitrary dependence, provided each null p-value is valid.',
+        'bh': 'False discovery rate control for valid null p-values under independence of the p-values, or suitable positive dependence (PRDS) on the subset of true null hypotheses.',
+        'by': 'False discovery rate control under arbitrary dependence, provided each null p-value is valid.'
+    }
+    return dict(family_id=family_id, family_size=len(p), method=method, alpha=level,
+                error_control='FWER' if method in ('holm', 'bonferroni') else 'FDR',
+                error_control_definition='Probability of at least one false rejection in the family' if method in ('holm', 'bonferroni') else 'Expected fraction of false rejections among rejected hypotheses (zero when none are rejected)',
+                hypotheses=[dict(hypothesis_id=identifier, p_value=float(original), adjusted_p_value=float(adjustment),
+                                 reject=bool(rejected), effect_estimate=estimate,
+                                 effect_status='caller_supplied' if estimate is not None else 'not_supplied')
+                            for identifier, original, adjustment, rejected, estimate in zip(ids, p, adjusted, reject, estimates)],
+                effect_definition=effect_definition,
+                conditions=[conditions[method], 'Supply the complete prespecified family, including nonsignificant tests; this tool cannot check omitted tests or the sampling design.'],
+                backend=dict(name='statsmodels.stats.multitest.multipletests', version=version('statsmodels'), method=backend_method),
+                note='Adjustment does not repair invalid p-values, data selection, confounding or a wrong statistical model. Adjusted p-values are not probabilities that hypotheses are false; effect estimates remain caller supplied.')
 
 
 def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = None, *, table=None, alpha: float = 0.05, groups: Sequence[Sequence[float]] | None = None) -> dict:
@@ -27,14 +103,14 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
         out.update(statistic=float(r.statistic), p=float(r.pvalue), difference=float(diff), ci=[float(ci.low), float(ci.high)], effect_size_cohen_d=float(diff / sp))
         for name, x in (('a', a), ('b', b)):
             if len(x) < 30 and stats.shapiro(x).pvalue < alpha:
-                flags.append(f'sample {name} departs from normality (Shapiro p<{alpha}); consider mann_whitney')
+                flags.append(f'sample {name} departs from normality (Shapiro p<{alpha}); this is a diagnostic, not a rule for choosing another test. Assess outliers, sample size and independence for the mean-difference target; a rank test is not a general substitute for comparing means')
     elif kind == 'paired_t':
         r = stats.ttest_rel(a, b)
         d = a - b
         ci = r.confidence_interval(1 - alpha)
         out.update(statistic=float(r.statistic), p=float(r.pvalue), mean_difference=float(d.mean()), ci=[float(ci.low), float(ci.high)], effect_size_dz=float(d.mean() / d.std(ddof=1)))
         if len(d) < 30 and stats.shapiro(d).pvalue < alpha:
-            flags.append('differences depart from normality; consider a Wilcoxon signed-rank test')
+            flags.append('paired differences depart from normality; assess pair alignment, independence across pairs, outliers and the mean-difference target. Do not switch tests from this diagnostic p-value alone; signed-rank inference has a different target and additional symmetry assumptions')
     elif kind == 'mann_whitney':
         r = stats.mannwhitneyu(a, b, alternative='two-sided')
         out.update(statistic=float(r.statistic), p=float(r.pvalue), effect_size_prob_superiority=float(r.statistic / (len(a) * len(b))))
@@ -51,7 +127,7 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
             sst = ((np.concatenate(gs) - np.concatenate(gs).mean()) ** 2).sum()
             out['effect_size_eta_squared'] = float(ssb / sst)
             if stats.levene(*gs).pvalue < alpha:
-                flags.append('variances differ (Levene); use kruskal or a Welch-type test')
+                flags.append('variances differ (Levene); for a group-mean target, assess a heteroscedasticity-valid analysis such as Welch together with the sampling design. This diagnostic p-value alone does not select a method, and Kruskal is not a general substitute for comparing means')
             out['n'] = n
     elif kind == 'chi2_independence':
         t = np.asarray(table, float)
@@ -70,6 +146,21 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
             flags.append('Pearson and Spearman differ by more than 0.2: nonlinearity or outliers')
     else:
         raise ValueError('kind must be welch_t, paired_t, mann_whitney, ks_2samp, anova, kruskal, chi2_independence, shapiro or correlation')
+    design_targets = {
+        'welch_t': ('Difference in population means (a minus b)',
+                    ['Observations are independent within and across the two samples.',
+                     'Mean inference needs a suitable sampling design and adequate control of tails and outliers; Welch allows unequal variances.']),
+        'paired_t': ('Mean of aligned within-pair differences (a minus b)',
+                     ['a and b are aligned observations of the same pairs; differences are independent across pairs.',
+                      'The paired mean interval needs a suitable model for the differences, including normality for exact small-sample t inference.']),
+        'anova': ('Differences among population group means; eta squared describes the observed between-group variation',
+                  ['Observations are independent within and across groups.',
+                   'Classical one-way ANOVA assumes normal errors and equal group variances for exact finite-sample inference.'])
+    }
+    if kind in design_targets:
+        out['estimand'], requirements = design_targets[kind]
+        out['sample_design'] = dict(status='not_checked', requirements=requirements,
+                                    note='Diagnostic p-values neither verify these design requirements nor select another estimand or test automatically.')
     out['significant'] = bool(out.get('p', out.get('pearson_p', 1.0)) < alpha)
     out['flags'] = flags
     out['note'] = 'Significance is not importance: read the effect size and interval. Several tests on one data set need a multiplicity correction.'
