@@ -4,6 +4,34 @@
     {
       "contest": "mcm",
       "event": "MCM",
+      "edition": "2020",
+      "title": "COMAP MCM 2020 — award labels only",
+      "status": {
+        "rules": "unconfirmed",
+        "workflow": "not_validated",
+        "awards": "uncalibrated"
+      },
+      "award_system": [
+        "Successful Participant",
+        "Honorable Mention",
+        "Meritorious Winner",
+        "Finalist",
+        "Outstanding Winner"
+      ],
+      "award_system_scope": "Successful submission designations as printed in the official 2020 MCM Problem A results. Meritorious Winner retains the original designation; this record does not certify manuscript quality, historical rules, AI policy or workflow.",
+      "sources": [
+        {
+          "url": "https://www.contest.comap.com/undergraduate/contests/mcm/contests/2020/results/2020_MCM_Problem_A_Results.pdf",
+          "checked": "2026-10-12",
+          "sha256": "c356e7f2f2356f5823814b1a6ddb883fd85d0bee2c56256e594ee404463fc1e3",
+          "scope": "Result table labels only: PDF physical pages 2 (Finalist, Outstanding Winner), 8 (Meritorious Winner), 23 (Honorable Mention), 102 (Successful Participant). First press-release page not used; solution papers and award calibration not included."
+        }
+      ],
+      "limits": "MCM labels only. ICM and other editions do not inherit these designations. Historical submission rules and AI policy remain unconfirmed; downloaded public copies are not automatically byte-identical to official submissions."
+    },
+    {
+      "contest": "mcm",
+      "event": "MCM",
       "edition": "2024",
       "title": "COMAP MCM 2024 — award labels only",
       "status": {

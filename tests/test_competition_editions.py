@@ -42,6 +42,26 @@ def test_historical_award_labels_do_not_certify_rules_or_calibration():
         _award_view(dict(award, most_likely='全国一等奖'), 'mcm')
 
 
+def test_2020_result_designations_are_exact_and_only_register_mcm_awards():
+    record = lookup('mcm', 'MCM', '2020')
+    assert record['status'] == {'rules': 'unconfirmed', 'workflow': 'not_validated', 'awards': 'uncalibrated'}
+    assert record['award_system'] == ['Successful Participant', 'Honorable Mention',
+                                      'Meritorious Winner', 'Finalist', 'Outstanding Winner']
+    assert 'deliverables' not in record and 'ai' not in record and 'format' not in record
+    assert '2020_MCM_Problem_A_Results.pdf' in record['sources'][0]['url']
+    award = dict(contest='mcm', event='MCM', edition='2020', problem='A',
+                 version='frozen-copy', scope='full paper', target='Outstanding Winner',
+                 most_likely='Finalist', range=['Meritorious Winner', 'Finalist'],
+                 calibrated=False, basis='Limited qualitative review, no award probability', gaps=[], actions=[])
+    view = _award_view(award, 'mcm')
+    assert view['award_system_status'] == 'verified' and view['most_likely'] == 'Finalist'
+    assert not view['calibrated']
+    assert lookup('mcm', 'ICM', '2020').get('award_system', []) == []
+    assert lookup('mcm', 'MCM', '2021').get('award_system', []) == []
+    with pytest.raises(ValueError, match='exact contest edition'):
+        _award_view(dict(award, most_likely='Meritorious'), 'mcm')
+
+
 @pytest.mark.parametrize('event,edition', [('main', '2027'), ('other', '2026'), ('main', None)])
 def test_graduate_unknown_identity_does_not_inherit_2026(event, edition):
     assert lookup('graduate', event, edition)['status']['rules'] == 'unconfirmed'
