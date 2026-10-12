@@ -33,6 +33,8 @@ Explore two complete solutions with different mathematical demands: investment a
 
 **[Repeated observations, defensible comparisons →](data-analysis/README.en.md)** Follow forty-eight weekly observations from twelve synthetic stores through explicit data declarations, join cardinality, clustered inference, Holm adjustment and separate arithmetic checks. The runnable example retains inputs and rejected joins; its associations are not evidence about real stores or causal effects.
 
+**[Coverage, capacity and local bottlenecks →](spatial-analysis/README.en.md)** Spatial reachability changes the resources required by a synthetic service network. Feasible allocations and separate bounds establish costs of 17 at nominal locations and 25 under bounded position errors; a facility failure exposes why total capacity alone is insufficient. The study includes real data-driven figures and a runnable fixed scenario.
+
 ## Mathematical research
 
 Computation can suggest a pattern; a proof establishes where it holds. These notes cover two different tasks: reconstructing a classical result and obtaining a bounded conclusion inside an open problem.

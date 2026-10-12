@@ -10,11 +10,11 @@ Praxis 作为 Agent 插件维护：技能负责建模判断与协作，MCP／Pyt
 - **文档**：有编辑器／编译器则沿用；没有则使用已可用的文件与编译方式，缺失就说明未验证。Codex 内置 LaTeX 编译接口只是可选实现，不是通用技能要求。
 - **协作**：职责与交接不依赖子代理。当前宿主没有并行代理时，同一助手顺序推进。不能把分工建议冒充已联系真人成员。
 
-scripts/pipeline.py 使用标准 Python 与文件接口，不调用某家 Agent 的 SDK。references/automation.md 中命令以 POSIX shell 为例；Windows 可用 `uv run --locked --project <BUNDLE> python <BUNDLE>/scripts/pipeline.py --workspace <WORKSPACE> ...` 避免依赖 .venv/bin 路径。本项目尚未做 Windows 实测。
+scripts/pipeline.py 使用标准 Python 与文件接口，不调用某家 Agent 的 SDK。references/automation.md 中命令以 POSIX shell 为例；Windows 可用 `uv run --locked --project <BUNDLE> python <BUNDLE>/scripts/pipeline.py --workspace <WORKSPACE> ...` 避免依赖 .venv/bin 路径。已有Windows／macOS／Ubuntu的管线、核心MCP与固定排版CI实跑；这些检查不替代各宿主完整会话。
 
 ## 发现与调用
 
-安装目录见 README 表格；目标文件夹名应为 praxis。确认宿主实际加载了这份 SKILL.md，再执行。直接技能可用 Codex 的 `$praxis`、Claude Code 的 `/praxis`；插件模式由宿主加命名空间，以实际列出的名称为准；自然语言“使用 Praxis …”可作跨宿主请求，但自动选择与交互入口仍取决于宿主。
+安装目录见 README 表格；目标文件夹名应为 praxis。确认宿主实际加载了这份 SKILL.md，再执行。 已安装cache与已运行服务分开核对：更新文件不会替换旧进程中已导入的Python模块。若当前聊天仍报新版本已修错误，先记录实际调用失败，核安装来源与新进程的同一小调用，再按宿主支持的重载／重连方式刷新；没有该入口时可沿当前BUNDLE显式CLI继续，不编辑cache、重写原经验或把新进程成功说成当前聊天已恢复。直接技能可用 Codex 的 `$praxis`、Claude Code 的 `/praxis`；插件模式由宿主加命名空间，以实际列出的名称为准；自然语言“使用 Praxis …”可作跨宿主请求，但自动选择与交互入口仍取决于宿主。
 
 agents/openai.yaml 仅提供 Codex 的展示与调用元数据。通用规则放在 SKILL.md 与 references，不依赖该文件被其他宿主理解，不加入专有动态插值或固定工具授权。packaging/plugin.json 与 packaging/mcp.json 是 Agent Plugins 1.0 导出的来源；各宿主自己的插件目录与清单格式可能不同，宿主不读取该格式时，用技能目录加命令行工具（`python -m scripts.mcp_server --call`）。
 

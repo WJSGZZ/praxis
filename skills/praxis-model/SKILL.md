@@ -17,6 +17,7 @@ BUNDLE 指 `praxis` 技能目录（仓库根目录，或插件里的同级 `prax
 把请求转成任务 Q1、Q2……每项都有目标量、单位、约束、成功条件，再给出能回答它的最小模型、假设及其依据、验证设计。读 [methods.md](../../references/methods.md) 的“明确问题”“形成路线”“模型与验证一起选择”和“假设、理由与结论范围”；最小模型不指少列前提，实际依赖的隐含条件也须说明。
 
 - 只有会改变答案的歧义才读 [definition-review.md](../../references/definition-review.md)；其余写成假设并说明影响。
+- 自选的更强定义下无解只排除该解释。若原题仍有会改变主答案的合理解释，给覆盖它的条件方案／排除依据，或明确核心任务尚未完成；不能靠增加约束把原题难点消掉。
 - 参数可辨识性、量纲、优化保证、概率区间、干预结论需要判断时，读 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的对应分支。
 - 没有数据可拟合时，按 mathematical-reasoning.md 的参数范围规则列依据表，不把无依据取值藏在代码常数里；来源核验见 [writing.md](../../references/writing.md) 的“来源服务于具体论断”。
 - 常见方法的适用条件、可用工具与必做检查见 [model-library.md](../../references/model-library.md)。

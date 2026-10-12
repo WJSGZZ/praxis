@@ -2,11 +2,11 @@
 
 [简体中文](installation.md)
 
-Download a released package for your host or build one from source, then use that host's plugin installer. Each target includes the same twenty-two skills and mathematical engine. The adapter supplies the host metadata and paths; no marketplace listing is required.
+Download a released package for your host or build one from source, then use that host's plugin installer. Each target includes the same twenty-three skills and mathematical engine. The adapter supplies the host metadata and paths; no marketplace listing is required.
 
 ## Released packages
 
-The [0.7.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.0) contains ZIPs for [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-codex.zip), [Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-claude.zip), [Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-gemini.zip), [Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-copilot.zip), [Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-cursor.zip), and [portable use](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-portable.zip). Compare your chosen ZIP's SHA-256 with its entry in [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/SHA256SUMS.txt): use `Get-FileHash filename.zip -Algorithm SHA256` in PowerShell, `shasum -a 256 filename.zip` on macOS, or `sha256sum filename.zip` on Linux.
+The [0.7.1 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.1) contains ZIPs for [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-codex.zip), [Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-claude.zip), [Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-gemini.zip), [Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-copilot.zip), [Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-cursor.zip), and [portable use](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-portable.zip). Compare your chosen ZIP's SHA-256 with its entry in [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/SHA256SUMS.txt): use `Get-FileHash filename.zip -Algorithm SHA256` in PowerShell, `shasum -a 256 filename.zip` on macOS, or `sha256sum filename.zip` on Linux.
 
 Extract into a fresh directory. Skip cloning and building, and use the matching installation command below with the extracted bundle root. The computational resource is its `skills/praxis` directory. These packages include the locked Python project, not a Python environment; tools still need uv and its prepared dependencies. A fixed release remains separate from subsequent changes on main.
 
@@ -29,7 +29,7 @@ codex plugin marketplace add /absolute/path/to/praxis-dist/codex/praxis --json
 codex plugin add praxis@praxis-local --json
 ```
 
-The export includes its local marketplace catalog, so existing personal configuration need not be edited. If your CLI lacks these commands, use its supported local marketplace interface. Reload and look for `praxis@praxis-local` and twenty-two `praxis:*` skills. An earlier personal-marketplace install may instead be identified as `praxis@personal`.
+The export includes its local marketplace catalog, so existing personal configuration need not be edited. If your CLI lacks these commands, use its supported local marketplace interface. Reload and look for `praxis@praxis-local` and twenty-three `praxis:*` skills. An earlier personal-marketplace install may instead be identified as `praxis@personal`.
 
 Reference: [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins).
 
@@ -81,7 +81,7 @@ References: [local plugins](https://cursor.com/docs/plugins), [MCP variables](ht
 
 ## Runtime and maintenance
 
-Every target includes all twenty-two skills and `praxis-tools`. Portable, Codex, Claude and Copilot packages additionally declare the pinned arXiv server. Gemini and Cursor leave that optional integration out because their storage variables differ; configure an external storage location separately if needed. OpenAlex, Unpaywall and Crossref remain available through the core service.
+Every target includes all twenty-three skills and `praxis-tools`. Portable, Codex, Claude and Copilot packages additionally declare the pinned arXiv server. Gemini and Cursor leave that optional integration out because their storage variables differ; configure an external storage location separately if needed. OpenAlex, Unpaywall and Crossref remain available through the core service.
 
 To update, fetch the source, export to a fresh destination and update or reinstall through your host. Do not patch an installation cache or overwrite user configuration. Keep the old source ref and export if you need a rollback.
 

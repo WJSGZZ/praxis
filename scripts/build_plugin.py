@@ -60,12 +60,14 @@ TREES = {
     'demos/collatz-research/reproduce/runs': {'.json'},
     'demos/data-analysis': {'.md', '.py', '.json'},
     'demos/data-analysis/assets': {'.png', '.pdf'},
+    'demos/spatial-analysis': {'.md', '.py', '.json'},
+    'demos/spatial-analysis/assets': {'.png', '.pdf'},
 }
 # Focused skills ship next to the core; all packaged Markdown links follow relocation.
 FOCUSED = ('praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report',
            'praxis-data-analysis', 'praxis-statistics', 'praxis-text-analysis',
            'praxis-visualization', 'praxis-time-series', 'praxis-causal-analysis',
-           'praxis-scientific-writing', 'praxis-literature-review', 'praxis-optimization', 'praxis-dynamical-modeling', 'praxis-uncertainty-analysis', 'praxis-machine-learning', 'praxis-experimental-design')
+           'praxis-scientific-writing', 'praxis-literature-review', 'praxis-optimization', 'praxis-dynamical-modeling', 'praxis-uncertainty-analysis', 'praxis-machine-learning', 'praxis-experimental-design', 'praxis-spatial-analysis')
 # Use the maintained brand asset for native presentation; reports keep their
 # scientific typography and do not acquire the plugin logo.
 VISUAL_ASSETS = {'assets/praxis-logo.png': 'demos/assets_src/praxis-logo.png'}

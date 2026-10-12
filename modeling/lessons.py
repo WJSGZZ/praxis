@@ -109,11 +109,18 @@ def add_lesson(path: Path, lesson: dict) -> dict:
     record = {**lesson, 'evidence': level, 'source_kind': source, 'date': lesson.get('date') or date.today().isoformat(), 'tags': sorted(set(lesson.get('tags', [])))}
     targets = record.get('supersedes', [])
     if isinstance(targets, str): targets = [targets]
-    if not isinstance(targets, list) or any(not isinstance(t, str) for t in targets) or len(set(targets)) != len(targets) or not set(targets) <= {r['id'] for r in current}:
+    if not isinstance(targets, list) or any(not isinstance(t, str) for t in targets) or len(set(targets)) != len(targets):
         raise ValueError('supersedes requires distinct currently active lesson IDs')
     if targets: record['supersedes'] = targets
     for rec in current:
-        if not targets and _signature(rec) == _signature(record): return rec
+        if _signature(rec) != _signature(record): continue
+        previous_targets = rec.get('supersedes', [])
+        if isinstance(previous_targets, str): previous_targets = [previous_targets]
+        # A successful replacement already made its parents inactive. Reuse
+        # that active identity on retry, but only for the same parent set.
+        if not targets or set(targets) == set(previous_targets): return rec
+    if not set(targets) <= {r['id'] for r in current}:
+        raise ValueError('supersedes requires distinct currently active lesson IDs')
     existing = load(path)
     if not targets and any(_signature(rec) == _signature(record) for rec in existing):
         raise ValueError('An identical inactive lesson cannot be revived; provide revised evidence or content')

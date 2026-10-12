@@ -3,6 +3,15 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 0.7.1 · 2026-10-13
+
+- 增加空间分析专业入口，共二十三个技能，处理坐标与单位、空间关系、栅格对齐和覆盖／可达约束；复用现有SciPy与网络优化，专业GIS库按实际需要另选，不增加默认依赖。
+  Spatial analysis joins the specialist routes, with explicit coordinate frames, distance and join semantics, raster alignment and local accessibility. Existing scientific libraries support the runnable coverage example; larger GIS workflows retain their own dependencies and scope.
+- 原创空间覆盖案例同时给名义与位置误差下的容量方案、解析界、局部故障割和科研图。优化与建模职责区分可行见证、必要资源、联合可行域及原题的更宽解释。
+  A synthetic coverage study connects distance boundaries to allocation, uncertainty and resource guarantees. A feasible configuration does not establish a universally necessary resource vector, and added restrictions do not exclude the wider original task.
+- 修复带替换关系的经验重试：同内容、同父集的活动记录复用原ID和历史字节；错误父集和退役记录仍拒绝。安装新进程与当前聊天服务分别验证，保留旧服务的失败诊断。
+  Retrying an active lesson replacement now reuses its identity without appending history. Invalid targets and retired records stay rejected. Host guidance distinguishes installed files, fresh-process checks and a still-running chat service.
+
 ## 0.7.0 · 2026-10-13
 
 - 增加七个专业入口：科研写作、文献比较、优化、动态建模、不确定性、监督学习和实验设计，共二十二个技能。入口按请求选择，共用计算、独立验证与交付规范；科学写作吸收成熟公开资源的论证机制，按许可原创整理。

@@ -119,6 +119,41 @@ def test_invalid_replacements_and_retirement_are_atomic(tmp_path):
         assert f.read_bytes()==before
 
 
+@pytest.mark.parametrize('string_target', [False, True])
+def test_active_superseding_lesson_retry_reuses_identity_without_append(tmp_path, string_target):
+    from scripts import mcp_server
+    f = tmp_path / 'lessons.jsonl'
+    first = lessons.add_lesson(f, sample())
+    target = first['id'] if string_target else [first['id']]
+    request = sample(principle='The resource region must allow alternative assignments', supersedes=target)
+    replacement = mcp_server.call('lesson_add', {'path': str(f), 'lesson': request})
+    saved = f.read_bytes()
+    assert mcp_server.call('lesson_add', {'path': str(f), 'lesson': request}) == replacement
+    assert f.read_bytes() == saved
+    assert [r['id'] for r in lessons.active(f)] == [replacement['id']]
+    assert len(lessons.load(f)) == 2
+
+
+def test_replacement_retry_matches_parent_set_but_never_revives_retired_record(tmp_path):
+    f = tmp_path / 'lessons.jsonl'
+    a = lessons.add_lesson(f, sample())
+    b = lessons.add_lesson(f, sample(problem='another original observation'))
+    request = sample(principle='A shared resource cut replaces both observations', supersedes=[a['id'], b['id']])
+    replacement = lessons.add_lesson(f, request)
+    saved = f.read_bytes()
+    assert lessons.add_lesson(f, dict(request, supersedes=[b['id'], a['id']])) == replacement
+    assert f.read_bytes() == saved
+    for targets in ([a['id'], a['id']], ['missing'], [a['id']]):
+        with pytest.raises(ValueError, match='supersedes'):
+            lessons.add_lesson(f, dict(request, supersedes=targets))
+        assert f.read_bytes() == saved
+    lessons.add_lesson(f, {'event': 'retire', 'target': replacement['id'], 'reason': 'Independent counterexample'})
+    retired = f.read_bytes()
+    with pytest.raises(ValueError):
+        lessons.add_lesson(f, request)
+    assert f.read_bytes() == retired and not lessons.active(f)
+
+
 def test_legacy_duplicate_view_and_invalid_imported_cycles(tmp_path):
     import json
     f=tmp_path/'l.jsonl'

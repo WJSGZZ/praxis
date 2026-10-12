@@ -2,13 +2,13 @@
 
 [English](installation.en.md)
 
-可以直接下载已发布的宿主安装包，或从源码导出，再使用宿主的安装入口。每种包共用二十二个技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式，不依赖官方商店收录。
+可以直接下载已发布的宿主安装包，或从源码导出，再使用宿主的安装入口。每种包共用二十三个技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式，不依赖官方商店收录。
 
 ## 下载已发布的安装包
 
-[0.7.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.0) 提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/praxis-0.7.0-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.7.0/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
+[0.7.1 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.1) 提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/praxis-0.7.1-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.7.1/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
 
-解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定Release与后续main改动分别保留，下载0.7.0不会自动带入未发布修复。
+解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定Release与后续main改动分别保留，下载0.7.1不会自动带入未发布修复。
 
 ## 从源码导出
 
@@ -29,7 +29,7 @@ codex plugin marketplace add /absolute/path/to/praxis-dist/codex/praxis --json
 codex plugin add praxis@praxis-local --json
 ```
 
-将 `/absolute/path/to` 替换为实际绝对路径。导出包自带 `.agents/plugins/marketplace.json`，不必手写或覆盖个人 marketplace。CLI 不提供这些命令时，使用该版本支持的本地 marketplace 安装界面。重载后确认 `praxis@praxis-local` 及二十二个 `praxis:*` 技能；此前通过个人 marketplace 安装的同一插件可能显示为 `praxis@personal`。
+将 `/absolute/path/to` 替换为实际绝对路径。导出包自带 `.agents/plugins/marketplace.json`，不必手写或覆盖个人 marketplace。CLI 不提供这些命令时，使用该版本支持的本地 marketplace 安装界面。重载后确认 `praxis@praxis-local` 及二十三个 `praxis:*` 技能；此前通过个人 marketplace 安装的同一插件可能显示为 `praxis@personal`。
 
 依据：[OpenAI 插件打包](https://developers.openai.com/plugins/build/plugins)。
 
@@ -53,7 +53,7 @@ gemini extensions install /absolute/path/to/praxis-dist/gemini/praxis
 gemini extensions list
 ```
 
-使用原生 `gemini-extension.json`，由扩展加载二十二个技能及 `praxis-tools`，路径使用 `${extensionPath}`。安装后重启 CLI 会话。
+使用原生 `gemini-extension.json`，由扩展加载二十三个技能及 `praxis-tools`，路径使用 `${extensionPath}`。安装后重启 CLI 会话。
 
 依据：[Gemini 扩展参考](https://geminicli.com/docs/extensions/reference/)。
 
@@ -81,11 +81,11 @@ uv run --locked python -m scripts.build_plugin --host cursor --output ~/.cursor/
 
 ## 工具、更新与排查
 
-所有包都包含二十二个技能和 `praxis-tools`。通用、Codex、Claude 和 Copilot 包另带固定版本的 arXiv 服务；Gemini、Cursor 包不自动配置它，因为其存储目录变量不同。核心工具中的 OpenAlex、Unpaywall、Crossref 检索不受此影响；需要额外 arXiv 服务时按宿主配置外部存储路径，勿写入安装目录。
+所有包都包含二十三个技能和 `praxis-tools`。通用、Codex、Claude 和 Copilot 包另带固定版本的 arXiv 服务；Gemini、Cursor 包不自动配置它，因为其存储目录变量不同。核心工具中的 OpenAlex、Unpaywall、Crossref 检索不受此影响；需要额外 arXiv 服务时按宿主配置外部存储路径，勿写入安装目录。
 
 更新时先更新源码，再导出到新的目录，通过宿主更新或重新安装。直接修改源码不保证安装缓存同步；不要手改缓存，不覆盖旧导出目录或用户配置。需要退回旧版时，保留旧源码 ref 和原导出包。
 
-重载后检查三件事：Praxis 出现在插件／扩展列表；二十二个技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。可从任意目录检查底层服务（替换路径）：
+重载后检查三件事：Praxis 出现在插件／扩展列表；二十三个技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。可从任意目录检查底层服务（替换路径）：
 
 ```bash
 uv run --locked --directory /absolute/path/to/plugin/skills/praxis python -m scripts.mcp_server --list

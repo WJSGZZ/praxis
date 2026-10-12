@@ -1,0 +1,1122 @@
+{
+  "scope": "Original synthetic local Cartesian service coverage; no real city, road, travel-time, river or GIS validation",
+  "original_input_sha256": {
+    "input.json": "c53b014c47a116b6032880702b508742cb3765b99b21c167f94fa0535b9bf35e"
+  },
+  "model": "Minimum 3a+2b+c with 0<=a,b,c<=8, divisible demand and flows only on Euclidean distance<=5-km edges",
+  "capacity_order": [
+    "A",
+    "B",
+    "C"
+  ],
+  "nominal_capacity": {
+    "A": -0.0,
+    "B": 5.0,
+    "C": 7.0
+  },
+  "nominal_minimum_cost": 17.0,
+  "guaranteed_capacity": {
+    "A": 4.0,
+    "B": 5.0,
+    "C": 3.0
+  },
+  "guaranteed_minimum_cost": 25.0,
+  "nominal_edges": [
+    [
+      "A",
+      "u"
+    ],
+    [
+      "B",
+      "v"
+    ],
+    [
+      "C",
+      "u"
+    ],
+    [
+      "C",
+      "w"
+    ]
+  ],
+  "guaranteed_edges": [
+    [
+      "A",
+      "u"
+    ],
+    [
+      "B",
+      "v"
+    ],
+    [
+      "C",
+      "w"
+    ]
+  ],
+  "maximum_service_after_b_failure_with_total_capacity_12": 7.0,
+  "verification": {
+    "status": "passed",
+    "distance_squared_oracle_km2": [
+      [
+        9,
+        45,
+        49
+      ],
+      [
+        45,
+        9,
+        85
+      ],
+      [
+        25,
+        61,
+        1
+      ]
+    ],
+    "nominal_cost_lower_bound": 17,
+    "guaranteed_cost_lower_bound": 25,
+    "nominal_proof": "b>=5 and a+c>=7 imply 3a+2b+c>=17+2a>=17; (0,5,7) attains 17.",
+    "robust_proof": "The admissible configuration C=(0,8.1),u=(0,2.9) removes Cu, forcing a>=4,b>=5,c>=3 and cost>=25; (4,5,3) uses only always-allowed edges and attains 25.",
+    "nominal_subset_cuts": [
+      {
+        "demands": [
+          "u"
+        ],
+        "neighbors": [
+          "A",
+          "C"
+        ],
+        "available_capacity": 7.0,
+        "required": 4.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "v"
+        ],
+        "neighbors": [
+          "B"
+        ],
+        "available_capacity": 5.0,
+        "required": 5.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "w"
+        ],
+        "neighbors": [
+          "C"
+        ],
+        "available_capacity": 7.0,
+        "required": 3.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "v"
+        ],
+        "neighbors": [
+          "A",
+          "B",
+          "C"
+        ],
+        "available_capacity": 12.0,
+        "required": 9.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "w"
+        ],
+        "neighbors": [
+          "A",
+          "C"
+        ],
+        "available_capacity": 7.0,
+        "required": 7.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "v",
+          "w"
+        ],
+        "neighbors": [
+          "B",
+          "C"
+        ],
+        "available_capacity": 12.0,
+        "required": 8.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "v",
+          "w"
+        ],
+        "neighbors": [
+          "A",
+          "B",
+          "C"
+        ],
+        "available_capacity": 12.0,
+        "required": 12.0,
+        "satisfied": true
+      }
+    ],
+    "guaranteed_subset_cuts": [
+      {
+        "demands": [
+          "u"
+        ],
+        "neighbors": [
+          "A"
+        ],
+        "available_capacity": 4.0,
+        "required": 4.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "v"
+        ],
+        "neighbors": [
+          "B"
+        ],
+        "available_capacity": 5.0,
+        "required": 5.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "w"
+        ],
+        "neighbors": [
+          "C"
+        ],
+        "available_capacity": 3.0,
+        "required": 3.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "v"
+        ],
+        "neighbors": [
+          "A",
+          "B"
+        ],
+        "available_capacity": 9.0,
+        "required": 9.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "w"
+        ],
+        "neighbors": [
+          "A",
+          "C"
+        ],
+        "available_capacity": 7.0,
+        "required": 7.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "v",
+          "w"
+        ],
+        "neighbors": [
+          "B",
+          "C"
+        ],
+        "available_capacity": 8.0,
+        "required": 8.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "v",
+          "w"
+        ],
+        "neighbors": [
+          "A",
+          "B",
+          "C"
+        ],
+        "available_capacity": 12.0,
+        "required": 12.0,
+        "satisfied": true
+      }
+    ],
+    "coordinate_minimum_vector": {
+      "A": 0,
+      "B": 5,
+      "C": 3
+    },
+    "coordinate_minimum_subset_cuts": [
+      {
+        "demands": [
+          "u"
+        ],
+        "neighbors": [
+          "A",
+          "C"
+        ],
+        "available_capacity": 3.0,
+        "required": 4.0,
+        "satisfied": false
+      },
+      {
+        "demands": [
+          "v"
+        ],
+        "neighbors": [
+          "B"
+        ],
+        "available_capacity": 5.0,
+        "required": 5.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "w"
+        ],
+        "neighbors": [
+          "C"
+        ],
+        "available_capacity": 3.0,
+        "required": 3.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "v"
+        ],
+        "neighbors": [
+          "A",
+          "B",
+          "C"
+        ],
+        "available_capacity": 8.0,
+        "required": 9.0,
+        "satisfied": false
+      },
+      {
+        "demands": [
+          "u",
+          "w"
+        ],
+        "neighbors": [
+          "A",
+          "C"
+        ],
+        "available_capacity": 3.0,
+        "required": 7.0,
+        "satisfied": false
+      },
+      {
+        "demands": [
+          "v",
+          "w"
+        ],
+        "neighbors": [
+          "B",
+          "C"
+        ],
+        "available_capacity": 8.0,
+        "required": 8.0,
+        "satisfied": true
+      },
+      {
+        "demands": [
+          "u",
+          "v",
+          "w"
+        ],
+        "neighbors": [
+          "A",
+          "B",
+          "C"
+        ],
+        "available_capacity": 8.0,
+        "required": 12.0,
+        "satisfied": false
+      }
+    ],
+    "scope": "Author-process independent arithmetic for this synthetic fixture; no blind test, real GIS validation or award claim",
+    "original_input_sha256": "c53b014c47a116b6032880702b508742cb3765b99b21c167f94fa0535b9bf35e",
+    "original_input_preserved": true
+  },
+  "implementation_sha256": {
+    "examples/spatial_analysis_demo.py": "61eedc3dc94a3ce6b1f6f5829cf7be233634f6014e5aac5c7bf456bcee02884c",
+    "modeling/optimize.py": "ae3efb00afc83de42c6759b7602dd7df9ae33b22fd5d8b13f6647a7856e9b225"
+  },
+  "figure": {
+    "original_input_sha256": "c53b014c47a116b6032880702b508742cb3765b99b21c167f94fa0535b9bf35e",
+    "source_artifact_sha256": {
+      "input.json": "c53b014c47a116b6032880702b508742cb3765b99b21c167f94fa0535b9bf35e",
+      "edge-audit.json": "9a6d1637b9856cd797a261559707a19a192f9b3874e94b7b44cf0dbe9f54a819",
+      "nominal-allocation.json": "5396dbc8d53e9ced6beea8b9845c4020d536506c290aa8de9225a1befecee9d5",
+      "guaranteed-allocation.json": "d91066be8d3cf5b284249ff0c7eb1e8cb45f937897257af9b1d1e396a18a6089",
+      "independent-verification.json": "e697665164378c1e7329c1e2650a34a35edd9696b5ebe96474b24bb1962ff82f"
+    },
+    "scientific_caption": "A declared synthetic Cartesian plane in km, shown at equal aspect. Squares are facilities and circles are demands. Blue edges remain allowed for every independent radius-0.1-km point error; dashed C-u is nominally allowed at exactly 5 km but can reach 5.2 km. The C circle is its nominal 5-km boundary. Right-hand dots and bars show all nine actual nominal distances and tight geometric bounds, not confidence intervals. Demand v has only B as a possible neighbor.",
+    "spatial_axis": {
+      "xlabel": "x (km)",
+      "ylabel": "y (km)",
+      "aspect": 1.0,
+      "xlim": [
+        -6.2,
+        9.2
+      ],
+      "ylim": [
+        -1.5,
+        14.0
+      ]
+    },
+    "facilities": {
+      "ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "xy": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          6.0,
+          0.0
+        ],
+        [
+          0.0,
+          8.0
+        ]
+      ],
+      "marker": "s",
+      "label": "Facility",
+      "facecolors": [
+        [
+          0.12549019607843137,
+          0.1450980392156863,
+          0.16470588235294117,
+          1.0
+        ]
+      ],
+      "sizes": [
+        100
+      ],
+      "actual_marker_path_vertices": [
+        [
+          [
+            -0.5,
+            -0.5
+          ],
+          [
+            0.5,
+            -0.5
+          ],
+          [
+            0.5,
+            0.5
+          ],
+          [
+            -0.5,
+            0.5
+          ],
+          [
+            -0.5,
+            -0.5
+          ]
+        ]
+      ]
+    },
+    "demands": {
+      "ids": [
+        "u",
+        "v",
+        "w"
+      ],
+      "xy": [
+        [
+          0.0,
+          3.0
+        ],
+        [
+          6.0,
+          3.0
+        ],
+        [
+          0.0,
+          7.0
+        ]
+      ],
+      "marker": "o",
+      "label": "Demand",
+      "facecolors": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "edgecolors": [
+        [
+          0.12549019607843137,
+          0.1450980392156863,
+          0.16470588235294117,
+          1.0
+        ]
+      ],
+      "sizes": [
+        75
+      ],
+      "actual_marker_path_vertices": [
+        [
+          [
+            0.0,
+            -0.5
+          ],
+          [
+            0.13260155,
+            -0.5
+          ],
+          [
+            0.25978993539242673,
+            -0.44731684579412084
+          ],
+          [
+            0.3535533905932738,
+            -0.3535533905932738
+          ],
+          [
+            0.44731684579412084,
+            -0.25978993539242673
+          ],
+          [
+            0.5,
+            -0.13260155
+          ],
+          [
+            0.5,
+            0.0
+          ],
+          [
+            0.5,
+            0.13260155
+          ],
+          [
+            0.44731684579412084,
+            0.25978993539242673
+          ],
+          [
+            0.3535533905932738,
+            0.3535533905932738
+          ],
+          [
+            0.25978993539242673,
+            0.44731684579412084
+          ],
+          [
+            0.13260155,
+            0.5
+          ],
+          [
+            0.0,
+            0.5
+          ],
+          [
+            -0.13260155,
+            0.5
+          ],
+          [
+            -0.25978993539242673,
+            0.44731684579412084
+          ],
+          [
+            -0.3535533905932738,
+            0.3535533905932738
+          ],
+          [
+            -0.44731684579412084,
+            0.25978993539242673
+          ],
+          [
+            -0.5,
+            0.13260155
+          ],
+          [
+            -0.5,
+            0.0
+          ],
+          [
+            -0.5,
+            -0.13260155
+          ],
+          [
+            -0.44731684579412084,
+            -0.25978993539242673
+          ],
+          [
+            -0.3535533905932738,
+            -0.3535533905932738
+          ],
+          [
+            -0.25978993539242673,
+            -0.44731684579412084
+          ],
+          [
+            -0.13260155,
+            -0.5
+          ],
+          [
+            0.0,
+            -0.5
+          ],
+          [
+            0.0,
+            -0.5
+          ]
+        ]
+      ]
+    },
+    "service_edges": [
+      {
+        "site": "C",
+        "demand": "u",
+        "classification": "possible_only",
+        "x": [
+          0.0,
+          0.0
+        ],
+        "y": [
+          8.0,
+          3.0
+        ],
+        "color": "#D55E00",
+        "linestyle": "--",
+        "marker": "None",
+        "label": "Possible only: C-u"
+      },
+      {
+        "site": "A",
+        "demand": "u",
+        "classification": "always",
+        "x": [
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          3.0
+        ],
+        "color": "#0072B2",
+        "linestyle": "-",
+        "marker": "None",
+        "label": "Guaranteed edge"
+      },
+      {
+        "site": "B",
+        "demand": "v",
+        "classification": "always",
+        "x": [
+          6.0,
+          6.0
+        ],
+        "y": [
+          0.0,
+          3.0
+        ],
+        "color": "#0072B2",
+        "linestyle": "-",
+        "marker": "None",
+        "label": "_nolegend_"
+      },
+      {
+        "site": "C",
+        "demand": "w",
+        "classification": "always",
+        "x": [
+          0.0,
+          0.0
+        ],
+        "y": [
+          8.0,
+          7.0
+        ],
+        "color": "#0072B2",
+        "linestyle": "-",
+        "marker": "None",
+        "label": "_nolegend_"
+      }
+    ],
+    "nominal_C_boundary": {
+      "center": [
+        0,
+        8
+      ],
+      "radius_km": 5.0,
+      "linestyle": ":",
+      "edgecolor": [
+        0.5450980392156862,
+        0.5647058823529412,
+        0.5882352941176471,
+        1.0
+      ],
+      "annotation": "C: 5 km boundary",
+      "annotation_xy": [
+        -5.65,
+        12.85
+      ]
+    },
+    "spatial_annotations": [
+      {
+        "text": "A",
+        "xy": [
+          -0.45,
+          -0.3
+        ]
+      },
+      {
+        "text": "B",
+        "xy": [
+          6.45,
+          -0.3
+        ]
+      },
+      {
+        "text": "C",
+        "xy": [
+          0.4,
+          8.3
+        ]
+      },
+      {
+        "text": "u: 4 units",
+        "xy": [
+          -0.45,
+          3
+        ]
+      },
+      {
+        "text": "v: 5 units",
+        "xy": [
+          6.45,
+          3
+        ]
+      },
+      {
+        "text": "w: 3 units",
+        "xy": [
+          0.45,
+          6.95
+        ]
+      },
+      {
+        "text": "C-u: 5 km",
+        "xy": [
+          -0.35,
+          5.1
+        ]
+      }
+    ],
+    "legend_labels": [
+      "Possible only: C-u",
+      "Guaranteed edge",
+      "Facility",
+      "Demand"
+    ],
+    "legend_artist_types": [
+      "Line2D",
+      "Line2D",
+      "PathCollection",
+      "PathCollection"
+    ],
+    "distance_axis": {
+      "xlabel": "Facility-to-demand distance (km)",
+      "row_labels": [
+        "A-u",
+        "A-v",
+        "A-w",
+        "B-u",
+        "B-v",
+        "B-w",
+        "C-u",
+        "C-v",
+        "C-w"
+      ],
+      "xlim": [
+        0.0,
+        10.0
+      ],
+      "threshold_artist": {
+        "x": [
+          5.0,
+          5.0
+        ],
+        "y": [
+          0.0,
+          1.0
+        ],
+        "color": "#20252A",
+        "linestyle": ":",
+        "marker": "None",
+        "label": "_child0"
+      }
+    },
+    "distance_series": [
+      {
+        "site": "A",
+        "demand": "u",
+        "classification": "always",
+        "bounds": {
+          "x": [
+            2.8,
+            3.2
+          ],
+          "y": [
+            0.0,
+            0.0
+          ],
+          "color": "#0072B2",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child2"
+        },
+        "nominal": {
+          "x": [
+            3.0
+          ],
+          "y": [
+            0.0
+          ],
+          "color": "#0072B2",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child3"
+        }
+      },
+      {
+        "site": "A",
+        "demand": "v",
+        "classification": "never",
+        "bounds": {
+          "x": [
+            6.508203932499369,
+            6.90820393249937
+          ],
+          "y": [
+            1.0,
+            1.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child4"
+        },
+        "nominal": {
+          "x": [
+            6.708203932499369
+          ],
+          "y": [
+            1.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child5"
+        }
+      },
+      {
+        "site": "A",
+        "demand": "w",
+        "classification": "never",
+        "bounds": {
+          "x": [
+            6.8,
+            7.2
+          ],
+          "y": [
+            2.0,
+            2.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child6"
+        },
+        "nominal": {
+          "x": [
+            7.0
+          ],
+          "y": [
+            2.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child7"
+        }
+      },
+      {
+        "site": "B",
+        "demand": "u",
+        "classification": "never",
+        "bounds": {
+          "x": [
+            6.508203932499369,
+            6.90820393249937
+          ],
+          "y": [
+            3.0,
+            3.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child8"
+        },
+        "nominal": {
+          "x": [
+            6.708203932499369
+          ],
+          "y": [
+            3.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child9"
+        }
+      },
+      {
+        "site": "B",
+        "demand": "v",
+        "classification": "always",
+        "bounds": {
+          "x": [
+            2.8,
+            3.2
+          ],
+          "y": [
+            4.0,
+            4.0
+          ],
+          "color": "#0072B2",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child10"
+        },
+        "nominal": {
+          "x": [
+            3.0
+          ],
+          "y": [
+            4.0
+          ],
+          "color": "#0072B2",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child11"
+        }
+      },
+      {
+        "site": "B",
+        "demand": "w",
+        "classification": "never",
+        "bounds": {
+          "x": [
+            9.019544457292888,
+            9.419544457292886
+          ],
+          "y": [
+            5.0,
+            5.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child12"
+        },
+        "nominal": {
+          "x": [
+            9.219544457292887
+          ],
+          "y": [
+            5.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child13"
+        }
+      },
+      {
+        "site": "C",
+        "demand": "u",
+        "classification": "possible_only",
+        "bounds": {
+          "x": [
+            4.8,
+            5.2
+          ],
+          "y": [
+            6.0,
+            6.0
+          ],
+          "color": "#D55E00",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child14"
+        },
+        "nominal": {
+          "x": [
+            5.0
+          ],
+          "y": [
+            6.0
+          ],
+          "color": "#D55E00",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child15"
+        }
+      },
+      {
+        "site": "C",
+        "demand": "v",
+        "classification": "never",
+        "bounds": {
+          "x": [
+            7.610249675906654,
+            8.010249675906653
+          ],
+          "y": [
+            7.0,
+            7.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child16"
+        },
+        "nominal": {
+          "x": [
+            7.810249675906654
+          ],
+          "y": [
+            7.0
+          ],
+          "color": "#8B9096",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child17"
+        }
+      },
+      {
+        "site": "C",
+        "demand": "w",
+        "classification": "always",
+        "bounds": {
+          "x": [
+            0.8,
+            1.2
+          ],
+          "y": [
+            8.0,
+            8.0
+          ],
+          "color": "#0072B2",
+          "linestyle": "-",
+          "marker": "|",
+          "label": "_child18"
+        },
+        "nominal": {
+          "x": [
+            1.0
+          ],
+          "y": [
+            8.0
+          ],
+          "color": "#0072B2",
+          "linestyle": "None",
+          "marker": "o",
+          "label": "_child19"
+        }
+      }
+    ],
+    "capacity_summary": {
+      "order": [
+        "A",
+        "B",
+        "C"
+      ],
+      "nominal": {
+        "A": -0.0,
+        "B": 5.0,
+        "C": 7.0
+      },
+      "guaranteed": {
+        "A": 4.0,
+        "B": 5.0,
+        "C": 3.0
+      },
+      "nominal_cost": 17.0,
+      "guaranteed_cost": 25.0
+    },
+    "figure_generator_sha256": "71e5bd54ea257fc2990120ae90ad8af22143f1a0372d17c111a01d5a05b2b37d",
+    "runtime": {
+      "matplotlib": "3.11.2",
+      "numpy": "2.5.3"
+    },
+    "artifacts": {
+      "coverage.pdf": "e985078a569bbf44d88aa39e7b21abcbce33c2942e2be05598d89343b9440cc5",
+      "coverage.png": "ee0ae91433c4ed76f0e2ed6fdffdff384eb6658b875e11286e95361aa0239cae"
+    },
+    "visual_review": "required"
+  },
+  "figure_generator_sha256": "71e5bd54ea257fc2990120ae90ad8af22143f1a0372d17c111a01d5a05b2b37d",
+  "figure_runtime": {
+    "matplotlib": "3.11.2",
+    "numpy": "2.5.3"
+  },
+  "figure_review": {
+    "actual_png_viewed": true,
+    "actual_pdf_raster_viewed": true,
+    "selected_rasters_equal_to_viewed_v3": true,
+    "selected_pdfs_equal_to_viewed_v3": true,
+    "all_nine_actual_distances_checked": true,
+    "all_six_coordinate_points_checked": true,
+    "C_and_w_distinct": true,
+    "spatial_equal_aspect": true,
+    "all_fonts_embedded": true,
+    "png_pixel_dimensions": [
+      2196,
+      1314
+    ],
+    "pdf_size_points": [
+      878.4,
+      525.6
+    ],
+    "scope": "Standalone scientific demo; no whole-paper scaling or competition-format certification"
+  },
+  "artifact_sha256": {
+    "coverage.png": "ee0ae91433c4ed76f0e2ed6fdffdff384eb6658b875e11286e95361aa0239cae",
+    "coverage.pdf": "e985078a569bbf44d88aa39e7b21abcbce33c2942e2be05598d89343b9440cc5"
+  },
+  "figure_implementation_sha256": {
+    "demos/spatial-analysis/build_figure.py": "71e5bd54ea257fc2990120ae90ad8af22143f1a0372d17c111a01d5a05b2b37d"
+  }
+}

@@ -131,6 +131,7 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis`](SKILL.md) | "Take this problem all the way" | The shared line of reasoning, the task record, team and deadline coordination, handoffs |
 | [`praxis-model`](skills/praxis-model/SKILL.md) | "How should I model this? Where do the parameters come from?" | Problem definition, assumptions and parameter grounding, route and model choice, identifiability and optimization structure |
 | [`praxis-data-analysis`](skills/praxis-data-analysis/SKILL.md) | "What can these tables tell us?" | Observation units, coverage, missingness, join cardinality, denominators and exploratory findings |
+| [`praxis-spatial-analysis`](skills/praxis-spatial-analysis/SKILL.md) | "Which locations can serve this demand? Are the spatial measurements valid?" | Coordinate systems, distance and join semantics, raster alignment, accessibility and capacity bottlenecks |
 | [`praxis-statistics`](skills/praxis-statistics/SKILL.md) | "How large is the difference? Are these observations independent?" | Estimands, effects and intervals, paired or clustered designs, multiple comparisons and assumptions |
 | [`praxis-text-analysis`](skills/praxis-text-analysis/SKILL.md) | "What are people discussing? Can I trust these text features?" | Corpus and label definitions, features, inspected examples, semantic errors and held-out evaluation |
 | [`praxis-time-series`](skills/praxis-time-series/SKILL.md) | "Forecast the next periods and compare simple baselines" | Entities and calendars, information available at each origin, horizons, rolling evaluation and forecast errors |
@@ -151,7 +152,7 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-machine-learning`](skills/praxis-machine-learning/SKILL.md) | "Does this predictor improve on a baseline?" | Prediction contracts, group splits, fold-local preprocessing, baselines and held-out evaluation |
 | [`praxis-experimental-design`](skills/praxis-experimental-design/SKILL.md) | "Design a useful experiment and justify its sample size" | Experimental units, allocation, randomization, replication, power and measurement design |
 
-The core and twenty-one specialists share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
+The core and twenty-two specialists share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
 
 
 ### Competitions are one application
@@ -237,6 +238,7 @@ praxis-plugin/
     praxis/                 # entry skill, with all references, scripts and tool code
     praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
     praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
+    praxis-spatial-analysis/
     praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
 ```
 

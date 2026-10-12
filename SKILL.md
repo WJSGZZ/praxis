@@ -23,7 +23,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 | 当前缺口 | 专业方向 |
 |---|---|
 | 题意、前提、机制与路线 | model、assumptions、explore、dynamical-modeling |
-| 文献、数据与测量 | literature-review、data-analysis、text-analysis |
+| 文献、数据与测量 | literature-review、data-analysis、text-analysis、spatial-analysis |
 | 推断、预测、识别与采集 | statistics、machine-learning、time-series、causal-analysis、experimental-design |
 | 动作、资源与未知 | optimization、uncertainty-analysis |
 | 执行与主张核验 | compute、verify |

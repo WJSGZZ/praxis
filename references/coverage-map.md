@@ -25,7 +25,8 @@
 | 状态估计 | 工具 | `kalman_filter` | 非线性滤波：库 |
 | 库存、金融 | 工具 | `eoq`、`newsvendor`、`cvar_portfolio` | 期权定价：解析式见 domain-models.md |
 | 结构探索、反例、猜想 | 工具 | `probe_structure`、`find_counterexample`、`guess_sequence`、`find_relation`、`dimensional_analysis` | — |
-| 空间统计、地理优化、图像与信号 | 缺 | — | 用库实现；这类题先回到机制和量纲，再决定是否值得做 |
+| 空间度量、覆盖与地理优化 | 库 | [空间分析](spatial-analysis.md)：明确CRS／单位的SciPy点查询、已有LP／网络分配；矢量／栅格按需用成熟GIS库 | 地理／高程基准、局部可达与位置误差另核；专业GIS库非默认依赖，不冒充通用水动力 |
+| 空间统计、图像与信号 | 缺 | — | 空间抽样／相关先按[空间分析](spatial-analysis.md)与统计设计，估计器／图像／信号处理再选成熟库和独立检查 |
 | 符号推导 | 库 | sympy | 推导后用 `test_conjecture` 数值核对 |
 
 ## 用法

@@ -124,13 +124,14 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 技能一览
 
-一个入口负责整题，二十一个专项处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
+一个入口负责整题，二十二个专项处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
 
 | 技能 | 适合的请求 | 内容 |
 |---|---|---|
 | [`praxis`](SKILL.md) | “把这道题做完” | 统一主线、任务记录、团队与限时协调、环节交接 |
 | [`praxis-model`](skills/praxis-model/SKILL.md) | “这题怎么做？参数怎么定？” | 读题与定义、假设和参数依据、路线与模型选择、可辨识性与优化结构 |
 | [`praxis-data-analysis`](skills/praxis-data-analysis/SKILL.md) | “分析这几张表，看看数据能说明什么” | 数据质量、观测单位、缺失与覆盖、关联基数、分母和探索结果 |
+| [`praxis-spatial-analysis`](skills/praxis-spatial-analysis/SKILL.md) | “点位怎么匹配，距离和覆盖约束靠谱吗” | 坐标与单位、空间关系、栅格对齐、覆盖边和局部可达；按需复用成熟GIS库 |
 | [`praxis-statistics`](skills/praxis-statistics/SKILL.md) | “差异有多大？重复测量应该怎样检验？” | 估计对象、区间和效应、配对与聚类、多重比较及统计条件 |
 | [`praxis-text-analysis`](skills/praxis-text-analysis/SKILL.md) | “评论主要谈什么？文本特征可信吗？” | 语料与标注、特征、抽查与语义误差、训练和留出边界 |
 | [`praxis-time-series`](skills/praxis-time-series/SKILL.md) | “预测未来几期，和简单基线比一比” | 时间与实体、可用信息、预测跨度、滚动验证与误差 |
@@ -236,6 +237,7 @@ praxis-plugin/
     praxis/                 # 入口技能，带全部参考、脚本与工具代码
     praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
     praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
+    praxis-spatial-analysis/
     praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
 ```
 

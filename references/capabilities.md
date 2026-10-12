@@ -9,6 +9,7 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 | 假设与适用条件 | 原题、模型／数据及拟写结论；前提是否充分、实际使用、合理？ | 显式与隐含前提、依据、作用位置及失效影响；明确检查和未验证条件 | [praxis-assumptions](../skills/praxis-assumptions/SKILL.md)；[methods.md](methods.md#假设理由与结论范围) |
 | 模型设计 | 任务定义、机制、数据能力 | 基线与必要扩展、假设和验证设计；组合关系明确 | [praxis-model](../skills/praxis-model/SKILL.md)；mathematical-reasoning.md与成熟库条件路线 |
 | 数据分析 | 原始表、观测单位、实体和时间口径；数据能回答什么？ | 只读审计、覆盖与缺失、明确分母、关联基数和可回答范围 | [praxis-data-analysis](../skills/praxis-data-analysis/SKILL.md)；Pandas；`audit_data`、`audit_join` |
+| 空间分析 | 点位／矢量／栅格、坐标与单位、定位精度、空间阈值和目标 | 可核的距离／面积／匹配、对齐与掩码、覆盖边及局部可达约束 | [praxis-spatial-analysis](../skills/praxis-spatial-analysis/SKILL.md)；SciPy、NetworkX；按需采用GeoPandas／PyProj／Rasterio |
 | 统计推断 | 估计对象、采样／配对／组结构、预先选择的比较族 | 效应与区间、实际假设、聚类或多重比较、不可推断的条件 | [praxis-statistics](../skills/praxis-statistics/SKILL.md)；Statsmodels、SciPy；`adjust_pvalues`、`ols_report` |
 | 文本分析 | 语料、语言、分析单位、标签或待测主张 | 可追溯特征与实例、标注定义、误差和验证边界 | [praxis-text-analysis](../skills/praxis-text-analysis/SKILL.md)；scikit-learn 的条件路线 |
 | 时间序列 | 时间／实体、可用信息、预测起点与跨度、日历 | 同一评价口径下的滚动基线、误差、区间与外推条件 | [praxis-time-series](../skills/praxis-time-series/SKILL.md)；`backtest_baselines`、`arima_forecast` |
