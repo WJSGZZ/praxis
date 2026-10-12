@@ -62,3 +62,5 @@
 ## Python 够用吗
 
 数值计算、统计、优化、网络、符号推导、微分方程与出图，NumPy、SciPy、pandas、statsmodels、scikit-learn、networkx、SymPy 与 Matplotlib 覆盖了绝大多数建模任务，可以替代 MATLAB 与 R 的常规用法。只有出现具体缺口时才考虑别的工具：框图式动态仿真、专门的偏微分方程求解器、某些 R 独有的统计包，或商业求解器（Gurobi、Lingo）才能处理的超大规模整数规划。此时先写明缺口与用途，核验来源与许可，再在任务记录里保留输入、命令和输出；未经需要不安装大型工具。HiGHS 已能处理常见规模的 LP／MILP，路径与排班类问题规模更大时再核验 OR-Tools。
+
+监督预测用 `cross_validate_predictor`：Ridge或0/1 Logistic，独立／整组留出，逐训练折预处理、Dummy比较及完整OOF；不处理时间外推、调参或概率校准。条件见 [machine-learning.md](machine-learning.md)。

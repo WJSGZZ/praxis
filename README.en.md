@@ -8,7 +8,7 @@
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Version](https://img.shields.io/badge/Version-0.6.1-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.7.0-263B9B?style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -76,7 +76,7 @@ Explore either case or bring your own problem. **Star Praxis** if you would like
 
 ### 1. Install for your agent
 
-Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [0.6.1 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.1), or export the current source:
+Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [0.7.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.0), or export the current source:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -143,8 +143,15 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-visualization`](skills/praxis-visualization/SKILL.md) | "Make a scientific figure; check its units, legend and fonts" | Figure choice, real input arrays, uncertainty, denominators and inspected graphical objects |
 | [`praxis-report`](skills/praxis-report/SKILL.md) | "Write it up, fix the abstract, check the PDF" | Natural Chinese and English, paper and figure editing, references, AI disclosure, and PDF delivery |
 | [`praxis-assumptions`](skills/praxis-assumptions/SKILL.md) | "Are these assumptions justified? What is implicit?" | Premises, supporting reasons, actual uses, failure effects and checks |
+| [`praxis-scientific-writing`](skills/praxis-scientific-writing/SKILL.md) | "Make the argument readable and explain the equations" | Research questions, paragraph connections, mathematical exposition, decisions and discussion |
+| [`praxis-literature-review`](skills/praxis-literature-review/SKILL.md) | "Find evidence and compare this with prior work" | Primary-source search, actual reading, evidence extraction, method comparisons and citations |
+| [`praxis-optimization`](skills/praxis-optimization/SKILL.md) | "Choose a decision and establish its optimality scope" | Feasibility, objectives, solver structure, bounds, gaps and multi-objective tradeoffs |
+| [`praxis-dynamical-modeling`](skills/praxis-dynamical-modeling/SKILL.md) | "Build and check a dynamical mechanism" | States, fluxes, units, initial/boundary conditions, equilibria, identification and numerical error |
+| [`praxis-uncertainty-analysis`](skills/praxis-uncertainty-analysis/SKILL.md) | "How does uncertainty affect the result and decision?" | Uncertainty sources, joint dependence, propagation, sensitivity, risk and robust decisions |
+| [`praxis-machine-learning`](skills/praxis-machine-learning/SKILL.md) | "Does this predictor improve on a baseline?" | Prediction contracts, group splits, fold-local preprocessing, baselines and held-out evaluation |
+| [`praxis-experimental-design`](skills/praxis-experimental-design/SKILL.md) | "Design a useful experiment and justify its sample size" | Experimental units, allocation, randomization, replication, power and measurement design |
 
-The core and fourteen specialists share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
+The core and twenty-one specialists share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
 
 
 ### Competitions are one application
@@ -167,7 +174,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 |---|---|
 | Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `knapsack` (exact), `shortest_path`, `max_flow` (with the minimum cut), `min_cost_flow`, `minimum_spanning_tree` |
 | Nonlinear and robust optimisation | `minimize_nlp` (multi-start, distinguishes converged candidates from failed feasible points), `robust_lp` (budgeted robustness with its price), `solve_mdp` (exact backward induction or value iteration) |
-| Regression, tests and statistics | `ols_report` (ordinary or explicitly clustered inference), `adjust_pvalues` (Holm, BH, BY and Bonferroni with a declared comparison family), `compare_models` (cross-validated against a baseline), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
+| Regression, tests and statistics | `ols_report` (ordinary or explicitly clustered inference), `adjust_pvalues` (Holm, BH, BY and Bonferroni with a declared comparison family), `compare_models` (cross-validated against a baseline), `cross_validate_predictor` (numeric Ridge/binary Logistic, group splits and fold-local preprocessing), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_ode` (re-run at tighter tolerance), `solve_layered_diffusion` with the independent `layered_diffusion_laplace`, `grid_convergence_index`, `solve_diffusion` (finite volumes with an energy account) |
 | Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `bimatrix_nash`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |

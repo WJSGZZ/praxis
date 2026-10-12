@@ -55,6 +55,7 @@
 | `solve_mdp` | P*, R*, horizon, discount, terminal, maximize | Finite-state decision process: P[action][state][next state], R[state][action] |
 | `hypothesis_test` | kind*, a, b, groups, table, alpha | Test with effect size and assumption flags |
 | `adjust_pvalues` | pvalues*, hypothesis_ids*, family_id*, method, alpha, effects, effect_definition | Adjust a complete named hypothesis family by Holm/Bonferroni (FWER) or BH/BY (FDR), preserving original p-values and order; records dependence conditions and caller-supplied effects |
+| `cross_validate_predictor` | X*, y*, task*, split*, n_splits, groups, seed, ridge_alpha, logistic_c | Fold-local supervised prediction with Ridge regression or binary logistic classification; explicitly choose iid exchangeable rows or disjoint groups |
 | `bootstrap_ci` | data*, statistic, n_resamples, confidence, seed, method | Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations |
 | `monte_carlo` | expression*, distributions*, n, seed, threshold | Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check |
 | `solve_ode` | rhs*, names*, y0*, t_span*, t_eval, method, rtol | Integrate dy/dt = rhs(t, y) for expressions in t and the named states; compares dense interpolants with 100 times tighter tolerance at common times before either run terminates |

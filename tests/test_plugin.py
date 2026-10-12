@@ -82,7 +82,8 @@ def test_export_rejects_links_to_external_content(tmp_path):
 
 FOCUSED = ('praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report',
            'praxis-data-analysis', 'praxis-statistics', 'praxis-text-analysis',
-           'praxis-visualization', 'praxis-time-series', 'praxis-causal-analysis')
+           'praxis-visualization', 'praxis-time-series', 'praxis-causal-analysis',
+           'praxis-scientific-writing', 'praxis-literature-review', 'praxis-optimization', 'praxis-dynamical-modeling', 'praxis-uncertainty-analysis', 'praxis-machine-learning', 'praxis-experimental-design')
 
 
 def _links(text):

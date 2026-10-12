@@ -1,0 +1,21 @@
+{
+  "id": "MCM-2023-A-current",
+  "title_en": "Diversity as Insurance, Competition as a Filter",
+  "title_zh": "多样性作为保险，竞争作为筛选",
+  "pages": 17,
+  "pdf_sha256": "160d2036717f2a5610513ea056134db6cea23996252d880cb1e15ebac5ee0b12",
+  "assessment_en": "Current 17-page version received page-by-page AI development review of logic, conditions, navigation, layout and typography. No award rating was made or inherited from the earlier 19-page feedback revision.",
+  "assessment_zh": "当前17页版本由AI开发审阅者逐页审查逻辑、条件、导航、版面、字号；不做奖档评定且不继承19页反馈稿的F中心/F–O判断。",
+  "strength_en": "Separates functional density from species retention and includes an analytical baseline, independent checks, matched weather comparisons and explicit limits.",
+  "strength_zh": "明确区分功能密度与物种保留；含解析基线、独立检查、配对天气对照和适用边界。",
+  "limits_en": "Ecological applicability and field calibration remain unverified; the earlier F/F–O assessment belongs to a different manuscript.",
+  "limits_zh": "生态适用性与现场校准未验证；旧F/F–O意见属于另一稿。",
+  "source_materials_included": false,
+  "reviewer_identity_zh": "当前版由AI开发审阅者检查；此前科学评阅为独立AI角色。",
+  "reviewer_identity_en": "Current version checked by an AI development reviewer; prior science assessment by an independent AI reviewer.",
+  "identity_zh": "自主迁移稿；反馈修订与编辑修订身份留存 / autonomous transfer paper; feedback and editorial identities retained",
+  "pdf_path": "../papers/mcm-2023-a.pdf",
+  "review_scope_en": "Current 17-page version received page-by-page AI development review of logic, conditions, navigation, layout and typography. No award rating was made or inherited from the earlier 19-page feedback revision.",
+  "review_scope_zh": "当前17页版本由AI开发审阅者逐页审查逻辑、条件、导航、版面、字号；不做奖档评定且不继承19页反馈稿的F中心/F–O判断。",
+  "pdf_path_relative_to": "this metadata file"
+}

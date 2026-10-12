@@ -26,6 +26,8 @@
 
 ## 论证先于润色
 
+论证、主题链、公式解释及真实取舍统一见 [scientific-writing.md](scientific-writing.md)，入口为 [praxis-scientific-writing](../skills/praxis-scientific-writing/SKILL.md)。本文保留事实冻结、组稿与成品规则；不把每个模型写成重复的固定五段。文献综合见 [literature-review.md](literature-review.md)。
+
 围绕读者需要理解的主要贡献组织内容：题名准确概括主问题或有证据的答案，摘要保留问题、方法、关键结果与条件；各章承担明确任务并说明相互依赖，段落把主张、依据和推论接起来，图表在相邻正文中完成实际论证。术语保持一致，删除绕回与无用途细节。按逻辑而非尝试算法的时间顺序写，不能仅靠“因此”“然后”掩盖推理缺口，也不强制每段按固定三句格式。这里借鉴 Mensh 与 Kording 的读者和结构建议，按数学建模交付物调整，不机械套用实验论文结构。[论文原文](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005619)
 
 每项结论回到任务与有效证据。说明为什么选模型、结果回答了什么、独立核验如何支持它，以及假设与局限；漂亮语言不能替代这些内容。推导、实现和实验区分，最优性、因果性与泛化范围不在润色时升级。

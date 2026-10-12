@@ -36,6 +36,19 @@ def test_incomplete_or_unknown_evidence_is_rejected(tmp_path):
     assert not f.exists()
 
 
+def test_multilabel_historical_structures_are_searchable_without_rewriting(tmp_path):
+    from scripts import mcp_server
+    f = tmp_path / 'lessons.jsonl'
+    first = lessons.add_lesson(f, sample(structure=['energy', 'control', 'energy']))
+    second = lessons.add_lesson(f, sample(problem='another task', structure=['energy', 'lower-bound']))
+    original = f.read_bytes()
+    out = mcp_server.call('lesson_search', {'path': str(f), 'query': 'energy', 'limit': 5})
+    assert {r['id'] for r in out['lessons']} == {first['id'], second['id']}
+    assert out['patterns']['by_structure'] == {'energy': 2, 'control': 1, 'lower-bound': 1}
+    assert out['patterns']['repeated_structures'] == {'energy': 2}
+    assert f.read_bytes() == original
+
+
 def test_seed_lessons_are_valid_and_found_by_a_new_problem(tmp_path):
     from pathlib import Path
     import shutil

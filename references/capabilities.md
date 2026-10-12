@@ -7,17 +7,24 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 | 问题分析 | 原题、目标、约束；哪些解释改变答案？ | 明确任务、定义与成功条件，不遗漏原始要求 | methods.md；定义歧义时 definition-review.md |
 | 文献与来源 | 待核验的机制、参数、方法或论断 | 支持具体用途的第一手来源，记录位置、条件与许可，不把引用数量当证据 | writing.md 的来源部分；实际研究领域的原始论文与官方数据 |
 | 假设与适用条件 | 原题、模型／数据及拟写结论；前提是否充分、实际使用、合理？ | 显式与隐含前提、依据、作用位置及失效影响；明确检查和未验证条件 | [praxis-assumptions](../skills/praxis-assumptions/SKILL.md)；[methods.md](methods.md#假设理由与结论范围) |
-| 模型设计 | 任务定义、机制、数据能力 | 基线与必要扩展、假设和验证设计；组合关系明确 | mathematical-reasoning.md；SymPy、CVXPY、PyMC 等条件路线 |
+| 模型设计 | 任务定义、机制、数据能力 | 基线与必要扩展、假设和验证设计；组合关系明确 | [praxis-model](../skills/praxis-model/SKILL.md)；mathematical-reasoning.md与成熟库条件路线 |
 | 数据分析 | 原始表、观测单位、实体和时间口径；数据能回答什么？ | 只读审计、覆盖与缺失、明确分母、关联基数和可回答范围 | [praxis-data-analysis](../skills/praxis-data-analysis/SKILL.md)；Pandas；`audit_data`、`audit_join` |
 | 统计推断 | 估计对象、采样／配对／组结构、预先选择的比较族 | 效应与区间、实际假设、聚类或多重比较、不可推断的条件 | [praxis-statistics](../skills/praxis-statistics/SKILL.md)；Statsmodels、SciPy；`adjust_pvalues`、`ols_report` |
 | 文本分析 | 语料、语言、分析单位、标签或待测主张 | 可追溯特征与实例、标注定义、误差和验证边界 | [praxis-text-analysis](../skills/praxis-text-analysis/SKILL.md)；scikit-learn 的条件路线 |
 | 时间序列 | 时间／实体、可用信息、预测起点与跨度、日历 | 同一评价口径下的滚动基线、误差、区间与外推条件 | [praxis-time-series](../skills/praxis-time-series/SKILL.md)；`backtest_baselines`、`arima_forecast` |
 | 因果分析 | 干预、目标人群、估计对象和识别依据 | 识别论证及敏感性，或无法识别的证据与可回答的关联 | [praxis-causal-analysis](../skills/praxis-causal-analysis/SKILL.md)；实际设计优先于估计器 |
+| 文献综合 | 明确问题、实际已读来源及检索范围 | 检索／筛选位置、论断—证据对应及研究差异 | [praxis-literature-review](../skills/praxis-literature-review/SKILL.md)；literature-review.md |
+| 监督预测 | 目标、时点、特征、行／组及分割 | 折内预处理、Dummy基线、OOF误差与外推范围 | [praxis-machine-learning](../skills/praxis-machine-learning/SKILL.md)；`cross_validate_predictor` |
+| 实验设计 | 目标、随机化单位、可采集量与资源 | 设计、区组／重复、精度或功效及停止计划 | [praxis-experimental-design](../skills/praxis-experimental-design/SKILL.md)；Statsmodels、SciPy |
+| 优化与运筹 | 动作、目标、原约束与信息 | 可行方案、原单位残差、独立界／gap及风险 | [praxis-optimization](../skills/praxis-optimization/SKILL.md)；HiGHS、SciPy |
+| 机制动态模型 | 状态／单位、机制、初边条件与观测 | ODE／PDE、守恒与稳态、收敛与辨识 | [praxis-dynamical-modeling](../skills/praxis-dynamical-modeling/SKILL.md)；现动态／扩散工具 |
+| 不确定性传播 | 参数与结构未知、联合依赖及目标 | 条件分布／界、敏感性、精度与建议翻转 | [praxis-uncertainty-analysis](../skills/praxis-uncertainty-analysis/SKILL.md)；SALib、SciPy |
+| 科研表达 | 原稿、读者、有效结果及改动范围 | 论证、段落／公式连接及事实保真 | [praxis-scientific-writing](../skills/praxis-scientific-writing/SKILL.md)；scientific-writing.md |
 | 数据与计算 | 已明确模型、原始输入、参数 | 可复现处理与实际运行；变换遵守信息边界 | [praxis-compute](../skills/praxis-compute/SKILL.md)；data-computing.md；执行用 automation.md |
 | 独立验证 | 原始目标、模型、有效结果及拟写结论 | 与结论强度相称的对照、界、失败或限制 | methods.md 的证据与反馈；现有解析演练、SALib 和 DoWhy 的条件参考 |
 | 作品评审 | 原题／研究问题、当前完整稿与有效证据、目标与版本 | 按交付用途评价主要答案、证据、作品质量与修改优先级；竞赛和研究标准分开 | [praxis-review](../skills/praxis-review/SKILL.md)；[judging.md](../evals/judging.md) 分类导航 |
 | 图表表达 | 有效结果、单位、不确定性与需要表达的判断 | 回指数据版本的图与图注，实际数组、曲线与图例对应，最终尺寸可读 | [praxis-visualization](../skills/praxis-visualization/SKILL.md)；唯一规范 visualization.md |
-| 论文与报告 | 任务答案、有效证据、图表和来源 | 读者能理解的论证，数字与引用一致，符合实际规范 | writing.md；Mensh/Kording 的论文结构建议、Manubot 的引用追溯思路 |
+| 论文与报告 | 任务答案、有效证据、图表和来源 | 读者能理解的论证，数字与引用一致，符合实际规范 | [praxis-report](../skills/praxis-report/SKILL.md)；writing.md、共享模板及披露 |
 
 ## 主技能、专业模块与用途适配
 
@@ -37,7 +44,7 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 
 在 planning/tasks.md 对应任务 ID 中注明：此次输入／来源位置、当前模型与假设、有效运行与结果字段、单位与不确定性、允许表达的结论、尚未解决的问题、需要下游形成的交付物。复用该记录与现有文件路径，不另建含义不同的总台账。
 
-写作与图表拿到结果时，沿记录核对版本和结论边界。缺失证据返回验证或计算；问题本身改变返回分析／建模。画图和润色不能悄悄修改结果、补造依据或把条件结论变成事实。写作也能指出论证缺口，并反馈到对应任务。整稿水平与奖项／研究价值交作品评审；局部结论核验交 verify，纯语言与页面修改交 report，标准小计算继续小任务直通。旧入口收到整稿请求时交接已有输入，不要求使用者重讲题目或管理技能名。
+写作与图表拿到结果时，沿记录核对版本和结论边界。缺失证据返回验证或计算；问题本身改变返回分析／建模。画图和润色不能悄悄修改结果、补造依据或把条件结论变成事实。写作也能指出论证缺口，并反馈到对应任务。整稿水平与奖项／研究价值交作品评审；局部结论核验交 verify，纯论证与语言交 scientific-writing，组稿／模板与页面交 report，标准小计算继续小任务直通。旧入口收到整稿请求时交接已有输入，不要求使用者重讲题目或管理技能名。
 
 ## 各能力如何吸收外部经验
 

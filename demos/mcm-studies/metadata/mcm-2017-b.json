@@ -1,0 +1,23 @@
+{
+  "id": "MCM-2017-B-secondary",
+  "title_en": "Merge After Toll: Toll-plaza layout and downstream congestion",
+  "title_zh": "收费站后的汇流：收费站布局与下游拥堵",
+  "pages": 17,
+  "pdf_sha256": "13b6a2233261719ed5becb43b401e8cce68f494d19c307cd47a4ca6988502c26",
+  "assessment_en": "Latest semantic review covers the pre-layout TeX and selected numerical claims. A 17-page visual check exists for earlier PDF hash b4af…, not the current 13b6… PDF. Latest review abstains from an award estimate.",
+  "assessment_zh": "最新全文语义审阅审查终稿前一TeX版本与选定数值；当前PDF有17页视觉检查记录，但记录哈希是此前版b4af…，不绑定当前13b6… PDF。最新评议不提供奖档估计。",
+  "strength_en": "Links payment compatibility, booth layout, merging and finite downstream storage, while retaining rejected routes and conditional conclusions.",
+  "strength_zh": "连接支付兼容、窗口布局、汇合和有限出口占用；保存被拒路线与条件结论。",
+  "limits_en": "No field calibration of safety or land costs; current PDF lacks a page-review receipt bound to its exact hash.",
+  "limits_zh": "没有现场安全/土地成本标定；当前PDF缺同哈希逐页视觉回执。",
+  "source_materials_included": false,
+  "reviewer_identity_zh": "作者外AI全文语义评议；另有独立AI版面审查，均非真人。",
+  "reviewer_identity_en": "Author-external AI semantic review plus a separate AI layout review; no human reviewer.",
+  "identity_zh": "自主完成稿 / autonomous completed manuscript",
+  "additional_note_zh": "历史9页首稿保留为单独版本，不随本条终稿链接打包。",
+  "additional_note_en": "A separate 9-page historical first draft is retained but not bundled with this final-paper link.",
+  "pdf_path": "../../../research/merge-after-toll/paper/paper.pdf",
+  "review_scope_en": "Latest semantic review covers pre-layout TeX and selected claims; it abstains from an award estimate. Existing visual check is for an earlier PDF hash, not this one.",
+  "review_scope_zh": "最新语义评阅覆盖排版前 TeX 与选定主张，不给奖档判断；已有视觉检查针对更早 PDF 哈希，不绑定当前版。",
+  "pdf_path_relative_to": "this metadata file"
+}

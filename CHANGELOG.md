@@ -3,6 +3,20 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 0.7.0 · 2026-10-13
+
+- 增加七个专业入口：科研写作、文献比较、优化、动态建模、不确定性、监督学习和实验设计，共二十二个技能。入口按请求选择，共用计算、独立验证与交付规范；科学写作吸收成熟公开资源的论证机制，按许可原创整理。
+  Seven focused skills cover scientific writing, literature, optimization, dynamics, uncertainty, supervised learning and experimental design. The twenty-two skills share existing execution, verification and delivery contracts, with writing guidance adapted from primary sources and attributed public resources.
+
+- 新增 `cross_validate_predictor`，工具共六十五项：数值Ridge／0–1 Logistic、独立行或完整留组分割、训练折中位数填补与尺度变换、训练Dummy基线及逐行OOF损失。固定参数，不执行调参、最终refit或外部校准；分组独立和上游信息时点仍须审查。scikit-learn最低版本为1.6，对应分组分割API。
+  The 65-tool registry adds numeric Ridge and binary Logistic cross-validation, with iid or whole-group splits, fold-local imputation/scaling, training-only dummy baselines and row-weighted out-of-fold losses. It does not tune, refit a deployment model or certify external calibration; group independence and upstream information availability remain explicit assumptions. The scikit-learn minimum is 1.6 for the group-split API.
+
+- 新增次级美赛案例入口，区分自主、学习和研究身份及当前／历史评阅；完整自产论文在源码案例页开放，原题、参考论文和私有运行记录不进入插件。2020C学习稿完成论证修订、词法说明勘正及推荐模型参数补充，保留原自主稿与学习冻结。
+  A secondary MCM gallery distinguishes autonomous, learning and research identities and current versus historical review scopes. Authored papers are available from the source gallery. The 2020C learning paper receives a substantive writing revision, corrected lexical descriptions and the recommended model's parameters; earlier autonomous and learning snapshots remain preserved.
+
+- 经验检索的结构汇总支持历史多标签记录，每条经验同一标签只计一次，保留原JSONL字节与身份。真实旧记录触发的检索崩溃已修复。
+  Lesson search accepts historical multi-label structures, counting each tag once per lesson while preserving stored records. This fixes a reproduced search failure on existing project history.
+
 ## 0.6.1 · 2026-10-12
 
 - 共享美赛模板升级为v4：摘要和三级标题后的首段与普通正文统一缩进2em。独立摘要组件沿用LaTeX机制，实际PDF字框核验；旧v1/v2/v3样式继续支持明确的归档复编。公开浴缸论文、生成源及预览同步，数学数据和历史评议身份保持。

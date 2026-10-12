@@ -8,7 +8,7 @@
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.6.1-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.7.0-263B9B?style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -76,7 +76,7 @@
 
 ### 1. 选择你的 Agent
 
-**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [0.6.1 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.6.1) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
+**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [0.7.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.0) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -124,7 +124,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 技能一览
 
-一个入口负责整题，十四个专项处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
+一个入口负责整题，二十一个专项处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
 
 | 技能 | 适合的请求 | 内容 |
 |---|---|---|
@@ -143,6 +143,13 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | [`praxis-visualization`](skills/praxis-visualization/SKILL.md) | “做科研图，检查图例、单位和最终字体” | 选图、由有效数组生成、区间与分母、实际图形及图例对应 |
 | [`praxis-report`](skills/praxis-report/SKILL.md) | “写论文、改摘要、查 PDF” | 中英文语言优化、论文与图表、引用及 AI 披露、PDF 检查与交付 |
 | [`praxis-assumptions`](skills/praxis-assumptions/SKILL.md) | “假设合理吗、补理由、查隐含前提” | 前提性质与依据、实际用途、失效影响及检查设计 |
+| [`praxis-scientific-writing`](skills/praxis-scientific-writing/SKILL.md) | “改论证、解释公式，让文章更像论文” | 问题与贡献、段落联系、公式含义、作者选择、结果讨论 |
+| [`praxis-literature-review`](skills/praxis-literature-review/SKILL.md) | “找依据，比较已有方法和我们的贡献” | 第一手检索、实际阅读、证据提取、方法比较与引用边界 |
+| [`praxis-optimization`](skills/praxis-optimization/SKILL.md) | “选择最优方案，能保证多强的最优性？” | 可行域、目标、求解结构、界与间隙、多目标权衡 |
+| [`praxis-dynamical-modeling`](skills/praxis-dynamical-modeling/SKILL.md) | “建立动态机制，检查守恒和数值解” | 状态与通量、单位、初边值、平衡、辨识与离散误差 |
+| [`praxis-uncertainty-analysis`](skills/praxis-uncertainty-analysis/SKILL.md) | “参数不确定会如何影响结果和决策？” | 不确定来源、联合依赖、传播、敏感性、风险与稳健决策 |
+| [`praxis-machine-learning`](skills/praxis-machine-learning/SKILL.md) | “这个预测模型真的优于基线吗？” | 预测契约、按主体分割、折内预处理、基线与留出评价 |
+| [`praxis-experimental-design`](skills/praxis-experimental-design/SKILL.md) | “怎样收集有用数据，样本量应该怎么算？” | 实验单位、分配、随机化、重复与功效、观测和验证设计 |
 
 这些技能共用 [统一方法](references/methods.md) 和同一份任务记录。主技能按目标、用途与届次选择专业模块，比赛特有规则按档案加载；能力之间的交接见 [能力分工](references/capabilities.md)。
 
@@ -166,7 +173,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 |---|---|
 | 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
 | 非线性与稳健优化 | `minimize_nlp`（多起点，区分收敛候选与失败可行点）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（精确逆向递推或值迭代） |
-| 回归、检验与统计 | `ols_report`（常规或显式按组的区间与诊断）、`adjust_pvalues`（Holm、BH、BY、Bonferroni及比较族声明）、`compare_models`（对基线的交叉验证比较）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
+| 回归、检验与统计 | `ols_report`（常规或显式按组的区间与诊断）、`adjust_pvalues`（Holm、BH、BY、Bonferroni及比较族声明）、`compare_models`（对基线的交叉验证比较）、`cross_validate_predictor`（Ridge／二分类、留组与折内填补）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |
 | 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |

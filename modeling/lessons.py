@@ -166,6 +166,13 @@ def patterns(path: Path) -> dict:
     records = active(path)
     by_structure: dict[str, int] = {}
     for rec in records:
-        by_structure[rec['structure']] = by_structure.get(rec['structure'], 0) + 1
+        # Historical lessons also use a list of structural tags. Count each
+        # tag once per active lesson, without rewriting those source records.
+        structure = rec['structure']
+        labels = [structure] if isinstance(structure, str) else structure
+        if not isinstance(labels, list) or any(not isinstance(label, str) or not label.strip() for label in labels):
+            raise ValueError('Lesson structure must be text or a list of nonempty text tags')
+        for label in dict.fromkeys(labels):
+            by_structure[label] = by_structure.get(label, 0) + 1
     repeated = {k: v for k, v in by_structure.items() if v > 1}
     return dict(lessons=len(records), by_structure=by_structure, repeated_structures=repeated)

@@ -34,6 +34,7 @@ class _Lazy:
 
 decision, regression, sensitivity, inference = _Lazy('modeling.decision'), _Lazy('modeling.regression'), _Lazy('modeling.sensitivity'), _Lazy('modeling.inference')
 data_analysis = _Lazy('modeling.data_analysis')
+prediction_validation = _Lazy('modeling.prediction_validation')
 audit_data, check_references, literature = _Lazy('scripts.audit_data'), _Lazy('scripts.check_references'), _Lazy('scripts.literature')
 
 def _project_version():
@@ -474,6 +475,17 @@ TOOLS = dict([
            'method': {'type': 'string', 'enum': ['holm', 'bonferroni', 'bh', 'by']}, 'alpha': {'type': 'number', 'minimum': 0, 'maximum': 1, 'description': 'Strictly between zero and one; the statistical input contract rejects either endpoint.'},
            'effects': {'type': 'array', 'items': {'type': ['number', 'null']}}, 'effect_definition': {'type': 'string'}},
           ['pvalues', 'hypothesis_ids', 'family_id'], lambda a: inference.adjust_pvalues(**a)),
+    _tool('cross_validate_predictor', 'Fold-local supervised prediction with Ridge regression or binary logistic classification; explicitly choose iid exchangeable rows or disjoint groups. Compares training-only Dummy baselines and returns fold indices, preprocessing, metrics and OOF predictions. No time split, tuning, causal claim or deployment calibration.',
+          {'X': {'type': 'array', 'items': {'type': 'array', 'items': {'type': ['number', 'null']}, 'minItems': 1, 'maxItems': 100}, 'minItems': 4, 'maxItems': 5000},
+           'y': {'type': 'array', 'items': {'type': 'number'}, 'minItems': 4, 'maxItems': 5000},
+           'task': {'type': 'string', 'enum': ['regression', 'binary_classification']},
+           'split': {'type': 'string', 'enum': ['iid', 'group']},
+           'n_splits': {'type': 'integer', 'minimum': 2, 'maximum': 10},
+           'groups': {'type': 'array', 'items': {'type': ['string', 'integer']}, 'minItems': 4, 'maxItems': 5000},
+           'seed': {'type': 'integer', 'minimum': 0, 'maximum': 4294967295},
+           'ridge_alpha': {'type': 'number', 'minimum': 0, 'description': 'Strictly positive Ridge alpha; used only for regression.'},
+           'logistic_c': {'type': 'number', 'minimum': 0, 'description': 'Strictly positive inverse regularization C; used only for classification.'}},
+          ['X', 'y', 'task', 'split'], lambda a: prediction_validation.cross_validate_predictor(**a)),
     _tool('bootstrap_ci', 'Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations.',
           {'data': SERIES, 'statistic': {'type': 'string'}, 'n_resamples': {'type': 'integer'}, 'confidence': _num(), 'seed': {'type': 'integer'}, 'method': {'type': 'string'}}, ['data'],
           lambda a: inference.bootstrap_ci(a['data'], a.get('statistic', 'mean'), n_resamples=a.get('n_resamples', 5000), confidence=a.get('confidence', .95), seed=a.get('seed', 2027), method=a.get('method', 'BCa'))),
@@ -514,6 +526,8 @@ EXAMPLES = {
     'audit_join': dict(left=[dict(id=1, value=10), dict(id=2, value=20), dict(id=3, value=30)],
                       right=[dict(id=1, group='A'), dict(id=3, group='B')], on='id', relationship='many_to_one'),
     'adjust_pvalues': dict(pvalues=[.01, .04, .03, .2], hypothesis_ids=['h1', 'h2', 'h3', 'h4'], family_id='planned-effects', method='bh'),
+    'cross_validate_predictor': dict(X=[[-1], [1], [-1], [1]], y=[-1, 1, -1, 1],
+                                     task='regression', split='group', groups=['a', 'a', 'b', 'b'], n_splits=2),
     'solve_lp': dict(c=[2, 3], A_ge=[[1, 1]], b_ge=[4]),
     'solve_milp': dict(c=[-1, -1], A_ub=[[2, 2]], b_ub=[5], integrality=[1, 1], bounds=[[0, 10], [0, 10]]),
     'probe_structure': dict(property='convexity', expression='x**2 + y**2', names=['x', 'y'], bounds=[[-1, 1], [-1, 1]]),

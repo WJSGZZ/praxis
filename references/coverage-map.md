@@ -15,9 +15,9 @@
 | 分阶段决策、马尔可夫决策 | 工具 | `solve_mdp`（精确逆向递推或值迭代）、`markov_*` | 状态空间过大：近似动态规划，须与小规模精确解对照 |
 | 博弈 | 工具 | `matrix_game`、`bimatrix_nash` | 多人、动态博弈：库，写清均衡概念 |
 | 评价、权重、方案排序 | 工具 | `evaluate_alternatives`、`ahp_weights`、`entropy_weights`、`pareto_front` | 先查支配，再谈权重 |
-| 回归与预测 | 工具 | `ols_report`、`compare_models`、`backtest_baselines`、`arima_forecast`、`gm11_forecast` | 结构时间序列、面板数据：statsmodels |
-| 假设检验、区间估计 | 工具 | `hypothesis_test`（含效应量）、`bootstrap_ci` | 多重比较、贝叶斯推断：库（PyMC 自装） |
-| 降维、聚类 | 工具 | `pca_report`、`cluster_report`（含稳定性） | 分类、深度学习：scikit-learn，必须有留出集与基线 |
+| 回归与预测 | 工具 | `ols_report`、`compare_models`、`cross_validate_predictor`（数值Ridge／二分类，独立行或留组）、`backtest_baselines`、`arima_forecast`、`gm11_forecast` | 结构时间序列、面板数据：statsmodels |
+| 假设检验、区间估计 | 工具 | `hypothesis_test`（含效应量）、`bootstrap_ci` | 多重比较：`adjust_pvalues`；贝叶斯推断：库（PyMC 自装） |
+| 降维、聚类 | 工具 | `pca_report`、`cluster_report`（含稳定性） | 其他分类、深度学习：成熟库，必须有留出集与基线 |
 | 随机模拟、不确定性传播 | 工具 | `monte_carlo`（误差与收敛）、`sobol_convergence`、`queue_mmc` | 离散事件仿真：SimPy 或自写，固定种子并重复 |
 | 常微分方程 | 工具 | `solve_ode`（紧容差复算）、`calibrate_curve`、`equilibria` | 最优控制：先写出哈密顿量，再用 `minimize_nlp` 做直接法 |
 | 偏微分方程（一维扩散、分层导热） | 工具 | `solve_diffusion`、`solve_layered_diffusion`、`layered_diffusion_laplace`、`grid_convergence_index` | 二、三维：有限元或有限体积库，网格收敛不可省 |

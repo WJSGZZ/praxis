@@ -6,7 +6,7 @@ license: MIT
 
 # Praxis · 论文与交付
 
-BUNDLE 指 `praxis` 技能目录。按当前请求读 [writing.md](../../references/writing.md) 的对应小节；纯语言修改只读“语言专项”，涉及图表才读 [visualization.md](../../references/visualization.md)。
+BUNDLE 指 `praxis` 技能目录。纯论证与语言交 [praxis-scientific-writing](../praxis-scientific-writing/SKILL.md)，组稿交付沿本技能接续；文献综合交 [praxis-literature-review](../praxis-literature-review/SKILL.md)。按当前请求读 [writing.md](../../references/writing.md) 的对应小节；纯语言修改只读“语言专项”，涉及图表才读 [visualization.md](../../references/visualization.md)。
 
 ## 调用契约
 
@@ -15,7 +15,7 @@ BUNDLE 指 `praxis` 技能目录。按当前请求读 [writing.md](../../referen
 ## 做什么
 
 - 完整报告按 [convergence.md](../../references/convergence.md) 从有效证据决定正文、附录与证据池的取舍；局部改稿直接处理当前缺口，不重做研究流程。
-- 结构：按 writing.md 的章节层级与标题规则，重要共同前提通常单列“假设及其理由”，局部模型补特有条件；不以简洁隐藏前提或按条数判断质量。合并无实际定位作用的孤立编号子节，技术标题准确命名对象与论证任务，分点只用于有并列或顺序关系的内容；摘要先写问题、方法、关键数字与条件；每个模型按“假设—推导—求解—检验—局限”；证明简短但完整；以真实结果支撑的结论收尾。
+- 结构：按 writing.md 的章节层级与标题规则，重要共同前提通常单列“假设及其理由”，局部模型补特有条件；不以简洁隐藏前提或按条数判断质量。合并无实际定位作用的孤立编号子节，技术标题准确命名对象与论证任务，分点只用于有并列或顺序关系的内容；摘要先写问题、方法、关键数字与条件；按读者核查需要展开模型，不重复固定小节顺序；证明简短但完整；以真实结果支撑的结论收尾。
 - 图表：按 visualization.md 先比较不画、用表与其他图形的表达价值；不设最低图数，不把图框当模板必填项。每张保留的图回答一个读者的问题，图题、读图必要说明与正文分析的分工统一按writing.md；证据记录保留数据版本，图内／图注／相邻正文按需要交代单位、比较条件与来源，不强迫把版本和完整分析都写进图名；不画不支持结论的图。由实际有效数据通过成熟科学绘图库生成，核对坐标变换、插值、采样／网格与统计区间含义；数值核验和最终尺寸视觉验收都通过后才进入正文。
 - 新绘图或图形诊断可交 [praxis-visualization](../praxis-visualization/SKILL.md) 专项处理；本技能仍负责图表在全文中的论证用途、引用和整稿版面。两个入口共用 visualization.md，不维护第二套字体、图题或颜色规则。
 - 排版：按交付用途读取 [contest-delivery.md](../../references/contest-delivery.md) 或 [research-mode.md](../../references/research-mode.md) 的研究稿与模板要求；确认目标期刊后再核投稿规范。模板组件按论证需要选用，必需结构以当届规则为准；队号、年份、标题等身份信息从当前作品的统一配置生成，核对封面、页眉、披露与副本，不把通用模板占位符带进已确定身份的交付，也不把案例队号写死成所有用户的默认。沿用原生成源与宿主编译器，修改后实际查看 PDF；正文模板字体正确不代表外部图中的字体或最终字号正确，按 visualization.md 检查成品；美赛新稿按 automation.md 显式执行最终12TeXpt检查，逐条审阅真实数学小字，再带同PDF的审阅记录冻结，不能只读取多数正文字号。未知届次不继承已确认要求。

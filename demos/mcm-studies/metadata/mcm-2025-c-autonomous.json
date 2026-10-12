@@ -1,0 +1,21 @@
+{
+  "id": "MCM-2025-C-autonomous",
+  "title_en": "Coherent Olympic Forecasts through National Opportunity Portfolios",
+  "title_zh": "通过国家机会组合形成一致的奥运预测",
+  "pages": 20,
+  "pdf_sha256": "75c22649c7192f54b424ae5d64cc4173820b33e92be49d70eb47dd572f518bab",
+  "assessment_en": "The AI executor visually inspected all 20 final pages; no complete scientific or award review bound to this PDF was found.",
+  "assessment_zh": "AI执行者对终稿20页做逐页视觉检查；未找到与此PDF绑定的完整科学评议或奖档判断。",
+  "strength_en": "Builds an opportunity-portfolio forecast across sports while stating scenario and information conditions.",
+  "strength_zh": "构造跨项目的机会组合预测并明确情景与信息条件。",
+  "limits_en": "No full scientific/award review is bound to the autonomous PDF; do not transfer the learning-paper opinion.",
+  "limits_zh": "缺少绑定自主PDF的完整科学/奖项评议；不可借用学习稿评议。",
+  "source_materials_included": false,
+  "reviewer_identity_zh": "自主AI执行者对PDF逐页视觉审查；未找到当前稿绑定的完整科学评阅。",
+  "reviewer_identity_en": "Autonomous AI executor performed a page-by-page visual review; no full science review bound to this PDF was found.",
+  "identity_zh": "自主首稿 / autonomous original manuscript",
+  "pdf_path": "../papers/mcm-2025-c-autonomous.pdf",
+  "review_scope_en": "The AI executor visually inspected all 20 final pages; no complete scientific or award review bound to this PDF was found.",
+  "review_scope_zh": "AI执行者对终稿20页做逐页视觉检查；未找到与此PDF绑定的完整科学评议或奖档判断。",
+  "pdf_path_relative_to": "this metadata file"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "MCM-2024-B-current",
+  "title_en": "Finding a Drifting Submersible Before Recovery Becomes Impossible",
+  "title_zh": "在救援变得不可能之前找到漂移中的潜艇",
+  "pages": 22,
+  "pdf_sha256": "31972826f029ff8c06369e37a8f8ce81ba74f81c9574c0b1aadf4c80f5bdcb23",
+  "assessment_en": "Current science successor is bound to this PDF/TeX hash. Root acceptance records review of all 22 pages and full-size inspection of changed pages, accepting the scoped scientific revision. AI review, not human; award opinion is uncalibrated. The bound quality reference is Finalist-centered, adjacent Meritorious–Finalist.",
+  "assessment_zh": "当前科学后继绑定此PDF/TeX哈希；root acceptance记录全部22页浏览、修改页原尺寸检查，并接受本轮限定科学修订。审阅为AI非人类，奖档未校准。 当前绑定意见为Finalist中心、Meritorious–Finalist相邻。",
+  "strength_en": "Connects location, detection, search, drift, endurance and recovery timing in a decision chain, retaining adverse-current cases and model limits.",
+  "strength_zh": "把位置、探测、搜索、漂移、续航和回收时钟连成决策主线；保留不利流场与模型限制。",
+  "limits_en": "Real detection, currents, incident rates, procurement and rescue outcomes are uncalibrated.",
+  "limits_zh": "真实探测、海流、事故率、采购和救援结果未校准。",
+  "source_materials_included": false,
+  "reviewer_identity_zh": "n02独立AI评阅 + root AI验收；非真人。",
+  "reviewer_identity_en": "n02 independent AI review plus root AI acceptance; no human reviewer.",
+  "identity_zh": "自主论文＋22页科学反馈后继 / autonomous paper with 22-page science-feedback successor",
+  "pdf_path": "../papers/mcm-2024-b.pdf",
+  "review_scope_en": "Current science successor is bound to this PDF/TeX hash. Root acceptance records review of all 22 pages and full-size inspection of changed pages, accepting the scoped scientific revision. AI review, not human; award opinion is uncalibrated.",
+  "review_scope_zh": "当前科学后继绑定此PDF/TeX哈希；root acceptance记录全部22页浏览、修改页原尺寸检查，并接受本轮限定科学修订。审阅为AI非人类，奖档未校准。",
+  "pdf_path_relative_to": "this metadata file",
+  "award_quality_reference": {
+    "most_likely": "Finalist",
+    "adjacent": [
+      "Meritorious",
+      "Finalist"
+    ],
+    "calibrated": false,
+    "official": false,
+    "version_sha256": "31972826f029ff8c06369e37a8f8ce81ba74f81c9574c0b1aadf4c80f5bdcb23"
+  }
+}

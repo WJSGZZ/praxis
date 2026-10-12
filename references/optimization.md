@@ -1,0 +1,46 @@
+# 优化模型、求解与决策保证
+
+目标和前提按 [methods.md](methods.md)，保证范围按 [mathematical-reasoning.md](mathematical-reasoning.md)，实际工具概览见 [model-library.md](model-library.md)。这里负责把决策问题落实为能检查的优化模型；运行快照与独立验收沿原计算管线。
+
+## 定义可执行的决策
+
+变量表说明动作、单位、上下界、离散性与决定时间；目标说明是在最小成本、最大收益、风险或多个相冲指标中选什么。硬约束来自真实要求，软偏好说明惩罚及权重来源；不可通过惩罚函数低成本地“买掉”安全底线。检查约束符号、单位、守恒和被遗漏的资源；相同指标重复进入目标会隐式加权。
+
+写清允许信息和动作族。只知当前状态的策略不能和知道未来真值的方案共称同尺度最优；固定分段控制的最优也不是任意反馈控制最优。先给手工可行基线或小规模枚举；业务规则尚有歧义时先检查它是否改变推荐，不急着调求解器。
+
+## 用结构选择工具
+
+| 结构／任务 | 已有工具 | 必须保持的含义 |
+|---|---|---|
+| 线性连续／混合整数 | `solve_lp`、`solve_milp`，SciPy／HiGHS | 行分别是A_ub x≤b_ub、A_ge x≥b_ge、A_eq x=b_eq；默认变量非负，需负值时显式bounds |
+| 一对一分配／网络／背包 | `solve_assignment`、`shortest_path`、`max_flow`、`min_cost_flow`、`knapsack` | 核流守恒、容量与代价；简单图接口不接受平行边；背包整数重量的缩放须保原可行性 |
+| 对称往返路径 | `solve_tsp` | 启发式可行路线与1-tree下界，非零gap不称最优 |
+| 非线性约束 | `minimize_nlp` | SLSQP多起点；其ineq为expression≥0，与LP≤行不同；失败可行点只作incumbent |
+| 已给定有限状态／动作的序贯决策 | `solve_mdp` | P[action][state][next]、R[state][action]；有限期反向归纳，无限期折现<1；策略依赖完整状态与所给转移 |
+| 系数不确定的线性约束 | `robust_lp` | x≥0、≤行、A±delta及每行gamma预算；gamma不是置信度或发生概率 |
+| 情景收益下的尾部风险 | `cvar_portfolio` | 等权场景，损失为负组合收益、权重和为1，long_only决定非负持仓；不作未来收益预测 |
+| 多目标候选表 | `pareto_front` | senses +1最大／-1最小，只判给定点集支配；不能生成或认证整个Pareto前沿 |
+
+调用前用实际 `--describe`／工具Schema核参数与状态，保留失败。需要组合逻辑、黑箱非线性多目标或特殊稀疏结构时，可以核对固定版本的OR-Tools／pymoo等成熟工具；先比较已有方法、依赖、许可与计算预算，实际使用才适配，不把它们列为默认必装依赖。
+
+## 解、界、证明与失败分开
+
+在原始单位和约束上重算候选方案，不只读solver success。报告可执行向量、目标、最大实际残差、整数性及终止状态。最小化用下界约束最优值，最大化用上界；LP对偶间隙、MILP best_bound／mip_gap 和 proved_optimal 各按实际结果解释。限时MILP有incumbent时可交可行方案与gap，没有解向量就不能只凭界给出动作。
+
+多起点收敛、有限凸性探测或多个随机种子一致，只支持数值候选，不证明全局最优。NLP未找到可行解也不证明不可行；查模型、可行基线、尺度及更合适的界。松弛可能很松，界宽时不能称方案接近最优。图／小例证书验证原建模语义，不能只核求解内部形式。
+
+数值容差与物理可行容差分开；舍入后的方案重新核约束，不能将整数解四舍五入或通过改物理限值制造成功。含动态状态或连续空间的约束还须查采样间极值，见 [dynamical-modeling.md](dynamical-modeling.md) 与scientific-foundations。
+
+## 多目标、稳健与风险取舍
+
+先删除真正支配的候选，再区分硬底线和可商议目标；归一化、方向、单位与重复指标显式处理。加权和需要有意义的偏好与尺度，非凸前沿可能遗漏解；可用epsilon-constraint、词典序或相称外部方法补充。`evaluate_alternatives` 的TOPSIS是偏好排名，不证明优化最优；熵权描述离散，不自动代表重要性。对权重、约束底线和场景做改变推荐的检查，不只画前沿。
+
+`robust_lp` 的gamma=0是名义、gamma等于列数是完整系数盒；其保证仅归声明的不确定集合和动作模型，集合之外另验。联合分布、共同冲击与有依据的情景归 [uncertainty-analysis.md](uncertainty-analysis.md)。CVaR与机会约束是不同风险问题，经验场景下的风险最优不能直接许诺现实概率约束。`cvar_portfolio`的CVaR由情景LP求得；当尾部质量包含部分场景时，另报的empirical_tail_mean是向上取整后的最坏场景均值，不能硬要求两者相等。序贯场景决策还须保持非前瞻性，不能为各未来情景提前选择不同“当前”动作。
+
+## 验收与交付
+
+选择能攻击当前建议的独立方法：小例穷举、第二种表示、对偶／守恒或解析界。保留同预算的基线、失败与原方案；昂贵模型使用代理时核代理误差，并将推荐点回到原模型检查。结果报告方案、可行性、界、信息及动作范围、风险代价和适用条件；一组漂亮收敛曲线不认证它们。
+
+## 依据
+
+本文为Praxis原创整理并复用现有工具契约。[SciPy linprog官方文档](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html)说明HiGHS、变量范围与状态；[KDense pymoo固定指南](https://github.com/K-Dense-AI/scientific-agent-skills/blob/a1043ef544e3a100c28e70a736b6cf32554d0677/skills/pymoo/SKILL.md)提供约束复评、同预算多种子和近似前沿的参考机制，未复制其代码或引入依赖。其库API与许可若实际采用须另核。

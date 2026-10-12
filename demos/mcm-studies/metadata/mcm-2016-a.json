@@ -1,0 +1,19 @@
+{
+  "id": "MCM-2016-A-primary-demo",
+  "title_en": "A Hot Bath: Conserving Water Without Losing Uniformity",
+  "title_zh": "热水浴：在保持均匀性的同时节约用水",
+  "pages": 26,
+  "pdf_sha256": "1c1ebfebf8abb0b8eda342c755eb0df55f56df93a6f1243d45db7afc578a3ba1",
+  "assessment_en": "Existing primary demo; earlier O-competitive assessment is not bound to the current PDF hash.",
+  "assessment_zh": "现有主Demo；旧O竞争力评议未绑定当前PDF SHA。",
+  "strength_en": "Connects water use, uniformity and spatial control in a conditional model while retaining physical-calibration limits.",
+  "strength_zh": "条件模型把水量、均匀性与空间分区联系起来，并保留物理校准边界。",
+  "limits_en": "Not a calibrated real-bath study or an actual award; the current PDF has no newly bound award review.",
+  "limits_zh": "并非实浴池标定或实际获奖；当前版奖档尚未重新绑定。",
+  "source_materials_included": false,
+  "reviewer_identity_zh": "早期作者外AI评议；当前版未重新给奖档。",
+  "reviewer_identity_en": "Earlier author-external AI review; current PDF not freshly award-reviewed.",
+  "identity_zh": "长期迭代后的主Demo / iteratively developed primary demo",
+  "pdf_path": "../../mcm-2016-a/paper.pdf",
+  "pdf_path_relative_to": "this metadata file"
+}

@@ -27,6 +27,8 @@ Explore two complete solutions with different mathematical demands: investment a
 </tr>
 </table>
 
+**[Additional MCM studies](https://github.com/WJSGZZ/praxis/tree/main/demos/mcm-studies)** collect autonomous pilots, learning revisions and research papers, with version-specific review limits. The two primary demonstrations remain the starting points.
+
 ## Data analysis
 
 **[Repeated observations, defensible comparisons →](data-analysis/README.en.md)** Follow forty-eight weekly observations from twelve synthetic stores through explicit data declarations, join cardinality, clustered inference, Holm adjustment and separate arithmetic checks. The runnable example retains inputs and rejected joins; its associations are not evidence about real stores or causal effects.
