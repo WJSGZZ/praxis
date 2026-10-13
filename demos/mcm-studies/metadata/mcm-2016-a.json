@@ -39,5 +39,9 @@
   "event": "MCM",
   "edition": 2016,
   "problem": "A",
-  "case_identity": "MCM-2016-A"
+  "case_identity": "MCM-2016-A",
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  }
 }

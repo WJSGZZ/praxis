@@ -14,7 +14,7 @@
   "edition": 2024,
   "problem": "E",
   "pages": 22,
-  "pdf_sha256": "04782c5e2af95c9c4e5df529d031c5f3919fd938bbc28b6948bbfce9fdf8dfba",
+  "pdf_sha256": "02263706d81c492d40950970b1da7571612eb7164ec436369e482dffa2a7c601",
   "reviewer_identity_en": "Author-external AI review with follow-up by the same reviewer; neither human nor technically blind. Exact served model identity is unknown.",
   "reviewer_identity_zh": "作者外 AI 评阅，同一评阅者复核；非真人或技术盲审。确切实际模型身份未知。",
   "current_semantic_review": {
@@ -103,5 +103,18 @@
   },
   "pdf_path": "../papers/icm-2024-e.pdf",
   "pdf_path_relative_to": "this metadata file",
-  "case_identity": "ICM-2024-E"
+  "case_identity": "ICM-2024-E",
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  },
+  "identity_revision": {
+    "parent_pdf_sha256": "04782c5e2af95c9c4e5df529d031c5f3919fd938bbc28b6948bbfce9fdf8dfba",
+    "source_sha256": "871e26990c4fb010256754c8b79889c7f33ef89bc9a36e45f804d524b34a5660",
+    "scope": "Current simulation identity fields only; scientific results, original review versions and page count retained.",
+    "identity_fields": "summary, all running headers, and current signatures/disclosure where present",
+    "current_format_and_font_review_passed": true,
+    "exact_text_and_raster_outside_identity_fields": true,
+    "new_award_assessment": false
+  }
 }

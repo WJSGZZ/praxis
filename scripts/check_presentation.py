@@ -7,6 +7,7 @@ from pathlib import Path
 from pypdf import PdfReader
 
 from scripts import build_plugin, mcp_server
+from scripts.paper_template import MCM_SIMULATION_TEAM
 
 ROOT = Path(__file__).resolve().parents[1]
 GALLERY = Path('demos/mcm-studies')
@@ -100,7 +101,23 @@ def check_gallery(root=ROOT):
             actual_sha = hashlib.sha256(pdf.read_bytes()).hexdigest()
             if actual_sha != expected_sha:
                 errors.append(f'{slug}: PDF SHA-256 differs from catalog')
-            pages = len(PdfReader(str(pdf)).pages)
+            reader = PdfReader(str(pdf))
+            pages = len(reader.pages)
+            identity = {'mode': 'simulation', 'team': MCM_SIMULATION_TEAM}
+            if entry.get('identity') != identity or metadata.get('identity') != identity:
+                errors.append(f'{slug}: gallery identity must declare the fixed simulation team')
+            summary = reader.pages[0].extract_text() or ''
+            teams = re.findall(r'Team\s+Control\s+Number\s*([0-9]+)', summary)
+            if teams != [MCM_SIMULATION_TEAM]:
+                errors.append(f'{slug}: summary does not use the fixed simulation team')
+            for number, page in enumerate(reader.pages[1:], 2):
+                page_text = page.extract_text() or ''
+                teams = re.findall(r'Team\s*#\s*([0-9]+)', page_text)
+                if teams != [MCM_SIMULATION_TEAM]:
+                    errors.append(f'{slug}: page {number} does not use the fixed simulation team')
+                fields = re.findall(r'(?:From:\s*Team\s+|(?:Respectfully|Sincerely),\s*Team\s+|internal control identifier\s+)([0-9]+)\b', page_text)
+                if any(team != MCM_SIMULATION_TEAM for team in fields):
+                    errors.append(f'{slug}: page {number} has a conflicting team signature or disclosure')
             if pages != entry.get('pages'):
                 errors.append(f'{slug}: PDF has {pages} pages; catalog says {entry.get("pages")}')
             if metadata.get('pdf_sha256') != expected_sha or metadata.get('pages') != entry.get('pages'):

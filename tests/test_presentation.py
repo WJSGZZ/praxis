@@ -69,6 +69,49 @@ def test_single_best_gallery_has_unique_problem_identity_and_bound_papers():
     assert result['errors'] == []
 
 
+@pytest.mark.parametrize('line, expected_error', [
+    ('Team Control Number 0000000', 'summary does not use'),
+    ('From: Team 7391861', 'conflicting team signature'),
+])
+def test_gallery_reads_actual_pdf_identity_even_with_fresh_hashes(tmp_path, line, expected_error):
+    import hashlib
+    import json
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
+    from scripts.check_presentation import check_gallery
+
+    gallery = _gallery_copy(tmp_path)
+    catalog_path = gallery / 'catalog.json'
+    catalog = json.loads(catalog_path.read_text())
+    entry = catalog['entries'][2]
+    pdf = gallery / entry['pdf_path']
+    writer = PdfWriter(); writer.clone_document_from_reader(PdfReader(pdf))
+    page = writer.pages[0 if line.startswith('Team Control') else 2]
+    resources = page['/Resources'].get_object()
+    fonts = resources['/Font'].get_object()
+    font = DictionaryObject({NameObject('/Type'): NameObject('/Font'),
+                             NameObject('/Subtype'): NameObject('/Type1'),
+                             NameObject('/BaseFont'): NameObject('/Helvetica')})
+    fonts[NameObject('/IdentityFixture')] = writer._add_object(font)
+    stream = DecodedStreamObject()
+    stream.set_data(('BT /IdentityFixture 12 Tf 72 500 Td (' + line + ') Tj ET').encode('ascii'))
+    page.replace_contents(page.get_contents())
+    from pypdf.generic import ArrayObject
+    page[NameObject('/Contents')] = ArrayObject([page['/Contents'], writer._add_object(stream)])
+    pdf.chmod(0o600)  # Only the owned fixture copy; frozen source PDFs stay read-only.
+    with pdf.open('wb') as output:
+        writer.write(output)
+    digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
+    entry['pdf_sha256'] = digest
+    metadata_path = gallery / entry['metadata']
+    metadata = json.loads(metadata_path.read_text()); metadata['pdf_sha256'] = digest
+    metadata_path.write_text(json.dumps(metadata))
+    catalog_path.write_text(json.dumps(catalog))
+    errors = check_gallery(tmp_path)['errors']
+    assert any(expected_error in error for error in errors)
+    assert not any('SHA-256 differs' in error for error in errors)
+
+
 def test_gallery_rejects_duplicate_problem_identity(tmp_path):
     import json
     from scripts.check_presentation import check_gallery

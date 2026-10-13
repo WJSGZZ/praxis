@@ -33,5 +33,9 @@
   "event": "MCM",
   "edition": 2020,
   "problem": "C",
-  "case_identity": "MCM-2020-C"
+  "case_identity": "MCM-2020-C",
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  }
 }

@@ -12,6 +12,8 @@ from scripts import texplot
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
 VERSIONS = {'mcm': 4, 'cumcm': 2, 'research': 1}
+# A house identity for simulations only; it is not an assigned contest team.
+MCM_SIMULATION_TEAM = '7391856'
 BEGIN = '% BEGIN PRAXIS MCM STYLE v4\n'
 END = '% END PRAXIS MCM STYLE\n'
 
@@ -38,10 +40,35 @@ def escape(text):
     return ''.join(replacements.get(c, c) for c in text)
 
 
-def preamble(team, title, contest='mcm', *, layout_version=None):
-    if contest == 'mcm' and not re.fullmatch(r'[0-9]{1,12}', team):
-        raise ValueError('Team number must contain digits only; use the assigned number for a real entry')
-    return ((r'\newcommand{\PraxisTeam}{' + team + '}\n' if contest == 'mcm' else '') +
+def preamble(team=None, title='', contest='mcm', *, layout_version=None, identity_mode=None):
+    """Fixed simulation identity, explicit contest identity, or deliberate archive.
+
+    Existing nonzero positional team callers retain their exact preamble bytes.
+    A supplied contest number is a caller declaration, not verified registration.
+    """
+    identity = ''
+    if contest == 'mcm':
+        if identity_mode not in (None, 'simulation', 'contest', 'archive'):
+            raise ValueError('Identity mode must be simulation, contest or archive')
+        if identity_mode is None and team is None:
+            identity_mode = 'simulation'
+        if identity_mode == 'simulation':
+            if team not in (None, MCM_SIMULATION_TEAM):
+                raise ValueError('Simulation team must use the fixed MCM simulation identity')
+            team = MCM_SIMULATION_TEAM
+        if not isinstance(team, str) or not re.fullmatch(r'[0-9]{1,12}', team):
+            raise ValueError('Team number must contain ASCII digits; real entries require an explicitly supplied assigned number')
+        if identity_mode == 'archive':
+            if layout_version is None:
+                raise ValueError('Archive identity requires an explicit layout version')
+        elif not team.strip('0'):
+            raise ValueError('All-zero team placeholders cannot be used for current delivery')
+        identity = r'\newcommand{\PraxisTeam}{' + team + '}\n'
+        if identity_mode in ('simulation', 'contest'):
+            identity += r'\newcommand{\PraxisIdentityMode}{' + identity_mode + '}\n'
+    elif identity_mode is not None:
+        raise ValueError('MCM identity mode is only applicable to MCM/ICM papers')
+    return (identity +
             r'\newcommand{\PraxisTitle}{' + escape(title) + '}\n' +
             style_block(contest, layout_version=layout_version) + r'\begin{document}' + '\n')
 
@@ -212,6 +239,26 @@ def check(text, contest='mcm', *, layout_mode='archive'):
     if re.search(prohibited, rest):
         raise ValueError('Direct layout override outside the shared style')
     if contest == 'mcm' and layout_mode == 'current':
+        identity = mcm_identity(text)
+        if not identity['team'].strip('0'):
+            raise ValueError('All-zero team placeholders cannot be used for current delivery')
+        preamble_text = rest.split(r'\begin{document}', 1)[0]
+        modes = re.findall(r'\\newcommand\s*\{\\PraxisIdentityMode\}\s*\{([^{}]*)\}', preamble_text)
+        if len(modes) > 1 or (modes and modes[0] not in ('simulation', 'contest')):
+            raise ValueError('Current identity mode must be simulation or contest')
+        if modes == ['simulation'] and identity['team'] != MCM_SIMULATION_TEAM:
+            raise ValueError('Simulation team must use the fixed MCM simulation identity')
+        if re.search(r'\\(?:renewcommand|providecommand)\s*\{\\PraxisTeam\}|\\(?:def|gdef|edef|xdef|let)\s*\\PraxisTeam\b', rest):
+            raise ValueError('Team identity must have one literal declaration without overrides')
+        # Current author identities in letters/disclosures share the macro.
+        # Cited teams and actual random seeds remain their own truthful data.
+        identity_content = re.sub(r'\\begin\s*\{(Verbatim|verbatim|lstlisting|minted)\}.*?\\end\s*\{\1\}',
+                                  '', rest, flags=re.S)
+        literal_field = (r'\\textbf\{From:\}\s*Team\s*[0-9]+\b|'
+                         r'(?:Respectfully|Sincerely),[\s\\]*Team\s*[0-9]+\b|'
+                         r'internal control identifier\s+[0-9]+\b')
+        if re.search(literal_field, identity_content):
+            raise ValueError('Current team signatures and disclosure identity must use the shared PraxisTeam macro')
         _check_current_indentation(rest)
     if contest == 'research' and not re.search(r'\\title\s*\[[^\]\n]+\]', rest):
         raise ValueError('Research manuscripts need an explicit short running title')

@@ -6,6 +6,8 @@ Selected historical contest problems, one current representative paper each. The
 
 These are AI modeling exercises. They were not submitted as formal COMAP entries and have no actual award results. Award references in the metadata are uncalibrated AI opinions, not official awards or human-judge results. Where no complete review is bound to the current paper, the record says so. Conclusions remain subject to each paper's real-world data and validation limits.
 
+Every simulation uses the house team `7391856` on its summary sheet and running headers. This number is not a registration claim; real entries must explicitly supply their assigned team number.
+
 ## Physical mechanisms and engineering
 
 | Problem | Paper and record | Method and boundary |

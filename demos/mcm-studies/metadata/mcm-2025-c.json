@@ -11,7 +11,7 @@
   "review_scope_zh": "最新学习稿评阅为H–M交界/H保守中心，奖档绑定旧PDF fb87…，当前8384…的零池定义澄清未重新定档。",
   "id": "MCM-2025-C",
   "pages": 21,
-  "pdf_sha256": "74852523e2c6f15aafd6a36c6854f97349b9cd2d75739373014ba2589ad29941",
+  "pdf_sha256": "b0e87fe3e2561db962a0b7613edca00abe5f17a63ff9431fb601d250b2153cd1",
   "reviewer_identity_en": "Independent AI science, language and consistency reviewer; shared filesystem, not technically blind or human.",
   "reviewer_identity_zh": "独立AI科学、语言与一致性评阅者；共享文件系统，非技术盲审或真人。",
   "current_semantic_review": {
@@ -24,5 +24,18 @@
   "event": "MCM",
   "edition": 2025,
   "problem": "C",
-  "case_identity": "MCM-2025-C"
+  "case_identity": "MCM-2025-C",
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  },
+  "identity_revision": {
+    "parent_pdf_sha256": "74852523e2c6f15aafd6a36c6854f97349b9cd2d75739373014ba2589ad29941",
+    "source_sha256": "5055837246d9b6d72325990ab2b50b0db15f02bd5d8219cec5bdbd9a91b02bb5",
+    "scope": "Current simulation identity fields only; scientific results, original review versions and page count retained.",
+    "identity_fields": "summary, all running headers, and current signatures/disclosure where present",
+    "current_format_and_font_review_passed": true,
+    "exact_text_and_raster_outside_identity_fields": true,
+    "new_award_assessment": false
+  }
 }

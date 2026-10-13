@@ -11,7 +11,7 @@
   "review_scope_zh": "最新语义评阅覆盖排版前 TeX 与选定主张，不给奖档判断；已有视觉检查针对更早 PDF 哈希，不绑定当前版。",
   "id": "MCM-2017-B",
   "pages": 17,
-  "pdf_sha256": "1c64e7b38d672652ae10ce16531756f42504d176a959d2ceb27bf4b989fb56ce",
+  "pdf_sha256": "7a44a8e351d3717f278307ddbf0724c143ed729f28fdce4332c0b5a20b18c78f",
   "reviewer_identity_en": "Author-external AI semantic review and a separate AI presentation review; no human reviewer.",
   "reviewer_identity_zh": "作者外AI语义评议与独立AI版面评阅，均非真人。",
   "current_semantic_review": {
@@ -48,5 +48,18 @@
     ],
     "scope_en": "All 17 current PDF pages reviewed for presentation; this is not a scientific or award assessment.",
     "scope_zh": "当前PDF全部17页已做版面检查；这不是科学评议或奖档评估。"
+  },
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  },
+  "identity_revision": {
+    "parent_pdf_sha256": "1c64e7b38d672652ae10ce16531756f42504d176a959d2ceb27bf4b989fb56ce",
+    "source_sha256": "c75c0d071bf35b7bcee7ad3357640350b7b3b7bef13ca53b8f51d1b67b49f271",
+    "scope": "Current simulation identity fields only; scientific results, original review versions and page count retained.",
+    "identity_fields": "summary, all running headers, and current signatures/disclosure where present",
+    "current_format_and_font_review_passed": true,
+    "exact_text_and_raster_outside_identity_fields": true,
+    "new_award_assessment": false
   }
 }

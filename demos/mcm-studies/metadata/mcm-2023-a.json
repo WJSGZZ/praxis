@@ -24,5 +24,9 @@
   "event": "MCM",
   "edition": 2023,
   "problem": "A",
-  "case_identity": "MCM-2023-A"
+  "case_identity": "MCM-2023-A",
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  }
 }

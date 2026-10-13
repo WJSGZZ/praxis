@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent
 for parent in ROOT.parents:
     if (parent/'scripts/paper_template.py').is_file():
         sys.path.insert(0, str(parent)); break
-from scripts.paper_template import check, compile_in_place
+from scripts.paper_template import check, compile_in_place, mcm_identity, MCM_SIMULATION_TEAM
 from scripts.freeze_pdf import freeze
 
 
@@ -28,6 +28,8 @@ def main():
     if hashlib.sha256(raw).hexdigest() != record['pdf']['tex_sha256']:
         raise ValueError('Selected manuscript source changed; update actual science/format review before delivery')
     check(raw.decode('utf-8'), 'mcm', layout_mode='current')
+    if mcm_identity(raw.decode('utf-8'))['team'] != MCM_SIMULATION_TEAM:
+        raise ValueError('Current demo must use the fixed simulation team identity')
     output = ROOT/'paper'; output.mkdir(exist_ok=True)
     tex = output/'paper.tex'; tex.write_bytes(raw)
     compile_in_place(tex, 'mcm')

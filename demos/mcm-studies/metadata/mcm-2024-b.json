@@ -11,7 +11,7 @@
   "review_scope_zh": "原题四页与初始 20 页整稿、八组路线／环境数值审查按原证据接续。本版全部 23 页文本与实际页面；新增成本／路线／深度／索引及两页备忘录原尺寸查看，另完成 56 项独立坐标、准备阈值、量纲和索引核验。",
   "id": "MCM-2024-B",
   "pages": 23,
-  "pdf_sha256": "6b8bbb55ecac4ae69366a92752053aa7cf7772f0ff2425d672f5b5252c81dfee",
+  "pdf_sha256": "59f6023c84ebfc92360426efc63ba1c095abcdbdc453095b174cb9bd39b8dcc0",
   "reviewer_identity_en": "Author-external AI review; no human peer reviewer or official judge.",
   "reviewer_identity_zh": "作者外 AI 评阅；非真人同行评审或官方评委。",
   "current_semantic_review": {
@@ -33,5 +33,18 @@
   "event": "MCM",
   "edition": 2024,
   "problem": "B",
-  "case_identity": "MCM-2024-B"
+  "case_identity": "MCM-2024-B",
+  "identity": {
+    "mode": "simulation",
+    "team": "7391856"
+  },
+  "identity_revision": {
+    "parent_pdf_sha256": "6b8bbb55ecac4ae69366a92752053aa7cf7772f0ff2425d672f5b5252c81dfee",
+    "source_sha256": "e4b6f68927174f90e60bee74c3208c228f224b3afedbfda5a20b82b3f1d5f65c",
+    "scope": "Current simulation identity fields only; scientific results, original review versions and page count retained.",
+    "identity_fields": "summary, all running headers, and current signatures/disclosure where present",
+    "current_format_and_font_review_passed": true,
+    "exact_text_and_raster_outside_identity_fields": true,
+    "new_award_assessment": false
+  }
 }

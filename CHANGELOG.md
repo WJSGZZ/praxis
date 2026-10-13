@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 美赛与 ICM 模拟稿使用统一固定模拟队号 `7391856`；真实参赛显式提供实际队号，当前编译、冻结和展示检查拒绝全0占位。十篇当前公开作品的身份与元数据同步，历史冻结稿保留原件；不改变科学结论或奖档判断。
+  MCM and ICM simulations use the fixed house team `7391856`. Real entries require an explicitly supplied assigned number, and current compilation, freezing and gallery checks reject all-zero placeholders. Current papers and metadata agree; frozen history, scientific conclusions and award references keep their original scope.
+
 - 新增 `asof_join`，复用 Pandas 按决策截点选择声明的可用版本，保留缺失时点、同刻冲突与未发布查询。数据分析和时序专业入口共享字段版本契约；完整合成补货任务以独立时间扫描与整数穷举核对，并比较合法预测、固定基线与无效的事后快照。原工具接口与依赖保持。
   `asof_join` uses Pandas to map declared versions to decision cutoffs, preserving unknown availability, tied releases and unpublished queries. Data and time-series routes share the field-vintage contract. A complete synthetic replenishment exercise uses independent timestamp scans and integer enumeration to compare available forecasts, a fixed baseline and an invalid final snapshot. Existing tool interfaces and dependencies are unchanged.
 
