@@ -62,12 +62,14 @@ TREES = {
     'demos/data-analysis/assets': {'.png', '.pdf'},
     'demos/spatial-analysis': {'.md', '.py', '.json'},
     'demos/spatial-analysis/assets': {'.png', '.pdf'},
+    'demos/image-analysis': {'.md', '.py', '.json', '.tex'},
+    'demos/image-analysis/assets': {'.png', '.pdf'},
 }
 # Focused skills ship next to the core; all packaged Markdown links follow relocation.
 FOCUSED = ('praxis-model', 'praxis-assumptions', 'praxis-compute', 'praxis-verify', 'praxis-review', 'praxis-explore', 'praxis-dialogue', 'praxis-report',
            'praxis-data-analysis', 'praxis-statistics', 'praxis-text-analysis',
            'praxis-visualization', 'praxis-time-series', 'praxis-causal-analysis',
-           'praxis-scientific-writing', 'praxis-literature-review', 'praxis-optimization', 'praxis-dynamical-modeling', 'praxis-uncertainty-analysis', 'praxis-machine-learning', 'praxis-experimental-design', 'praxis-spatial-analysis')
+           'praxis-scientific-writing', 'praxis-literature-review', 'praxis-optimization', 'praxis-dynamical-modeling', 'praxis-uncertainty-analysis', 'praxis-machine-learning', 'praxis-experimental-design', 'praxis-spatial-analysis', 'praxis-image-analysis')
 # Use the maintained brand asset for native presentation; reports keep their
 # scientific typography and do not acquire the plugin logo.
 VISUAL_ASSETS = {'assets/praxis-logo.png': 'demos/assets_src/praxis-logo.png'}
@@ -182,29 +184,29 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
     for name in ('plugin.json', 'mcp.json', '.codex-plugin/plugin.json', '.mcp.json'):
         hashes[name] = hashlib.sha256((output / name).read_bytes()).hexdigest()
     (output / 'LICENSE').write_bytes((source / 'LICENSE').read_bytes())
-    (output / 'README.md').write_text('''# Praxis plugin
+    (output / 'README.md').write_text('''# Praxis · Agent 插件 / Agent plugin
 
-This directory is generated from the maintained Praxis Agent plugin repository.
-The portable entry point is plugin.json; mcp.json starts the praxis-tools MCP server
-(computation tools, run with uv). skills/praxis/ is the core skill with
-all references and scripts; focused sibling skills cover modeling, assumptions,
-computation, verification, whole-work review, exploration, dialogue, reporting,
-data analysis, statistical inference, text analysis, scientific graphics,
-time-series forecasting and causal analysis. All local Markdown links
-are relocated with their resources.
+[简体中文](skills/praxis/README.md) · [English](skills/praxis/README.en.md)
 
-Before running Python helpers, explicitly prepare their environment:
+本目录由 Praxis 的同一份源码按宿主导出，包含核心入口、专业技能、数学工具和证据工作流。
+宿主安装方式与首次使用见[中文安装指南](skills/praxis/references/installation.md)。
 
-```bash
+This host-specific package contains the coordinated skills, mathematical tools and evidence workflow.
+Start with the [English installation guide](skills/praxis/references/installation.en.md).
+
+## 计算环境 · Computational environment
+
+安装插件后，用实际包路径准备锁定的 Python 环境。此命令适用于终端和 PowerShell。
+Prepare the locked environment with the actual package path; the command works in a shell or PowerShell.
+
+```text
 uv sync --locked --project /absolute/path/to/praxis-plugin/skills/praxis
 ```
 
-Run helpers with that environment and pass --workspace to the user project.
-Installation does not install Python dependencies. Keep cases, data, reports
-and run outputs in the user project. See skills/praxis/README.md for usage
-and third-party licensing. Install this host-specific export using the instructions in
-skills/praxis/references/installation.md. Installation and discovery checks
-are distinct from plugin-directory publication.
+题目、数据和结果保存到自己的项目；运行脚本时显式传入该工作区。
+Keep problems, data and outputs in your project and pass its path to workspace-aware scripts.
+
+[技能与工具](skills/praxis/README.md#技能一览) · [Skills and tools](skills/praxis/README.en.md#skills)
 ''')
     receipt = {'format': 'praxis-plugin-export-v1', 'name': manifest['name'],
                'version': manifest['version'], 'host': host, 'files_sha256': hashes}

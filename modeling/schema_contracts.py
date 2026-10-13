@@ -26,7 +26,7 @@ def unique_object_pairs(pairs):
 KEYWORDS = {
     "$schema", "type", "properties", "required", "additionalProperties",
     "items", "prefixItems", "minItems", "maxItems", "minimum", "maximum",
-    "enum", "description", "examples",
+    "enum", "description", "examples", "default",
 }
 TYPES = {"object", "array", "string", "number", "integer", "boolean", "null"}
 
@@ -114,6 +114,8 @@ def check_schema(schema, path="$schema"):
         if not isinstance(schema["examples"], list):
             raise ContractError(f"{path}.examples: expected an array")
         _json_value(schema["examples"], f"{path}.examples")
+    if "default" in schema:
+        _json_value(schema["default"], f"{path}.default")
 
 
 def _is_type(value, kind):

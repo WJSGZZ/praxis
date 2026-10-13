@@ -8,7 +8,7 @@
 
 Build a model, challenge its conclusions, and deliver the evidence.
 
-[![Version](https://img.shields.io/badge/Version-0.7.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/github/v/release/WJSGZZ/praxis?label=Version&color=263B9B&style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -23,9 +23,9 @@ Build a model, challenge its conclusions, and deliver the evidence.
 
 **Praxis is an agent plugin for mathematical modeling**. Its core coordinates specialist skills, callable mathematical tools and a shared evidence workflow. Work from a question and data toward **a model, independent checks, and a finished report**, or use a focused skill for data analysis, statistical inference, assumptions, validation or writing.
 
-Use it in research, coursework, and competitions, or to study resource allocation, environmental questions, public services, and engineering decisions. Define the objective, constraints, and available data; establish an interpretable baseline before adding complexity. On an unfamiliar problem it looks for the mathematical structure first and compares several different routes on record; with no answer key it produces conclusions labelled by how sure they are, through conjectures, counterexample searches and high-precision checks. Connected records reduce bookkeeping, repeated computation, and handoff overhead, leaving more attention for the decisions that matter.
+Research, coursework, competitions and practical decisions share the same core: define the question and data, compare distinct modeling routes, establish an interpretable baseline, and check how strongly the evidence supports the conclusion. Open problems can begin with conjectures, counterexamples and exact checks.
 
-You can contribute without writing every line of code. Question an assumption in everyday language; Praxis turns it into a check and keeps a trace of what changed. Chinese and English drafts are edited for their own readers. Contest feedback leads with award-level estimates, evidence and useful next steps, while numerical diagnostics stay behind the scenes. A complete draft provides the foundation for deeper work on the questions that matter.
+Choose a complete workflow or a focused capability. The cases below include finished papers and reproduction entry points; the skill and tool tables show which tasks each component handles.
 
 <table>
 <tr>
@@ -66,17 +66,15 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 </table>
 
-**[Browse all cases →](demos/README.en.md)** Explore mathematical research and decision studies, with papers, code, and checks.
+**[Browse all cases →](demos/README.en.md)** Explore data analysis, spatial coverage, image measurement, mathematical studies and secondary competition papers.
 
 Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. New MCM reports require the problem edition explicitly and use the three-column summary header. Third-level headings and contents entries are available when they aid navigation; frozen cases retain their recorded layout unless separately revised. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
-
-Explore either case or bring your own problem. **Star Praxis** if you would like to follow its development.
 
 ## Quick start
 
 ### 1. Install for your agent
 
-Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [0.7.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.0), or export the current source:
+Install the specialist skills, mathematical tools and evidence workflow together. Download a verified host package from the [latest release](https://github.com/WJSGZZ/praxis/releases/latest), or export the current source:
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -132,6 +130,7 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-model`](skills/praxis-model/SKILL.md) | "How should I model this? Where do the parameters come from?" | Problem definition, assumptions and parameter grounding, route and model choice, identifiability and optimization structure |
 | [`praxis-data-analysis`](skills/praxis-data-analysis/SKILL.md) | "What can these tables tell us?" | Observation units, coverage, missingness, join cardinality, denominators and exploratory findings |
 | [`praxis-spatial-analysis`](skills/praxis-spatial-analysis/SKILL.md) | "Which locations can serve this demand? Are the spatial measurements valid?" | Coordinate systems, distance and join semantics, raster alignment, accessibility and capacity bottlenecks |
+| [`praxis-image-analysis`](skills/praxis-image-analysis/SKILL.md) | “Turn images into measurements; check masks, scales and labels” | Observation units, calibration, connected-region measurements, source-family splits and semantic validation |
 | [`praxis-statistics`](skills/praxis-statistics/SKILL.md) | "How large is the difference? Are these observations independent?" | Estimands, effects and intervals, paired or clustered designs, multiple comparisons and assumptions |
 | [`praxis-text-analysis`](skills/praxis-text-analysis/SKILL.md) | "What are people discussing? Can I trust these text features?" | Corpus and label definitions, features, inspected examples, semantic errors and held-out evaluation |
 | [`praxis-time-series`](skills/praxis-time-series/SKILL.md) | "Forecast the next periods and compare simple baselines" | Entities and calendars, information available at each origin, horizons, rolling evaluation and forecast errors |
@@ -152,8 +151,7 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-machine-learning`](skills/praxis-machine-learning/SKILL.md) | "Does this predictor improve on a baseline?" | Prediction contracts, group splits, fold-local preprocessing, baselines and held-out evaluation |
 | [`praxis-experimental-design`](skills/praxis-experimental-design/SKILL.md) | "Design a useful experiment and justify its sample size" | Experimental units, allocation, randomization, replication, power and measurement design |
 
-The core and twenty-two specialists share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
-
+The core and specialist skills share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
 
 ### Competitions are one application
 
@@ -180,6 +178,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_ode` (re-run at tighter tolerance), `solve_layered_diffusion` with the independent `layered_diffusion_laplace`, `grid_convergence_index`, `solve_diffusion` (finite volumes with an energy account) |
 | Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `bimatrix_nash`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |
 | Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `check_recurrence` (finite-check proof), `find_relation`, `route_to_lesson`, `lesson_add`, `lesson_search` |
+| Image measurement | `binary_components` (connected regions, pixel areas, boxes and centroids in a supplied 2-D binary mask; physical scale must be explicit) |
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
 | Data and free literature | `audit_data` (original headers, parsing and data quality), `audit_join` (cardinality, null keys, unmatched rows and expansion limits), `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
@@ -238,7 +237,7 @@ praxis-plugin/
     praxis/                 # entry skill, with all references, scripts and tool code
     praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
     praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
-    praxis-spatial-analysis/
+    praxis-spatial-analysis/  praxis-image-analysis/
     praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
 ```
 

@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "oracle": "Independent queue-based breadth-first flood fill and direct pixel arithmetic; no SciPy-generated expected values.",
+  "checks": {
+    "shape": [
+      32,
+      40
+    ],
+    "foreground_pixels": 72,
+    "component_counts": {
+      "connectivity_4": 7,
+      "connectivity_8": 6
+    },
+    "rectangle_pixels": 42,
+    "L_region_pixels": 22,
+    "diagonal_pair": {
+      "separate_at_4": true,
+      "joined_at_8": true
+    },
+    "filtered_8": {
+      "retained_components": 3,
+      "retained_pixels": 68,
+      "border_excluded_first": 1,
+      "small_excluded_after_border": 2
+    },
+    "declared_scale_mm": [
+      0.2,
+      0.3
+    ],
+    "expected_areas_mm2": {
+      "foreground": 4.32,
+      "filtered": 4.08
+    }
+  },
+  "scope": "Deterministic synthetic mask and measurement implementation only; no segmentation validation, calibration verification, real-object counting, population inference, or imaging-system performance is established."
+}

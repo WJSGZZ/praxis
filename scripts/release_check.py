@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 QUICK = ['demos/domino-research/reproduce/explore.py', 'demos/cumcm-1998-a/reproduce/run_demo.py', 'demos/cumcm-1998-a/reproduce/check_capital_threshold.py',
          'demos/cumcm-1998-a/reproduce/check_recommendation.py', 'demos/cumcm-1998-a/reproduce/check_robustness.py', 'demos/cumcm-1998-a/reproduce/check_alternatives.py',
          'demos/cumcm-1998-a/reproduce/check_return_target.py', 'demos/cumcm-1998-a/reproduce/check_target_certificates.py',
-         'demos/mcm-2016-a/reproduce/run_demo.py', 'examples/data_analysis_demo.py', 'examples/spatial_analysis_demo.py']
+         'demos/mcm-2016-a/reproduce/run_demo.py', 'examples/data_analysis_demo.py', 'examples/spatial_analysis_demo.py', 'examples/image_analysis_demo.py']
 LONG = ['demos/mcm-2016-a/reproduce/run_extended.py', 'demos/mcm-2016-a/reproduce/run_mesh_check.py']
 
 
@@ -29,6 +29,13 @@ def run(command):
 
 def run_demo(script):
     source = ROOT / script
+    if script == 'examples/image_analysis_demo.py':
+        with tempfile.TemporaryDirectory(prefix='praxis-release-image-') as temporary:
+            run_dir = Path(temporary) / 'generated-mask'
+            if not run(['uv', 'run', '--locked', 'python', str(source), '--output', str(run_dir)]):
+                return False
+            return run(['uv', 'run', '--locked', 'python', 'demos/image-analysis/build_figure.py',
+                        '--run', str(run_dir), '--output', str(Path(temporary) / 'generated-figure')])
     if script in {'examples/data_analysis_demo.py', 'examples/spatial_analysis_demo.py'}:
         with tempfile.TemporaryDirectory(prefix='praxis-release-data-') as temporary:
             return run(['uv', 'run', '--locked', 'python', str(source), '--output',

@@ -22,6 +22,7 @@ Praxis 的公开源码、开发时产生的工作材料和最终插件包有不�
 ```bash
 uv sync --locked
 uv run --locked python -m pytest
+uv run --locked python -m scripts.check_presentation
 uv run --locked python -m scripts.build_plugin --host codex --output dist/codex/praxis
 ```
 
@@ -30,6 +31,10 @@ uv run --locked python -m scripts.build_plugin --host codex --output dist/codex/
 需要隔离测试临时目录时，用源码根目录内的新路径，例如 `pytest --basetemp=.session/check-transport`。部分集成测试主动检查案例必须留在所选工作区；把 `--basetemp` 移到工作区外会触发该保护，不能通过放宽路径边界来修复测试环境。
 
 发布前按改动运行 `scripts.release_check` 和相关长检查，核对案例记录未漂移。提交推送、版本发布与商店上架分别处理，不由一次本地导出自动触发。 美赛排版 CI 按 `scripts/contest_rules.py` 的解答页数边界验收，AI 使用报告单独计页，不把历史案例的 PDF 总页数设为硬规则；三系统成品仍逐页比较文字与栅格。
+
+中英文首页的技能／工具表、安装下载版本与清单由 `scripts.check_presentation` 对照实际注册表检查，并进入源码测试。新版本说明先维护双语 CHANGELOG；用 `scripts.release_notes --version 版本 --assets-json 实际发布资产元数据.json --output 新说明.md` 生成同一结构的发布文案，再核对实际附件后发布。历史修订使用对应标签的更新记录，保留附件和原发布时间，不把当前能力倒写为旧包能力。
+
+Public presentation is checked against the actual skill and tool registry, package version and installation links. Render bilingual release notes from that version's changelog and its real asset list; formatting an old release does not replace its source, packages or evidence.
 
 ## Working on the source
 

@@ -1,0 +1,42 @@
+\documentclass[12pt,border=6pt]{standalone}\usepackage{newtxtext,newtxmath}\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{fillbetween,groupplots}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{main}{HTML}{0072B2}
+\definecolor{accent}{HTML}{D55E00}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{light}{HTML}{B8BDC2}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oisky}{HTML}{56B4E9}
+\definecolor{oiyellow}{HTML}{F0E442}
+\definecolor{teal}{HTML}{17766E}
+\definecolor{clay}{HTML}{9E6440}
+\definecolor{slate}{HTML}{5D696E}
+\definecolor{sand}{HTML}{AAA69B}\begin{document}\begin{tikzpicture}\begin{axis}[width=8.75cm,
+ height=7.0cm,
+ scale only axis,
+ xlabel={Column (zero-based pixel index)},
+ ylabel={Row (zero-based; 0 at top)},
+ axis lines=left,
+ axis line style={gray!70},
+ grid=major,
+ grid style={gray!18},
+ tick label style={font=\footnotesize},
+ label style={font=\small},
+ every axis plot/.append style={line cap=round},
+ clip=false,
+ xmin=-0.5,
+ xmax=39.5,
+ ymin=-0.5,
+ ymax=31.5,
+ legend style={font=\footnotesize,draw=none,fill=none,at={(1.02,0.5)},anchor=west,},
+ y dir=reverse,grid=none,xtick={0,10,20,30,39},ytick={0,8,16,24,31}]
+\addplot[only marks,mark=square*,mark size=2.4pt,color=accent] coordinates {(4,4) (4,5) (5,4) (5,5) (4,6) (5,6) (6,4) (6,5) (6,6) (4,7) (5,7) (6,7) (7,4) (7,5) (7,6) (7,7) (4,8) (5,8) (6,8) (7,8) (8,4) (8,5) (8,6) (8,7) (8,8) (4,9) (5,9) (6,9) (7,9) (8,9) (9,4) (9,5) (9,6) (9,7) (9,8) (9,9) (10,4) (10,5) (10,6) (10,7) (10,8) (10,9)};\addlegendentry{Component 2: 42 px}
+\addplot[color=accent,line width=1.0pt,no marks,forget plot] coordinates {(3.5,3.5) (10.5,3.5) (10.5,9.5) (3.5,9.5) (3.5,3.5)};
+\addplot[only marks,mark=square*,mark size=2.4pt,color=oisky] coordinates {(4,16) (4,17) (5,16) (5,17) (4,18) (5,18) (4,19) (5,19) (6,19) (4,20) (5,20) (6,20) (7,19) (7,20) (8,19) (8,20) (9,19) (9,20) (10,19) (10,20) (11,19) (11,20)};\addlegendentry{Component 5: 22 px}
+\addplot[color=oisky,line width=1.0pt,no marks,forget plot] coordinates {(3.5,15.5) (11.5,15.5) (11.5,20.5) (3.5,20.5) (3.5,15.5)};
+\addplot[only marks,mark=square*,mark size=2.4pt,color=main] coordinates {(31,25) (31,26) (32,25) (32,26)};\addlegendentry{Component 6: 4 px}
+\addplot[color=main,line width=1.0pt,no marks,forget plot] coordinates {(30.5,24.5) (32.5,24.5) (32.5,26.5) (30.5,26.5) (30.5,24.5)};
+\addplot[only marks,mark=square*,mark size=2.4pt,color=muted] coordinates {(38,0) (28,5) (29,6) (22,13)};\addlegendentry{Excluded foreground pixels}
+\end{axis}\end{tikzpicture}\end{document}

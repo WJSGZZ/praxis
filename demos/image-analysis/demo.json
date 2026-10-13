@@ -1,0 +1,13 @@
+{
+  "scope": "Deterministic synthetic binary-mask measurement example; no real image, specimen, particle or organism is represented.",
+  "input": "mask.json",
+  "generator": "examples/image_analysis_demo.py",
+  "shape": [32, 40],
+  "foreground_pixels": 72,
+  "connectivity_4_components": 7,
+  "connectivity_8_components": 6,
+  "selected_components_after_border_and_minimum_size_filter": 3,
+  "caller_declared_pixel_size": [0.2, 0.3],
+  "caller_declared_unit": "mm",
+  "verification": "Independent queue-based BFS and hand-checkable rectangle/L-region counts; no SciPy expected-value generation."
+}

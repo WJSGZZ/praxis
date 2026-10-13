@@ -23,7 +23,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 | 当前缺口 | 专业方向 |
 |---|---|
 | 题意、前提、机制与路线 | model、assumptions、explore、dynamical-modeling |
-| 文献、数据与测量 | literature-review、data-analysis、text-analysis、spatial-analysis |
+| 文献、数据与测量 | literature-review、data-analysis、text-analysis、image-analysis、spatial-analysis |
 | 推断、预测、识别与采集 | statistics、machine-learning、time-series、causal-analysis、experimental-design |
 | 动作、资源与未知 | optimization、uncertainty-analysis |
 | 执行与主张核验 | compute、verify |
@@ -32,7 +32,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 完整题意与路线可直接进入 [praxis-model](skills/praxis-model/SKILL.md)，完整组稿用 [praxis-report](skills/praxis-report/SKILL.md)，整稿评价用 [praxis-review](skills/praxis-review/SKILL.md)。
 
-专项名以 `praxis-` 为前缀，是独立可发现技能。纯论证与语言归scientific-writing，report负责组稿、模板和交付；机制动态与未来统计预测分别归dynamical-modeling／time-series。优化负责方案与保证，uncertainty-analysis负责联合未知的传播，verify决定独立支持强度。沿同一任务ID交接，不建重复工作板。
+专项名以 `praxis-` 为前缀，是独立可发现技能。图像测量可直接进入 [praxis-image-analysis](skills/praxis-image-analysis/SKILL.md)；data-analysis核来源与标签，image-analysis核像素／mask测量，machine-learning核预测与划分，spatial-analysis核地理尺度，visualization负责表达。纯论证与语言归scientific-writing，report负责组稿、模板和交付；机制动态与未来统计预测分别归dynamical-modeling／time-series。优化负责方案与保证，uncertainty-analysis负责联合未知的传播，verify决定独立支持强度。沿同一任务ID交接，不建重复工作板。
 
 ## 按条件加载
 

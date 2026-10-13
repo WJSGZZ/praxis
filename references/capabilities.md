@@ -9,6 +9,7 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 | 假设与适用条件 | 原题、模型／数据及拟写结论；前提是否充分、实际使用、合理？ | 显式与隐含前提、依据、作用位置及失效影响；明确检查和未验证条件 | [praxis-assumptions](../skills/praxis-assumptions/SKILL.md)；[methods.md](methods.md#假设理由与结论范围) |
 | 模型设计 | 任务定义、机制、数据能力 | 基线与必要扩展、假设和验证设计；组合关系明确 | [praxis-model](../skills/praxis-model/SKILL.md)；mathematical-reasoning.md与成熟库条件路线 |
 | 数据分析 | 原始表、观测单位、实体和时间口径；数据能回答什么？ | 只读审计、覆盖与缺失、明确分母、关联基数和可回答范围 | [praxis-data-analysis](../skills/praxis-data-analysis/SKILL.md)；Pandas；`audit_data`、`audit_join` |
+| 图像测量 | 原图／ROI／mask、源家族与标签、像素尺度；测量对象和处理如何定义？ | 可追溯处理、面积／边界／连通测量、阈值与尺度敏感性；对象语义与识别效果另核 | [praxis-image-analysis](../skills/praxis-image-analysis/SKILL.md)；[image-analysis.md](image-analysis.md)；SciPy；`binary_components`限定给定有界二维二值mask |
 | 空间分析 | 点位／矢量／栅格、坐标与单位、定位精度、空间阈值和目标 | 可核的距离／面积／匹配、对齐与掩码、覆盖边及局部可达约束 | [praxis-spatial-analysis](../skills/praxis-spatial-analysis/SKILL.md)；SciPy、NetworkX；按需采用GeoPandas／PyProj／Rasterio |
 | 统计推断 | 估计对象、采样／配对／组结构、预先选择的比较族 | 效应与区间、实际假设、聚类或多重比较、不可推断的条件 | [praxis-statistics](../skills/praxis-statistics/SKILL.md)；Statsmodels、SciPy；`adjust_pvalues`、`ols_report` |
 | 文本分析 | 语料、语言、分析单位、标签或待测主张 | 可追溯特征与实例、标注定义、误差和验证边界 | [praxis-text-analysis](../skills/praxis-text-analysis/SKILL.md)；scikit-learn 的条件路线 |
@@ -32,6 +33,8 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 主技能接续目标、预算、当前状态和依赖，选择本次主责并组织交接。专业模块以能单独完成的一类任务为边界：有明确输入、专业判断、成品和验收。一个职责可以先由共享参考支持，真实独立请求或重复失败需要专门入口时再拆成技能；不是每个流程动作或论文标题都必须新增技能。假设审查归 assumptions，整题设计中的候选前提仍由 model 负责，数值检查归 verify，组织假设章归 report；已有入口交接输入，不让用户重讲题目。
 
 数据分析负责观测单位、数据诊断和探索，compute负责已设计计算的执行及快照；统计推断负责抽样结构与估计，verify核对结论的独立依据。时间预测与因果效应分别按未来可用信息和识别条件判断，拟合分数不能替代二者。科研绘图由 visualization负责选型、生成和实际图检查，report把已验图表放入全文并核对文字与版面。专业技能可调用现有成熟库；可选方法尚未实测时明确其状态，不把参考清单当功能认证。
+
+图片的来源、源家族、标签和时间归data-analysis；ROI、阈值、像素几何及连通测量归image-analysis；监督训练、源家族划分和部署概率目标归machine-learning。带地理参考的栅格还由spatial-analysis核CRS、对齐和距离／面积资格，visualization只表达已有有效测量或预测。`binary_components`不生成mask、不判真实对象；数值特征矩阵CV不训练CNN。完整图像任务仍由同一主技能按这些实际依赖协调，不另建一条总流程。
 
 | 用途 | 复用的专业能力 | 按需加载的特有规则与流程 |
 |---|---|---|

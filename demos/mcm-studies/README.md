@@ -1,43 +1,62 @@
-# 美赛论文案例：完整稿与学习修订
+# 美赛建模论文
 
-这里集中放置 Praxis 的 MCM/ICM 论文样例，方便读者比较不同题型、解题路线和写作修订。它们是建模与写作练习，不是 COMAP 官方作品，也不代表真实获奖。文中的竞赛队号来自演示生成配置，仅作占位。
+按问题类型阅读 Praxis 的 MCM/ICM 作品：物理机制、稀少观测、预测与跨期决策。每篇提供完整论文，以及对应版本的页数、评阅范围和主要局限。
 
-案例分为自主稿和封存后的同题学习稿。学习稿说明了它依赖先前作品，不应被当作第二次独立解题。评阅均由 AI 完成；每篇说明评阅绑定的版本、审阅范围及尚未验证之处。任何“奖档”描述都是未校准的评阅意见，不是获奖记录；没有绑定当前 PDF 的旧评语不会移植到当前版本。
+**简体中文** · [English](README.en.md) · [案例总览](../README.md)
 
-## 案例
+这些是使用历史题目的 AI 建模练习，未作为正式 COMAP 参赛作品提交，也没有实际获奖记录。队号为演示标识。自主周期允许内部检查和已披露的科学反馈；封存后的同题学习稿另列，不能算作第二次独立解题。下文的奖档均为**未校准的 AI 参考意见**，只适用于明确绑定的稿件。
 
-| 题目与版本 | 论文 | 身份与评阅状态 |
+## 物理机制与工程设计
+
+| 问题与作品 | 论文与版本信息 | 方法、结果与评阅边界 |
 |---|---|---|
-| 2016 A | [《A Hot Bath》现有主 Demo](../mcm-2016-a/paper.pdf) | 多轮迭代的主案例；旧评阅不绑定当前 PDF。 |
-| 2017 B | [《Merge After Toll》](../../research/merge-after-toll/paper/paper.pdf) | 自主完成稿；最新意见不评奖，当前 PDF 缺同哈希的逐页审阅回执。 |
-| 2020 C | [自主先导稿](papers/mcm-2020-c-autonomous.pdf) | 完整 AI 评阅；奖档未校准。 |
-| 2020 C | [封存后学习修订](papers/mcm-2020-c-learning.pdf) | 同题学习稿；完整源稿评阅为未校准的 Meritorious 候选、相邻 HM–Meritorious，最终稿仅完成有限页面点检，最终p8–10、20–26已增量核对，根实际查看全部26页。旧稿 O 中心意见不沿用。 |
-| 2023 A | [自主迁移稿](papers/mcm-2023-a.pdf) | 当前版完成逐页开发审阅；未评奖，也不继承另一版本的旧意见。 |
-| 2024 B | [科学反馈后继稿](papers/mcm-2024-b.pdf) | 当前 22 页版完成逐页 AI 科学验收；奖档未校准。 |
-| 2025 A | [自主研究练习](papers/mcm-2025-a.pdf) | 对原题开展的研究练习，不是限时首轮测评；完整 AI 评阅，奖档未校准。 |
-| 2025 C | [自主稿](papers/mcm-2025-c-autonomous.pdf) | 完成逐页视觉检查；尚无绑定当前稿的完整科学或奖档评阅。 |
-| 2025 C | [封存后学习修订](papers/mcm-2025-c-learning.pdf) | 同题学习稿；现有科学评语绑定旧版本，当前版未重新评档。 |
+| 2016 MCM A · 热水浴 | [主 Demo · 26 页](../mcm-2016-a/paper.pdf) · [说明](metadata/mcm-2016-a.json) | 水量、空间温度与补水控制；多轮迭代案例，旧评阅未绑定当前 PDF。 |
+| 2020 MCM B · 沙堡抗侵蚀 | [自主终稿 · 22 页](papers/mcm-2020-b-autonomous.pdf) · [说明](metadata/mcm-2020-b-autonomous.json) | 几何界、水分守恒与雨下方案反转；全文及新增证据经作者外 AI 审阅，Meritorious 中心、HM–Finalist 相邻。实测侵蚀和功能失效仍未校准。 |
+| 2023 MCM A · 生态多样性 | [自主迁移稿 · 17 页](papers/mcm-2023-a.pdf) · [说明](metadata/mcm-2023-a.json) | 区分功能密度与物种保留；当前版逐页开发审阅，不评奖，不继承另一版本的旧意见。 |
+| 2024 MCM B · 漂移潜艇搜救 | [科学反馈后继稿 · 22 页](papers/mcm-2024-b.pdf) · [说明](metadata/mcm-2024-b.json) | 连接漂移、探测、搜索与回收时钟；当前版逐页 AI 科学验收，Finalist 中心、Meritorious–Finalist 相邻；真实海流与救援效果未校准。 |
 
-每篇的短说明、页数、SHA-256、评阅身份与证据边界见 [`metadata/`](metadata/)。这些材料不包含题面 PDF、参考论文、原始数据或内部评阅记录。
+## 观测、分类与预测
 
-## MCM paper cases: completed drafts and learning revisions
-
-This gallery brings together Praxis MCM/ICM writing samples so readers can compare problem types, modeling routes, and revision choices. They are modeling and writing exercises—not official COMAP submissions and not evidence of actual awards. Team numbers in these papers are placeholders from the demo-generation configuration.
-
-The gallery distinguishes autonomous work from post-seal revisions based on the same problem. A learning revision depends on earlier work and is not a second independent solution. Reviews were produced by AI; each case records which version was reviewed, the review scope, and remaining limits. Any award-band language is an uncalibrated review opinion, never an award result. Older comments are not carried forward when they do not match the current PDF.
-
-## Cases
-
-| Problem and version | Paper | Identity and review status |
+| 问题与作品 | 论文与版本信息 | 方法、结果与评阅边界 |
 |---|---|---|
-| 2016 A | [Existing primary demo: “A Hot Bath”](../mcm-2016-a/paper.pdf) | Iteratively developed primary case; earlier review is not bound to the current PDF. |
-| 2017 B | [“Merge After Toll”](../../research/merge-after-toll/paper/paper.pdf) | Autonomous completed manuscript; latest review gives no award estimate, and the current PDF lacks a same-hash page-review receipt. |
-| 2020 C | [Autonomous pilot](papers/mcm-2020-c-autonomous.pdf) | Complete AI review; award opinion is uncalibrated. |
-| 2020 C | [Post-seal learning revision](papers/mcm-2020-c-learning.pdf) | Same-task learning paper; the complete source review called it an uncalibrated Meritorious candidate, adjacent to HM–Meritorious. Only a limited final-page check is complete with final pages8–10 and20–26 checked; the coordinator also inspected all26 pages. The older O-center opinion is not carried forward. |
-| 2023 A | [Autonomous transfer paper](papers/mcm-2023-a.pdf) | Current version received page-by-page development review; no award estimate was made or inherited from another version. |
-| 2024 B | [Science-feedback successor](papers/mcm-2024-b.pdf) | Current 22-page version received page-by-page AI science acceptance; award opinion is uncalibrated. |
-| 2025 A | [Autonomous research exercise](papers/mcm-2025-a.pdf) | A research exercise based on the prompt, not a timed first-pass assessment; full AI review, uncalibrated award opinion. |
-| 2025 C | [Autonomous manuscript](papers/mcm-2025-c-autonomous.pdf) | Page-by-page visual review completed; no full scientific or award review is bound to this version. |
-| 2025 C | [Post-seal learning revision](papers/mcm-2025-c-learning.pdf) | Same-task learning paper; the available scientific review is bound to an older version, so this PDF has no current award assessment. |
+| 2020 MCM C · 消费评论 | [自主先导 · 23 页](papers/mcm-2020-c-autonomous.pdf) · [说明](metadata/mcm-2020-c-autonomous.json) | 评论分母、产品构成与历史信息；完整 AI 评阅，奖档未校准，缺销售真值和真人语义标注。 |
+| 2020 MCM C · 消费评论 | [同题学习修订 · 26 页](papers/mcm-2020-c-learning.pdf) · [说明](metadata/mcm-2020-c-learning.json) | 初始完整稿获 Meritorious 候选、HM–Meritorious 相邻；最终源码差异及第 8–10、20–26 页增量核对，协调者另查看全部 26 页。未重新评最终整稿，旧 O 中心意见不沿用。 |
+| 2021 MCM C · 亚洲大黄蜂报告 | [自主终稿 · 19 页](papers/mcm-2021-c-autonomous.pdf) · [说明](metadata/mcm-2021-c-autonomous.json) | 稀少验证、信息时点与调查队列；完整修订稿及指定数值经作者外 AI 复核，Finalist 中心、Meritorious–Finalist 相邻。未取得图像像素，不是图像分类研究。 |
+| 2025 MCM A · 楼梯磨损 | [自主研究练习 · 19 页](papers/mcm-2025-a.pdf) · [说明](metadata/mcm-2025-a.json) | 从磨损反推历史；不是限时首轮测评。完整 AI 评阅，Finalist 中心、Meritorious–Outstanding 相邻；未校准且存在非盲评限制。 |
+| 2025 MCM C · 奥运奖牌预测 | [自主稿 · 20 页](papers/mcm-2025-c-autonomous.pdf) · [说明](metadata/mcm-2025-c-autonomous.json) | 跨项目机会组合；逐页视觉检查完成，当前版没有绑定的完整科学或奖档评阅。 |
+| 2025 MCM C · 奥运奖牌预测 | [同题学习修订 · 21 页](papers/mcm-2025-c-learning.pdf) · [说明](metadata/mcm-2025-c-learning.json) | 与自主稿比较信息边界、校准和不确定性表达；现有科学评语绑定旧版本，当前稿未重新评档。 |
 
-Short notes, page counts, SHA-256 digests, reviewer identities, and evidence limits are recorded in [`metadata/`](metadata/). The gallery excludes problem PDFs, reference papers, raw data, and internal review records.
+## 风险与跨期决策
+
+| 问题与作品 | 论文与版本信息 | 方法、结果与评阅边界 |
+|---|---|---|
+| 2017 MCM B · 收费站汇流 | [自主完成稿 · 17 页](../../research/merge-after-toll/paper/paper.pdf) · [说明](metadata/mcm-2017-b.json) | 支付兼容、汇合与有限出口空间；最新语义评阅不评奖，已有逐页视觉回执绑定更早 PDF。 |
+| 2024 ICM E · 沿海保险与遗产保护 | [自主终稿 · 22 页](papers/icm-2024-e-autonomous.pdf) · [说明](metadata/icm-2024-e-autonomous.json) | 承保、续期资金、开发与威尼斯圣马可大教堂保护；前一完整稿获 Meritorious 中心、HM–Finalist 相邻意见，最终有限文字修订经增量验收，按不变科学内容继承该意见。 |
+
+## 三份自主终稿的阅读重点
+
+三篇均在事前固定的自主周期内完成，使用 Praxis **0.7.1**，包括已披露的科学反馈，随后封存。同题参考学习发生在封存之后；这里提供的是封存时的原 PDF。它们是次要案例，原[热水浴主 Demo](../mcm-2016-a/README.md)保留完整说明与复现入口。
+
+### 沙堡：寿命更长是否意味着基础更好
+
+在同为 30 L 的条件下，合成干燥情景中的薄椭圆候选保留半数沙体达 15.62 h，圆锥为 9.00 h；但椭圆只有 1.94 cm 高，加入 10 cm 的有用高度要求后选择转向圆锥。5 mm/h 的给定降雨情景也使排名反转：椭圆为 1.08 h，圆锥为 3.90 h。报告把有限候选搜索与有明确条件的几何最优界分开，并用水量账本、独立积分和固定阻力对照核查结果。
+
+作者外 AI 审阅覆盖当前全部 22 页、图表及两页公众文章；新增对照单独核验，不变结果按原证据身份接续。模型没有实测海滩侵蚀系数，半体积留存也不等于承载或局部冲刷下的功能存续。封存前搜索意外显示过一段同题学生材料摘要，其影响未知，因此不声称严格盲测。
+
+### 大黄蜂：排名有用，概率与灭绝结论仍需证据
+
+4440 条报告仅有 14 条确认阳性，另有 2357 条结果未定。以文本、地理位置和日期建立的模型，在 1697 条较晚已核实报告中，前 85 名包含全部 6 条阳性；但概率误差比基率基线更差，移除明确的机构记录后只找回 4 条阳性中的 3 条。报告据此提出分级调查队列与探索配额，并区分已核实报告的评分、未核实报告的真实概率和监测系统的检出能力。
+
+同一作者外 AI 评阅者查看修订稿全部 19 页、三图六表和两页机构备忘录，独立核对指定代数、队列与 2000 次重采样。修订未提高原预测器的点表现。图像像素未取得，标签何时可用和跨地区迁移仍未知；公众报告没有再发现大黄蜂，不能据此证明灭绝。
+
+### 沿海保险：本年可承保，次年资金可能断开
+
+报告把水位损失、保费可负担性、灾后资本与续期联系起来，并在三年有限情景中核算外部资金及费用。圣马可大教堂的条件单年报价 EUR 195,469 可容纳于 EUR 200,000；加入 2% 资金承诺费用后为 EUR 207,781，原预算因此失败，且另需 EUR 1.4775 m 三年外部资本。EUR 208,000 是待批准的替代预算，并非已获资金。
+
+作者外 AI 曾完整查看前一 22 页科学修订稿并独立检查资金路径、风险界和净现值；最终版本只修正局部解释与 AI 披露，实际增量查看第 16–20、22 页，不构成新的整稿评奖。真实工程、需求、损失和资金提供者条款仍是条件输入。三年承诺不能保证三十年开发评估所需的持续续期。
+
+## 版本与材料
+
+[`metadata/`](metadata/) 记录每篇的标题、PDF 路径、总页数、SHA-256、稿件身份与实际评阅范围。原 PDF 的复制或阅读入口整理不会产生新的计算、科学验收或奖档；旧稿意见只保留在其对应版本。
+
+图库提供选定论文及读者说明，不附题面、获奖参考论文、原始数据、完整计算复现包或私人评阅记录。论文中的 AI 使用披露保留原文；完整原始聊天、确切模型用量与历史正式参赛合规性没有得到认证。

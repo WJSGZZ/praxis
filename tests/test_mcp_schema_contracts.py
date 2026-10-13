@@ -285,3 +285,10 @@ def test_known_invalid_json_or_constraint_violations_are_rejected(value, schema)
 ])
 def test_known_valid_json_schema_boundary_cases(value, schema):
     validate(value, schema)
+
+
+def test_json_schema_default_is_a_finite_json_annotation():
+    schema = {"type": ["number", "null"], "default": None}
+    validate(None, schema)
+    with pytest.raises(ContractError):
+        check_schema({"type": "number", "default": float("inf")})

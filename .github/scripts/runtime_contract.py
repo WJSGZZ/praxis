@@ -118,14 +118,15 @@ class Contract:
             "contract_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "dependency_installation_performed": False,
             "commands": [], "MCP": {"messages": []},
-            "scope": "Actual recorded OS only; tiny LP/pipeline/stdio and three professional arithmetic checks, not all tools, sampling validity or desktop-host installation.",
+            "scope": "Actual recorded OS only; tiny LP/pipeline/stdio and four professional arithmetic checks, not all tools, sampling validity or desktop-host installation.",
         }
         self.save()
 
     def bind_source(self):
         files = ["pyproject.toml", "uv.lock", "scripts/pipeline.py", "scripts/mcp_server.py",
                  "scripts/bounded_execution.py", "modeling/optimize.py", "modeling/schema_contracts.py",
-                 "modeling/data_analysis.py", "modeling/inference.py", "modeling/regression.py", "scripts/audit_data.py"]
+                 "modeling/data_analysis.py", "modeling/inference.py", "modeling/regression.py", "scripts/audit_data.py",
+                 "modeling/image_analysis.py"]
         for name in files:
             self.record["source_sha256"][name] = hashlib.sha256((self.bundle / name).read_bytes()).hexdigest()
         self.save()
@@ -245,9 +246,25 @@ class Contract:
                     abs(clustered["covariance"]["matrix"][0][0] - float(Fraction(7, 12))) > 1e-12 or
                     clustered["covariance"]["df_inference"] != 5):
                 raise ValueError("Cluster smoke disagrees with the six-group mean variance 7/12")
+            # A directly counted 2x2 rectangle. Its center is at index(1.5,1.5)
+            # and at physical(4,6) from the outer top-left corner, not(3,4.5).
+            image = call(10, "binary_components", {
+                "mask": [[0, 0, 0, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 0, 0, 0]],
+                "pixel_size": [2, 3], "unit": "mm"})
+            region = image["components"][0]
+            if (image["raw_component_count"] != 1 or image["foreground_pixels"] != 4 or
+                    region["bbox"] != [1, 1, 3, 3] or region["centroid"] != [1.5, 1.5] or
+                    region["physical_area"] != 24 or region["physical_centroid"] != [4, 6] or
+                    image["calibration"]["status"] != "caller_declared_not_verified"):
+                raise ValueError("Image smoke disagrees with independently counted rectangle geometry")
+            bad_image = client.request(11, "tools/call", {"name": "binary_components", "arguments": {
+                "mask": [[1]], "pixel_size": ["2", "3"], "unit": "mm"}})
+            if bad_image["result"].get("isError") is not True or client.request(12, "ping").get("result") != {}:
+                raise ValueError("Image calibration input rejection or subsequent recovery failed")
             self.record["MCP"].update(server_info=initialized["result"]["serverInfo"],
                                       tools=len(tools), LP_optimum=10,
-                                      professional_arithmetic={"holm": True, "join": True, "cluster_mean_variance": "7/12"},
+                                      professional_arithmetic={"holm": True, "join": True, "cluster_mean_variance": "7/12",
+                                                               "image_rectangle_area": 24, "image_error_recovery": True},
                                       invalid_then_ping_and_LP_recovery=True)
             self.save()
 

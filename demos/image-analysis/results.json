@@ -1,0 +1,352 @@
+{
+  "connectivity_4": {
+    "schema_version": 1,
+    "shape": [
+      32,
+      40
+    ],
+    "coordinate_contract": "zero-based [row, col] pixel-center indices; bbox is [row_min, col_min, row_max_exclusive, col_max_exclusive]",
+    "connectivity": 4,
+    "filters": {
+      "min_pixels": 1,
+      "exclude_border": false,
+      "filter_order": "border_then_small; mutually exclusive rejection counts"
+    },
+    "raw_component_count": 7,
+    "foreground_pixels": 72,
+    "filtered_component_count": 7,
+    "filtered_pixels": 72,
+    "excluded_border_components": 0,
+    "excluded_small_components": 0,
+    "max_components": 200,
+    "returned_component_count": 7,
+    "returned_pixels": 72,
+    "truncated": false,
+    "components": [
+      {
+        "id": 1,
+        "pixel_area": 1,
+        "bbox": [
+          0,
+          38,
+          1,
+          39
+        ],
+        "centroid": [
+          0.0,
+          38.0
+        ],
+        "touches_border": true
+      },
+      {
+        "id": 2,
+        "pixel_area": 42,
+        "bbox": [
+          4,
+          4,
+          10,
+          11
+        ],
+        "centroid": [
+          6.5,
+          7.0
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 3,
+        "pixel_area": 1,
+        "bbox": [
+          5,
+          28,
+          6,
+          29
+        ],
+        "centroid": [
+          5.0,
+          28.0
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 4,
+        "pixel_area": 1,
+        "bbox": [
+          6,
+          29,
+          7,
+          30
+        ],
+        "centroid": [
+          6.0,
+          29.0
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 5,
+        "pixel_area": 1,
+        "bbox": [
+          13,
+          22,
+          14,
+          23
+        ],
+        "centroid": [
+          13.0,
+          22.0
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 6,
+        "pixel_area": 22,
+        "bbox": [
+          16,
+          4,
+          21,
+          12
+        ],
+        "centroid": [
+          18.81818181818182,
+          6.681818181818182
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 7,
+        "pixel_area": 4,
+        "bbox": [
+          25,
+          31,
+          27,
+          33
+        ],
+        "centroid": [
+          25.5,
+          31.5
+        ],
+        "touches_border": false
+      }
+    ],
+    "interpretation": "Measurements describe connected regions in the supplied binary mask only; no image segmentation, semantic classification, or real-object count is certified.",
+    "area_unit": "pixels"
+  },
+  "connectivity_8": {
+    "schema_version": 1,
+    "shape": [
+      32,
+      40
+    ],
+    "coordinate_contract": "zero-based [row, col] pixel-center indices; bbox is [row_min, col_min, row_max_exclusive, col_max_exclusive]",
+    "connectivity": 8,
+    "filters": {
+      "min_pixels": 1,
+      "exclude_border": false,
+      "filter_order": "border_then_small; mutually exclusive rejection counts"
+    },
+    "raw_component_count": 6,
+    "foreground_pixels": 72,
+    "filtered_component_count": 6,
+    "filtered_pixels": 72,
+    "excluded_border_components": 0,
+    "excluded_small_components": 0,
+    "max_components": 200,
+    "returned_component_count": 6,
+    "returned_pixels": 72,
+    "truncated": false,
+    "components": [
+      {
+        "id": 1,
+        "pixel_area": 1,
+        "bbox": [
+          0,
+          38,
+          1,
+          39
+        ],
+        "centroid": [
+          0.0,
+          38.0
+        ],
+        "touches_border": true
+      },
+      {
+        "id": 2,
+        "pixel_area": 42,
+        "bbox": [
+          4,
+          4,
+          10,
+          11
+        ],
+        "centroid": [
+          6.5,
+          7.0
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 3,
+        "pixel_area": 2,
+        "bbox": [
+          5,
+          28,
+          7,
+          30
+        ],
+        "centroid": [
+          5.5,
+          28.5
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 4,
+        "pixel_area": 1,
+        "bbox": [
+          13,
+          22,
+          14,
+          23
+        ],
+        "centroid": [
+          13.0,
+          22.0
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 5,
+        "pixel_area": 22,
+        "bbox": [
+          16,
+          4,
+          21,
+          12
+        ],
+        "centroid": [
+          18.81818181818182,
+          6.681818181818182
+        ],
+        "touches_border": false
+      },
+      {
+        "id": 6,
+        "pixel_area": 4,
+        "bbox": [
+          25,
+          31,
+          27,
+          33
+        ],
+        "centroid": [
+          25.5,
+          31.5
+        ],
+        "touches_border": false
+      }
+    ],
+    "interpretation": "Measurements describe connected regions in the supplied binary mask only; no image segmentation, semantic classification, or real-object count is certified.",
+    "area_unit": "pixels"
+  },
+  "filtered_8": {
+    "schema_version": 1,
+    "shape": [
+      32,
+      40
+    ],
+    "coordinate_contract": "zero-based [row, col] pixel-center indices; bbox is [row_min, col_min, row_max_exclusive, col_max_exclusive]",
+    "connectivity": 8,
+    "filters": {
+      "min_pixels": 3,
+      "exclude_border": true,
+      "filter_order": "border_then_small; mutually exclusive rejection counts"
+    },
+    "raw_component_count": 6,
+    "foreground_pixels": 72,
+    "filtered_component_count": 3,
+    "filtered_pixels": 68,
+    "excluded_border_components": 1,
+    "excluded_small_components": 2,
+    "max_components": 200,
+    "returned_component_count": 3,
+    "returned_pixels": 68,
+    "truncated": false,
+    "components": [
+      {
+        "id": 2,
+        "pixel_area": 42,
+        "bbox": [
+          4,
+          4,
+          10,
+          11
+        ],
+        "centroid": [
+          6.5,
+          7.0
+        ],
+        "touches_border": false,
+        "physical_area": 2.52,
+        "physical_centroid": [
+          1.5,
+          2.1
+        ]
+      },
+      {
+        "id": 5,
+        "pixel_area": 22,
+        "bbox": [
+          16,
+          4,
+          21,
+          12
+        ],
+        "centroid": [
+          18.81818181818182,
+          6.681818181818182
+        ],
+        "touches_border": false,
+        "physical_area": 1.3199999999999998,
+        "physical_centroid": [
+          1.4363636363636365,
+          5.795454545454546
+        ]
+      },
+      {
+        "id": 6,
+        "pixel_area": 4,
+        "bbox": [
+          25,
+          31,
+          27,
+          33
+        ],
+        "centroid": [
+          25.5,
+          31.5
+        ],
+        "touches_border": false,
+        "physical_area": 0.24,
+        "physical_centroid": [
+          6.4,
+          7.8
+        ]
+      }
+    ],
+    "interpretation": "Measurements describe connected regions in the supplied binary mask only; no image segmentation, semantic classification, or real-object count is certified.",
+    "physical_foreground_area": 4.32,
+    "physical_filtered_area": 4.08,
+    "calibration": {
+      "pixel_size": [
+        0.2,
+        0.3
+      ],
+      "unit": "mm",
+      "area_unit": "mm^2",
+      "status": "caller_declared_not_verified",
+      "origin": "top-left pixel corner"
+    }
+  }
+}

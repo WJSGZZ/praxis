@@ -8,7 +8,7 @@
 
 读懂题目，建好模型，把结果写成一份有依据的报告。
 
-[![Version](https://img.shields.io/badge/Version-0.7.0-263B9B?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/github/v/release/WJSGZZ/praxis?label=Version&color=263B9B&style=flat-square)](CHANGELOG.md)
 [![Tests](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml/badge.svg)](https://github.com/WJSGZZ/praxis/actions/workflows/tests.yml)
 [![Agent Plugins](https://img.shields.io/badge/Agent_Plugins-1.0-302B31?style=flat-square)](https://agent-plugins.org/specification)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
@@ -23,9 +23,9 @@
 
 **Praxis 是面向通用数学建模的 Agent 插件**：一个入口协调专业技能，可直接调用数学工具，并带着证据工作流。它帮助个人或团队从问题和数据出发，完成**模型、核验和报告**；也可以只用于数据分析、统计推断、审查假设与模型、验证结果或改进论文。
 
-研究、课程、比赛，以及资源分配、环境分析、公共服务和工程决策等现实问题，都可以使用这套工作方式。先明确目标、约束与数据，再建立可解释的基线，按需要增加复杂度；遇到陌生问题，先找出它背后的数学结构，比较几条不同的路线并留下记录；没有标准答案时，用猜想、反例和高精度检验产出带把握等级的结论；让需求、计算、验证和报告中的结论彼此对应，减少整理、重复计算与协作交接的负担，把精力留给关键判断。
+研究、课程、竞赛和实际决策共用这套流程：定义目标与数据，比较结构不同的路线，建立可解释的基线，再用独立答案和边界检查决定能下多强的结论。陌生或开放问题可以从猜想、反例和精确检查开始。
 
-不需要先会写全部代码：你可以用日常语言质疑模型，Praxis 将疑问转成可检查的情景，并记录实际采纳与修改。写作按中文、英文各自的表达习惯处理；赛事评估先讲奖项档次、依据与改进价值，诊断分用于内部定位。目标是更有竞争力的作品，先形成完整交付，再深入值得改进的关键问题。
+你可以整题推进，也可以只调用一项专业能力。下面的案例提供完整论文、结果和复现入口；技能表说明每个模块适合什么请求，工具表对应实际可调用的方法。
 
 <table>
 <tr>
@@ -66,17 +66,15 @@
 </tr>
 </table>
 
-**[更多案例 →](demos/README.md)** 从组合计数与开放数学探索，到有完整证据的决策研究。
+**[更多案例 →](demos/README.md)** 数据分析、空间覆盖、图像测量、数学研究及次要美赛论文集中在案例总览。
 
 论文由共享版式源生成：国赛、美赛分别适配，数学研究稿使用 [AMS 风格模板](templates/research-paper.tex)。固定编译环境、样式漂移检查和三系统排版 CI 用来维持一致；新美赛稿明确使用原题年份，摘要采用三栏信息；正文与目录可按需要使用三级标题。冻结案例保留原版式，迁移另存修订。章节与图按论证需要选择，最终仍检查实际 PDF。图由有效数据生成，使用 PGFplots/TikZ 矢量绘制，复杂数值场可按需求使用成熟科学绘图库。
-
-如果你也希望把建模推进到一份可核查的完整作品，欢迎 **Star Praxis**，或先用下面的方式试一次。
 
 ## 快速开始
 
 ### 1. 选择你的 Agent
 
-**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [0.7.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.7.0) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
+**安装完整插件：专业技能 + 数学工具 + 证据工作流。** 可从 [最新 Release](https://github.com/WJSGZZ/praxis/releases/latest) 下载对应宿主包并核对校验和，也可从源码导出当前能力：
 
 ```bash
 git clone https://github.com/WJSGZZ/praxis.git
@@ -124,7 +122,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 技能一览
 
-一个入口负责整题，二十二个专项处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
+一个入口协调整题，专业技能处理各自的请求。只想做一件事时，直接调用对应技能，不必走完整流程；专业分析复用 Pandas、SciPy、Statsmodels、scikit-learn 等成熟库。
 
 | 技能 | 适合的请求 | 内容 |
 |---|---|---|
@@ -132,6 +130,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | [`praxis-model`](skills/praxis-model/SKILL.md) | “这题怎么做？参数怎么定？” | 读题与定义、假设和参数依据、路线与模型选择、可辨识性与优化结构 |
 | [`praxis-data-analysis`](skills/praxis-data-analysis/SKILL.md) | “分析这几张表，看看数据能说明什么” | 数据质量、观测单位、缺失与覆盖、关联基数、分母和探索结果 |
 | [`praxis-spatial-analysis`](skills/praxis-spatial-analysis/SKILL.md) | “点位怎么匹配，距离和覆盖约束靠谱吗” | 坐标与单位、空间关系、栅格对齐、覆盖边和局部可达；按需复用成熟GIS库 |
+| [`praxis-image-analysis`](skills/praxis-image-analysis/SKILL.md) | “图像如何变成测量？阈值、连接和标注可信吗？” | 图像观测单位、ROI与尺度、掩码与连接测量、源家族分割、误差与语义验证 |
 | [`praxis-statistics`](skills/praxis-statistics/SKILL.md) | “差异有多大？重复测量应该怎样检验？” | 估计对象、区间和效应、配对与聚类、多重比较及统计条件 |
 | [`praxis-text-analysis`](skills/praxis-text-analysis/SKILL.md) | “评论主要谈什么？文本特征可信吗？” | 语料与标注、特征、抽查与语义误差、训练和留出边界 |
 | [`praxis-time-series`](skills/praxis-time-series/SKILL.md) | “预测未来几期，和简单基线比一比” | 时间与实体、可用信息、预测跨度、滚动验证与误差 |
@@ -179,6 +178,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |
 | 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
 | 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（有限核对证明）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
+| 图像测量 | `binary_components`（给定二维二值掩码的连接区域、像素面积、边界框与质心；物理尺度须显式提供） |
 | 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
 | 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
@@ -237,7 +237,7 @@ praxis-plugin/
     praxis/                 # 入口技能，带全部参考、脚本与工具代码
     praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
     praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
-    praxis-spatial-analysis/
+    praxis-spatial-analysis/  praxis-image-analysis/
     praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
 ```
 

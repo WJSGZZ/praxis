@@ -1,0 +1,44 @@
+{
+  "input_mask": "synthetic 32x40 binary mask from the demo run",
+  "visible_components": [
+    {
+      "id": 2,
+      "pixels": 42,
+      "bbox": [
+        4,
+        4,
+        10,
+        11
+      ]
+    },
+    {
+      "id": 5,
+      "pixels": 22,
+      "bbox": [
+        16,
+        4,
+        21,
+        12
+      ]
+    },
+    {
+      "id": 6,
+      "pixels": 4,
+      "bbox": [
+        25,
+        31,
+        27,
+        33
+      ]
+    }
+  ],
+  "excluded_foreground_pixels": 4,
+  "colors": {
+    "2": "accent",
+    "5": "oisky",
+    "6": "main"
+  },
+  "axis_orientation": "row zero at top; pixel centers at integer coordinates; bounding-box edges at half integers",
+  "pdf_sha256": "08a783f9d42575e558c4a302ee02d2e02ffa8975a942565f6a41f5d5cbdb797d",
+  "visual_review": "required"
+}

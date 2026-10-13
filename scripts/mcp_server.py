@@ -34,6 +34,7 @@ class _Lazy:
 
 decision, regression, sensitivity, inference = _Lazy('modeling.decision'), _Lazy('modeling.regression'), _Lazy('modeling.sensitivity'), _Lazy('modeling.inference')
 data_analysis = _Lazy('modeling.data_analysis')
+image_analysis = _Lazy('modeling.image_analysis')
 prediction_validation = _Lazy('modeling.prediction_validation')
 audit_data, check_references, literature = _Lazy('scripts.audit_data'), _Lazy('scripts.check_references'), _Lazy('scripts.literature')
 
@@ -276,6 +277,14 @@ EDGES = {'type': 'array', 'items': {'type': 'array', 'minItems': 3, 'maxItems': 
 SERIES = {'type': 'array', 'items': {'type': 'number'}}
 
 
+def _image_components(a):
+    return image_analysis.binary_components(
+        a['mask'], connectivity=a.get('connectivity', 8),
+        min_pixels=a.get('min_pixels', 1), exclude_border=a.get('exclude_border', False),
+        max_components=a.get('max_components', 200),
+        pixel_size=a.get('pixel_size'), unit=a.get('unit'))
+
+
 def _nlp(a):
     names = a['names']
     objective = _scalar(a['objective'], names)
@@ -306,6 +315,14 @@ def _tool(name, description, properties, required, function):
 
 
 TOOLS = dict([
+    _tool('binary_components', 'Measure connected regions in an explicitly supplied 2-D binary mask. Reports pixel areas, bounding boxes and pixel-center centroids; optional caller-declared [xsize, ysize] scale adds physical areas/centroids. This is not image segmentation, semantic classification, or certification of real-object counts.',
+          {'mask': {'type': 'array', 'minItems': 1, 'maxItems': 512, 'items': {'type': 'array', 'minItems': 1, 'maxItems': 512, 'items': {'type': ['number', 'boolean']}, 'description': 'Each row must have equal length; total elements are limited to 65536. Values must be booleans or finite numeric 0/1.'}},
+           'connectivity': {'type': 'integer', 'enum': [4, 8], 'default': 8, 'description': 'Default 8; choose 4 for edge-only adjacency or 8 to include diagonal adjacency.'},
+           'min_pixels': {'type': 'integer', 'minimum': 1, 'maximum': 65536, 'default': 1, 'description': 'Default 1; components below this size are excluded after border filtering.'},
+           'exclude_border': {'type': 'boolean', 'default': False, 'description': 'Default false; when true, border-touching components are excluded before the small-component filter.'},
+           'max_components': {'type': 'integer', 'minimum': 0, 'maximum': 1000, 'default': 200, 'description': 'Default 200; caps returned component geometries only. All raw and filtered counts/pixel totals are still computed; zero returns none.'},
+           'pixel_size': {'type': ['array', 'null'], 'default': None, 'minItems': 2, 'maxItems': 2, 'prefixItems': [{'type': 'number'}, {'type': 'number'}], 'items': False, 'description': 'Optional [xsize, ysize] positive finite real scale; null or omission means pixel units only.'},
+           'unit': {'type': ['string', 'null'], 'default': None, 'description': 'Required when pixel_size is supplied; nonempty, at most 32 characters. Omit or pass null without scale.'}}, ['mask'], _image_components),
     _tool('audit_data', 'Read-only audit of CSV/TSV/Excel: original and parsed headers, missingness, duplicates, declared data contract and scan coverage; hashes the original.',
           {'path': {'type': 'string'}, 'sheet': {'type': ['string', 'integer']}, 'encoding': {'type': 'string'}, 'sep': {'type': 'string'},
            'contract': {'type': 'object'}, 'max_rows': {'type': 'integer', 'minimum': 1}, 'missing_values': {'type': 'array'}, 'keep_default_na': {'type': 'boolean'}}, ['path'],
@@ -523,6 +540,7 @@ TOOLS = dict([
 
 # One minimal, runnable call per tool that needs a shape to be guessed; a test calls every example, so they stay correct.
 EXAMPLES = {
+    'binary_components': dict(mask=[[0, 0, 0], [0, 1, 1], [0, 0, 0]], connectivity=8, min_pixels=1, exclude_border=False, max_components=200, pixel_size=None, unit=None),
     'audit_join': dict(left=[dict(id=1, value=10), dict(id=2, value=20), dict(id=3, value=30)],
                       right=[dict(id=1, group='A'), dict(id=3, group='B')], on='id', relationship='many_to_one'),
     'adjust_pvalues': dict(pvalues=[.01, .04, .03, .2], hypothesis_ids=['h1', 'h2', 'h3', 'h4'], family_id='planned-effects', method='bh'),

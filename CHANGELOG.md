@@ -3,6 +3,17 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 0.8.0 · 2026-10-13
+
+- 新增图像分析专业入口与 `binary_components` 工具，复用 SciPy 测量显式二维二值掩码的连通区域、面积、边界框和质心。物理尺度由调用者显式声明，像素连接不自动等于真实对象；默认依赖保持。
+  Image analysis adds a specialist route and a SciPy-backed `binary_components` tool for supplied 2-D binary masks. Measurements include connected regions, areas, boxes and centroids. Physical scale is caller-declared, and a connected region does not certify a real object. Default dependencies are unchanged.
+- 新增可复现的原创图像测量案例，连接邻接、边界排除、区域面积过滤和尺度选择，给出独立小例核验与实际科研图；专业规范明确原图像家族先分割、后增强，语义标签和部署概率须另核。
+  A reproducible synthetic image study links adjacency, border exclusion, region-size filtering and declared scale to independently checked measurements and scientific figures. Image-family splits precede augmentation; semantic labels and deployment probabilities retain separate validation requirements.
+- 完善目标人群与选择运输、零事件重采样的指标定义、跨期资源与外部支持、共同情景比较和技术结果到读者动作的专业职责。三份自主美赛论文进入次要案例，保留各自版本、范围和未校准评议。
+  Shared guidance covers population targets, selection transport, zero-event resampling, recurring resources, priced external support, matched comparison conditions and actionable scientific writing. Three autonomous competition papers join the secondary gallery with their version-specific scope and uncalibrated reviews.
+- 双语首页与安装入口同步；发布说明从对应版本的双语更新记录生成。新增展示一致性检查，核对实际技能／工具目录、版本和下载入口；旧发布附件与数学证据保持原身份。
+  Both README languages and installation entry points are synchronized. Release notes are rendered from the selected bilingual changelog entry. Presentation checks compare the actual skill/tool registry, version and download links; historical packages and mathematical evidence keep their identities.
+
 ## 0.7.1 · 2026-10-13
 
 - 增加空间分析专业入口，共二十三个技能，处理坐标与单位、空间关系、栅格对齐和覆盖／可达约束；复用现有SciPy与网络优化，专业GIS库按实际需要另选，不增加默认依赖。

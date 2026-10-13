@@ -27,13 +27,15 @@ Explore two complete solutions with different mathematical demands: investment a
 </tr>
 </table>
 
-**[Additional MCM studies](https://github.com/WJSGZZ/praxis/tree/main/demos/mcm-studies)** collect autonomous pilots, learning revisions and research papers, with version-specific review limits. The two primary demonstrations remain the starting points.
+**[MCM and ICM paper studies](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md)** include sandcastle design, hornet report triage and coastal insurance alongside earlier work, organized by modeling problem. Autonomous manuscripts, same-task learning revisions and research papers retain their identities and version-specific AI review limits. The two primary demonstrations remain the starting points.
 
 ## Data analysis
 
 **[Repeated observations, defensible comparisons →](data-analysis/README.en.md)** Follow forty-eight weekly observations from twelve synthetic stores through explicit data declarations, join cardinality, clustered inference, Holm adjustment and separate arithmetic checks. The runnable example retains inputs and rejected joins; its associations are not evidence about real stores or causal effects.
 
 **[Coverage, capacity and local bottlenecks →](spatial-analysis/README.en.md)** Spatial reachability changes the resources required by a synthetic service network. Feasible allocations and separate bounds establish costs of 17 at nominal locations and 25 under bounded position errors; a facility failure exposes why total capacity alone is insufficient. The study includes real data-driven figures and a runnable fixed scenario.
+
+**[Measure regions in a binary mask →](image-analysis/README.en.md)** A synthetic 32-by-40 mask has 7 regions under 4-connectivity and 6 under 8-connectivity. Border and size rules retain 3 regions and 68 pixels. Independent pixel arithmetic supports areas, boxes and centroids; the runnable study shows the declared scale and actual scientific figure without equating regions with real objects.
 
 ## Mathematical research
 
