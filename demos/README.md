@@ -27,7 +27,7 @@
 </tr>
 </table>
 
-更多作品见 **[美赛建模论文](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.md)**：沙堡抗侵蚀、大黄蜂报告分流与沿海保险等次要案例，按问题类型组织。自主稿、同题学习修订和研究稿各有版本说明，AI 评阅只用于对应稿件；两个主 Demo 保持原入口。
+更多作品见 **[美赛建模论文](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.md)**：沙堡抗侵蚀、大黄蜂报告分流、沿海保险等，每题选一份代表作，按建模问题分类。评阅依据与适用范围见对应说明。
 
 ## 专业数据分析
 

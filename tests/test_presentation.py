@@ -154,3 +154,22 @@ def test_gallery_catalog_can_grow_without_hard_coded_problem_count(tmp_path):
         start = text.index(next_heading, text.index('\n## ', text.index('\n## ') + 1))
         path.write_text(text[:start] + '\n' + row + text[start:])
     assert check_gallery(tmp_path)['errors'] == []
+
+
+def test_gallery_rejects_duplicate_paper_row_under_unknown_heading(tmp_path):
+    from scripts.check_presentation import check_gallery
+    gallery = _gallery_copy(tmp_path)
+    path = gallery/'README.md'
+    text = path.read_text(); row = next(line for line in text.splitlines()
+                                       if 'metadata/mcm-2016-a.json' in line)
+    path.write_text(text+'\n## 旧版本\n\n'+row+'\n')
+    assert any('all displayed paper rows' in error for error in check_gallery(tmp_path)['errors'])
+
+
+def test_gallery_rejects_wrong_visible_problem_label(tmp_path):
+    from scripts.check_presentation import check_gallery
+    gallery = _gallery_copy(tmp_path)
+    path = gallery/'README.en.md'
+    path.write_text(path.read_text().replace('2017 MCM B · Toll-plaza',
+                                            '2016 MCM A · Toll-plaza'))
+    assert any('displayed problem label differs' in error for error in check_gallery(tmp_path)['errors'])

@@ -1,6 +1,6 @@
 # MCM and ICM Modeling Papers
 
-Ten historical contest problems, one current representative paper each. The collection is organized around physical mechanisms and engineering, data analysis and inverse problems, and long-term risk and decisions. Every row links to its paper and a concise record.
+Selected historical contest problems, one current representative paper each. The collection is organized around physical mechanisms and engineering, data analysis and inverse problems, and long-term risk and decisions. Every row links to its paper and a concise record.
 
 [简体中文](README.md) · **English** · [All cases](../README.en.md)
 

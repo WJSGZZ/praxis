@@ -47,7 +47,7 @@ def check_gallery(root=ROOT):
     if not catalog_path.is_file():
         return {'entries': 0, 'errors': [f'Gallery catalog is missing: {catalog_path}']}
     try:
-        catalog = json.loads(catalog_path.read_text())
+        catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
         entries = catalog['entries']
     except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
         return {'entries': 0, 'errors': [f'Invalid gallery catalog: {exc}']}
@@ -91,7 +91,7 @@ def check_gallery(root=ROOT):
         slug = entry.get('slug', '<missing-slug>')
         try:
             metadata_path = gallery / entry['metadata']
-            metadata = json.loads(metadata_path.read_text())
+            metadata = json.loads(metadata_path.read_text(encoding='utf-8'))
             pdf = (gallery / entry['pdf_path']).resolve()
             if not pdf.is_file():
                 errors.append(f'{slug}: PDF is missing: {entry["pdf_path"]}')
@@ -115,8 +115,13 @@ def check_gallery(root=ROOT):
         if not path.is_file():
             errors.append(f'{lang}: gallery README is missing')
             continue
-        text = path.read_text()
+        text = path.read_text(encoding='utf-8')
         row_slugs = []
+        # Include every displayed paper row, even under an unrecognized heading.
+        paper_rows = [line for line in text.splitlines()
+                      if line.startswith('|') and re.search(r'\]\([^)]*\.pdf\)', line)]
+        if len(paper_rows) != len(entries):
+            errors.append(f'{lang}: all displayed paper rows must match the catalog exactly once')
         section_categories = {title: category
                               for category, title in ((key, value[lang])
                                                       for key, value in GALLERY_CATEGORIES.items())}
@@ -150,7 +155,13 @@ def check_gallery(root=ROOT):
                 elif matching[0].get('category') != category:
                     errors.append(f'{lang}: row is under the wrong category for {matching[0]["slug"]}')
                 else:
-                    row_slugs.append(matching[0]['slug'])
+                    entry = matching[0]
+                    label = row.split('|')[1].strip()
+                    identity = (rf"^{entry['edition']}\s+{re.escape(entry['contest'])}"
+                                rf"\s+{re.escape(entry['problem'])}\b")
+                    if not re.match(identity, label):
+                        errors.append(f'{lang}: displayed problem label differs from {entry["slug"]}')
+                    row_slugs.append(entry['slug'])
         expected_categories = {entry.get('category') for entry in entries}
         if seen_categories != expected_categories:
             errors.append(f'{lang}: README sections do not match catalog categories')
@@ -160,18 +171,18 @@ def check_gallery(root=ROOT):
 
 
 def check(root=ROOT):
-    project = tomllib.loads((root / 'pyproject.toml').read_text())['project']
+    project = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']
     version = project['version']
-    manifest = json.loads((root / 'packaging/plugin.json').read_text())
+    manifest = json.loads((root / 'packaging/plugin.json').read_text(encoding='utf-8'))
     errors = [] if manifest['version'] == version else ['Plugin and project versions differ']
     skills = {'praxis', *build_plugin.FOCUSED}
     for language, file in [('zh', 'README.md'), ('en', 'README.en.md')]:
-        errors += readme_errors((root / file).read_text(), language, version, skills, mcp_server.TOOLS)
+        errors += readme_errors((root / file).read_text(encoding='utf-8'), language, version, skills, mcp_server.TOOLS)
     if not re.search(r'^## ' + re.escape(version) + r' · ',
-                     (root / 'CHANGELOG.md').read_text(), re.MULTILINE):
+                     (root / 'CHANGELOG.md').read_text(encoding='utf-8'), re.MULTILINE):
         errors.append('Current version has no changelog entry')
     for language, file in [('zh', 'installation.md'), ('en', 'installation.en.md')]:
-        text = (root / 'references' / file).read_text()
+        text = (root / 'references' / file).read_text(encoding='utf-8')
         versions = set(re.findall(r'/releases/(?:tag|download)/v(\d+\.\d+\.\d+)', text))
         if versions != {version}:
             errors.append(f'{language}: installation release versions {sorted(versions)} differ from {version}')
@@ -181,7 +192,7 @@ def check(root=ROOT):
     receipt_path = bundle / 'build-receipt.json'
     exported_without_gallery = False
     if root == bundle / 'skills/praxis' and receipt_path.is_file():
-        receipt = json.loads(receipt_path.read_text())
+        receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
         exported_without_gallery = (receipt.get('format') == 'praxis-plugin-export-v1'
             and isinstance(receipt.get('files_sha256'), dict)
             and not any(name.startswith('skills/praxis/demos/mcm-studies/')

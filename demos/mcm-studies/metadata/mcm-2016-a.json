@@ -7,8 +7,8 @@
   "strength_zh": "把补热与热量到达冷端的时间分开。在给定浴缸条件下，合格六段补水为 21.48 L，最佳已接受恒流为 24.14 L；使用指南明确区分温度容差与开水时机。",
   "limits_en": "Post-learning revision, not a first autonomous solution or actual award. Physical coefficients and human motion remain uncalibrated. Full feedback-bank and recourse results were not freshly replayed by this reviewer. The historical 2016 formal page limit and complete AI transcripts remain unauthenticated. Newly added mixing diagnostics have no public reproduction package.",
   "limits_zh": "学后修订，非首次自主解题或实际获奖。物理参数与人体运动仍未实测校准；本次评委没有重跑反馈库与全部 recourse。2016 正式页数上限及完整 AI 聊天仍未认证；新增混合诊断不附公开复现包。",
-  "review_scope_en": "Initial full 27-page scientific review inherited only for unchanged content; current 28-page text and all-page visual overview, native pages 1, 8, 9, 11, 12, 20, 22, 24, 25, 26, 27 and 28. No new model computation in the revision review.",
-  "review_scope_zh": "初始 27 页完整科学审查按未变内容接续；本版全部 28 页文本及视觉总览，原尺寸查看第 1、8、9、11、12、20、22、24、25、26、27、28 页。本次增量复评没有新增模型计算。",
+  "review_scope_en": "The complete scientific and award-reference reviews remain bound to their earlier manuscripts. The current28page copy preserves those models, numbers and conditions; its actual format review covers11 restored table callouts and local pagination, without a new whole-paper award judgment.",
+  "review_scope_zh": "完整科学与参考档次审阅仍绑定原稿。当前28页稿保留原模型、数字及条件，实际格式审查包含11处补齐的正文表格引用与局部分页；未进行新一轮全文奖项评价。",
   "id": "MCM-2016-A",
   "pages": 28,
   "pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
@@ -30,7 +30,9 @@
       "Outstanding Winner"
     ],
     "calibrated": false,
-    "actual_award": false
+    "actual_award": false,
+    "version_sha256": "e108b46bdfc588c9df979f5c356fb14127cf3b4713428f8caa0267ffcb43bb2b",
+    "scope": "Uncalibrated reference bound to the earlier scientific review; unchanged mathematical content inherits that scope, without a new award judgment."
   },
   "pdf_path": "../../mcm-2016-a/paper.pdf",
   "pdf_path_relative_to": "this metadata file",

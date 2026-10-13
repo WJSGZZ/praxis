@@ -27,7 +27,7 @@ Explore two complete solutions with different mathematical demands: investment a
 </tr>
 </table>
 
-**[MCM and ICM paper studies](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md)** include sandcastle design, hornet report triage and coastal insurance alongside earlier work, organized by modeling problem. Autonomous manuscripts, same-task learning revisions and research papers retain their identities and version-specific AI review limits. The two primary demonstrations remain the starting points.
+**[Selected MCM and ICM papers](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md)** cover sandcastle design, hornet report triage, coastal insurance and other modeling problems. Each problem has one representative paper, with its review evidence and limits in the linked record.
 
 ## Data analysis
 
