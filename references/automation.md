@@ -48,6 +48,23 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
 - 预测：和朴素基线比较，选择正确的数据分割；多步预测还要核对目标集合，开发／调参目标不得跨入最终留出集，仅检查训练前缀并不充分；优化：检查约束、整数性与基准；连续模型：解析解、守恒、边界或步长；评价与敏感性：使用适合实际问题的检查。随机种子固定，避免只报告最佳一次运行。
 - 可以导入技能包 `modeling/` 与 `scripts/`。运行器把技能包路径加入 PYTHONPATH。不要把模型生成的其他文件放进原始数据区，或用脚本联网调用不相关外部服务。
 
+## 按信息截点映射版本
+
+`asof_join` 接收 `queries`、`versions`、键 `on`、查询时间列 `decision_time` 和版本可用时间列 `available_time`。最多 20000 查询、200000 版本，每张表列名一致且值为有限 JSON；键类型一致且非空。时间为带 Z 或 ±HH:MM 时区的 ISO8601，最多九位小数；拒绝仅日期、无时区及范围外值。返回 `schema_version: 1` 与原顺序的索引映射，不复制 payload、不改原件。
+
+```python
+from modeling.data_analysis import asof_join
+queries = [{"id": "A", "cutoff": "2026-01-02T08:00:00Z"}]
+versions = [
+    {"id": "A", "released": "2026-01-02T07:50:00Z", "value": 12},
+    {"id": "A", "released": "2026-01-03T12:00:00Z", "value": 19},
+]
+mapping = asof_join(queries, versions, "id", "cutoff", "released")
+# matched_version_index 为 0，不能选翌日才公布的 19。
+```
+
+默认严格早于截点；确知同刻可用时显式 `allow_exact_matches=True`。未发布、同键缺可用时点或最新可用时刻冲突分别返回 `not_available`、`unknown_availability`、`ambiguous_latest`，索引为 null。计数覆盖全查询，空查询的匹配比例为 null。它不能认证账本真实／完整、因果或部署性能；科学含义归 [data-analysis.md](data-analysis.md#按决策时刻选择数据版本)，原记录 payload 由调用者按有效索引取值，未决项显式处理。
+
 ## 数学工具的结果契约
 
 - `probe_structure` 的违例是浮点或有限差分候选，始终 `proved: false`。`test_conjecture` 的 `holds`／`numerical_holds` 描述采样计算；普遍命题状态另读 `claim_status`，候选核验另读 `verification`。只有支持的有理算术在箱内一个精确点严格违例，才给 `exact_rational_witness` 和 `claim_status: refuted`；候选被精确核验否定或含未支持函数时仍未决。mpmath高精度本身不升级证据。`find_counterexample` 只有忠实精确的整数谓词才保留有限域证明；浮点常量、实变量、真正除法及未认证的负／变量幂不因穷举而成为严格保证。精确组合判据、条件性递推证明等原保证继续按自身前提使用。

@@ -169,6 +169,8 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 数学工具
 
+本表对应当前源码。`asof_join` 与版本补货案例是未发布增量，正式0.8.0安装包尚不包含；版本记录见 [CHANGELOG](CHANGELOG.md)。
+
 `praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可用 `python -m scripts.mcp_server --call 工具名 '参数'`。哪类问题有现成工具、没有时怎么办，见[能力覆盖地图](references/coverage-map.md)。每个工具都有独立答案的测试：教科书例题、闭式解或暴力枚举。
 
 | 类别 | 工具 |
@@ -182,7 +184,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（有限核对证明）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
 | 图像测量 | `binary_components`（给定二维二值掩码的连接区域、像素面积、边界框与质心；物理尺度须显式提供） |
 | 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
-| 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
+| 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`asof_join`（决策截点前的版本索引与未决项）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
 通用、Codex、Claude 和 Copilot 安装包还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
 

@@ -169,6 +169,8 @@ For solo work under time pressure, Praxis defaults to one current user action an
 
 ## Math tools
 
+This table describes the current source. The `asof_join` tool and vintage case are unreleased additions; the published 0.8.0 package does not yet include them. See the [changelog](CHANGELOG.md).
+
 `praxis-tools` turns common methods into callable tools with JSON in and out. Hosts without MCP can run `python -m scripts.mcp_server --call <tool> '<json>'`. The [coverage map](references/coverage-map.md) shows which kinds of problem have a ready tool and what to do when none exists. Every tool is tested against an answer derived separately: a textbook example, a closed form, or brute-force enumeration.
 
 | Group | Tools |
@@ -182,7 +184,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 | Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `check_recurrence` (finite-check proof), `find_relation`, `route_to_lesson`, `lesson_add`, `lesson_search` |
 | Image measurement | `binary_components` (connected regions, pixel areas, boxes and centroids in a supplied 2-D binary mask; physical scale must be explicit) |
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
-| Data and free literature | `audit_data` (original headers, parsing and data quality), `audit_join` (cardinality, null keys, unmatched rows and expansion limits), `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
+| Data and free literature | `audit_data` (original headers, parsing and data quality), `audit_join` (cardinality, null keys, unmatched rows and expansion limits), `asof_join` (available-version indices at decision cutoffs, including unresolved queries), `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
 
 Numerical violations are candidates until independently certified. Supported rational witnesses receive an exact check; undefined fit diagnostics carry reasons, and game enumeration reports its completeness limits. The [result and execution contract](references/automation.md#数学工具的结果契约) explains these distinctions and the bounds on expression calls.
 

@@ -31,6 +31,8 @@ Explore two complete solutions with different mathematical demands: investment a
 
 ## Data analysis
 
+**[Forecast vintages and replenishment →](data-vintages/README.en.md)** Available forecasts have an MAE of 5.4375 against 3.9375 for a fixed baseline, while an invalid final snapshot produces zero error. The complete synthetic task retains all 20 queries and two unresolved daily orders, with separate timestamp scans and integer enumeration checking version selection, capacity and cost. Time eligibility alone does not establish forecast usefulness.
+
 **[Repeated observations, defensible comparisons →](data-analysis/README.en.md)** Follow forty-eight weekly observations from twelve synthetic stores through explicit data declarations, join cardinality, clustered inference, Holm adjustment and separate arithmetic checks. The runnable example retains inputs and rejected joins; its associations are not evidence about real stores or causal effects.
 
 **[Coverage, capacity and local bottlenecks →](spatial-analysis/README.en.md)** Spatial reachability changes the resources required by a synthetic service network. Feasible allocations and separate bounds establish costs of 17 at nominal locations and 25 under bounded position errors; a facility failure exposes why total capacity alone is insufficient. The study includes real data-driven figures and a runnable fixed scenario.

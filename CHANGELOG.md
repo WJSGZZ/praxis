@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 新增 `asof_join`，复用 Pandas 按决策截点选择声明的可用版本，保留缺失时点、同刻冲突与未发布查询。数据分析和时序专业入口共享字段版本契约；完整合成补货任务以独立时间扫描与整数穷举核对，并比较合法预测、固定基线与无效的事后快照。原工具接口与依赖保持。
+  `asof_join` uses Pandas to map declared versions to decision cutoffs, preserving unknown availability, tied releases and unpublished queries. Data and time-series routes share the field-vintage contract. A complete synthetic replenishment exercise uses independent timestamp scans and integer enumeration to compare available forecasts, a fixed baseline and an invalid final snapshot. Existing tool interfaces and dependencies are unchanged.
+
 - 公开美赛作品按题目展示，每题只保留最好的一份；十题十稿使用固定文件名与统一选择清单。主 Demo 同步为完整 28 页稿，旧研究版与失败证据保全到历史。双语入口、生成源、预览和导出同步，检查器拒绝重复题目及残留稿。
   The public MCM gallery selects one best paper per problem, with ten works under stable filenames and a shared catalog. The primary demo now presents the complete 28-page manuscript; earlier research versions and failures remain preserved in history. Bilingual links, source, previews and exports agree, with checks against duplicate problems and orphan papers.
 

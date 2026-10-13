@@ -1,0 +1,1605 @@
+{
+  "schema_version": 1,
+  "case": "synthetic-data-vintages",
+  "information_policy": "strictly_before_cutoff",
+  "mapping": {
+    "schema_version": 1,
+    "status": "mapped",
+    "backend": {
+      "library": "pandas",
+      "version": "2.3.3",
+      "direction": "backward"
+    },
+    "on": [
+      "day",
+      "sku"
+    ],
+    "decision_time": "cutoff",
+    "available_time": "available_at",
+    "allow_exact_matches": false,
+    "key_types": {
+      "day": {
+        "queries": "str",
+        "versions": "str"
+      },
+      "sku": {
+        "queries": "str",
+        "versions": "str"
+      }
+    },
+    "query_rows": 20,
+    "version_rows": 38,
+    "counts": {
+      "matched": 17,
+      "not_available": 1,
+      "unknown_availability": 1,
+      "ambiguous_latest": 1
+    },
+    "matched_fraction": 0.85,
+    "mappings": [
+      {
+        "query_index": 0,
+        "status": "matched",
+        "matched_version_index": 37,
+        "decision_time_utc": "2026-01-01T08:00:00Z",
+        "available_time_utc": "2026-01-01T07:50:00Z"
+      },
+      {
+        "query_index": 1,
+        "status": "matched",
+        "matched_version_index": 35,
+        "decision_time_utc": "2026-01-01T08:00:00Z",
+        "available_time_utc": "2026-01-01T07:50:00Z"
+      },
+      {
+        "query_index": 2,
+        "status": "matched",
+        "matched_version_index": 33,
+        "decision_time_utc": "2026-01-02T08:00:00Z",
+        "available_time_utc": "2026-01-02T07:50:00Z"
+      },
+      {
+        "query_index": 3,
+        "status": "matched",
+        "matched_version_index": 31,
+        "decision_time_utc": "2026-01-02T08:00:00Z",
+        "available_time_utc": "2026-01-02T07:50:00Z"
+      },
+      {
+        "query_index": 4,
+        "status": "matched",
+        "matched_version_index": 29,
+        "decision_time_utc": "2026-01-03T08:00:00Z",
+        "available_time_utc": "2026-01-03T07:50:00Z"
+      },
+      {
+        "query_index": 5,
+        "status": "matched",
+        "matched_version_index": 27,
+        "decision_time_utc": "2026-01-03T08:00:00Z",
+        "available_time_utc": "2026-01-03T07:50:00Z"
+      },
+      {
+        "query_index": 6,
+        "status": "matched",
+        "matched_version_index": 25,
+        "decision_time_utc": "2026-01-04T08:00:00Z",
+        "available_time_utc": "2026-01-04T07:50:00Z"
+      },
+      {
+        "query_index": 7,
+        "status": "matched",
+        "matched_version_index": 23,
+        "decision_time_utc": "2026-01-04T08:00:00Z",
+        "available_time_utc": "2026-01-04T07:50:00Z"
+      },
+      {
+        "query_index": 8,
+        "status": "matched",
+        "matched_version_index": 21,
+        "decision_time_utc": "2026-01-05T08:00:00Z",
+        "available_time_utc": "2026-01-05T07:50:00Z"
+      },
+      {
+        "query_index": 9,
+        "status": "matched",
+        "matched_version_index": 19,
+        "decision_time_utc": "2026-01-05T08:00:00Z",
+        "available_time_utc": "2026-01-05T07:50:00Z"
+      },
+      {
+        "query_index": 10,
+        "status": "matched",
+        "matched_version_index": 17,
+        "decision_time_utc": "2026-01-06T08:00:00Z",
+        "available_time_utc": "2026-01-06T07:50:00Z"
+      },
+      {
+        "query_index": 11,
+        "status": "matched",
+        "matched_version_index": 15,
+        "decision_time_utc": "2026-01-06T08:00:00Z",
+        "available_time_utc": "2026-01-06T07:50:00Z"
+      },
+      {
+        "query_index": 12,
+        "status": "matched",
+        "matched_version_index": 13,
+        "decision_time_utc": "2026-01-07T08:00:00Z",
+        "available_time_utc": "2026-01-07T07:50:00Z"
+      },
+      {
+        "query_index": 13,
+        "status": "matched",
+        "matched_version_index": 11,
+        "decision_time_utc": "2026-01-07T08:00:00Z",
+        "available_time_utc": "2026-01-07T07:50:00Z"
+      },
+      {
+        "query_index": 14,
+        "status": "matched",
+        "matched_version_index": 9,
+        "decision_time_utc": "2026-01-08T08:00:00Z",
+        "available_time_utc": "2026-01-08T07:50:00Z"
+      },
+      {
+        "query_index": 15,
+        "status": "matched",
+        "matched_version_index": 7,
+        "decision_time_utc": "2026-01-08T08:00:00Z",
+        "available_time_utc": "2026-01-08T07:50:00Z"
+      },
+      {
+        "query_index": 16,
+        "status": "unknown_availability",
+        "matched_version_index": null,
+        "decision_time_utc": "2026-01-09T08:00:00Z",
+        "available_time_utc": null
+      },
+      {
+        "query_index": 17,
+        "status": "ambiguous_latest",
+        "matched_version_index": null,
+        "decision_time_utc": "2026-01-09T08:00:00Z",
+        "available_time_utc": null
+      },
+      {
+        "query_index": 18,
+        "status": "not_available",
+        "matched_version_index": null,
+        "decision_time_utc": "2026-01-10T08:00:00Z",
+        "available_time_utc": null
+      },
+      {
+        "query_index": 19,
+        "status": "matched",
+        "matched_version_index": 0,
+        "decision_time_utc": "2026-01-10T08:00:00Z",
+        "available_time_utc": "2026-01-10T07:00:00Z"
+      }
+    ],
+    "limitations": [
+      "Does not prove availability metadata is true.",
+      "Does not prove the version ledger is complete.",
+      "Does not establish forecast deployment performance."
+    ]
+  },
+  "query_coverage": {
+    "query_rows": 20,
+    "matched": 17,
+    "not_available": 1,
+    "unknown_availability": 1,
+    "ambiguous_latest": 1
+  },
+  "daily_actionable_days": 8,
+  "daily_decision_days": 10,
+  "daily_actions": [
+    {
+      "day": "2026-01-01",
+      "cutoff": "2026-01-01T08:00:00Z",
+      "forecasts": {
+        "A": 15.0,
+        "B": 20.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 37,
+        "B": 35
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 15,
+        "B": 20
+      },
+      "forecast_loss": 0.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-02",
+      "cutoff": "2026-01-02T08:00:00Z",
+      "forecasts": {
+        "A": 18.0,
+        "B": 18.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 33,
+        "B": 31
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 18,
+        "B": 18
+      },
+      "forecast_loss": 0.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-03",
+      "cutoff": "2026-01-03T08:00:00Z",
+      "forecasts": {
+        "A": 26.0,
+        "B": 22.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 29,
+        "B": 27
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 26,
+        "B": 14
+      },
+      "forecast_loss": 32.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-04",
+      "cutoff": "2026-01-04T08:00:00Z",
+      "forecasts": {
+        "A": 20.0,
+        "B": 16.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 25,
+        "B": 23
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 20,
+        "B": 16
+      },
+      "forecast_loss": 0.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-05",
+      "cutoff": "2026-01-05T08:00:00Z",
+      "forecasts": {
+        "A": 28.0,
+        "B": 23.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 21,
+        "B": 19
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 28,
+        "B": 12
+      },
+      "forecast_loss": 44.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-06",
+      "cutoff": "2026-01-06T08:00:00Z",
+      "forecasts": {
+        "A": 14.0,
+        "B": 20.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 17,
+        "B": 15
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 14,
+        "B": 20
+      },
+      "forecast_loss": 0.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-07",
+      "cutoff": "2026-01-07T08:00:00Z",
+      "forecasts": {
+        "A": 20.0,
+        "B": 14.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 13,
+        "B": 11
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 20,
+        "B": 14
+      },
+      "forecast_loss": 0.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-08",
+      "cutoff": "2026-01-08T08:00:00Z",
+      "forecasts": {
+        "A": 18.0,
+        "B": 20.0
+      },
+      "query_status": {
+        "A": "matched",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": 9,
+        "B": 7
+      },
+      "actionable": true,
+      "status": "actionable",
+      "orders": {
+        "A": 18,
+        "B": 20
+      },
+      "forecast_loss": 0.0,
+      "capacity": 40,
+      "solver_proved_optimal": true,
+      "abstention_reason": null
+    },
+    {
+      "day": "2026-01-09",
+      "cutoff": "2026-01-09T08:00:00Z",
+      "forecasts": {
+        "A": null,
+        "B": null
+      },
+      "query_status": {
+        "A": "unknown_availability",
+        "B": "ambiguous_latest"
+      },
+      "matched_version_indices": {
+        "A": null,
+        "B": null
+      },
+      "actionable": false,
+      "status": "abstain",
+      "orders": null,
+      "forecast_loss": null,
+      "capacity": 40,
+      "solver_proved_optimal": null,
+      "abstention_reason": {
+        "message": "At least one query has no unique, known-available forecast at cutoff.",
+        "unresolved_skus": [
+          "A",
+          "B"
+        ],
+        "recovery_conditions": [
+          "A complete, timestamped availability ledger for 2026-01-09/A.",
+          "A unique authoritative release or tie-break record for 2026-01-09/B."
+        ]
+      }
+    },
+    {
+      "day": "2026-01-10",
+      "cutoff": "2026-01-10T08:00:00Z",
+      "forecasts": {
+        "A": null,
+        "B": 20.0
+      },
+      "query_status": {
+        "A": "not_available",
+        "B": "matched"
+      },
+      "matched_version_indices": {
+        "A": null,
+        "B": 0
+      },
+      "actionable": false,
+      "status": "abstain",
+      "orders": null,
+      "forecast_loss": null,
+      "capacity": 40,
+      "solver_proved_optimal": null,
+      "abstention_reason": {
+        "message": "At least one query has no unique, known-available forecast at cutoff.",
+        "unresolved_skus": [
+          "A"
+        ],
+        "recovery_conditions": [
+          "A forecast version with verified availability before the cutoff for 2026-01-10/A."
+        ]
+      }
+    }
+  ],
+  "comparison": {
+    "asof": {
+      "method": "declared_asof",
+      "eligible_at_cutoff_under_declared_metadata": true,
+      "evaluation_days": 8,
+      "target_count": 16,
+      "mae": 5.4375,
+      "absolute_error_sum": 87.0,
+      "forecast_cost": 76.0,
+      "realized_cost": 248.0,
+      "shortage": 46.0,
+      "overage": 34.0,
+      "days": [
+        {
+          "day": "2026-01-01",
+          "forecast": {
+            "A": 15.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 15,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 22.0,
+          "shortage": {
+            "A": 3.0,
+            "B": 0.0,
+            "total": 3.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 4.0,
+            "total": 4.0
+          },
+          "demand": {
+            "A": 18.0,
+            "B": 16.0
+          }
+        },
+        {
+          "day": "2026-01-02",
+          "forecast": {
+            "A": 18.0,
+            "B": 18.0
+          },
+          "orders": {
+            "A": 18,
+            "B": 18
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 34.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 7.0,
+            "total": 7.0
+          },
+          "overage": {
+            "A": 6.0,
+            "B": 0.0,
+            "total": 6.0
+          },
+          "demand": {
+            "A": 12.0,
+            "B": 25.0
+          }
+        },
+        {
+          "day": "2026-01-03",
+          "forecast": {
+            "A": 26.0,
+            "B": 22.0
+          },
+          "orders": {
+            "A": 26,
+            "B": 14
+          },
+          "forecast_cost": 32.0,
+          "realized_cost": 4.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 4.0,
+            "B": 0.0,
+            "total": 4.0
+          },
+          "demand": {
+            "A": 22.0,
+            "B": 14.0
+          }
+        },
+        {
+          "day": "2026-01-04",
+          "forecast": {
+            "A": 20.0,
+            "B": 16.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 16
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 29.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 6.0,
+            "total": 6.0
+          },
+          "overage": {
+            "A": 5.0,
+            "B": 0.0,
+            "total": 5.0
+          },
+          "demand": {
+            "A": 15.0,
+            "B": 22.0
+          }
+        },
+        {
+          "day": "2026-01-05",
+          "forecast": {
+            "A": 28.0,
+            "B": 23.0
+          },
+          "orders": {
+            "A": 28,
+            "B": 12
+          },
+          "forecast_cost": 44.0,
+          "realized_cost": 27.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 6.0,
+            "total": 6.0
+          },
+          "overage": {
+            "A": 3.0,
+            "B": 0.0,
+            "total": 3.0
+          },
+          "demand": {
+            "A": 25.0,
+            "B": 18.0
+          }
+        },
+        {
+          "day": "2026-01-06",
+          "forecast": {
+            "A": 14.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 14,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 60.0,
+          "shortage": {
+            "A": 6.0,
+            "B": 6.0,
+            "total": 12.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 20.0,
+            "B": 26.0
+          }
+        },
+        {
+          "day": "2026-01-07",
+          "forecast": {
+            "A": 20.0,
+            "B": 14.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 14
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 28.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 6.0,
+            "total": 6.0
+          },
+          "overage": {
+            "A": 4.0,
+            "B": 0.0,
+            "total": 4.0
+          },
+          "demand": {
+            "A": 16.0,
+            "B": 20.0
+          }
+        },
+        {
+          "day": "2026-01-08",
+          "forecast": {
+            "A": 18.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 18,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 44.0,
+          "shortage": {
+            "A": 6.0,
+            "B": 0.0,
+            "total": 6.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 8.0,
+            "total": 8.0
+          },
+          "demand": {
+            "A": 24.0,
+            "B": 12.0
+          }
+        }
+      ],
+      "interpretation": "Declared cost units are ex-post diagnostics, not proven future-best orders or real monetary returns."
+    },
+    "baseline": {
+      "method": "baseline_20_20",
+      "eligible_at_cutoff_under_declared_metadata": true,
+      "evaluation_days": 8,
+      "target_count": 16,
+      "mae": 3.9375,
+      "absolute_error_sum": 63.0,
+      "forecast_cost": 0.0,
+      "realized_cost": 157.0,
+      "shortage": 24.0,
+      "overage": 39.0,
+      "days": [
+        {
+          "day": "2026-01-01",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 6.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 2.0,
+            "B": 4.0,
+            "total": 6.0
+          },
+          "demand": {
+            "A": 18.0,
+            "B": 16.0
+          }
+        },
+        {
+          "day": "2026-01-02",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 28.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 5.0,
+            "total": 5.0
+          },
+          "overage": {
+            "A": 8.0,
+            "B": 0.0,
+            "total": 8.0
+          },
+          "demand": {
+            "A": 12.0,
+            "B": 25.0
+          }
+        },
+        {
+          "day": "2026-01-03",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 18.0,
+          "shortage": {
+            "A": 2.0,
+            "B": 0.0,
+            "total": 2.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 6.0,
+            "total": 6.0
+          },
+          "demand": {
+            "A": 22.0,
+            "B": 14.0
+          }
+        },
+        {
+          "day": "2026-01-04",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 13.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 2.0,
+            "total": 2.0
+          },
+          "overage": {
+            "A": 5.0,
+            "B": 0.0,
+            "total": 5.0
+          },
+          "demand": {
+            "A": 15.0,
+            "B": 22.0
+          }
+        },
+        {
+          "day": "2026-01-05",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 32.0,
+          "shortage": {
+            "A": 5.0,
+            "B": 0.0,
+            "total": 5.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 2.0,
+            "total": 2.0
+          },
+          "demand": {
+            "A": 25.0,
+            "B": 18.0
+          }
+        },
+        {
+          "day": "2026-01-06",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 24.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 6.0,
+            "total": 6.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 20.0,
+            "B": 26.0
+          }
+        },
+        {
+          "day": "2026-01-07",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 4.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 4.0,
+            "B": 0.0,
+            "total": 4.0
+          },
+          "demand": {
+            "A": 16.0,
+            "B": 20.0
+          }
+        },
+        {
+          "day": "2026-01-08",
+          "forecast": {
+            "A": 20.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 32.0,
+          "shortage": {
+            "A": 4.0,
+            "B": 0.0,
+            "total": 4.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 8.0,
+            "total": 8.0
+          },
+          "demand": {
+            "A": 24.0,
+            "B": 12.0
+          }
+        }
+      ],
+      "interpretation": "Declared cost units are ex-post diagnostics, not proven future-best orders or real monetary returns."
+    },
+    "final_snapshot": {
+      "method": "invalid_final_snapshot",
+      "eligible_at_cutoff_under_declared_metadata": false,
+      "evaluation_days": 8,
+      "target_count": 16,
+      "mae": 0.0,
+      "absolute_error_sum": 0.0,
+      "forecast_cost": 36.0,
+      "realized_cost": 36.0,
+      "shortage": 9.0,
+      "overage": 0.0,
+      "days": [
+        {
+          "day": "2026-01-01",
+          "forecast": {
+            "A": 18.0,
+            "B": 16.0
+          },
+          "orders": {
+            "A": 18,
+            "B": 16
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 0.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 18.0,
+            "B": 16.0
+          }
+        },
+        {
+          "day": "2026-01-02",
+          "forecast": {
+            "A": 12.0,
+            "B": 25.0
+          },
+          "orders": {
+            "A": 12,
+            "B": 25
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 0.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 12.0,
+            "B": 25.0
+          }
+        },
+        {
+          "day": "2026-01-03",
+          "forecast": {
+            "A": 22.0,
+            "B": 14.0
+          },
+          "orders": {
+            "A": 22,
+            "B": 14
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 0.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 22.0,
+            "B": 14.0
+          }
+        },
+        {
+          "day": "2026-01-04",
+          "forecast": {
+            "A": 15.0,
+            "B": 22.0
+          },
+          "orders": {
+            "A": 15,
+            "B": 22
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 0.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 15.0,
+            "B": 22.0
+          }
+        },
+        {
+          "day": "2026-01-05",
+          "forecast": {
+            "A": 25.0,
+            "B": 18.0
+          },
+          "orders": {
+            "A": 25,
+            "B": 15
+          },
+          "forecast_cost": 12.0,
+          "realized_cost": 12.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 3.0,
+            "total": 3.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 25.0,
+            "B": 18.0
+          }
+        },
+        {
+          "day": "2026-01-06",
+          "forecast": {
+            "A": 20.0,
+            "B": 26.0
+          },
+          "orders": {
+            "A": 20,
+            "B": 20
+          },
+          "forecast_cost": 24.0,
+          "realized_cost": 24.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 6.0,
+            "total": 6.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 20.0,
+            "B": 26.0
+          }
+        },
+        {
+          "day": "2026-01-07",
+          "forecast": {
+            "A": 16.0,
+            "B": 20.0
+          },
+          "orders": {
+            "A": 16,
+            "B": 20
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 0.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 16.0,
+            "B": 20.0
+          }
+        },
+        {
+          "day": "2026-01-08",
+          "forecast": {
+            "A": 24.0,
+            "B": 12.0
+          },
+          "orders": {
+            "A": 24,
+            "B": 12
+          },
+          "forecast_cost": 0.0,
+          "realized_cost": 0.0,
+          "shortage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "overage": {
+            "A": 0.0,
+            "B": 0.0,
+            "total": 0.0
+          },
+          "demand": {
+            "A": 24.0,
+            "B": 12.0
+          }
+        }
+      ],
+      "interpretation": "Retrospective upper-information comparison; uses releases published after the order cutoff and is not deployable."
+    }
+  },
+  "final_snapshot_status_counts": {
+    "latest_known_release": 19,
+    "ambiguous_latest": 1
+  },
+  "future_value_perturbation_check": {
+    "method_side_check_only": true,
+    "mutated_version_count": 17,
+    "mutations": [
+      {
+        "version_index": 1,
+        "day": "2026-01-10",
+        "sku": "A",
+        "available_at": "2026-01-10T09:00:00Z",
+        "forecast_before": 20.0,
+        "forecast_after": 120.0
+      },
+      {
+        "version_index": 6,
+        "day": "2026-01-08",
+        "sku": "B",
+        "available_at": "2026-01-09T12:00:00Z",
+        "forecast_before": 12.0,
+        "forecast_after": 112.0
+      },
+      {
+        "version_index": 8,
+        "day": "2026-01-08",
+        "sku": "A",
+        "available_at": "2026-01-09T12:00:00Z",
+        "forecast_before": 24.0,
+        "forecast_after": 124.0
+      },
+      {
+        "version_index": 10,
+        "day": "2026-01-07",
+        "sku": "B",
+        "available_at": "2026-01-08T12:00:00Z",
+        "forecast_before": 20.0,
+        "forecast_after": 120.0
+      },
+      {
+        "version_index": 12,
+        "day": "2026-01-07",
+        "sku": "A",
+        "available_at": "2026-01-08T12:00:00Z",
+        "forecast_before": 16.0,
+        "forecast_after": 116.0
+      },
+      {
+        "version_index": 14,
+        "day": "2026-01-06",
+        "sku": "B",
+        "available_at": "2026-01-07T12:00:00Z",
+        "forecast_before": 26.0,
+        "forecast_after": 126.0
+      },
+      {
+        "version_index": 16,
+        "day": "2026-01-06",
+        "sku": "A",
+        "available_at": "2026-01-07T12:00:00Z",
+        "forecast_before": 20.0,
+        "forecast_after": 120.0
+      },
+      {
+        "version_index": 18,
+        "day": "2026-01-05",
+        "sku": "B",
+        "available_at": "2026-01-06T12:00:00Z",
+        "forecast_before": 18.0,
+        "forecast_after": 118.0
+      },
+      {
+        "version_index": 20,
+        "day": "2026-01-05",
+        "sku": "A",
+        "available_at": "2026-01-06T12:00:00Z",
+        "forecast_before": 25.0,
+        "forecast_after": 125.0
+      },
+      {
+        "version_index": 22,
+        "day": "2026-01-04",
+        "sku": "B",
+        "available_at": "2026-01-05T12:00:00Z",
+        "forecast_before": 22.0,
+        "forecast_after": 122.0
+      },
+      {
+        "version_index": 24,
+        "day": "2026-01-04",
+        "sku": "A",
+        "available_at": "2026-01-05T12:00:00Z",
+        "forecast_before": 15.0,
+        "forecast_after": 115.0
+      },
+      {
+        "version_index": 26,
+        "day": "2026-01-03",
+        "sku": "B",
+        "available_at": "2026-01-04T12:00:00Z",
+        "forecast_before": 14.0,
+        "forecast_after": 114.0
+      },
+      {
+        "version_index": 28,
+        "day": "2026-01-03",
+        "sku": "A",
+        "available_at": "2026-01-04T12:00:00Z",
+        "forecast_before": 22.0,
+        "forecast_after": 122.0
+      },
+      {
+        "version_index": 30,
+        "day": "2026-01-02",
+        "sku": "B",
+        "available_at": "2026-01-03T12:00:00Z",
+        "forecast_before": 25.0,
+        "forecast_after": 125.0
+      },
+      {
+        "version_index": 32,
+        "day": "2026-01-02",
+        "sku": "A",
+        "available_at": "2026-01-03T12:00:00Z",
+        "forecast_before": 12.0,
+        "forecast_after": 112.0
+      },
+      {
+        "version_index": 34,
+        "day": "2026-01-01",
+        "sku": "B",
+        "available_at": "2026-01-02T12:00:00Z",
+        "forecast_before": 16.0,
+        "forecast_after": 116.0
+      },
+      {
+        "version_index": 36,
+        "day": "2026-01-01",
+        "sku": "A",
+        "available_at": "2026-01-02T12:00:00Z",
+        "forecast_before": 18.0,
+        "forecast_after": 118.0
+      }
+    ],
+    "before_query_mappings": [
+      {
+        "query_index": 0,
+        "status": "matched",
+        "matched_version_index": 37
+      },
+      {
+        "query_index": 1,
+        "status": "matched",
+        "matched_version_index": 35
+      },
+      {
+        "query_index": 2,
+        "status": "matched",
+        "matched_version_index": 33
+      },
+      {
+        "query_index": 3,
+        "status": "matched",
+        "matched_version_index": 31
+      },
+      {
+        "query_index": 4,
+        "status": "matched",
+        "matched_version_index": 29
+      },
+      {
+        "query_index": 5,
+        "status": "matched",
+        "matched_version_index": 27
+      },
+      {
+        "query_index": 6,
+        "status": "matched",
+        "matched_version_index": 25
+      },
+      {
+        "query_index": 7,
+        "status": "matched",
+        "matched_version_index": 23
+      },
+      {
+        "query_index": 8,
+        "status": "matched",
+        "matched_version_index": 21
+      },
+      {
+        "query_index": 9,
+        "status": "matched",
+        "matched_version_index": 19
+      },
+      {
+        "query_index": 10,
+        "status": "matched",
+        "matched_version_index": 17
+      },
+      {
+        "query_index": 11,
+        "status": "matched",
+        "matched_version_index": 15
+      },
+      {
+        "query_index": 12,
+        "status": "matched",
+        "matched_version_index": 13
+      },
+      {
+        "query_index": 13,
+        "status": "matched",
+        "matched_version_index": 11
+      },
+      {
+        "query_index": 14,
+        "status": "matched",
+        "matched_version_index": 9
+      },
+      {
+        "query_index": 15,
+        "status": "matched",
+        "matched_version_index": 7
+      },
+      {
+        "query_index": 16,
+        "status": "unknown_availability",
+        "matched_version_index": null
+      },
+      {
+        "query_index": 17,
+        "status": "ambiguous_latest",
+        "matched_version_index": null
+      },
+      {
+        "query_index": 18,
+        "status": "not_available",
+        "matched_version_index": null
+      },
+      {
+        "query_index": 19,
+        "status": "matched",
+        "matched_version_index": 0
+      }
+    ],
+    "after_query_mappings": [
+      {
+        "query_index": 0,
+        "status": "matched",
+        "matched_version_index": 37
+      },
+      {
+        "query_index": 1,
+        "status": "matched",
+        "matched_version_index": 35
+      },
+      {
+        "query_index": 2,
+        "status": "matched",
+        "matched_version_index": 33
+      },
+      {
+        "query_index": 3,
+        "status": "matched",
+        "matched_version_index": 31
+      },
+      {
+        "query_index": 4,
+        "status": "matched",
+        "matched_version_index": 29
+      },
+      {
+        "query_index": 5,
+        "status": "matched",
+        "matched_version_index": 27
+      },
+      {
+        "query_index": 6,
+        "status": "matched",
+        "matched_version_index": 25
+      },
+      {
+        "query_index": 7,
+        "status": "matched",
+        "matched_version_index": 23
+      },
+      {
+        "query_index": 8,
+        "status": "matched",
+        "matched_version_index": 21
+      },
+      {
+        "query_index": 9,
+        "status": "matched",
+        "matched_version_index": 19
+      },
+      {
+        "query_index": 10,
+        "status": "matched",
+        "matched_version_index": 17
+      },
+      {
+        "query_index": 11,
+        "status": "matched",
+        "matched_version_index": 15
+      },
+      {
+        "query_index": 12,
+        "status": "matched",
+        "matched_version_index": 13
+      },
+      {
+        "query_index": 13,
+        "status": "matched",
+        "matched_version_index": 11
+      },
+      {
+        "query_index": 14,
+        "status": "matched",
+        "matched_version_index": 9
+      },
+      {
+        "query_index": 15,
+        "status": "matched",
+        "matched_version_index": 7
+      },
+      {
+        "query_index": 16,
+        "status": "unknown_availability",
+        "matched_version_index": null
+      },
+      {
+        "query_index": 17,
+        "status": "ambiguous_latest",
+        "matched_version_index": null
+      },
+      {
+        "query_index": 18,
+        "status": "not_available",
+        "matched_version_index": null
+      },
+      {
+        "query_index": 19,
+        "status": "matched",
+        "matched_version_index": 0
+      }
+    ],
+    "before_daily_orders": {
+      "2026-01-01": {
+        "A": 15,
+        "B": 20
+      },
+      "2026-01-02": {
+        "A": 18,
+        "B": 18
+      },
+      "2026-01-03": {
+        "A": 26,
+        "B": 14
+      },
+      "2026-01-04": {
+        "A": 20,
+        "B": 16
+      },
+      "2026-01-05": {
+        "A": 28,
+        "B": 12
+      },
+      "2026-01-06": {
+        "A": 14,
+        "B": 20
+      },
+      "2026-01-07": {
+        "A": 20,
+        "B": 14
+      },
+      "2026-01-08": {
+        "A": 18,
+        "B": 20
+      },
+      "2026-01-09": null,
+      "2026-01-10": null
+    },
+    "after_daily_orders": {
+      "2026-01-01": {
+        "A": 15,
+        "B": 20
+      },
+      "2026-01-02": {
+        "A": 18,
+        "B": 18
+      },
+      "2026-01-03": {
+        "A": 26,
+        "B": 14
+      },
+      "2026-01-04": {
+        "A": 20,
+        "B": 16
+      },
+      "2026-01-05": {
+        "A": 28,
+        "B": 12
+      },
+      "2026-01-06": {
+        "A": 14,
+        "B": 20
+      },
+      "2026-01-07": {
+        "A": 20,
+        "B": 14
+      },
+      "2026-01-08": {
+        "A": 18,
+        "B": 20
+      },
+      "2026-01-09": null,
+      "2026-01-10": null
+    },
+    "asof_indices_unchanged": true,
+    "orders_unchanged": true,
+    "perturbed_query_coverage": {
+      "query_rows": 20,
+      "matched": 17,
+      "not_available": 1,
+      "unknown_availability": 1,
+      "ambiguous_latest": 1
+    },
+    "is_independent_validator": false
+  },
+  "limits": [
+    "Availability timestamps are declared synthetic metadata; their real release provenance and ledger completeness are unknown.",
+    "No forecast uncertainty model or calibrated risk policy is fitted.",
+    "The eight-day fixed evaluation does not establish external validity or forecasting skill.",
+    "Realized cost is an ex-post diagnostic, not proven future-best performance or real monetary return.",
+    "The final-snapshot comparison uses future information and is not deployable.",
+    "The perturbation check is not an independent validator."
+  ]
+}

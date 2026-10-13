@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "title": "Forecast vintages and replenishment",
+  "identity": "Original synthetic demonstration, fixed before execution; not a blind contest episode",
+  "source": "Locally authored inputs and code; no downloaded contest text or reference paper",
+  "queries": 20,
+  "versions": 38,
+  "decision_days": 10,
+  "supported_decision_days": 8,
+  "common_evaluation_targets": 16,
+  "selection": "One current selected artifact; historical receipts stay outside this showcase",
+  "verification": "Separate standard-library UTC scan and exact enumeration of all861 feasible orders per supported day; future-only payload perturbation",
+  "unverified": [
+    "Real release provenance and complete historical ledgers",
+    "Forecast uncertainty or real deployment benefit",
+    "Competition quality or awards"
+  ],
+  "files": {
+    "README.en.md": "7f96479d8e958f982bd274eb918c9b6c8210309a304aac39c31e54b49aa3d699",
+    "README.md": "e3308f6bb2b778c2e1f8b8e0129785b9cf368648b408b3005c22729e6df82883",
+    "checks.json": "46c357a1a9270cd4235878f0e2e98ef1c38d0138efde7902126d753d71269ebd",
+    "data/outcomes.json": "c95447c3ea5cae543a97c1c3c2114a4d7647d9d44c4ecdc99213f1b0f45934d3",
+    "data/plan.json": "fc7b42e1dc2668c64d9275abda88afa5b5db02421522f86c3a4fc4215d53c194",
+    "data/problem.md": "4b4c45eadf27fa5542c60c1fb1bf336b0dbb4ab14a2bc8a90ef6cf81d94b7131",
+    "data/queries.json": "c7f4a56f9e7183058f5ca1edbe9b4ab2aa9a12c03c77429c154c9d3d24c12821",
+    "data/versions.json": "3e75e8bb8d15ccf088dd8db8bf6ed01410bfd20becac75ead3a3a1375af52740",
+    "model.py": "54ca562a61f1d78df76c5c1167a9bb758e201bcdc2d05848250aef3957f9a001",
+    "report.md": "4323655240f82ea2e6c488e69813432d95e214e7ecbb33c2af066ef7aae579cb",
+    "requirements.json": "6d15f6953693a694f3c186a15edb2df823b42445d5d563a6f4895f3f5edb2b9f",
+    "results.json": "edfa7414f44861705f8fb86026e44ef01392727c0d8c971b007242b2ec1bab3e",
+    "run.py": "078782904626fc3cd6604a733960fa4c1b9a62b3742adf2a11f780d622403c29",
+    "validate.py": "1c65a062f70734af0e0968dca8442f17c356b9541f56a9f164c6541562f439e3"
+  }
+}

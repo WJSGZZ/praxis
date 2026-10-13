@@ -61,6 +61,8 @@ TREES = {
     'demos/collatz-research/reproduce/runs': {'.json'},
     'demos/data-analysis': {'.md', '.py', '.json'},
     'demos/data-analysis/assets': {'.png', '.pdf'},
+    'demos/data-vintages': {'.md', '.py', '.json'},
+    'demos/data-vintages/data': {'.md', '.json'},
     'demos/spatial-analysis': {'.md', '.py', '.json'},
     'demos/spatial-analysis/assets': {'.png', '.pdf'},
     'demos/image-analysis': {'.md', '.py', '.json', '.tex'},

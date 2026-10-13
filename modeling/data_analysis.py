@@ -1,5 +1,7 @@
 """Read-only data diagnostics using Pandas, with declared interpretation limits."""
+from datetime import datetime, timedelta, timezone
 import math
+import re
 
 import pandas as pd
 
@@ -178,3 +180,179 @@ def audit_join(left, right, on, how="left", relationship="many_to_one",
             "key_entity_change": result["key_entities"]["output"] - unique,
         }
     return result
+
+
+_ISO_INSTANT = re.compile(
+    r"^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})$"
+)
+
+
+def _instant_ns(value, name):
+    if not isinstance(value, str):
+        raise ValueError(f"{name}: expected an explicit-timezone ISO-8601 instant")
+    match = _ISO_INSTANT.fullmatch(value)
+    if match is None:
+        raise ValueError(f"{name}: expected YYYY-MM-DDTHH:MM:SS[.1-9 digits](Z|+/-HH:MM)")
+    date_part, clock_part, fraction, zone = match.groups()
+    try:
+        local = datetime.strptime(f"{date_part}T{clock_part}", "%Y-%m-%dT%H:%M:%S")
+        if zone == "Z":
+            offset = timezone.utc
+        else:
+            sign = 1 if zone[0] == "+" else -1
+            hours, minutes = int(zone[1:3]), int(zone[4:6])
+            if hours > 23 or minutes > 59:
+                raise ValueError("invalid UTC offset")
+            offset = timezone(sign * timedelta(hours=hours, minutes=minutes))
+        utc = local.replace(tzinfo=offset).astimezone(timezone.utc).replace(tzinfo=None)
+    except (ValueError, OverflowError) as error:
+        raise ValueError(f"{name}: invalid ISO-8601 instant {value!r}") from error
+    epoch = datetime(1970, 1, 1)
+    delta = utc - epoch
+    seconds = delta.days * 86400 + delta.seconds
+    nanos = int((fraction or "").ljust(9, "0"))
+    result = seconds * 1_000_000_000 + nanos
+    if result < pd.Timestamp.min.value or result > pd.Timestamp.max.value:
+        raise ValueError(f"{name}: instant is outside Pandas nanosecond timestamp bounds")
+    return result
+
+
+def _ns_utc_text(value):
+    seconds, nanos = divmod(value, 1_000_000_000)
+    stamp = datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=seconds)
+    text = stamp.strftime("%Y-%m-%dT%H:%M:%S")
+    if nanos:
+        text += "." + f"{nanos:09d}".rstrip("0")
+    return text + "Z"
+
+
+def asof_join(queries, versions, on, decision_time, available_time,
+              allow_exact_matches=False):
+    """Map each query to its unique latest available version at decision time.
+
+    Availability is interpreted conservatively: if any version for a key has
+    an unknown availability time, every query for that key is marked unknown.
+    This audits declared metadata and does not establish that metadata or a
+    version ledger is complete or true.
+    """
+    keys = [on] if isinstance(on, str) else list(on) if isinstance(on, list) else on
+    if (not isinstance(keys, list) or not keys or
+            any(not isinstance(key, str) or not key for key in keys) or
+            len(set(keys)) != len(keys)):
+        raise ValueError("on must contain unique nonempty column names")
+    _finite_json(keys, "on")
+    if not isinstance(decision_time, str) or not decision_time:
+        raise ValueError("decision_time must be a nonempty column name")
+    if not isinstance(available_time, str) or not available_time:
+        raise ValueError("available_time must be a nonempty column name")
+    _finite_json(decision_time, "decision_time")
+    _finite_json(available_time, "available_time")
+    if type(allow_exact_matches) is not bool:
+        raise ValueError("allow_exact_matches must be a boolean")
+
+    query_df = _records_frame(queries, "queries", keys)
+    if len(query_df) > 20_000:
+        raise ValueError("queries exceeds the 20000 input-row audit limit")
+    version_df = _records_frame(versions, "versions", keys)
+    if query_df[keys].isna().any(axis=None):
+        raise ValueError("Null query join keys are rejected")
+    if version_df[keys].isna().any(axis=None):
+        raise ValueError("Null version join keys are rejected")
+    for label, records, time_column in (
+        ("queries", queries, decision_time), ("versions", versions, available_time)
+    ):
+        if records and time_column not in records[0]:
+            raise ValueError(f"{label}: missing time column {time_column!r}")
+        if time_column in keys:
+            raise ValueError(f"{label}: time column {time_column!r} must not overlap on")
+
+    key_types = {}
+    for key in keys:
+        query_type, version_type = _key_kind(query_df, key, "queries"), _key_kind(version_df, key, "versions")
+        if query_type != "unknown" and version_type != "unknown" and query_type != version_type:
+            raise ValueError(f"{key}: incompatible queries/versions key types {query_type}/{version_type}")
+        key_types[key] = {"queries": query_type, "versions": version_type}
+    for index, record in enumerate(queries):
+        if record.get(decision_time) is None:
+            raise ValueError(f"queries[{index}].{decision_time}: decision time must not be null")
+
+    query_ns = [_instant_ns(record[decision_time], f"queries[{i}].{decision_time}") for i, record in enumerate(queries)]
+    version_ns = [None if record.get(available_time) is None else
+                  _instant_ns(record[available_time], f"versions[{i}].{available_time}")
+                  for i, record in enumerate(versions)]
+
+    # Stable, typed tuple IDs prevent numeric key coercion inside Pandas while
+    # keeping the actual eligibility operation in the locked merge_asof engine.
+    group_ids = {}
+    def group_key(record):
+        return tuple((type(record[key]), record[key]) for key in keys)
+    query_groups = []
+    version_groups = []
+    for record in queries:
+        identity = group_key(record)
+        if identity not in group_ids:
+            group_ids[identity] = len(group_ids)
+        query_groups.append(group_ids[identity])
+    for record in versions:
+        identity = group_key(record)
+        if identity not in group_ids:
+            group_ids[identity] = len(group_ids)
+        version_groups.append(group_ids[identity])
+
+    groups_with_unknown = {group for group, ns in zip(version_groups, version_ns) if ns is None}
+    valid_version_counts = {}
+    right_rows = []
+    for index, (group, ns) in enumerate(zip(version_groups, version_ns)):
+        if ns is not None:
+            valid_version_counts[(group, ns)] = valid_version_counts.get((group, ns), 0) + 1
+            right_rows.append({"__group": group, "__time": ns, "__version": index})
+
+    matched_ids = [None] * len(queries)
+    matched_times = [None] * len(queries)
+    if queries and right_rows:
+        left = pd.DataFrame({"__group": query_groups, "__time": query_ns,
+                             "__query": list(range(len(queries)))})
+        right = pd.DataFrame(right_rows)
+        left = left.sort_values(["__time", "__query"], kind="mergesort")
+        right = right.sort_values(["__time", "__version"], kind="mergesort")
+        mapped = pd.merge_asof(left, right, on="__time", by="__group",
+                               direction="backward", allow_exact_matches=allow_exact_matches)
+        for query_index, version_index in mapped[["__query", "__version"]].itertuples(index=False, name=None):
+            if pd.notna(version_index):
+                matched_ids[int(query_index)] = int(version_index)
+                matched_times[int(query_index)] = version_ns[int(version_index)]
+
+    mappings = []
+    totals = {"matched": 0, "not_available": 0, "unknown_availability": 0, "ambiguous_latest": 0}
+    for index, (group, decision_ns) in enumerate(zip(query_groups, query_ns)):
+        decision_utc = _ns_utc_text(decision_ns)
+        version_index = matched_ids[index]
+        if group in groups_with_unknown:
+            status, version_index, available_utc = "unknown_availability", None, None
+        elif version_index is None:
+            status, available_utc = "not_available", None
+        elif valid_version_counts[(group, matched_times[index])] > 1:
+            status, version_index, available_utc = "ambiguous_latest", None, None
+        else:
+            status = "matched"
+            available_ns = matched_times[index]
+            available_utc = _ns_utc_text(available_ns)
+        totals[status] += 1
+        mappings.append({"query_index": index, "status": status,
+                         "matched_version_index": version_index,
+                         "decision_time_utc": decision_utc,
+                         "available_time_utc": available_utc})
+
+    return {
+        "schema_version": 1,
+        "status": "audited" if all(row["status"] == "matched" for row in mappings) else "mapped",
+        "backend": {"library": "pandas", "version": pd.__version__, "direction": "backward"},
+        "on": keys, "decision_time": decision_time, "available_time": available_time,
+        "allow_exact_matches": allow_exact_matches, "key_types": key_types,
+        "query_rows": len(queries), "version_rows": len(versions), "counts": totals,
+        "matched_fraction": totals["matched"] / len(queries) if queries else None,
+        "mappings": mappings,
+        "limitations": ["Does not prove availability metadata is true.",
+                        "Does not prove the version ledger is complete.",
+                        "Does not establish forecast deployment performance."],
+    }

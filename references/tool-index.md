@@ -7,6 +7,7 @@
 | `binary_components` | mask*, connectivity, min_pixels, exclude_border, max_components, pixel_size, unit | Measure connected regions in an explicitly supplied 2-D binary mask |
 | `audit_data` | path*, sheet, encoding, sep, contract, max_rows, missing_values, keep_default_na | Read-only audit of CSV/TSV/Excel: original and parsed headers, missingness, duplicates, declared data contract and scan coverage; hashes the original |
 | `audit_join` | left*, right*, on*, how, relationship, null_policy, max_output_rows | Audit a declared table join using Pandas cardinality validation and an explicit null-key policy; returns aggregate coverage and row expansion, without joined records |
+| `asof_join` | queries*, versions*, on*, decision_time*, available_time*, allow_exact_matches | Map each decision query to the latest declared available version strictly before its cutoff (or at the cutoff when explicitly enabled), using Pandas backward merge_asof |
 | `check_references` | references*, mailto | Check each reference line with a DOI against Crossref (title and year); lines without a DOI are reported as no_doi |
 | `solve_lp` | c*, A_ub, b_ub, A_ge, b_ge, A_eq, b_eq, bounds, maximize | Linear program (HiGHS) with a duality-gap certificate |
 | `solve_milp` | c*, A_ub, b_ub, A_ge, b_ge, A_eq, b_eq, bounds, integrality, maximize, time_limit | Mixed-integer linear program (HiGHS) with proved bound and gap |

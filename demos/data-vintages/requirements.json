@@ -1,0 +1,43 @@
+{
+  "requirements": [
+    {
+      "id": "Q1",
+      "question": "Which version is available for every original query?",
+      "unit": "row index/status",
+      "result_pointer": "/mapping/mappings",
+      "checks": [
+        "independent version selection",
+        "fixed query roster"
+      ]
+    },
+    {
+      "id": "Q2",
+      "question": "What supported order or unresolved state exists on every day?",
+      "unit": "inventory units",
+      "result_pointer": "/daily_actions",
+      "checks": [
+        "independent allocation and abstention"
+      ]
+    },
+    {
+      "id": "Q3",
+      "question": "How do lawful forecasts, the baseline and invalid final snapshots compare?",
+      "unit": "inventory units/declared cost units",
+      "result_pointer": "/comparison",
+      "checks": [
+        "independent asof diagnostics",
+        "independent baseline diagnostics",
+        "independent final_snapshot diagnostics"
+      ]
+    },
+    {
+      "id": "Q4",
+      "question": "Do future-only payload changes alter existing decisions?",
+      "unit": "row index/inventory units",
+      "result_pointer": "/future_value_perturbation_check",
+      "checks": [
+        "future-value invariance"
+      ]
+    }
+  ]
+}

@@ -334,6 +334,15 @@ TOOLS = dict([
            'relationship': {'type': 'string', 'enum': ['one_to_one', 'one_to_many', 'many_to_one', 'many_to_many']},
            'null_policy': {'type': 'string', 'enum': ['reject', 'drop', 'match']}, 'max_output_rows': {'type': 'integer', 'minimum': 1}}, ['left', 'right', 'on'],
           lambda a: data_analysis.audit_join(**a)),
+    _tool('asof_join', 'Map each decision query to the latest declared available version strictly before its cutoff (or at the cutoff when explicitly enabled), using Pandas backward merge_asof. Missing availability and latest-time ties remain unresolved; returns original row indices, not payloads. Does not certify release metadata or forecasting performance.',
+          {'queries': {'type': 'array', 'maxItems': 20000, 'items': {'type': 'object'}},
+           'versions': {'type': 'array', 'maxItems': 200000, 'items': {'type': 'object'}},
+           'on': {'type': ['string', 'array'], 'items': {'type': 'string'}, 'minItems': 1},
+           'decision_time': {'type': 'string', 'description': 'Nonempty query column name containing explicit-timezone ISO8601 cutoffs.'},
+           'available_time': {'type': 'string', 'description': 'Nonempty version column name; null values leave that key unresolved.'},
+           'allow_exact_matches': {'type': 'boolean', 'default': False, 'description': 'False means strictly before the cutoff. Set true only when availability at the exact cutoff is declared usable.'}},
+          ['queries', 'versions', 'on', 'decision_time', 'available_time'],
+          lambda a: data_analysis.asof_join(**a)),
     _tool('check_references', 'Check each reference line with a DOI against Crossref (title and year); lines without a DOI are reported as no_doi. Needs internet.',
           {'references': {'type': 'array', 'items': {'type': 'string'}}, 'mailto': {'type': 'string'}}, ['references'],
           lambda a: check_references.check(a['references'], a.get('mailto', 'unknown@example.org'))),
@@ -540,6 +549,10 @@ TOOLS = dict([
 
 # One minimal, runnable call per tool that needs a shape to be guessed; a test calls every example, so they stay correct.
 EXAMPLES = {
+    'asof_join': dict(queries=[dict(id='A', cutoff='2026-01-02T08:00:00Z')],
+                     versions=[dict(id='A', released='2026-01-02T07:50:00Z', value=12),
+                               dict(id='A', released='2026-01-03T12:00:00Z', value=19)],
+                     on='id', decision_time='cutoff', available_time='released'),
     'binary_components': dict(mask=[[0, 0, 0], [0, 1, 1], [0, 0, 0]], connectivity=8, min_pixels=1, exclude_border=False, max_components=200, pixel_size=None, unit=None),
     'audit_join': dict(left=[dict(id=1, value=10), dict(id=2, value=20), dict(id=3, value=30)],
                       right=[dict(id=1, group='A'), dict(id=3, group='B')], on='id', relationship='many_to_one'),

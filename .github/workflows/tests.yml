@@ -29,7 +29,7 @@ jobs:
       - name: Run numerical pipeline and MCP contract
         run: uv run --locked --no-sync python .github/scripts/runtime_contract.py --bundle . --work ".session/Runtime contract with spaces" --receipt .session/runtime-contract.json
       - name: Check transport limits and worker deadlines
-        run: uv run --locked --no-sync python -m pytest -q tests/test_mcp_request_limits.py tests/test_bounded_execution.py --basetemp=.session/runtime-focused-pytest --junitxml=.session/runtime-focused.xml
+        run: uv run --locked --no-sync python -m pytest -q tests/test_mcp_request_limits.py tests/test_bounded_execution.py tests/test_asof_join.py tests/test_mcp_asof.py tests/test_data_vintages_demo.py --basetemp=.session/runtime-focused-pytest --junitxml=.session/runtime-focused.xml
       - uses: actions/upload-artifact@v4
         if: always()
         with:

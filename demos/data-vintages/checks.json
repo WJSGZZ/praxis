@@ -1,0 +1,51 @@
+[
+  {
+    "name": "independent version selection",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "All20 original queries compared with a separate per-key UTC scan; unknown, tie and future states retained."
+  },
+  {
+    "name": "fixed query roster",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "Fixed20 queries, independently counted states={'matched': 17, 'not_available': 1, 'unknown_availability': 1, 'ambiguous_latest': 1}; no unresolved row deletion."
+  },
+  {
+    "name": "independent allocation and abstention",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "All10 days preserved; eight supported orders independently minimize over all861 feasible integer pairs, two days unresolved."
+  },
+  {
+    "name": "independent asof diagnostics",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "Original16 common targets/8days; exact totals MAE=5.4375, cost=248, shortage=46, overage=34."
+  },
+  {
+    "name": "independent baseline diagnostics",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "Original16 common targets/8days; exact totals MAE=3.9375, cost=157, shortage=24, overage=39."
+  },
+  {
+    "name": "independent final_snapshot diagnostics",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "Original16 common targets/8days; exact totals MAE=0.0, cost=36, shortage=9, overage=0."
+  },
+  {
+    "name": "future-value invariance",
+    "passed": true,
+    "independent": true,
+    "method_family": "stdlib timestamp scan and exact integer enumeration",
+    "evidence": "Producer reruns mapping/order calculation after changing only post-cutoff payloads; both sides independently equal the declared-input scan/enumeration. Source inspection is also required."
+  }
+]

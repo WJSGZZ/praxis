@@ -21,6 +21,16 @@
 
 图片数据沿用同一测量契约：记录原图、同一拍摄／对象／事件的源家族、标签来源与完成时间、裁剪和增强的派生关系。图片数、独立事件数与真实对象数分别计数；信息不足的图片可为待判定，不能因目标不可见就补负标签。像素测量、ROI与阈值选择交 [image-analysis.md](image-analysis.md)，图像特征的预测划分交 [machine-learning.md](machine-learning.md)，地理坐标和栅格对齐交 [spatial-analysis.md](spatial-analysis.md)。
 
+## 按决策时刻选择数据版本
+
+事件日期、记录创建日期、字段发布日期和修订日期分别保存。旧日期的记录也可能包含后来改写的文本、评分或标签；将最终快照按事件日期排序，仍会把未来信息送入过去的决策。以实体×事件×字段为版本键，按来源可证明的可用时点选择版本；同一行内不同字段可能需要拆开核对。
+
+`asof_join(queries, versions, on, decision_time, available_time, allow_exact_matches=False)` 返回原始查询与版本的行索引。时间须为带明确时区的 ISO8601 字符串；默认只接纳截点之前的版本，确知同刻可用才显式设 true。复用锁定 Pandas 的 `merge_asof(direction="backward")`，内部按全局时间排序并恢复查询顺序；不使用 nearest／forward，不将排序位置当发布证据。
+
+每个查询保留 `matched`、`not_available`、`unknown_availability` 或 `ambiguous_latest`。同键任一版本缺可用时点时，该键的当前快照无法认证；最新可用时刻有多个版本时，不按行序挑胜者。返回 null 的查询不能静默删去后提高覆盖率。工具只映射声明的账本，不证明时间戳真实、历史版本完整、特征构造正确或预测有效。事先公布的未来事件可在截点前合法使用，不能单凭事件日期晚于决策日期拒绝。
+
+独立核一组逐版本筛选答案；改变截点之后的版本值，已支持的预测和动作应不变。再分别核同刻政策、缺失时点、冲突版本和未发布查询。完整分析同时报告固定查询群体、实际可评价群体与未决项；来源不足时给有界回顾分析，不能把它称为实时部署回测。执行参数和小例见 [automation.md](automation.md#按信息截点映射版本)。
+
 ## 覆盖与探索先检验解释是否站得住
 
 根据问题检查总体及关键组／时间的覆盖、独立实体数、重复结构、缺失比例与取值域。比较均值／SD和中位数／IQR／MAD，查看有序变化、边界、离散点、异常影响及同分母的组差异。异常标记是调查起点；有效极端观察应保留，删除需具体测量错误或预定排除规则，并核对结果影响。
@@ -55,4 +65,5 @@
 
 - [K-Dense EDA](https://github.com/K-Dense-AI/scientific-agent-skills/blob/a1043ef544e3a100c28e70a736b6cf32554d0677/skills/exploratory-data-analysis/SKILL.md)及其[报告模板](https://github.com/K-Dense-AI/scientific-agent-skills/blob/a1043ef544e3a100c28e70a736b6cf32554d0677/skills/exploratory-data-analysis/assets/report_template.md)，固定提交 `a1043ef`，MIT：参考观察／测量字典、缺失区别、前缀扫描限制与探索性解释。这里是职责综合，没有安装其格式栈或宣称所有格式支持。
 - [Pandas merge官方API](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html)：基数、indicator及空键匹配；运行时以实际锁定版本为准。
+- [Pandas 2.3.3 merge_asof](https://pandas.pydata.org/pandas-docs/version/2.3.3/reference/api/pandas.merge_asof.html)：复用已安装版本的排序、分组、backward及同刻匹配机制。Praxis 的原始行索引、缺时点和冲突政策是本地适配；没有复制库实现或增加依赖。
 - [Pandera实际API](https://github.com/unionai-oss/pandera/blob/77179030949a87bb52336cc14a7c93f401f1f156/pandera/api/pandas/container.py)及[Check语义](https://github.com/unionai-oss/pandera/blob/77179030949a87bb52336cc14a7c93f401f1f156/docs/source/checks.md)，固定提交 `7717903`，MIT：参考声明式契约能力与默认边界。审计工具仍按其真实支持范围使用。

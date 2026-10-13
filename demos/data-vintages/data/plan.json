@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "identity": "Original synthetic data-vintage replenishment exercise; not a competition evaluation",
+  "decision_hour_utc": 8,
+  "allow_exact_matches": false,
+  "capacity_units_per_day": 40,
+  "shortage_penalty": {
+    "A": 6,
+    "B": 4
+  },
+  "overage_penalty": {
+    "A": 1,
+    "B": 1
+  },
+  "baseline_forecast": {
+    "A": 20,
+    "B": 20
+  },
+  "common_evaluation_days": [
+    "2026-01-01",
+    "2026-01-02",
+    "2026-01-03",
+    "2026-01-04",
+    "2026-01-05",
+    "2026-01-06",
+    "2026-01-07",
+    "2026-01-08"
+  ],
+  "unresolved_action": "No certified automated order; escalate for missing release evidence. An operational fallback is not modeled.",
+  "scope": "Point-forecast allocation minimizes declared forecast loss; realized costs are ex-post diagnostics, not guaranteed optimal or a calibrated uncertainty policy."
+}
