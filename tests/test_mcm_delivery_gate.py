@@ -345,3 +345,19 @@ def test_completed_log_can_precede_pdf_serialization(tmp_path):
     os.utime(log, ns=(old, old))
     assert freeze(pdf, tmp_path / 'final.pdf', tex=tex, contest='mcm',
                   build_receipt=build)['typesetting_diagnostics']['passed']
+
+
+def test_crlf_style_inspection_preserves_actual_source_binding(tmp_path):
+    tex = tmp_path / 'windows-lines.tex'
+    raw = source().replace('\n', '\r\n').encode('utf-8')
+    tex.write_bytes(raw)
+    assert check(raw.decode('utf-8'), 'mcm', layout_mode='current')['profile'] == 'praxis-mcm-v4'
+    altered = raw.decode('utf-8').replace('a4paper', 'letterpaper', 1)
+    with pytest.raises(ValueError, match='differs from the shared source'):
+        check(altered, 'mcm', layout_mode='current')
+    if shutil.which('tectonic') is None:
+        pytest.skip('Canonical Tectonic compiler is unavailable')
+    record = compile_paper(tex, 'mcm', tmp_path / 'compiled')
+    assert tex.read_bytes() == raw
+    assert record['tex_sha256'] == hashlib.sha256(raw).hexdigest()
+    assert record['current_mcm_format']['passed']

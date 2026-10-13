@@ -143,6 +143,9 @@ def check(text, contest='mcm', *, layout_mode='archive'):
     Local font commands in content (including captions) are not macro-expanded.
     Actual rendered pagination and role-specific font sizes require PDF inspection.
     """
+    # Inspect TeX line endings semantically; receipts still bind untouched bytes.
+    # Windows Path.write_text emits CRLF even with LF Git checkout attributes.
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
     if layout_mode not in {'current', 'archive'}:
         raise ValueError('Layout mode must be current or archive')
     version = VERSIONS[contest]
@@ -332,6 +335,7 @@ def mcm_identity(text):
     """Literal identity supplied by a checked standalone MCM source."""
     preamble_text = text.split(r'\begin{document}', 1)[0]
     preamble_text = re.sub(r'(?<!\\)%[^\n]*', '', preamble_text)
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
     team = re.findall(r'\\newcommand\s*\{\\PraxisTeam\}\s*\{([0-9]{1,12})\}', preamble_text)
     headers = [(letter, year) for year in set(re.findall(r'\\textbf\{((?:19|20)[0-9]{2})\\\\MCM/ICM', text))
                for letter in 'ABCDEF' if summary_header(letter, edition=year) in text]
