@@ -7,7 +7,7 @@
       "slug": "mcm-2016-a",
       "pdf_path": "../mcm-2016-a/paper.pdf",
       "pages": 28,
-      "pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+      "pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
       "metadata": "metadata/mcm-2016-a.json",
       "category": "mechanism",
       "identity": {
@@ -22,7 +22,7 @@
       "slug": "mcm-2017-b",
       "pdf_path": "papers/mcm-2017-b.pdf",
       "pages": 17,
-      "pdf_sha256": "7a44a8e351d3717f278307ddbf0724c143ed729f28fdce4332c0b5a20b18c78f",
+      "pdf_sha256": "9c71ac44d78bcef32d654defed07aa8fac3fe52962b1b236e5ba314b084376ef",
       "metadata": "metadata/mcm-2017-b.json",
       "category": "mechanism",
       "identity": {
@@ -37,7 +37,7 @@
       "slug": "mcm-2020-b",
       "pdf_path": "papers/mcm-2020-b.pdf",
       "pages": 22,
-      "pdf_sha256": "cf896f21aad330695b6474487c69f51138e1001d25b25955fd1dfef8a0c7de38",
+      "pdf_sha256": "17169fdfc8b3ff9321bca8bfb68b82f99898caa8f0c4d5ef33dc7152b856b66c",
       "metadata": "metadata/mcm-2020-b.json",
       "category": "mechanism",
       "identity": {
@@ -52,7 +52,7 @@
       "slug": "mcm-2020-c",
       "pdf_path": "papers/mcm-2020-c.pdf",
       "pages": 21,
-      "pdf_sha256": "be9bea7a11d86be203de49a03fe8fff37e0612e74f5edb707ae389a0f7d9a862",
+      "pdf_sha256": "8e062464388dca122c112fd90032af31426428bac2730ef5de9497d6f1f0c9e4",
       "metadata": "metadata/mcm-2020-c.json",
       "category": "data",
       "identity": {
@@ -67,7 +67,7 @@
       "slug": "mcm-2021-c",
       "pdf_path": "papers/mcm-2021-c.pdf",
       "pages": 19,
-      "pdf_sha256": "6a5991dbc2acce0780f53de0dae5df3dc772327fc1e9cfba778354579275a107",
+      "pdf_sha256": "c18c5bab146dabf6cd07961ff209b76f495b65962b5813bcd024afdd8ced0eed",
       "metadata": "metadata/mcm-2021-c.json",
       "category": "data",
       "identity": {
@@ -82,7 +82,7 @@
       "slug": "mcm-2023-a",
       "pdf_path": "papers/mcm-2023-a.pdf",
       "pages": 17,
-      "pdf_sha256": "b1d0ef2c48c9995eaacf2a767d84fe03a7e04de8c745b3fbe9d8d21ca2ab4814",
+      "pdf_sha256": "af48ec0a58be387160ebcb9fb9285586ba8b9e55e80488f179af3a3736a182f9",
       "metadata": "metadata/mcm-2023-a.json",
       "category": "mechanism",
       "identity": {
@@ -112,7 +112,7 @@
       "slug": "icm-2024-e",
       "pdf_path": "papers/icm-2024-e.pdf",
       "pages": 22,
-      "pdf_sha256": "02263706d81c492d40950970b1da7571612eb7164ec436369e482dffa2a7c601",
+      "pdf_sha256": "ae88be9e26f7e1738449f665b213bcf90f38e44e70d7d2cb6a1df41a36bff7ad",
       "metadata": "metadata/icm-2024-e.json",
       "category": "risk",
       "identity": {
@@ -127,7 +127,7 @@
       "slug": "mcm-2025-a",
       "pdf_path": "papers/mcm-2025-a.pdf",
       "pages": 19,
-      "pdf_sha256": "2331c2f7ca4eabf17ebe13e7b4bf9b089fc95add203f9352243be433fd375216",
+      "pdf_sha256": "5b0d4727e2f57d4bbf482955d2ee225499938a241ad34e0b0e672088ff527ea4",
       "metadata": "metadata/mcm-2025-a.json",
       "category": "data",
       "identity": {
@@ -142,7 +142,7 @@
       "slug": "mcm-2025-c",
       "pdf_path": "papers/mcm-2025-c.pdf",
       "pages": 21,
-      "pdf_sha256": "b0e87fe3e2561db962a0b7613edca00abe5f17a63ff9431fb601d250b2153cd1",
+      "pdf_sha256": "2c6f75f7949d0ee8a802483e9ed85cab793fa8512ed76723e06c7c8780103ef6",
       "metadata": "metadata/mcm-2025-c.json",
       "category": "data",
       "identity": {

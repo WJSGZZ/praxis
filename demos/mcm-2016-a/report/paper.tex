@@ -227,7 +227,7 @@ A fixed envelope volume is preserved by balancing inlet and overflow. In the bas
 
 \textbf{Spatial temperature distribution.}
 
-Figure \ref{fig:spatial} locates cold regions across layers on one scale.
+Figure \ref{fig:spatial} locates cold regions across layers on one scale. The three layers share a color scale; distances are in metres.
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}
@@ -351,7 +351,7 @@ Figure \ref{fig:spatial} locates cold regions across layers on one scale.
 \addplot[draw=none] coordinates {(0,0)};
 \end{axis}
 \end{tikzpicture}
-\caption{Final cell-average temperatures. The three layers share a color scale; distances are in metres.}\label{fig:spatial}
+\caption{Final cell-average temperatures}\label{fig:spatial}
 \end{figure}
 The heat map and Figure \ref{fig:temperature} use the same archived trajectory. Exchange couples the horizontal layers into one three-dimensional network. The cold-region locations explain information lost by a mean or range; the mesh table tests resolution. These are homogenized cell averages, not resolved anatomy, recirculation or a faucet jet.
 
@@ -370,7 +370,7 @@ Starts are tested at 0, 120, …, 1200 seconds. For each, rates from 0 to 3 L/mi
 This is a reproducible candidate search. Nonmonotone flow responses, untested delays, pulsed inputs, inlet relocation and feedback are not excluded by the calculation. A failed search means no candidate was accepted, not that every possible action is infeasible. The independent checks further examine the chosen trajectory between samples.
 
 \section{Replenishment policies}
-Figure \ref{fig:temperature} contrasts the mean, coldest cell and spatial range.
+Figure \ref{fig:temperature} contrasts the mean, coldest cell and spatial range. Shading spans the coldest cell to the hottest cell outside the inlet jet zone.
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}
@@ -401,7 +401,7 @@ Figure \ref{fig:temperature} contrasts the mean, coldest cell and spatial range.
 \draw[black, line width=0.8pt, dotted] ({rel axis cs:0,0}|-{axis cs:0,41}) -- ({rel axis cs:1,0}|-{axis cs:0,41});
 \end{axis}
 \end{tikzpicture}
-\caption{Temperature evolution under constant replenishment. Shading spans the coldest cell to the hottest cell outside the inlet jet zone.}\label{fig:temperature}
+\caption{Temperature evolution under constant replenishment}\label{fig:temperature}
 \end{figure}
 \begin{table}[ht]\centering\normalsize\caption{Baseline result under the best constant rate}\label{tab:6}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.6410\dimexpr\linewidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{0.3590\dimexpr\linewidth-2\tabcolsep\relax}@{}}
@@ -446,7 +446,7 @@ replay on three meshes with independent integration;
 accept only if continuous bounds meet all limits
 \end{Verbatim}
 \end{minipage}\par\medskip
-Figure \ref{fig:control} shows flow timing and temperature constraints.
+Figure \ref{fig:control} shows flow timing and temperature constraints. The top panel shows flow rates and the bottom panel temperatures outside the inlet jet zone; dotted lines mark the limits.
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}
@@ -501,7 +501,7 @@ Figure \ref{fig:control} shows flow timing and temperature constraints.
 \node[anchor=north,font=\normalsize,text=accent,xshift=0pt,yshift=0pt] at (axis cs:8,39.3935) {Coldest cell};
 \end{axis}
 \end{tikzpicture}
-\caption{Buffered 6-segment replenishment. Flow rates (top) and temperatures outside the inlet jet zone (bottom); dotted lines mark the limits.}\label{fig:control}
+\caption{Buffered six-segment replenishment}\label{fig:control}
 \end{figure}
 The accepted 6-segment policy is off for the first 5.0 minutes and last 10.0 minutes, with a peak flow of 1.67 L/min. For consecutive 5-minute intervals the rates, rounded to nine decimals, are 0, 1.668107192, 1.343440056, 1.283871597, 0, 0 L/min; the interval duration times their sum is 21.477094 L. It adds 21.48 L, 11.0\% below the constant rate. Its 0.1°C design margin sacrifices some water savings to protect the stated constraints. The remaining 6.06 L gap to the energy bound is not an optimality certificate.
 
@@ -510,7 +510,7 @@ The unbuffered 12-segment candidate uses 19.35 L but reaches a spread of 1.531°
 \subsection{Temperature–water trade-off}
 The task asks for a bath close to its initial temperature without wasting much water, which is a trade-off rather than a single optimum. Figure \ref{fig:frontier} repeats the search while the allowed fall below 40°C changes from 0.25 to 3°C; the 1°C case is the baseline. With a fall of 2.5°C or more the stored heat suffices and no water is added. At 2°C the best constant rate adds 1.9 L, at 1.5°C 12.9 L, at 1°C 24.1 L and at 0.75°C 29.8 L. Between 2°C and 0.75°C each further 0.5°C of tolerance is therefore worth roughly 11 L, almost linearly. At 0.5°C the best constant rate adds 36.3 L; for a fall of 0.25°C no constant-rate policy was accepted, while the perfectly mixed bath would still need 30.7 L.
 
-Figure \ref{fig:frontier} compares searched spatial policies with analytical benchmarks.
+Figure \ref{fig:frontier} compares searched spatial policies with analytical benchmarks. Crosses denote unsuccessful searches; the dotted line marks the baseline.
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}
@@ -535,7 +535,7 @@ Figure \ref{fig:frontier} compares searched spatial policies with analytical ben
 \draw[black, line width=0.8pt, dotted] ({axis cs:1,0}|-{rel axis cs:0,0}) -- ({axis cs:1,0}|-{rel axis cs:0,1});
 \end{axis}
 \end{tikzpicture}
-\caption{Water use versus temperature tolerance. Crosses denote unsuccessful searches; the dotted line marks the baseline.}\label{fig:frontier}
+\caption{Water use and temperature tolerance}\label{fig:frontier}
 \end{figure}
 The spatial-minus-mixed gap increases from 1.5 L at a 2°C fall to 9.2 L at 0.75°C. Scheduling lowers the baseline by 11\%; schedules at other tolerances were not optimized.
 
@@ -729,7 +729,7 @@ Exclude a model if either interval is empty. Choose the least of 0, 0.8, 0.9 and
 
 \textbf{Conditional feasibility and water cap.} Each accepted minute is checked with the original remaining backup. Subsequent observations only shrink the set, preserving that feasible tail. Induction applies if the truth stays in the static bank and propagators are valid. For L/min commands $0\le q_k\le q_k^{\mathrm{backup}}$, a completed service has $J_{\mathrm{cmd}}=\sum_k q_k\Delta t\le\sum_k q_k^{\mathrm{backup}}\Delta t\le26.09$ L ($\Delta t=1$ minute). A shared $\alpha>0$ gives $J_{\mathrm{act}}=\alpha J_{\mathrm{cmd}}\le\alpha\times26.09$ L. This proves neither minimum water nor fault or timeout recovery.
 
-Fixed probe biases (+0.013, -0.011)°C give 23.59 L with zero reading noise and 23.16 L with one bounded-noise sequence (seed 20261010); 114/1 models remain. Both start from 1,465 hypotheses and the 26.09 L backup. Figure \ref{fig:feedback} shows action changes before unique identification. These nominal cases do not estimate population performance.
+Fixed probe biases (+0.013, -0.011)°C give 23.59 L with zero reading noise and 23.16 L with one bounded-noise sequence (seed 20261010); 114/1 models remain. Both start from 1,465 hypotheses and the 26.09 L backup. Figure \ref{fig:feedback} shows action changes before unique identification. Retained-model counts use a logarithmic scale. These nominal cases do not estimate population performance.
 
 \begin{figure}[ht]\centering
 \begin{tikzpicture}
@@ -776,7 +776,7 @@ Fixed probe biases (+0.013, -0.011)°C give 23.59 L with zero reading noise and 
 \addplot[color=accent,line width=1.1pt,dashed,no marks,forget plot] coordinates {(0,1465) (1,1032) (2,727) (3,582) (4,448) (5,398) (6,215) (7,89) (8,85) (9,23) (10,23) (11,9) (12,9) (13,9) (14,9) (15,9) (16,9) (17,9) (18,8) (19,6) (20,6) (21,6) (22,6) (23,6) (24,3) (25,3) (26,1) (27,1) (28,1) (29,1)};
 \end{axis}
 \end{tikzpicture}
-\caption{Observation-dependent replenishment. Retained-model counts use a logarithmic scale.}\label{fig:feedback}
+\caption{Observation-dependent replenishment}\label{fig:feedback}
 \end{figure}
 A separate matched 12-model ablation uses 26.00 L without observations versus 22.86, 22.86 and 22.08 L with them in three structures. Six feedback trajectories pass 18 independent half-second three-grid RHS/energy replays; realized actions do not certify fine-grid feedback throughout the bank.
 

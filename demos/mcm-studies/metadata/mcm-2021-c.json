@@ -14,7 +14,7 @@
   "edition": 2021,
   "problem": "C",
   "pages": 19,
-  "pdf_sha256": "6a5991dbc2acce0780f53de0dae5df3dc772327fc1e9cfba778354579275a107",
+  "pdf_sha256": "c18c5bab146dabf6cd07961ff209b76f495b65962b5813bcd024afdd8ced0eed",
   "reviewer_identity_en": "Author-external AI review with follow-up by the same reviewer; neither human nor technically blind. Exact served model identity is unknown.",
   "reviewer_identity_zh": "作者外 AI 评阅，同一评阅者复核；非真人或技术盲审。确切实际模型身份未知。",
   "current_semantic_review": {
@@ -83,5 +83,14 @@
     "current_format_and_font_review_passed": true,
     "exact_text_and_raster_outside_identity_fields": true,
     "new_award_assessment": false
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "6a5991dbc2acce0780f53de0dae5df3dc772327fc1e9cfba778354579275a107",
+    "current_pdf_sha256": "c18c5bab146dabf6cd07961ff209b76f495b65962b5813bcd024afdd8ced0eed",
+    "source_sha256": "e4fa4ffe68bf1b314855d4b4cf104c710ee46d16e97bab2aada368126e0140e5",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }

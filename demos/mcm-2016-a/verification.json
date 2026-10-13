@@ -1,21 +1,21 @@
 {
   "schema": 1,
-  "checked_on": "2026-10-13",
+  "checked_on": "2026-10-14",
   "status": "selected_best_reviewed_work",
   "pdf": {
-    "sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
-    "bytes": 183803,
+    "sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
+    "bytes": 183868,
     "pages_total": 28,
     "solution_pages": 27,
     "ai_pages": 1,
-    "tex_sha256": "119a076814f84807afaceb6e2f17969ebf22b3d627f8bb8ae7cf0f14e8592b83",
+    "tex_sha256": "2d7b99076e5022c7f2a7e08d6f531327b7f7d04ffcd9514fbd846efcf183a7f5",
     "source": "report/paper.tex",
-    "source_scope": "Selected reviewed scientific snapshot with explicit reader callouts restored; no changed models, numbers, formulas, tables or figure arrays."
+    "source_scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment."
   },
   "public_paper": {
     "path": "paper.pdf",
-    "sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
-    "bytes": 183803,
+    "sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
+    "bytes": 183868,
     "byte_identical_to": "deliverables/paper.pdf"
   },
   "submission_files": [
@@ -47,8 +47,8 @@
   },
   "scientific_review_binding": {
     "reviewed_pdf_sha256": "e108b46bdfc588c9df979f5c356fb14127cf3b4713428f8caa0267ffcb43bb2b",
-    "current_pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
-    "kind": "Accepted scientific work; only explicit reader callouts and local pagination changed, with actual current format review",
+    "current_pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
+    "kind": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
     "mathematics_and_conditions_preserved": true,
     "new_full_award_review": false
   },
@@ -119,5 +119,14 @@
       "all28texts_and_rasters_equal": true,
       "math_glyph_records_equal": true
     }
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+    "current_pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
+    "source_sha256": "2d7b99076e5022c7f2a7e08d6f531327b7f7d04ffcd9514fbd846efcf183a7f5",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }

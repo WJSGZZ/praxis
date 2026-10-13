@@ -1,6 +1,6 @@
 {
-  "pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
-  "actor": "Praxis root: actual final28page overview and native affected pages, 2026-10-13",
+  "pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
+  "actor": "Praxis root: actual contact sheets01-05/all28pages and native first-figure page8, 2026-10-13",
   "pages": [
     1,
     2,
@@ -40,24 +40,8 @@
     "ai_report_boundary": true
   },
   "native_pages_viewed": [
-    3,
-    4,
-    5,
-    6,
-    9,
-    10,
-    14,
-    15,
-    16,
-    18,
-    19,
-    21,
-    22,
-    23,
-    27
+    8
   ],
-  "scope": "All28 latest pages match actually viewed overview renders except page9, viewed again after preserving the constant-rate scope. Native affected pages inspected; 11 explicit table callouts restored. No numerical rerun or new whole-paper award review.",
-  "findings": "A4/v4/12pt ordinary text/2em paragraphs, no clipping or overlap observed, no unreferenced numbered floats, isolated AI page28. Recourse setup paragraph stays together without shrinking text.",
-  "parent_pdf_sha256": "e8f0feb59235827344c61cb48190e963c510ae16f694bd3a23aa2394a7b15f95",
-  "source_whitespace_equivalence": "84 trailing blanks removed in selected TeX; all28 page texts/72dpi rasters and390 small-run plus1 unmapped glyph records equal the actually viewed parent. No semantic or visible change."
+  "scope": "Actual all28page visual overview plus readable page8; inherited scientific content not re-evaluated. Short titles, adjacent prose, summary7391856, paragraphindentation and separateAIpage28 observed. No clipping or overlap observed.",
+  "reviewed_utc": "2026-10-13T15:35:28.693153+00:00"
 }

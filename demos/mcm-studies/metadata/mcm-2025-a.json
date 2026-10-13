@@ -11,7 +11,7 @@
   "review_scope_zh": "作者外AI评阅重读final-07全稿及19页PDF，评估为F中心、M–F–O邻档，未校准；审查同样受AI身份和非盲限制。",
   "id": "MCM-2025-A",
   "pages": 19,
-  "pdf_sha256": "2331c2f7ca4eabf17ebe13e7b4bf9b089fc95add203f9352243be433fd375216",
+  "pdf_sha256": "5b0d4727e2f57d4bbf482955d2ee225499938a241ad34e0b0e672088ff527ea4",
   "reviewer_identity_en": "n02_independent_review; author-external AI reviewer, not human.",
   "reviewer_identity_zh": "n02_independent_review；作者外AI评阅者，非真人。",
   "current_semantic_review": {
@@ -37,5 +37,14 @@
     "current_format_and_font_review_passed": true,
     "exact_text_and_raster_outside_identity_fields": true,
     "new_award_assessment": false
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "2331c2f7ca4eabf17ebe13e7b4bf9b089fc95add203f9352243be433fd375216",
+    "current_pdf_sha256": "5b0d4727e2f57d4bbf482955d2ee225499938a241ad34e0b0e672088ff527ea4",
+    "source_sha256": "2b76100c6f32322cfe1602eb9e7aca9ebc1de76cdabc0a26c725d76ac9d3fc5c",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }

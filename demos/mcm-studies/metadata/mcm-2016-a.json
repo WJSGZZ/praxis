@@ -11,7 +11,7 @@
   "review_scope_zh": "完整科学与参考档次审阅仍绑定原稿。当前28页稿保留原模型、数字及条件，实际格式审查包含11处补齐的正文表格引用与局部分页；未进行新一轮全文奖项评价。",
   "id": "MCM-2016-A",
   "pages": 28,
-  "pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+  "pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
   "reviewer_identity_en": "Author-external AI review; no human peer reviewer or official judge.",
   "reviewer_identity_zh": "作者外 AI 评阅；非真人同行评审或官方评委。",
   "current_semantic_review": {
@@ -19,7 +19,7 @@
     "review_scope_zh": "初始 27 页完整科学审查按未变内容接续；本版全部 28 页文本及视觉总览，原尺寸查看第 1、8、9、11、12、20、22、24、25、26、27、28 页。本次增量复评没有新增模型计算。",
     "reviewed_pdf_sha256": "e108b46bdfc588c9df979f5c356fb14127cf3b4713428f8caa0267ffcb43bb2b",
     "reviewed_current_pdf_sha256": "337745c50912c628b420896c73584eead81f7cbf21e2388d6f163282acf565f8",
-    "current_pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+    "current_pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
     "current_revision_scope_en": "11 explicit table callouts and local pagination only; current28page format reviewed; science and award opinions retain their original version and scope.",
     "current_revision_scope_zh": "仅补11处正文表格引用与局部分页；当前28页格式已实际审查，科学与奖项意见保留原版本及范围。"
   },
@@ -43,5 +43,14 @@
   "identity": {
     "mode": "simulation",
     "team": "7391856"
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+    "current_pdf_sha256": "fe17836d55347cb90a51db510d8df35f2e2a195786cfdf887935197fd6405745",
+    "source_sha256": "2d7b99076e5022c7f2a7e08d6f531327b7f7d04ffcd9514fbd846efcf183a7f5",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }

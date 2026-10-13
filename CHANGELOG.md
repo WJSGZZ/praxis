@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 当前美赛图题只保留简短名称，说明移到附近正文；图框内的居中段落与小框说明同样检查。默认当前编译／冻结拒绝多句、过长图题和图框内的普通说明，同时支持正规缩写与历史手工图号。科研数据、公式及必要的条件和不确定性保留，历史原稿另存。
+  Current MCM figure captions contain short titles, with necessary explanation in adjacent prose. The checks cover centered paragraphs and note boxes inside figures. Current compilation and freezing reject long or multi-sentence titles and narrative figure notes, while accepting ordinary abbreviations and historical manual figure counters. Scientific inputs, formulas and essential conditions remain preserved.
+
 - 美赛与 ICM 模拟稿使用统一固定模拟队号 `7391856`；真实参赛显式提供实际队号，当前编译、冻结和展示检查拒绝全0占位。十篇当前公开作品的身份与元数据同步，历史冻结稿保留原件；不改变科学结论或奖档判断。
   MCM and ICM simulations use the fixed house team `7391856`. Real entries require an explicitly supplied assigned number, and current compilation, freezing and gallery checks reject all-zero placeholders. Current papers and metadata agree; frozen history, scientific conclusions and award references keep their original scope.
 

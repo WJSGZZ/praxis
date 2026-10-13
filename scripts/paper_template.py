@@ -259,6 +259,9 @@ def check(text, contest='mcm', *, layout_mode='archive'):
                          r'internal control identifier\s+[0-9]+\b')
         if re.search(literal_field, identity_content):
             raise ValueError('Current team signatures and disclosure identity must use the shared PraxisTeam macro')
+        titles = review_figure_titles(rest)
+        if titles['errors']:
+            raise ValueError('Current MCM figure titles: ' + '; '.join(titles['errors']))
         _check_current_indentation(rest)
     if contest == 'research' and not re.search(r'\\title\s*\[[^\]\n]+\]', rest):
         raise ValueError('Research manuscripts need an explicit short running title')
@@ -411,6 +414,121 @@ def check_explicit_references(text):
     missing = {key for key in references-labels-{'LastPage'} if '\\' not in key}
     if missing:
         raise ValueError('Unresolved explicit cross-reference: ' + ', '.join(sorted(missing)))
+
+
+def review_figure_titles(text):
+    """Inspect literal figure captions as short titles in the MCM house profile.
+
+    This is a project style, not a COMAP or universal journal requirement.
+    It does not certify semantics, visible line length or expanded user macros.
+    Essential explanation belongs in adjacent prose; journal legends keep their
+    target journal's rules. Tables, definitions and quoted code are excluded.
+    """
+    from pylatexenc.latexwalker import (LatexCharsNode, LatexEnvironmentNode, LatexGroupNode,
+                                       LatexMacroNode, LatexWalker, LatexWalkerError)
+    from pylatexenc.macrospec import MacroSpec
+    from pylatexenc.latex2text import LatexNodes2Text
+    from scripts.paper_structure import _context, DEFINITIONS, PRIMITIVE_DEFINITIONS, RAW_ENVIRONMENTS
+    context = _context()
+    context.add_context_category('praxis-figure-titles', prepend=True, macros=[
+        MacroSpec('caption', '*[{'), MacroSpec('captionof', '*{[{'),
+        MacroSpec('refstepcounter', '{'), MacroSpec('stepcounter', '{'),
+        MacroSpec('addtocounter', '{{'), MacroSpec('setcounter', '{{'),
+        MacroSpec('rule', '[{{')])
+    try:
+        nodes, _, _ = LatexWalker(text, latex_context=context,
+                                 tolerant_parsing=False).get_latex_nodes()
+    except LatexWalkerError as exc:
+        raise ValueError('Figure-title inspection could not parse the source: ' + str(exc)) from exc
+    titles, errors = [], []
+    figure_ends = []
+
+    def figure_prose(items):
+        """Literal prose outside graphical data/labels and the caption itself."""
+        found = []
+        graphics = {'tikzpicture', 'axis', 'groupplot', 'picture', 'pgfpicture',
+                    'pspicture', 'circuitikz', 'forest', 'tabular', 'tabular*'}
+        text_macros = {'textbf', 'textit', 'emph', 'textrm', 'textsf', 'texttt',
+                       'mbox', 'makebox', 'parbox'}
+        for node in items:
+            if isinstance(node, LatexCharsNode):
+                if re.search(r'[A-Za-z\u3400-\u9fff]', node.chars):
+                    found.append(node.chars.strip())
+            elif isinstance(node, LatexGroupNode):
+                found.extend(figure_prose(node.nodelist))
+            elif isinstance(node, LatexEnvironmentNode):
+                if node.environmentname not in graphics and node.environmentname not in RAW_ENVIRONMENTS:
+                    found.extend(figure_prose(node.nodelist))
+            elif isinstance(node, LatexMacroNode) and node.macroname in text_macros:
+                args = node.nodeargd.argnlist if node.nodeargd else []
+                if args and isinstance(args[-1], LatexGroupNode):
+                    found.extend(figure_prose(args[-1].nodelist))
+        return found
+
+    def walk(items, environment=None):
+        for node in items:
+            if isinstance(node, LatexEnvironmentNode):
+                if node.environmentname not in RAW_ENVIRONMENTS:
+                    kind = node.environmentname.rstrip('*')
+                    if kind == 'figure':
+                        if figure_prose(node.nodelist):
+                            line = text.count('\n', 0, node.pos) + 1
+                            errors.append(f'line {line}: ordinary prose inside figure belongs in adjacent prose')
+                        figure_ends.append(node.pos + node.len - len(r'\end{' + node.environmentname + '}'))
+                    walk(node.nodelist, kind if kind in ('figure', 'table') else environment)
+                    if kind == 'figure':
+                        figure_ends.pop()
+            elif isinstance(node, LatexGroupNode):
+                walk(node.nodelist, environment)
+            elif isinstance(node, LatexMacroNode):
+                if node.macroname in DEFINITIONS or node.macroname in PRIMITIVE_DEFINITIONS:
+                    continue
+                arguments = node.nodeargd.argnlist if node.nodeargd else []
+                is_figure = node.macroname == 'caption' and environment == 'figure'
+                if node.macroname == 'captionof' and len(arguments) == 4:
+                    kind = arguments[1]
+                    is_figure = isinstance(kind, LatexGroupNode) and kind.latex_verbatim()[1:-1].strip() == 'figure'
+                if is_figure and arguments and isinstance(arguments[-1], LatexGroupNode):
+                    raw = arguments[-1].latex_verbatim()[1:-1]
+                    # Retain the exact legacy manual label/counter convention.
+                    raw = re.sub(r'^\s*\\normalsize\s*\\textbf\{Figure\s+\\thefigure\.\}\s*', '', raw)
+                    title = LatexNodes2Text(math_mode='text').latex_to_text(raw).strip()
+                    words = len(re.findall(r"[A-Za-z]+(?:[-’'][A-Za-z]+)*", title))
+                    chinese = len(re.findall(r'[\u3400-\u9fff]', title))
+                    sentence_text = re.sub(r'(?:\b[A-Z]\.){2,}', 'ACRONYM', title)
+                    sentence_text = re.sub(r'\b(?:vs|e\.g|i\.e|s\.d|s\.e|No)\.(?=\s)', 'ABBREVIATION', sentence_text)
+                    issues = []
+                    if not title:
+                        issues.append('empty title')
+                    if re.search(r'[.!?]\s+\S', sentence_text):
+                        issues.append('explanatory sentences belong in adjacent prose')
+                    if words > 15 or chinese > 30:
+                        issues.append('title exceeds the project short-title limit (15 English words / 30 Chinese characters)')
+                    if node.macroname == 'caption' and figure_ends:
+                        # A label or closing center/group is not another title.
+                        # Narrative hidden in a post-caption minipage/paragraph
+                        # still reads as an extended caption on the real page.
+                        tail = text[node.pos + node.len:figure_ends[-1]]
+                        tail = re.sub(r'(?<!\\)%[^\n]*', '', tail)
+                        tail = re.sub(r'\\label\s*\{[^{}]*\}', '', tail)
+                        tail = re.sub(r'\\end\s*\{[^{}]*\}', '', tail)
+                        # Strip opening minipage dimensions (they are layout,
+                        # never scientific content), then inspect its prose.
+                        tail = re.sub(r'\\begin\s*\{minipage\}(?:\[[^\]]*\])?\s*\{[^{}]*\}', '', tail)
+                        tail_visible = LatexNodes2Text(math_mode='text').latex_to_text(tail).strip(' \n\t{}')
+                        if re.search(r'[A-Za-z\u3400-\u9fff]', tail_visible):
+                            issues.append('post-caption explanation inside figure belongs in adjacent prose')
+                    line = text.count('\n', 0, node.pos) + 1
+                    titles.append({'line': line, 'title': title, 'english_words': words,
+                                   'chinese_characters': chinese, 'issues': issues})
+                    errors.extend(f'line {line}: {issue}' for issue in issues)
+                else:
+                    for argument in arguments:
+                        if isinstance(argument, LatexGroupNode):
+                            walk(argument.nodelist, environment)
+    walk(nodes)
+    return {'profile': 'praxis-short-figure-title-v1', 'titles': titles, 'errors': errors,
+            'scope': 'Literal figure title shape only; semantics and final PDF need actual review'}
 
 
 def review_captions(text):

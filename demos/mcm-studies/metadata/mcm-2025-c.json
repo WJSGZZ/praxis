@@ -11,7 +11,7 @@
   "review_scope_zh": "最新学习稿评阅为H–M交界/H保守中心，奖档绑定旧PDF fb87…，当前8384…的零池定义澄清未重新定档。",
   "id": "MCM-2025-C",
   "pages": 21,
-  "pdf_sha256": "b0e87fe3e2561db962a0b7613edca00abe5f17a63ff9431fb601d250b2153cd1",
+  "pdf_sha256": "2c6f75f7949d0ee8a802483e9ed85cab793fa8512ed76723e06c7c8780103ef6",
   "reviewer_identity_en": "Independent AI science, language and consistency reviewer; shared filesystem, not technically blind or human.",
   "reviewer_identity_zh": "独立AI科学、语言与一致性评阅者；共享文件系统，非技术盲审或真人。",
   "current_semantic_review": {
@@ -37,5 +37,14 @@
     "current_format_and_font_review_passed": true,
     "exact_text_and_raster_outside_identity_fields": true,
     "new_award_assessment": false
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "b0e87fe3e2561db962a0b7613edca00abe5f17a63ff9431fb601d250b2153cd1",
+    "current_pdf_sha256": "2c6f75f7949d0ee8a802483e9ed85cab793fa8512ed76723e06c7c8780103ef6",
+    "source_sha256": "4b520d2b37da461fa7a1e653836a4e76113f549cd2f69dd1377dd4a68d677b45",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }

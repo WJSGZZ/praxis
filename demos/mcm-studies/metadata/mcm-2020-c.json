@@ -11,7 +11,7 @@
   "review_scope_zh": "初始19页全文数学评议按未变内容接续；反馈21页全文/全页总览及信、三图、区间、动作表原尺寸审读，独立精确超几何/相容/FN界。最终交付只改闭引号、奶嘴对象措辞与forecast参考标签，根核三页、源diff及科学保持；不称后继稿另做第二次完整奖档评阅。",
   "id": "MCM-2020-C",
   "pages": 21,
-  "pdf_sha256": "be9bea7a11d86be203de49a03fe8fff37e0612e74f5edb707ae389a0f7d9a862",
+  "pdf_sha256": "8e062464388dca122c112fd90032af31426428bac2730ef5de9497d6f1f0c9e4",
   "reviewer_identity_en": "Author-external AI review; no human peer reviewer or official judge.",
   "reviewer_identity_zh": "作者外 AI 评阅；非真人同行评审或官方评委。",
   "current_semantic_review": {
@@ -37,5 +37,14 @@
   "identity": {
     "mode": "simulation",
     "team": "7391856"
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "be9bea7a11d86be203de49a03fe8fff37e0612e74f5edb707ae389a0f7d9a862",
+    "current_pdf_sha256": "8e062464388dca122c112fd90032af31426428bac2730ef5de9497d6f1f0c9e4",
+    "source_sha256": "aa914b2cd90a283f7b9bcfe640298cdb82c9d3560c8a46ca650b54d2e2fee5c5",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }

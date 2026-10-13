@@ -11,7 +11,7 @@
   "review_scope_zh": "当前17页版本由AI开发审阅者逐页审查逻辑、条件、导航、版面、字号；不做奖档评定且不继承19页反馈稿的F中心/F–O判断。",
   "id": "MCM-2023-A",
   "pages": 17,
-  "pdf_sha256": "b1d0ef2c48c9995eaacf2a767d84fe03a7e04de8c745b3fbe9d8d21ca2ab4814",
+  "pdf_sha256": "af48ec0a58be387160ebcb9fb9285586ba8b9e55e80488f179af3a3736a182f9",
   "reviewer_identity_en": "Current version checked by an AI development reviewer; prior science assessment by an independent AI reviewer.",
   "reviewer_identity_zh": "当前版由AI开发审阅者检查；此前科学评阅为独立AI角色。",
   "current_semantic_review": {
@@ -28,5 +28,14 @@
   "identity": {
     "mode": "simulation",
     "team": "7391856"
+  },
+  "figure_title_revision": {
+    "parent_pdf_sha256": "b1d0ef2c48c9995eaacf2a767d84fe03a7e04de8c745b3fbe9d8d21ca2ab4814",
+    "current_pdf_sha256": "af48ec0a58be387160ebcb9fb9285586ba8b9e55e80488f179af3a3736a182f9",
+    "source_sha256": "204917249c09a5a1183f542f1bb48e0844480b276d44145b218534d746f125a0",
+    "scope": "Short figure titles and adjacent ordinary prose; necessary conditions, original plots and mathematics preserved. Actual current all-page format/font/source review. No new scientific computation or whole-paper award judgment.",
+    "science_preserved": true,
+    "new_science_runs": 0,
+    "new_award_review": false
   }
 }
