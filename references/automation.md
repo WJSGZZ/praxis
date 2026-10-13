@@ -50,7 +50,7 @@ validate.py --results <输出目录/results.json> --output <本次运行/checks.
 
 ## 按信息截点映射版本
 
-`asof_join` 接收 `queries`、`versions`、键 `on`、查询时间列 `decision_time` 和版本可用时间列 `available_time`。最多 20000 查询、200000 版本，每张表列名一致且值为有限 JSON；键类型一致且非空。时间为带 Z 或 ±HH:MM 时区的 ISO8601，最多九位小数；拒绝仅日期、无时区及范围外值。返回 `schema_version: 1` 与原顺序的索引映射，不复制 payload、不改原件。
+`asof_join` 接收 `queries`、`versions`、键 `on`、查询时间列 `decision_time` 和版本可用时间列 `available_time`。最多 20000 查询、200000 版本，每张表列名一致且值为有限 JSON；键类型一致且非空。时间为带 Z 或 ±HH:MM 时区的 ISO8601，时间数字使用 ASCII、最多九位小数；拒绝仅日期、无时区及范围外值。返回 `schema_version: 1` 与原顺序的索引映射，不复制 payload、不改原件。
 
 ```python
 from modeling.data_analysis import asof_join

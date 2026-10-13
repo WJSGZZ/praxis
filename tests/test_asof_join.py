@@ -197,7 +197,8 @@ def test_nanosecond_boundary_uses_integer_exactness():
 @pytest.mark.parametrize("bad", [None, "2024-01-01", "2024-01-01T00:00:00",
                                   "2024-01-01t00:00:00Z", "2024-01-01T00:00:00.Z",
                                   "2024-02-30T00:00:00Z", "2024-01-01T00:00:00+24:00",
-                                  "1600-01-01T00:00:00Z", "2300-01-01T00:00:00Z"])
+                                  "1600-01-01T00:00:00Z", "2300-01-01T00:00:00Z",
+                                  "2024-01-01T00:00:00.١Z", "2024-01-01T00:00:00.１Z"])
 def test_invalid_query_instants_are_rejected(bad):
     with pytest.raises(ValueError, match="decision time|expected|invalid|outside"):
         run([{"key": "x", "decision": bad}], [])
