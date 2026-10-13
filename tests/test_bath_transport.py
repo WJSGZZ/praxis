@@ -51,7 +51,9 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert indentation['previous_current_pdf']['sha256']==heading_revision['current_pdf_sha256']
     indentation_inheritance=indentation['scientific_review_inheritance']
     assert indentation_inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']
-    assert indentation_inheritance['current_pdf_sha256']==indentation['current_pdf_sha256']==meta['pdf']['sha256']
+    assert indentation_inheritance['current_pdf_sha256']==indentation['current_pdf_sha256']==meta['format_gate_revision']['previous_current_pdf']['sha256']
+    assert meta['format_gate_revision']['current_pdf_sha256']==meta['pdf']['sha256']
+    assert meta['format_gate_revision']['scientific_review_inheritance']['new_scientific_review'] is False
     assert indentation_inheritance['new_scientific_review'] is False and indentation_inheritance['new_award_assessment'] is False
     pages=PdfReader(pdf).pages
     assert len(pages)==26
@@ -86,7 +88,7 @@ def test_four_layout_edges_keep_actual_archived_generator_sources():
         raw=(demo/binding['generator_source']).read_bytes()
         assert hashlib.sha256(raw).hexdigest()==binding['generator_sha256']
         old.append(raw.decode())
-    current=(demo/meta['pdf']['generator_source']).read_text()
+    current=(demo/meta['format_gate_revision']['previous_current_pdf']['generator_source']).read_text()
 
     def replace(text,before,after,count=1):
         assert text.count(before)==count

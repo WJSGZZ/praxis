@@ -9,7 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def paper():
-    return preamble('7391857', 'A title & a result') + summary_header('B', edition=2025) + r'Body.\end{document}'
+    return (preamble('7391857', 'A title & a result') + summary_header('B', edition=2025)
+            + summary_heading() + r'Body.\end{document}')
 
 
 def test_shared_layout_accepts_content_and_local_reference_format():
@@ -100,10 +101,14 @@ def test_layout_gate_records_source_and_style(tmp_path):
     with pytest.raises(ValueError, match='build-receipt'):
         freeze(pdf, tmp_path/'missing.pdf', tex=source, contest='mcm')
     assert not (tmp_path/'missing.pdf').exists()
-    receipt = freeze(pdf, tmp_path / 'final.pdf', tex=source, contest='mcm', build_receipt=build)
+    # This synthetic blank PDF tests archive provenance binding only. Actual
+    # current delivery requires font, format and all-page rendering evidence.
+    receipt = freeze(pdf, tmp_path / 'final.pdf', tex=source, contest='mcm', build_receipt=build,
+                     layout_mode='archive')
     pdf.write_bytes(pdf.read_bytes()+b'\n% changed after compilation')
     with pytest.raises(ValueError, match='does not match'):
-        freeze(pdf, tmp_path/'stale.pdf', tex=source, contest='mcm', build_receipt=build)
+        freeze(pdf, tmp_path/'stale.pdf', tex=source, contest='mcm', build_receipt=build,
+               layout_mode='archive')
     assert not (tmp_path/'stale.pdf').exists()
     assert receipt['layout']['tex_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
     assert receipt['layout']['profile'] == 'praxis-mcm-v4'
@@ -247,7 +252,8 @@ def test_freeze_checks_actual_pdf_boundary_even_when_source_boundary_passes(tmp_
                                 'tex_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
                                 'pdf_sha256': hashlib.sha256(pdf.read_bytes()).hexdigest()}))
     with pytest.raises(ValueError, match='PDF AI-report boundary'):
-        freeze(pdf, tmp_path/'final.pdf', tex=source, contest='mcm', build_receipt=build)
+        freeze(pdf, tmp_path/'final.pdf', tex=source, contest='mcm', build_receipt=build,
+               layout_mode='archive')
     assert not (tmp_path/'final.pdf').exists()
 
 

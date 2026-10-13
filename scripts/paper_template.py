@@ -136,19 +136,24 @@ def _check_section_boundaries(text):
             raise ValueError('Separate-section component requires clearpage before and after its content')
 
 
-def check(text, contest='mcm'):
+def check(text, contest='mcm', *, layout_mode='archive'):
     """Reject missing/modified styles and explicit layout/page-counter overrides.
 
     This static gate detects direct commands, not arbitrary TeX macro expansion.
     Local font commands in content (including captions) are not macro-expanded.
     Actual rendered pagination and role-specific font sizes require PDF inspection.
     """
+    if layout_mode not in {'current', 'archive'}:
+        raise ValueError('Layout mode must be current or archive')
     version = VERSIONS[contest]
     if contest == 'mcm':
         markers = re.findall(r'% BEGIN PRAXIS MCM STYLE v([0-9]+)\n', text)
         if len(markers) != 1:
             raise ValueError('Require exactly one shared MCM style version')
         version = int(markers[0])
+        if layout_mode == 'current' and version != VERSIONS['mcm']:
+            raise ValueError('Current MCM delivery requires the current shared style v'
+                             + str(VERSIONS['mcm']) + '; use explicit archive mode for historical reproduction')
     block = style_block(contest, layout_version=version)
     begin = f'% BEGIN PRAXIS {contest.upper()} STYLE v{version}\n'
     end = f'% END PRAXIS {contest.upper()} STYLE\n'
@@ -203,6 +208,8 @@ def check(text, contest='mcm'):
                   r'\\usepackage(?:\[[^\]]*\])?\{[^}]*\b(?:geometry|fontspec|fontenc|lmodern|newtxtext|newtxmath|times|mathptmx)[^}]*\}')
     if re.search(prohibited, rest):
         raise ValueError('Direct layout override outside the shared style')
+    if contest == 'mcm' and layout_mode == 'current':
+        _check_current_indentation(rest)
     if contest == 'research' and not re.search(r'\\title\s*\[[^\]\n]+\]', rest):
         raise ValueError('Research manuscripts need an explicit short running title')
     # Literal source/code in disclosure records is content, not an executed
@@ -245,6 +252,100 @@ def check(text, contest='mcm'):
             if not re.search(r'\\clearpage\s*(?:\\renewcommand\{\\contentsname\}\{[^{}]*\}\s*)?$', before):
                 raise ValueError('Contents must begin on a separate page with clearpage')
     return {'profile': f'praxis-{contest}-v{version}', 'style_sha256': hashlib.sha256(block.encode()).hexdigest()}
+
+
+def _check_current_indentation(text):
+    """Inspect literal heading transitions with the existing LatexWalker context.
+
+    Shared v4 supplies the indentation. This check catches direct suppression at
+    ordinary first paragraphs; it does not expand user macros or inspect images.
+    Letter and memorandum salutations retain their separate paragraph role.
+    """
+    from pylatexenc.latexwalker import (
+        LatexCharsNode, LatexCommentNode, LatexEnvironmentNode, LatexGroupNode,
+        LatexMacroNode, LatexMathNode, LatexWalker, LatexWalkerError,
+    )
+    from pylatexenc.macrospec import MacroSpec
+    from scripts.paper_structure import _context, DEFINITIONS, PRIMITIVE_DEFINITIONS, RAW_ENVIRONMENTS
+    context = _context()
+    context.add_context_category('praxis-current-summary', prepend=True,
+                                 macros=[MacroSpec('PraxisSummaryHeading', '{')])
+    try:
+        nodes, _, _ = LatexWalker(text, latex_context=context,
+                                 tolerant_parsing=False).get_latex_nodes()
+    except LatexWalkerError as exc:
+        raise ValueError('Current MCM indentation inspection could not parse the source: ' + str(exc)) from exc
+    summaries = []
+
+    def inspect(items):
+        pending = None
+        for node in items:
+            if isinstance(node, LatexCommentNode):
+                continue
+            if isinstance(node, LatexCharsNode):
+                if node.chars.strip():
+                    pending = None
+                continue
+            if isinstance(node, LatexMathNode):
+                pending = None
+                continue
+            if isinstance(node, LatexMacroNode):
+                name = node.macroname
+                if re.match(r'\\(?:@afterindentfalse|@afterheading)\b', text[node.pos:]):
+                    raise ValueError('Current MCM first-paragraph indentation overrides the shared heading transition')
+                if name in DEFINITIONS or name in PRIMITIVE_DEFINITIONS:
+                    # The mature parser consumes balanced declaration arguments;
+                    # only their literal target is inspected, never their body as
+                    # an executed heading or ordinary paragraph.
+                    arguments = node.nodeargd.argnlist
+                    target = arguments[0] if name in PRIMITIVE_DEFINITIONS else next(
+                        (argument for argument in arguments if isinstance(argument, (LatexMacroNode, LatexGroupNode))), None)
+                    if target is not None and re.search(r'\\PraxisSummaryHeading\b', target.latex_verbatim()):
+                        raise ValueError('Current MCM first-paragraph indentation overrides the shared summary heading')
+                    continue
+                if name == 'PraxisSummaryHeading':
+                    summaries.append(node)
+                    pending = 'summary'
+                    continue
+                if name in {'section', 'subsection', 'subsubsection'}:
+                    title = node.nodeargd.argnlist[-1].latex_verbatim()
+                    pending = None if re.search(r'\b(?:letter|memo|memorandum)\b', title, re.I) else name
+                    continue
+                if name == 'noindent' and pending is not None:
+                    raise ValueError('Current MCM first-paragraph indentation is suppressed after ' + pending)
+                if name in {'label', 'addcontentsline', 'vspace', 'hspace', 'par', 'relax'}:
+                    continue
+                pending = None
+            elif isinstance(node, LatexEnvironmentNode):
+                if node.environmentname not in RAW_ENVIRONMENTS:
+                    inspect(node.nodelist)
+                pending = None
+            elif isinstance(node, LatexGroupNode):
+                inspect(node.nodelist)
+                pending = None
+    inspect(nodes)
+    if len(summaries) != 1:
+        raise ValueError('Current MCM requires exactly one shared summary_heading() transition')
+
+
+def mcm_identity(text):
+    """Literal identity supplied by a checked standalone MCM source."""
+    preamble_text = text.split(r'\begin{document}', 1)[0]
+    preamble_text = re.sub(r'(?<!\\)%[^\n]*', '', preamble_text)
+    team = re.findall(r'\\newcommand\s*\{\\PraxisTeam\}\s*\{([0-9]{1,12})\}', preamble_text)
+    headers = [(letter, year) for year in set(re.findall(r'\\textbf\{((?:19|20)[0-9]{2})\\\\MCM/ICM', text))
+               for letter in 'ABCDEF' if summary_header(letter, edition=year) in text]
+    if len(team) != 1 or len(headers) != 1:
+        raise ValueError('Current MCM requires one literal team number and original-year summary identity')
+    return {'team': team[0], 'problem': headers[0][0], 'edition': headers[0][1]}
+
+
+def mcm_ai_report_expected(text):
+    """Literal AI heading, with comments and conventional code quotes excluded."""
+    text = re.sub(r'(?<!\\)%[^\n]*', '', text)
+    text = re.sub(r'\\begin\s*\{(Verbatim|verbatim|lstlisting|minted)\}.*?\\end\s*\{\1\}',
+                  '', text, flags=re.S)
+    return bool(re.search(r'\\section\s*\*?\s*(?:\[[^\]]*\]\s*)?\{Report on Use of AI(?: Tools)?\}', text, re.I))
 
 
 def check_explicit_references(text):
@@ -293,7 +394,35 @@ def review_captions(text):
             'review_candidates': sum(c['review_length'] for c in captions)}
 
 
-def compile_paper(tex, contest, output, compiler=None):
+def inspect_typesetting_log(log_file, *, pdf=None):
+    """Inspect the retained TeX log; timestamps are freshness evidence, not provenance.
+
+    Current receipts bind its bytes. Older current receipts can still be closed
+    with the actual adjacent completed log, whose hash is saved by freezing.
+    """
+    log_file = Path(log_file)
+    if not log_file.is_file():
+        raise ValueError('Current MCM requires the retained co-located typesetting log')
+    raw = log_file.read_bytes()
+    text = raw.decode('utf-8', errors='replace')
+    if not raw or not re.search(r'^Output written on .+\.(?:pdf|xdv)\b', text, flags=re.M):
+        raise ValueError('Current MCM typesetting log is empty or incomplete')
+    log_mtime = log_file.stat().st_mtime_ns
+    pdf_mtime = Path(pdf).stat().st_mtime_ns if pdf is not None else None
+    # Tectonic may flush its log before serializing the PDF; mtime order is
+    # recorded for diagnosis only. The canonical receipt binds log bytes.
+    overfull = re.findall(r'^Overfull \\(?:hbox|vbox) \([^\n]*', text, flags=re.M)
+    oversized = re.findall(r'^LaTeX Warning: Float too large for page[^\n]*', text, flags=re.M)
+    result = {'overfull_boxes': overfull, 'oversized_floats': oversized,
+              'log_name': log_file.name, 'log_sha256': hashlib.sha256(raw).hexdigest(),
+              'log_mtime_ns': log_mtime, 'pdf_mtime_ns': pdf_mtime, 'passed': not (overfull or oversized)}
+    if not result['passed']:
+        raise ValueError('Current MCM candidate has unresolved typesetting overflow: '
+                         + '; '.join(overfull + oversized))
+    return result
+
+
+def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current'):
     """Canonical compiler + bundle; a receipt binds this actual source and PDF."""
     import json
     import shutil
@@ -302,7 +431,10 @@ def compile_paper(tex, contest, output, compiler=None):
     tex, output = Path(tex).resolve(), Path(output).resolve()
     source = tex.read_bytes()
     check_explicit_references(source.decode('utf-8'))
-    layout = check(tex.read_text(encoding='utf-8'), contest) if contest else None
+    if layout_mode not in {'current', 'archive'}:
+        raise ValueError('Layout mode must be current or archive')
+    text = source.decode('utf-8')
+    layout = check(text, contest, layout_mode=layout_mode) if contest else None
     runtime = json.loads((ROOT / 'templates/typesetting-runtime.json').read_text(encoding='utf-8'))
     executable = compiler or shutil.which('tectonic') or str(Path.home()/'.local/bin/tectonic')
     version = subprocess.run([str(executable), '--version'], check=True, capture_output=True, text=True).stdout.strip()
@@ -329,25 +461,40 @@ def compile_paper(tex, contest, output, compiler=None):
     (output/(tex.stem+'.compile.txt')).write_text(run.stdout+run.stderr, encoding='utf-8')
     if run.returncode:
         raise RuntimeError(run.stdout+run.stderr)
+    diagnostics = None
+    if contest == 'mcm' and layout_mode == 'current':
+        log_file = output/(tex.stem+'.log')
+        diagnostics = inspect_typesetting_log(log_file, pdf=output/(tex.stem+'.pdf'))
     if tex.read_bytes() != source:
         raise ValueError('TeX source changed during compilation')
     pdf = output/(tex.stem+'.pdf')
+    final_format = None
+    if contest == 'mcm' and layout_mode == 'current':
+        from scripts.check_pdf import inspect_mcm_delivery_format
+        final_format = inspect_mcm_delivery_format(pdf, mcm_identity(text),
+                                                  ai_report_expected=mcm_ai_report_expected(text))
+        if not final_format['passed']:
+            raise ValueError('Current MCM PDF format failed: ' + '; '.join(final_format['errors']))
     receipt = {'runtime': runtime, 'layout': layout, 'source_name': tex.name,
+               'layout_mode': layout_mode,
                'tex_sha256': hashlib.sha256(source).hexdigest(),
                'pdf_sha256': hashlib.sha256(pdf.read_bytes()).hexdigest(),
                'visual_review_required': True}
+    if final_format is not None:
+        receipt['current_mcm_format'] = final_format
+        receipt['typesetting_diagnostics'] = diagnostics
     (output/(tex.stem+'.build.json')).write_text(json.dumps(receipt, indent=2), encoding='utf-8')
     return receipt
 
 
-def compile_in_place(tex, contest, compiler=None):
+def compile_in_place(tex, contest, compiler=None, *, layout_mode='current'):
     """Used by generators that already replace their own generated artifacts."""
     import shutil
     import tempfile
     session = Path(tex).parent/'.session'; session.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='paper-build-', dir=session) as directory:
         output = Path(directory)/'compiled'
-        receipt = compile_paper(tex, contest, output, compiler)
+        receipt = compile_paper(tex, contest, output, compiler, layout_mode=layout_mode)
         for suffix in ('.pdf', '.build.json', '.compile.txt', '.log'):
             path = output/(Path(tex).stem+suffix)
             if path.exists():
@@ -362,6 +509,8 @@ def main():
     parser.add_argument('--compile', action='store_true', help='Compile with the pinned canonical runtime')
     parser.add_argument('--output-directory', type=Path, help='New output directory for canonical build artifacts')
     parser.add_argument('--compiler', help='Path to Tectonic 0.17.0')
+    parser.add_argument('--layout-mode', choices=['current', 'archive'], default='current',
+                        help='Current delivery by default; archive explicitly reproduces a retained historical style')
     reviews = parser.add_mutually_exclusive_group()
     reviews.add_argument('--review-captions', action='store_true',
                          help='List literal captions and advisory length candidates; not a quality certification')
@@ -379,9 +528,10 @@ def main():
             if args.output_directory is None:
                 parser.error('--compile requires --output-directory')
             import json
-            print(json.dumps(compile_paper(args.tex, args.contest, args.output_directory, args.compiler), indent=2))
+            print(json.dumps(compile_paper(args.tex, args.contest, args.output_directory, args.compiler,
+                                          layout_mode=args.layout_mode), indent=2))
             return
-        result = check(args.tex.read_text(encoding='utf-8'), args.contest)
+        result = check(args.tex.read_text(encoding='utf-8'), args.contest, layout_mode=args.layout_mode)
     except ValueError as exc:
         parser.exit(1, str(exc) + '\n')
     if args.review_structure:

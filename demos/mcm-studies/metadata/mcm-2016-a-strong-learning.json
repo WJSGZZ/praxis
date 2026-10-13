@@ -1,0 +1,95 @@
+{
+  "id": "MCM-2016-A-strong-learning-feedback1",
+  "title_en": "A Hot Bath: Conserving Water Without Losing Uniformity",
+  "title_zh": "热水浴：热量补给与空间均匀性",
+  "assessment_en": "Uncalibrated author-external AI opinion: Outstanding-centered, adjacent Finalist–Outstanding. The complete initial paper was reviewed; the current 28-page text and actual-page overview were reread, with key pages inspected at native size. The registered 20-minute revision-review window was exceeded before administrative closeout.",
+  "assessment_zh": "作者外 AI 未校准参考意见：Outstanding 中心、相邻 Finalist–Outstanding。初始整稿已有完整审查；本版重新读全部 28 页文本及实际页面总览，重点页原尺寸核对。本次增量复评未在预定 20 分钟内完成行政封存。",
+  "strength_en": "Separates heat replacement from transport to the coldest region. Under the stated bath conditions, a qualified six-stage schedule uses 21.48 L versus 24.14 L for the best accepted constant trickle; the guide now distinguishes the temperature allowance from the faucet-start decision.",
+  "strength_zh": "把补热与热量到达冷端的时间分开。在给定浴缸条件下，合格六段补水为 21.48 L，最佳已接受恒流为 24.14 L；使用指南明确区分温度容差与开水时机。",
+  "limits_en": "Post-learning revision, not a first autonomous solution or actual award. Physical coefficients and human motion remain uncalibrated. Full feedback-bank and recourse results were not freshly replayed by this reviewer. The historical 2016 formal page limit and complete AI transcripts remain unauthenticated. Newly added mixing diagnostics have no public reproduction package.",
+  "limits_zh": "学后修订，非首次自主解题或实际获奖。物理参数与人体运动仍未实测校准；本次评委没有重跑反馈库与全部 recourse。2016 正式页数上限及完整 AI 聊天仍未认证；新增混合诊断不附公开复现包。",
+  "review_scope_en": "Initial full 27-page scientific review inherited only for unchanged content; current 28-page text and all-page visual overview, native pages 1, 8, 9, 11, 12, 20, 22, 24, 25, 26, 27 and 28. No new model computation in the revision review.",
+  "review_scope_zh": "初始 27 页完整科学审查按未变内容接续；本版全部 28 页文本及视觉总览，原尺寸查看第 1、8、9、11、12、20、22、24、25、26、27、28 页。本次增量复评没有新增模型计算。",
+  "review_status": "partial_deadline_exceeded_late_administrative_closeout",
+  "solution_pages": 27,
+  "ai_report_pages": 1,
+  "guide_pages": [
+    24
+  ],
+  "pages": 28,
+  "pdf_sha256": "337745c50912c628b420896c73584eead81f7cbf21e2388d6f163282acf565f8",
+  "pdf_path": "../papers/mcm-2016-a-strong-learning.pdf",
+  "pdf_path_relative_to": "this metadata file",
+  "source_materials_included": false,
+  "public_reproduction_package_included": false,
+  "identity_zh": "学后完整作品 / complete post-learning work",
+  "identity_en": "Complete post-learning work; no first-autonomous claim",
+  "reviewer_identity_zh": "作者外 AI 评阅；非真人同行评审或官方评委。",
+  "reviewer_identity_en": "Author-external AI review; no human peer reviewer or official judge.",
+  "award_estimate": {
+    "most_likely": "Outstanding Winner",
+    "range": [
+      "Finalist",
+      "Outstanding Winner"
+    ],
+    "calibrated": false,
+    "actual_award": false
+  },
+  "parent_metadata": {
+    "id": "MCM-2016-A-strong-learning-feedback1",
+    "title_en": "A Hot Bath: Conserving Water Without Losing Uniformity",
+    "title_zh": "热水浴：热量补给与空间均匀性",
+    "assessment_en": "Uncalibrated author-external AI opinion: Outstanding-centered, adjacent Finalist–Outstanding. The complete initial paper was reviewed; the current 28-page text and actual-page overview were reread, with key pages inspected at native size. The registered 20-minute revision-review window was exceeded before administrative closeout.",
+    "assessment_zh": "作者外 AI 未校准参考意见：Outstanding 中心、相邻 Finalist–Outstanding。初始整稿已有完整审查；本版重新读全部 28 页文本及实际页面总览，重点页原尺寸核对。本次增量复评未在预定 20 分钟内完成行政封存。",
+    "strength_en": "Separates heat replacement from transport to the coldest region. Under the stated bath conditions, a qualified six-stage schedule uses 21.48 L versus 24.14 L for the best accepted constant trickle; the guide now distinguishes the temperature allowance from the faucet-start decision.",
+    "strength_zh": "把补热与热量到达冷端的时间分开。在给定浴缸条件下，合格六段补水为 21.48 L，最佳已接受恒流为 24.14 L；使用指南明确区分温度容差与开水时机。",
+    "limits_en": "Post-learning revision, not a first autonomous solution or actual award. Physical coefficients and human motion remain uncalibrated. Full feedback-bank and recourse results were not freshly replayed by this reviewer. The historical 2016 formal page limit and complete AI transcripts remain unauthenticated. Newly added mixing diagnostics have no public reproduction package.",
+    "limits_zh": "学后修订，非首次自主解题或实际获奖。物理参数与人体运动仍未实测校准；本次评委没有重跑反馈库与全部 recourse。2016 正式页数上限及完整 AI 聊天仍未认证；新增混合诊断不附公开复现包。",
+    "review_scope_en": "Initial full 27-page scientific review inherited only for unchanged content; current 28-page text and all-page visual overview, native pages 1, 8, 9, 11, 12, 20, 22, 24, 25, 26, 27 and 28. No new model computation in the revision review.",
+    "review_scope_zh": "初始 27 页完整科学审查按未变内容接续；本版全部 28 页文本及视觉总览，原尺寸查看第 1、8、9、11、12、20、22、24、25、26、27、28 页。本次增量复评没有新增模型计算。",
+    "review_status": "partial_deadline_exceeded_late_administrative_closeout",
+    "solution_pages": 27,
+    "ai_report_pages": 1,
+    "guide_pages": [
+      24
+    ],
+    "pages": 28,
+    "pdf_sha256": "e108b46bdfc588c9df979f5c356fb14127cf3b4713428f8caa0267ffcb43bb2b",
+    "pdf_path": "../papers/mcm-2016-a-strong-learning.pdf",
+    "pdf_path_relative_to": "this metadata file",
+    "source_materials_included": false,
+    "public_reproduction_package_included": false,
+    "identity_zh": "学后完整作品 / complete post-learning work",
+    "identity_en": "Complete post-learning work; no first-autonomous claim",
+    "reviewer_identity_zh": "作者外 AI 评阅；非真人同行评审或官方评委。",
+    "reviewer_identity_en": "Author-external AI review; no human peer reviewer or official judge.",
+    "award_estimate": {
+      "most_likely": "Outstanding Winner",
+      "range": [
+        "Finalist",
+        "Outstanding Winner"
+      ],
+      "calibrated": false,
+      "actual_award": false
+    }
+  },
+  "format_revision": {
+    "kind": "format-only reading successor",
+    "date": "2026-10-13",
+    "profile": "praxis-mcm-v4",
+    "page_size": "A4",
+    "ordinary_body_size": "12 TeX pt",
+    "paragraph_indent": "2em",
+    "all_page_visual_review": true,
+    "new_science_assessment": false,
+    "new_award_assessment": false,
+    "inheritance": "Mathematical content, conditions and plotted arrays are unchanged; the prior scientific review scope is inherited only within its original limits. This current-format visual QA assesses presentation and is not a new award review.",
+    "prior_scientific_pdf_sha256": "e108b46bdfc588c9df979f5c356fb14127cf3b4713428f8caa0267ffcb43bb2b",
+    "prior_award_binding_sha256": "e108b46bdfc588c9df979f5c356fb14127cf3b4713428f8caa0267ffcb43bb2b",
+    "award_binding_preserved": true,
+    "team_identity": "unchanged",
+    "ai_disclosure": "retained on a separate page",
+    "mcm_page_limit_note": "The 27-page solution section is a historical reading/learning work; it is not represented as passing the formal 2016 page limit.",
+    "status": "frozen format successor"
+  }
+}

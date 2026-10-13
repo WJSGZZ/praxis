@@ -4,16 +4,18 @@
 
 **简体中文** · [English](README.en.md) · [案例总览](../README.md)
 
-这些是使用历史题目的 AI 建模练习，未作为正式 COMAP 参赛作品提交，也没有实际获奖记录。队号为演示标识。自主周期允许内部检查和已披露的科学反馈；封存后的同题学习稿另列，不能算作第二次独立解题。下文的奖档均为**未校准的 AI 参考意见**，只适用于明确绑定的稿件。
+这些是使用历史题目的 AI 建模练习，未作为正式 COMAP 参赛作品提交，也没有实际获奖记录。队号为演示标识。自主周期允许内部检查和已披露的科学反馈；封存后的同题学习稿另列，不能算作第二次独立解题。当前 A4、正文及图表 12 pt、段首缩进 2em 为图库统一阅读样式，不代表 COMAP 强制要求 A4。摘要身份页保留队号与题号，AI 披露另页；本轮只改格式，不新增科学评议或奖档评估。下文的奖档均为**未校准的 AI 参考意见**，只适用于明确绑定的稿件。
 
 ## 物理机制与工程设计
 
 | 问题与作品 | 论文与版本信息 | 方法、结果与评阅边界 |
 |---|---|---|
 | 2016 MCM A · 热水浴 | [主 Demo · 26 页](../mcm-2016-a/paper.pdf) · [说明](metadata/mcm-2016-a.json) | 水量、空间温度与补水控制；多轮迭代案例，旧评阅未绑定当前 PDF。 |
+| 2016 MCM A · 热水浴 | [学后完整修订 · 28 页](papers/mcm-2016-a-strong-learning.pdf) · [说明](metadata/mcm-2016-a-strong-learning.json) | 补热、输运与开水时机形成一条主线；作者外 AI 参考为 Outstanding 中心、Finalist–Outstanding 相邻。实浴池与人体运动未校准。 |
 | 2020 MCM B · 沙堡抗侵蚀 | [自主终稿 · 22 页](papers/mcm-2020-b-autonomous.pdf) · [说明](metadata/mcm-2020-b-autonomous.json) | 几何界、水分守恒与雨下方案反转；全文及新增证据经作者外 AI 审阅，Meritorious 中心、HM–Finalist 相邻。实测侵蚀和功能失效仍未校准。 |
 | 2023 MCM A · 生态多样性 | [自主迁移稿 · 17 页](papers/mcm-2023-a.pdf) · [说明](metadata/mcm-2023-a.json) | 区分功能密度与物种保留；当前版逐页开发审阅，不评奖，不继承另一版本的旧意见。 |
-| 2024 MCM B · 漂移潜艇搜救 | [科学反馈后继稿 · 22 页](papers/mcm-2024-b.pdf) · [说明](metadata/mcm-2024-b.json) | 连接漂移、探测、搜索与回收时钟；当前版逐页 AI 科学验收，Finalist 中心、Meritorious–Finalist 相邻；真实海流与救援效果未校准。 |
+| 2024 MCM B · 漂移潜艇搜救 | [科学反馈后继稿 · 25 页](papers/mcm-2024-b.pdf) · [说明](metadata/mcm-2024-b.json) | 连接漂移、探测、搜索与回收时钟；当前版逐页 AI 科学验收，Finalist 中心、Meritorious–Finalist 相邻；真实海流与救援效果未校准。 |
+| 2024 MCM B · 漂移潜艇搜救 | [学后完整修订 · 23 页](papers/mcm-2024-b-strong-learning.pdf) · [说明](metadata/mcm-2024-b-strong-learning.json) | 34 步搜索路线、恢复时钟与准备状态采购阈值；作者外 AI 参考为 Outstanding 中心、Finalist–Outstanding 相邻。现实救援及商业输入未校准。 |
 
 ## 观测、分类与预测
 
@@ -21,6 +23,7 @@
 |---|---|---|
 | 2020 MCM C · 消费评论 | [自主先导 · 23 页](papers/mcm-2020-c-autonomous.pdf) · [说明](metadata/mcm-2020-c-autonomous.json) | 评论分母、产品构成与历史信息；完整 AI 评阅，奖档未校准，缺销售真值和真人语义标注。 |
 | 2020 MCM C · 消费评论 | [同题学习修订 · 26 页](papers/mcm-2020-c-learning.pdf) · [说明](metadata/mcm-2020-c-learning.json) | 初始完整稿获 Meritorious 候选、HM–Meritorious 相邻；最终源码差异及第 8–10、20–26 页增量核对，协调者另查看全部 26 页。未重新评最终整稿，旧 O 中心意见不沿用。 |
+| 2020 MCM C · 消费评论 | [学后完整修订 · 21 页](papers/mcm-2020-c-strong-learning.pdf) · [说明](metadata/mcm-2020-c-strong-learning.json) | 分析 32,024 条评论，区分产品家族、当前单元投诉、特征词义与截止时点信息；作者外 AI 参考为 Outstanding 中心、Finalist–Outstanding 相邻。物理缺陷率与前瞻预警仍未验证。 |
 | 2021 MCM C · 亚洲大黄蜂报告 | [自主终稿 · 19 页](papers/mcm-2021-c-autonomous.pdf) · [说明](metadata/mcm-2021-c-autonomous.json) | 稀少验证、信息时点与调查队列；完整修订稿及指定数值经作者外 AI 复核，Finalist 中心、Meritorious–Finalist 相邻。未取得图像像素，不是图像分类研究。 |
 | 2025 MCM A · 楼梯磨损 | [自主研究练习 · 19 页](papers/mcm-2025-a.pdf) · [说明](metadata/mcm-2025-a.json) | 从磨损反推历史；不是限时首轮测评。完整 AI 评阅，Finalist 中心、Meritorious–Outstanding 相邻；未校准且存在非盲评限制。 |
 | 2025 MCM C · 奥运奖牌预测 | [自主稿 · 20 页](papers/mcm-2025-c-autonomous.pdf) · [说明](metadata/mcm-2025-c-autonomous.json) | 跨项目机会组合；逐页视觉检查完成，当前版没有绑定的完整科学或奖档评阅。 |
@@ -30,12 +33,24 @@
 
 | 问题与作品 | 论文与版本信息 | 方法、结果与评阅边界 |
 |---|---|---|
-| 2017 MCM B · 收费站汇流 | [自主完成稿 · 17 页](../../research/merge-after-toll/paper/paper.pdf) · [说明](metadata/mcm-2017-b.json) | 支付兼容、汇合与有限出口空间；最新语义评阅不评奖，已有逐页视觉回执绑定更早 PDF。 |
+| 2017 MCM B · 收费站汇流 | [自主完成稿 · 17 页](papers/mcm-2017-b.pdf) · [说明](metadata/mcm-2017-b.json) | 支付兼容、汇合与有限出口空间；最新语义评阅不评奖，已有逐页视觉回执绑定更早 PDF。 |
 | 2024 ICM E · 沿海保险与遗产保护 | [自主终稿 · 22 页](papers/icm-2024-e-autonomous.pdf) · [说明](metadata/icm-2024-e-autonomous.json) | 承保、续期资金、开发与威尼斯圣马可大教堂保护；前一完整稿获 Meritorious 中心、HM–Finalist 相邻意见，最终有限文字修订经增量验收，按不变科学内容继承该意见。 |
+
+## 新增学习修订的阅读重点
+
+新的热水浴与潜艇稿件保留原主 Demo 和历史版本；它们展示的是学习、独立数值核验与科学反馈之后的完整修订。当前作者外 AI 判断具有较强 Outstanding 竞争力，但没有经过真人评委校准，也不能用来计算首次自主解题的 O 奖成功率。实际阅读、检查与时间边界见各自版本记录。
+
+热水浴把开水时机写进实际策略：给定 164.25 L、40°C 初温与 30 分钟浴程，恒流从零分钟开始需 24.14 L；经三网络连续检查的六段方案需 21.48 L。1°C 容差不是等降温后才开水的指令，闭网混合诊断也不等于人体运动的实测标定。
+
+潜艇稿把实际 34 步搜索、深度层和返航时钟放入论文，再用恢复截止时刻评价准备状态。在声明的服务模型和相同可用性／成功率下，六小时相比七小时就绪的机会差为 0.261729；采购、长期租赁与响应合同须比较完整成本。该条件值不是真实救援成功率。
+
+消费评论的本轮修订稿分析 32,024 条记录，固定 58 个评论—主题对的语义审计揭示旧产品、包装、否定与当前单元故障的混淆；正文保留评分监测的小增益和历史字段时点限制。本轮已形成 21 页学习修订；本轮反馈稿已完成当前整稿评阅，最终三处局部修订经根核后接受；意见绑定和继承范围见版本说明。
+
+图库提供阅读版本。论文引用的公开基线可从 [热水浴固定源码](https://github.com/WJSGZZ/praxis/tree/0e3f29b1323486eafa74916218e72cfcb066631a/demos/mcm-2016-a/reproduce) 和 [既有案例集合](https://github.com/WJSGZZ/praxis/tree/0e3f29b1323486eafa74916218e72cfcb066631a/demos/mcm-studies) 访问；新增私有诊断及完整 companion 包没有随本图库公开，PDF 内的本地复现入口不应视为已提供的下载。
 
 ## 三份自主终稿的阅读重点
 
-三篇均在事前固定的自主周期内完成，使用 Praxis **0.7.1**，包括已披露的科学反馈，随后封存。同题参考学习发生在封存之后；这里提供的是封存时的原 PDF。它们是次要案例，原[热水浴主 Demo](../mcm-2016-a/README.md)保留完整说明与复现入口。
+三篇均在事前固定的自主周期内完成，使用 Praxis **0.7.1**，包括已披露的科学反馈，随后封存。同题参考学习发生在封存之后；这里提供的是当前格式阅读后继稿；原科学冻结身份与评议边界保留。它们是次要案例，原[热水浴主 Demo](../mcm-2016-a/README.md)保留完整说明与复现入口。
 
 ### 沙堡：寿命更长是否意味着基础更好
 

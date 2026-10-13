@@ -117,6 +117,111 @@ def inspect_font_sizes(path, minimum_tex_pt, review_path=None):
             'scope': 'Effective vertical em sizes of extractable text after PDF transforms; no automatic prose/math classification or raster/outline-text certification'}
 
 
+def inspect_mcm_delivery_format(path, identity, *, ai_report_expected=False):
+    """Bounded checks of the actual current MCM PDF, separate from edition rules.
+
+    A4 is the project delivery choice. This does not impose the latest contest's
+    page limit on historical editions, classify paragraphs, or inspect raster
+    text. All pages still need the exact-PDF-bound rendering review.
+    """
+    from scripts.contest_rules import extract, evaluate
+    errors, page_boxes = [], []
+    reader = PdfReader(str(path))
+    if reader.is_encrypted or not reader.pages:
+        raise ValueError('Current MCM PDF must be readable and nonempty')
+    a4 = (210 / 25.4 * 72, 297 / 25.4 * 72)
+    tolerance = .08  # bp; permits PDF numeric rounding, not a different page size.
+    for number, page in enumerate(reader.pages, 1):
+        unit = float(page.get('/UserUnit', 1))
+        media = [float(v) * unit for v in page.mediabox]
+        crop = [float(v) * unit for v in page.cropbox]
+        width, height = media[2] - media[0], media[3] - media[1]
+        record = {'page': number, 'media_box_bp': media, 'crop_box_bp': crop,
+                  'user_unit': unit, 'rotation': int(page.get('/Rotate', 0)) % 360}
+        page_boxes.append(record)
+        if (not math.isfinite(unit) or unit <= 0 or record['rotation'] != 0
+                or any(not math.isfinite(v) for v in media + crop)
+                or abs(width - a4[0]) > tolerance or abs(height - a4[1]) > tolerance
+                or abs(media[0]) > tolerance or abs(media[1]) > tolerance
+                or any(abs(a - b) > tolerance for a, b in zip(media, crop))):
+            errors.append(f'page {number}: current MCM requires an uncropped portrait A4 page box')
+    records = extract(path)
+    first = ' '.join(records[0]['lines'][:16])
+    for label in ('Problem Chosen', 'Team Control Number', 'Summary Sheet'):
+        if label.casefold() not in first.casefold():
+            errors.append('page 1: missing shared summary identity ' + label)
+    for field in ('team', 'edition', 'problem'):
+        if not re.search(r'(?<![A-Za-z0-9])' + re.escape(str(identity[field])) + r'(?![A-Za-z0-9])', first):
+            errors.append('page 1: summary ' + field + ' differs from the current TeX identity')
+    if re.search(r'Team\s*#|\bPage\s*1\s*of\s*[0-9]+\b', first, re.I):
+        errors.append('page 1: summary metadata must not duplicate the running page header')
+    for number, record in enumerate(records[1:], 2):
+        top = ' '.join(record['lines'][:3])
+        team = re.search(r'Team\s*#\s*([0-9]{1,12})(?![0-9])', top, re.I)
+        # PDF reading order may join "of19" despite correct visible spacing.
+        # Read complete numeric tokens; comparing both numbers catches a joined
+        # wrong total such as of191 rather than accepting a prefix of it.
+        marks = re.search(r'\bPage\s*([0-9]+)\s*of\s*([0-9]+)\b', top, re.I)
+        if team is None or team.group(1) != identity['team']:
+            errors.append(f'page {number}: running team header differs from the summary identity')
+        if marks is None or tuple(map(int, marks.groups())) != (number, len(records)):
+            errors.append(f'page {number}: running page identity is missing, unresolved or inconsistent')
+    evaluated = evaluate(records, 'mcm')
+    facts = evaluated['facts']
+    observed_ai = facts['ai_report_heading_on_page'] is not None
+    if observed_ai != ai_report_expected:
+        errors.append('PDF AI-report presence differs from the checked TeX source')
+    if observed_ai and not facts['ai_report_starts_new_page']:
+        errors.append('PDF AI-report boundary is mixed or ambiguous')
+    # evaluate rejects duplicate literal headings; retain that boundary error
+    # without importing a latest-edition page-count or dominant-font policy.
+    for error in evaluated['errors']:
+        if 'AI report' in error or 'AI-report' in error:
+            if error not in errors:
+                errors.append(error)
+    return {'pdf_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+            'identity': identity, 'page_boxes': page_boxes, 'a4_tolerance_bp': tolerance,
+            'pdf_boundaries': {key: facts[key] for key in (
+                'total_pages', 'counted_pages', 'ai_report_from_page',
+                'ai_report_heading_on_page', 'ai_report_starts_new_page')},
+            'errors': errors, 'passed': not errors, 'visual_review_required': True,
+            'scope': 'Actual page boxes and extractable summary/running-header/AI-boundary identity; no arbitrary TeX expansion, paragraph measurement, raster/outline QA or edition compliance certification'}
+
+
+MCM_PAGE_REVIEW_CHECKS = (
+    'paragraph_indentation', 'figures_tables_fonts', 'clipping_overlap',
+    'cross_references', 'summary_headers', 'ai_report_boundary',
+)
+
+
+def inspect_mcm_page_review(path, review_path=None):
+    """Require a complete recorded rendering review bound to this exact PDF.
+
+    The actor records actual judgment; this validates completeness and binding,
+    never claims that a checklist proves visual or scientific correctness.
+    """
+    review_path = Path(review_path) if review_path is not None else Path(str(path) + '.page-review.json')
+    if not review_path.is_file():
+        raise ValueError('Current MCM delivery requires an exact-PDF-bound all-page rendering review (--page-review)')
+    review = json.loads(review_path.read_text(encoding='utf-8'))
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    count = len(PdfReader(str(path)).pages)
+    checks = review.get('format_checks')
+    if (review.get('pdf_sha256') != digest
+            or not isinstance(review.get('actor'), str) or not review['actor'].strip()
+            or not isinstance(review.get('pages'), list)
+            or any(type(number) is not int for number in review['pages'])
+            or review['pages'] != list(range(1, count + 1))
+            or not isinstance(checks, dict)
+            or any(checks.get(name) is not True for name in MCM_PAGE_REVIEW_CHECKS)):
+        raise ValueError('Current MCM page review must match PDF hash, actor, every actual page and all required format checks')
+    return {'review_path': str(review_path.resolve()),
+            'review_sha256': hashlib.sha256(review_path.read_bytes()).hexdigest(),
+            'pdf_sha256': digest, 'actor': review['actor'], 'pages': review['pages'],
+            'format_checks': {name: checks[name] for name in MCM_PAGE_REVIEW_CHECKS},
+            'passed': True, 'judgment_accuracy_not_certified': True}
+
+
 def inspect_pdf(path, max_pages=None, max_bytes=None, forbidden=(), forbidden_fonts=(),
                 require_embedded_fonts=False, checks_path=None, claimed_check_count=None,
                 minimum_font_tex_pt=None, font_review=None):

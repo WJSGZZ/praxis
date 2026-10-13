@@ -218,6 +218,8 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
                 revisions.append(meta['heading_layout_revision'])
             if 'indentation_revision' in meta:
                 revisions.append(meta['indentation_revision'])
+            if 'format_gate_revision' in meta:
+                revisions.append(meta['format_gate_revision'])
             expected_previous_sha = record['version_sha256']
             for revision in revisions:
                 inheritance = revision['scientific_review_inheritance']
@@ -302,7 +304,30 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
                         node.args.append(ast.Constant(value=True))
                     return node
             def scientific_tree(path):
-                return ast.dump(NormalizeLayout().visit(ast.parse(path.read_text())), include_attributes=False)
+                text = path.read_text()
+                if slug == 'mcm-2016-a' and path == new_source:
+                    prior = (demo / meta['format_gate_revision']['previous_current_pdf']['generator_source']).read_text()
+                    old_cli = "parser=argparse.ArgumentParser();parser.add_argument('--run',type=Path,required=True);args=parser.parse_args()"
+                    new_cli = "parser=argparse.ArgumentParser();parser.add_argument('--run',type=Path,required=True)\nparser.add_argument('--candidate',action='store_true',help='Build an unsealed preview; visual QA is required before delivery')\nparser.add_argument('--font-review',type=Path);parser.add_argument('--page-review',type=Path)\nargs=parser.parse_args()"
+                    assert text.count(new_cli) == 1
+                    text = text.replace(new_cli, old_cli)
+                    uri_helper = "def uri(x):\n    return x if re.match(r'https?://',x) else 'https://'+x\n\n"
+                    assert text.count(uri_helper) == 1
+                    text = text.replace(uri_helper, '')
+                    assert text.count("r'\\url{'+uri(x)+'}'") == 2
+                    text = text.replace("r'\\url{'+uri(x)+'}'", "r'\\url{'+x+'}'")
+                    # The entire scientific generation prefix must equal the
+                    # actual prior generator. Only the explicit delivery tail differs.
+                    marker = "if args.candidate:\n"
+                    assert text.count(marker) == 1
+                    prefix = text[:text.index(marker)]
+                    old_tail = prior[prior.index("(ROOT/'submission').mkdir"):]
+                    assert prefix == prior[:prior.index("(ROOT/'submission').mkdir")]
+                    actual_tail = text[text.index(marker):]
+                    assert 'record=freeze(pdf,target' in actual_tail
+                    assert 'shutil.copyfile' not in actual_tail
+                    text = prefix + old_tail
+                return ast.dump(NormalizeLayout().visit(ast.parse(text)), include_attributes=False)
             for index, revision in enumerate(revisions):
                 old_source = demo / revision['previous_current_pdf']['generator_source']
                 next_source = (demo / revisions[index + 1]['previous_current_pdf']['generator_source']) if index + 1 < len(revisions) else new_source

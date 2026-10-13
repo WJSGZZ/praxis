@@ -89,11 +89,15 @@ uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/check_pdf.py" /绝�
   --checks /实际运行/checks.json --claimed-check-count 12
 ```
 
-最终字号用 `--minimum-font-tex-pt 12` 显式检查（12是美赛新稿的项目与现行要求，不套给所有赛事）。测量使用成熟PDFium的字形矩阵，包含图形嵌套与旋转后的有效字号，不能用源码12pt或多数正文字号代替。首次输出列出所有较小文字及未识别字形；逐条看实际页面、上下文和源码，修正普通正文／轴／图例的小字，真实数学上下标和式内标注才可另记 `--font-review /绝对路径/font-review.json`。记录须含 `pdf_sha256`、`minimum_font_tex_pt` 和 `approved_math_runs`，每项用输出的 `id`、`role`（`math_script`或`math_notation`）及具体`reason`；未识别数学字形另用`approved_unmapped_math_glyphs`（`role=math_notation`）。不得按字号或字体批量豁免。记录与PDF或阈值不符、剩余候选未解决时拒绝通过；这保存审阅判断，不能自动证明某字真是数学。轮廓与图片文字仍需视觉核对。
+美赛当前交付的字号门禁固定为 12 TeX pt，冻结入口自动执行；先用 `--minimum-font-tex-pt 12` 取得字体候选（不套给其他赛事）。测量使用成熟PDFium的字形矩阵，包含图形嵌套与旋转后的有效字号，不能用源码12pt或多数正文字号代替。首次输出列出所有较小文字及未识别字形；逐条看实际页面、上下文和源码，修正普通正文／轴／图例的小字，真实数学上下标和式内标注才可另记 `--font-review /绝对路径/font-review.json`。记录须含 `pdf_sha256`、`minimum_font_tex_pt` 和 `approved_math_runs`，每项用输出的 `id`、`role`（`math_script`或`math_notation`）及具体`reason`；未识别数学字形另用`approved_unmapped_math_glyphs`（`role=math_notation`）。不得按字号或字体批量豁免。记录与PDF或阈值不符、剩余候选未解决时拒绝通过；这保存审阅判断，不能自动证明某字真是数学。轮廓与图片文字仍需视觉核对。
 
 字体禁用与是否要求嵌入由本稿规格配置，不内置赛事的某一种字体名单。逐页视觉检查仍需 PDF 查看工具。交付组件的连续／独立结构按 [contest-delivery.md](contest-delivery.md) 选择，用 scripts.paper_template 的共享函数生成；check 与冻结门禁拒绝直接遗漏的边界，仍需在实际 PDF 核对前后页、浮动体和正文计页。contest_rules 只有确认AI报告独立起页时才排除该尾部，混页或重复标题不能获得美赛页数豁免；国赛首个附录若与正文混页，该页仍计入正文。普通连续章节并不因此违反格式。它们是可提取文本的机械检查，宏展开、图像和真实披露仍需审阅，不认证未知届次。
 
-正式论文先用 scripts.paper_template 的 --compile 入口核验 templates/typesetting-runtime.json 固定的编译器及完整资源包；scripts/freeze_pdf.py 的 --tex／--contest 门禁还必须提供同次 --build-receipt，核对实际源码、PDF与资源版本后创建字节一致的新副本。美赛v3成品冻结还应传 `--minimum-font-tex-pt 12`，有合法较小数学文字时同时传 `--font-review`；字号门禁在创建新PDF前拒绝未解决候选，并在冻结收据保存实际复核结果。未传该配置的历史／通用冻结仍保留旧用途，不能声称通过最终字号验收。通用快照不等于论文通过门禁，构建记录也不是正式提交回执。
+当前美赛交付必须依次完成：current 编译 → 当前 PDF 字体候选和全部页面实际审阅 → current 冻结 → `workflow.report` 登记当前冻结副本与证据。首次交付任一门禁失败就保留候选和失败，不登记为成品。唯一执行入口为 scripts.paper_template 的 `--compile` 和 scripts.freeze_pdf 的 `--tex`／`--contest mcm`：默认 `--layout-mode current` 要求当前 v4，固定运行时和资源包，并核对实际 A4 页框、摘要年份／题号／队号、完整页眉身份及 AI 报告独立边界。编译和最终冻结共用真实 `.log` 检查，Overfull hbox/vbox 或 Float too large 均拒绝；冻结要求 PDF 同目录同名的完整日志，记录日志与 PDF 修改时间供诊断，并保存日志 SHA256。有诊断的构建收据须匹配该日志哈希；历史 current 收据缺此字段时允许以实际新鲜零溢出日志补验，记录该兼容路径而不改旧收据。编译器可能先落日志后写 PDF，因此不以二者时间先后判定有效性；日志、源码和 PDF 哈希也不代替视觉或科学核验。
+
+current 美赛冻结自动执行 12 TeX pt 字号门禁；合法较小数学候选必须逐项以同 PDF 的 `--font-review` 解释，普通小字必须修源重建。逐页实际查看后保存 `--page-review`（默认 `<候选.pdf>.page-review.json`）：含当前 `pdf_sha256`、真实 `actor`、全部一基页码 `pages`，以及 `format_checks` 中 `paragraph_indentation`、`figures_tables_fonts`、`clipping_overlap`、`cross_references`、`summary_headers`、`ai_report_boundary` 六项实际核对的布尔值 true。缺项、false、旧哈希或漏页都拒绝。它记录审阅范围与判断，不能自动认证完整 TeX 宏展开或人的核验。冻结还必须提供同次 `--build-receipt`；收据保存实际格式、结构、字体、日志和页审阅结果，创建字节一致的新副本后才调用 `workflow.report`。
+
+历史重现必须显式选择保留的 `layout_version`，编译与布局冻结传 `--layout-mode archive`；保留版本、原件和旧哈希，不称当前交付通过。无布局 profile 的通用 PDF 快照、research 和 CUMCM 继续其各自用途与规则；它们不自动成为美赛交付，也不能冒充当前美赛字号／页面门禁成功。构建或冻结记录不是正式提交回执。
 
 章节结构由 `python -m scripts.paper_template main.tex --contest mcm --review-structure` 预检，或单独运行 `python -m scripts.paper_structure main.tex`。采用 pylatexenc 的语法树，检查字面 chapter／section／subsection／subsubsection 的直接父子关系；注释、代码示例、数学内容和宏定义不作为实际标题。带 `--tex`／`--contest` 的最终冻结同样检查，未解决候选或解析失败时在写PDF前停止，另将结果保存在冻结收据；原构建收据的版式身份不变。它是编辑复查入口，不是官方子节数量规则或完整TeX解析认证：不展开宏、不读取 input／include、不执行条件分支；未覆盖的结构仍以实际目录和正文为准。合法的复杂TeX也可能触发解析失败，先查看诊断，不因此判论文错误，也不绕过成品审查。没有源码的通用快照保持原用途，不认证章节结构。
 

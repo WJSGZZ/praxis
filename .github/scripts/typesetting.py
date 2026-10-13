@@ -90,7 +90,7 @@ def main(compiler=None):
             (OUT / f'{name}.tex').write_bytes(archive.read(f'paper/{name}.tex'))
     os.environ['PATH'] = str(executable.parent) + os.pathsep + os.environ.get('PATH', '')
     bath = ROOT/'demos/mcm-2016-a/reproduce'
-    generated = subprocess.run([sys.executable, str(bath/'build_report.py'), '--run', str(bath/'reference')], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
+    generated = subprocess.run([sys.executable, str(bath/'build_report.py'), '--run', str(bath/'reference'), '--candidate'], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
     (OUT/'bath-generator.txt').write_text(generated.stdout+generated.stderr, encoding='utf-8')
     if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
     shutil.copyfile(bath/'paper/paper.tex', OUT/'bath.tex')
@@ -106,9 +106,13 @@ def main(compiler=None):
         tex = OUT / f'{name}.tex'
         if contest: check(tex.read_text(encoding='utf-8'), contest)
         built = OUT/(name+'-build')
-        compile_paper(tex, contest, built, executable)
+        # Preserve the original archived toll layout; current examples are candidates
+        # here, with cross-platform rendering checked below. CI cannot invent
+        # a page-by-page human/AI visual-review record.
+        mode = 'archive' if name == 'toll' else 'current'
+        compile_paper(tex, contest, built, executable, layout_mode=mode)
         pdf = built/(name+'.pdf')
-        if contest:
+        if contest and contest != 'mcm':
             freeze(pdf, built/'frozen.pdf', tex=tex, contest=contest,
                    build_receipt=built/(name+'.build.json'))
         for suffix in ('.pdf', '.compile.txt', '.log', '.build.json'):

@@ -10,13 +10,14 @@ from pypdf import PdfWriter
 
 from scripts.freeze_pdf import freeze
 from scripts.paper_structure import inspect_structure
-from scripts.paper_template import ROOT, check, preamble, summary_header
+from scripts.paper_template import ROOT, check, preamble, summary_header, summary_heading
 
 
 def artifact(tmp_path, body):
     tex = tmp_path / 'source.tex'
     tex.write_text(preamble('7391857', 'A conditional answer')
                    + summary_header('A', edition=2023)
+                   + summary_heading()
                    + body + r'\end{document}', encoding='utf-8')
     pdf = tmp_path / 'source.pdf'
     writer = PdfWriter()
@@ -24,6 +25,8 @@ def artifact(tmp_path, body):
     with pdf.open('wb') as stream:
         writer.write(stream)
     build = tmp_path / 'synthetic-build.json'
+    # Explicit archive mode keeps these synthetic binding/structure fixtures from
+    # claiming actual current-delivery PDF format/font/rendering compliance.
     # Synthetic provenance tests binding and refusal only. Real current-paper
     # compilation and negative old-paper replay are separate development evidence.
     build.write_text(json.dumps({
@@ -52,7 +55,7 @@ def test_sole_child_refuses_creation_without_changing_source(tmp_path):
     original = (tex.read_bytes(), pdf.read_bytes(), build.read_bytes())
     destination = tmp_path / 'delivery' / 'paper.pdf'
     with pytest.raises(ValueError, match='Heading structure review failed'):
-        freeze(pdf, destination, tex=tex, contest='mcm', build_receipt=build)
+        freeze(pdf, destination, tex=tex, contest='mcm', build_receipt=build, layout_mode='archive')
     assert not destination.parent.exists()
     assert original == (tex.read_bytes(), pdf.read_bytes(), build.read_bytes())
 
@@ -62,7 +65,7 @@ def test_source_bound_reason_allows_real_navigation_exception(tmp_path):
     review = approval(tmp_path, tex)
     destination = tmp_path / 'paper.pdf'
     receipt = freeze(pdf, destination, tex=tex, contest='mcm', build_receipt=build,
-                     structure_review=review)
+                     structure_review=review, layout_mode='archive')
     assert destination.read_bytes() == pdf.read_bytes()
     structure = receipt['heading_structure_review']
     assert structure['passed'] and len(structure['candidates']) == 1
@@ -87,7 +90,7 @@ def test_invalid_reason_cannot_create_snapshot(tmp_path, bad):
     destination = tmp_path / 'paper.pdf'
     with pytest.raises(ValueError, match='Heading structure review failed'):
         freeze(pdf, destination, tex=tex, contest='mcm', build_receipt=build,
-               structure_review=review)
+               structure_review=review, layout_mode='archive')
     assert not destination.exists()
 
 
@@ -97,7 +100,7 @@ def test_invalid_reason_cannot_create_snapshot(tmp_path, bad):
 ])
 def test_no_forced_subsections_or_reasons(tmp_path, body):
     tex, pdf, build = artifact(tmp_path, body)
-    receipt = freeze(pdf, tmp_path / 'paper.pdf', tex=tex, contest='mcm', build_receipt=build)
+    receipt = freeze(pdf, tmp_path / 'paper.pdf', tex=tex, contest='mcm', build_receipt=build, layout_mode='archive')
     assert receipt['heading_structure_review']['candidates'] == []
 
 

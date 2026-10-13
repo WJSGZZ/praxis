@@ -7,7 +7,10 @@ ROOT=Path(__file__).resolve().parent
 sys.path.insert(0,str(ROOT/'code'))
 import model,control
 TEAM_CONTROL_NUMBER='7391856'
-parser=argparse.ArgumentParser();parser.add_argument('--run',type=Path,required=True);args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--run',type=Path,required=True)
+parser.add_argument('--candidate',action='store_true',help='Build an unsealed preview; visual QA is required before delivery')
+parser.add_argument('--font-review',type=Path);parser.add_argument('--page-review',type=Path)
+args=parser.parse_args()
 r=json.loads((args.run/'results.json').read_text(encoding='utf-8'));checks=json.loads((args.run/'checks.json').read_text(encoding='utf-8'))
 assert all(c['passed'] for c in checks)
 p=r['parameters'];b=r['policy'];a=r['analytic'];sc=r['scenarios'];z=np.load(args.run/'trajectory.npz')
@@ -150,9 +153,12 @@ TOK={'Tmin':r'T_{\min}','Tmax':r'T_{\max}','Tout':r'T_{\mathrm{out}}','Tin':r'T_
  'ℓ':r'\ell','φ':r'\phi','Ṫ':r'\dot T','Ri':r'\mathrm{Ri}','ΔT':r'\Delta T','q':'q','D':'D','T':'T'}
 TOKRE=re.compile(r'(?<![\w°$\\])(%s)(?![\w°])'%'|'.join(sorted(map(re.escape,TOK),key=len,reverse=True)))
 EXP=re.compile(r'\b(\d+(?:\.\d+)?)e-(\d+)\b')
+def uri(x):
+    return x if re.match(r'https?://',x) else 'https://'+x
+
 def plain_nomath(s):
     parts=URL.split(s)
-    return ''.join((r'\url{'+x+'}') if i%2 else esc(x) for i,x in enumerate(parts))
+    return ''.join((r'\url{'+uri(x)+'}') if i%2 else esc(x) for i,x in enumerate(parts))
 def plain(s):
     hold=[]
     def keep(raw):hold.append(raw);return '\x00%d\x01'%(len(hold)-1)
@@ -162,7 +168,7 @@ def plain(s):
         seg=EXP.sub(lambda m:keep(r'$%s\times10^{-%s}$'%(m.group(1),m.group(2))),seg)
         seg=TOKRE.sub(lambda m:keep('$'+TOK[m.group(1)]+'$'),seg)
         parts=URL.split(seg)
-        out.append(''.join(keep(r'\url{'+x+'}') if j%2 else esc(x) for j,x in enumerate(parts)))
+        out.append(''.join(keep(r'\url{'+uri(x)+'}') if j%2 else esc(x) for j,x in enumerate(parts)))
     res=''.join(out)
     return re.sub('\x00(\\d+)\x01',lambda m:hold[int(m.group(1))],res)
 def tx(s,math=True):
@@ -651,6 +657,14 @@ para('Task/tool/scope records, code and numerical receipts remain; the complete 
 tex.append('\\end{list}\n')
 TOTAL=SEC[0]
 pdf=compile_pdf('paper','A Hot Bath')
-(ROOT/'submission').mkdir(exist_ok=True)
-shutil.copyfile(pdf,ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf'))
-print(json.dumps({'pdf':str(ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf')),'sections':TOTAL,'equations':eqcount,'tables':table_total,'figures':figcount[0],'checks':len(checks)}))
+if args.candidate:
+    print(json.dumps({'candidate':str(pdf),'review_required':True,'sections':TOTAL,'equations':eqcount,'tables':table_total,'figures':figcount[0],'checks':len(checks)}))
+else:
+    from scripts.freeze_pdf import freeze
+    target=ROOT/'submission'/(TEAM_CONTROL_NUMBER+'.pdf')
+    record=freeze(pdf,target,tex=pdf.with_suffix('.tex'),contest='mcm',
+                  build_receipt=pdf.with_suffix('.build.json'),
+                  font_review=args.font_review or ROOT.parent/'current-font-review.json',
+                  page_review=args.page_review or ROOT.parent/'current-page-review.json')
+    target.with_suffix('.pdf.receipt.json').write_text(json.dumps(record,indent=2)+'\n')
+    print(json.dumps({'pdf':str(target),'sealed':True,'sections':TOTAL,'equations':eqcount,'tables':table_total,'figures':figcount[0],'checks':len(checks)}))

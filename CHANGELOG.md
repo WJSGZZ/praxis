@@ -3,6 +3,20 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
+## 0.8.1 · 2026-10-13
+
+- 当前美赛交付统一使用共享 v4：A4、普通正文和图表文字 12pt、摘要与标题后首段缩进 2em、身份一致的摘要页和独立起页的 AI 报告。15 份活动阅读稿已重新生成并实际逐页检查，旧科学记录与冻结原件保留。
+  Current MCM delivery uses the shared v4 layout: A4, 12pt ordinary prose and figure text, two-em indentation after summary and section headings, consistent identities and a separate AI-report start. Fifteen active reading copies were rebuilt and visually reviewed; frozen originals and scientific records retain their versions.
+- 构建拒绝实际页框／身份不符及文字或浮动体溢出；冻结强制检查当前构建、真实字号、数学例外说明和绑定当前 PDF 的全部页面审阅。共用成熟 LaTeX/PDF 工具，不新增运行依赖。历史稿显式选择 archive，研究与国赛保持各自规则。
+  Compilation rejects mismatched page geometry or identity and actual typesetting overflow. Freezing requires a current build, measured font sizes, explicit mathematical-role reviews and an exact-PDF all-page review. Existing LaTeX and PDF libraries are reused; archived layouts require explicit archive mode, while research and CUMCM keep their profiles.
+- 次要案例增加三份完整学习作品，按问题类型组织版本、方法和局限；中英文首页、图库、复现入口和安装说明同步。AI 参考意见未校准，不等于正式获奖或首次自主 O 成功。
+  Three complete learning works join the secondary gallery with organized methods, versions and limits. Both README languages, reproduction entry points and installation guidance are synchronized. Uncalibrated AI opinions establish neither actual awards nor first-autonomous O success.
+
+### 收紧的交付要求 · Stricter delivery checks
+
+- 美赛编译与布局冻结默认 `current`，旧版式必须显式 `--layout-mode archive`。只有实际审阅后的冻结副本才能登记为成品。浴缸复现的 `--candidate` 生成待审预览；正式交付要求当前字号及逐页审阅记录，并拒绝覆盖旧交付。
+  MCM compilation and layout-gated freezing default to `current`; historical layouts require `--layout-mode archive`. Register reviewed frozen copies as deliveries. The bath generator's `--candidate` creates an unsealed preview; delivery requires current font and all-page review records and refuses to overwrite an earlier submission.
+
 ## 0.8.0 · 2026-10-13
 
 - 新增图像分析专业入口与 `binary_components` 工具，复用 SciPy 测量显式二维二值掩码的连通区域、面积、边界框和质心。物理尺度由调用者显式声明，像素连接不自动等于真实对象；默认依赖保持。

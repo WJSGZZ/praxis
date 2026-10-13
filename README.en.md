@@ -70,6 +70,8 @@ The competition cases make the full workflow inspectable; they do not define the
 
 Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. New MCM reports require the problem edition explicitly and use the three-column summary header. Third-level headings and contents entries are available when they aid navigation; frozen cases retain their recorded layout unless separately revised. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
 
+The active MCM gallery now uses the shared A4 layout: 12pt ordinary body and figure text, a two-em first-line indent after summary and section headings, and a separate AI-report start. Current delivery requires canonical compilation, font inspection, actual all-page review and freezing. Historical snapshots retain their identities. [Three complete learning works and their version records](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md) remain secondary cases; uncalibrated AI opinions do not establish official awards.
+
 ## Quick start
 
 ### 1. Install for your agent

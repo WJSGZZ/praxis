@@ -68,7 +68,8 @@ def marker_left_edges(pdf):
 def test_compiled_heading_and_summary_indentation(tmp_path, version, first_em, later_em):
     tex = tmp_path / f'indentation-v{version}.tex'
     tex.write_text(fixture_source(version))
-    receipt = compile_paper(tex, 'mcm', tmp_path / 'compiled')
+    receipt = compile_paper(tex, 'mcm', tmp_path / 'compiled',
+                            layout_mode='archive' if version == 3 else 'current')
     assert receipt['layout']['profile'] == f'praxis-mcm-v{version}'
     measured = marker_left_edges(tmp_path / f'compiled/indentation-v{version}.pdf')
     # newtx 12pt regular body: one em is 12 TeX pt; PDF uses 72/72.27 units.
