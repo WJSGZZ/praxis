@@ -3,7 +3,7 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
-## 0.8.1 · 2026-10-13
+## 未发布 · Unreleased
 
 - 当前美赛交付统一使用共享 v4：A4、普通正文和图表文字 12pt、摘要与标题后首段缩进 2em、身份一致的摘要页和独立起页的 AI 报告。15 份活动阅读稿已重新生成并实际逐页检查，旧科学记录与冻结原件保留。
   Current MCM delivery uses the shared v4 layout: A4, 12pt ordinary prose and figure text, two-em indentation after summary and section headings, consistent identities and a separate AI-report start. Fifteen active reading copies were rebuilt and visually reviewed; frozen originals and scientific records retain their versions.

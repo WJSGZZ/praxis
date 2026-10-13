@@ -6,9 +6,9 @@
 
 ## 下载已发布的安装包
 
-[0.8.1 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.8.1) 提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/praxis-0.8.1-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/praxis-0.8.1-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/praxis-0.8.1-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/praxis-0.8.1-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/praxis-0.8.1-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/praxis-0.8.1-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.8.1/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
+[0.8.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.8.0) 提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
 
-解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定Release与后续main改动分别保留，下载0.8.1不会自动带入未发布修复。
+解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定Release与后续main改动分别保留，下载0.8.0不会自动带入未发布修复。
 
 ## 从源码导出
 
