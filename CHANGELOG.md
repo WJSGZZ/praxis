@@ -5,7 +5,10 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
-- 当前美赛交付统一使用共享 v4：A4、普通正文和图表文字 12pt、摘要与标题后首段缩进 2em、身份一致的摘要页和独立起页的 AI 报告。15 份活动阅读稿已重新生成并实际逐页检查，旧科学记录与冻结原件保留。
+- 公开美赛作品按题目展示，每题只保留最好的一份；十题十稿使用固定文件名与统一选择清单。主 Demo 同步为完整 28 页稿，旧研究版与失败证据保全到历史。双语入口、生成源、预览和导出同步，检查器拒绝重复题目及残留稿。
+  The public MCM gallery selects one best paper per problem, with ten works under stable filenames and a shared catalog. The primary demo now presents the complete 28-page manuscript; earlier research versions and failures remain preserved in history. Bilingual links, source, previews and exports agree, with checks against duplicate problems and orphan papers.
+
+- 当前美赛交付统一使用共享 v4：A4、普通正文和图表文字 12pt、摘要与标题后首段缩进 2em、身份一致的摘要页和独立起页的 AI 报告。15 份研究稿已完成格式迁移与逐页检查，公开展示按每题一份的清单选择成品；旧科学记录与冻结原件保留。
   Current MCM delivery uses the shared v4 layout: A4, 12pt ordinary prose and figure text, two-em indentation after summary and section headings, consistent identities and a separate AI-report start. Fifteen active reading copies were rebuilt and visually reviewed; frozen originals and scientific records retain their versions.
 - 构建拒绝实际页框／身份不符及文字或浮动体溢出；冻结强制检查当前构建、真实字号、数学例外说明和绑定当前 PDF 的全部页面审阅。共用成熟 LaTeX/PDF 工具，不新增运行依赖。历史稿显式选择 archive，研究与国赛保持各自规则。
   Compilation rejects mismatched page geometry or identity and actual typesetting overflow. Freezing requires a current build, measured font sizes, explicit mathematical-role reviews and an exact-PDF all-page review. Existing LaTeX and PDF libraries are reused; archived layouts require explicit archive mode, while research and CUMCM keep their profiles.

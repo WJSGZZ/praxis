@@ -143,7 +143,16 @@ def test_demo_papers_satisfy_their_contest_rules():
     mcm = ROOT / 'demos/mcm-2016-a/deliverables/paper.pdf'
     cumcm = ROOT / 'demos/cumcm-1998-a/deliverables/paper.pdf'
     from scripts.check_pdf import margin_report
-    assert contest_rules.evaluate(contest_rules.extract(mcm), 'mcm')['passed']
+    import json
+    # A historical learning work is not a current-year eligible submission.
+    current = json.loads((mcm.parents[1] / 'verification.json').read_text())
+    rules = contest_rules.evaluate(contest_rules.extract(mcm), 'mcm', edition=2016)
+    assert rules['facts']['counted_pages'] == current['pdf']['solution_pages'] == 27
+    assert rules['facts']['ai_report_from_page'] == 28
+    assert not rules['passed'] and len(rules['errors']) == 1
+    assert '25-page limit' in rules['errors'][0]
+    assert current['format']['formal_2016_page_limit_verified'] is False
+    assert current['current_award_assessment']['target'] is None
     assert contest_rules.evaluate(contest_rules.extract(cumcm), 'cumcm', margins=margin_report(cumcm))['passed']
 
 

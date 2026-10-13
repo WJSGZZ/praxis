@@ -1,0 +1,114 @@
+{
+  "entries": [
+    {
+      "contest": "MCM",
+      "edition": 2016,
+      "problem": "A",
+      "slug": "mcm-2016-a",
+      "pdf_path": "../mcm-2016-a/paper.pdf",
+      "pages": 28,
+      "pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+      "metadata": "metadata/mcm-2016-a.json",
+      "category": "mechanism"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2017,
+      "problem": "B",
+      "slug": "mcm-2017-b",
+      "pdf_path": "papers/mcm-2017-b.pdf",
+      "pages": 17,
+      "pdf_sha256": "1c64e7b38d672652ae10ce16531756f42504d176a959d2ceb27bf4b989fb56ce",
+      "metadata": "metadata/mcm-2017-b.json",
+      "category": "mechanism"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2020,
+      "problem": "B",
+      "slug": "mcm-2020-b",
+      "pdf_path": "papers/mcm-2020-b.pdf",
+      "pages": 22,
+      "pdf_sha256": "6a0ce0c764b47cf5489459638dcddf518d6342528083c39e5beb014cfa8746ba",
+      "metadata": "metadata/mcm-2020-b.json",
+      "category": "mechanism"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2020,
+      "problem": "C",
+      "slug": "mcm-2020-c",
+      "pdf_path": "papers/mcm-2020-c.pdf",
+      "pages": 21,
+      "pdf_sha256": "be9bea7a11d86be203de49a03fe8fff37e0612e74f5edb707ae389a0f7d9a862",
+      "metadata": "metadata/mcm-2020-c.json",
+      "category": "data"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2021,
+      "problem": "C",
+      "slug": "mcm-2021-c",
+      "pdf_path": "papers/mcm-2021-c.pdf",
+      "pages": 19,
+      "pdf_sha256": "3705bcc48cc8382e24a479712ade9b54c888ab5d08ef5010136fe79ba3ea13c4",
+      "metadata": "metadata/mcm-2021-c.json",
+      "category": "data"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2023,
+      "problem": "A",
+      "slug": "mcm-2023-a",
+      "pdf_path": "papers/mcm-2023-a.pdf",
+      "pages": 17,
+      "pdf_sha256": "b1d0ef2c48c9995eaacf2a767d84fe03a7e04de8c745b3fbe9d8d21ca2ab4814",
+      "metadata": "metadata/mcm-2023-a.json",
+      "category": "mechanism"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2024,
+      "problem": "B",
+      "slug": "mcm-2024-b",
+      "pdf_path": "papers/mcm-2024-b.pdf",
+      "pages": 23,
+      "pdf_sha256": "6b8bbb55ecac4ae69366a92752053aa7cf7772f0ff2425d672f5b5252c81dfee",
+      "metadata": "metadata/mcm-2024-b.json",
+      "category": "mechanism"
+    },
+    {
+      "contest": "ICM",
+      "edition": 2024,
+      "problem": "E",
+      "slug": "icm-2024-e",
+      "pdf_path": "papers/icm-2024-e.pdf",
+      "pages": 22,
+      "pdf_sha256": "04782c5e2af95c9c4e5df529d031c5f3919fd938bbc28b6948bbfce9fdf8dfba",
+      "metadata": "metadata/icm-2024-e.json",
+      "category": "risk"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2025,
+      "problem": "A",
+      "slug": "mcm-2025-a",
+      "pdf_path": "papers/mcm-2025-a.pdf",
+      "pages": 19,
+      "pdf_sha256": "138c124bf237bd9c81c014161ecc620771e1ab4c9ab2ba3e89663d99cba6015a",
+      "metadata": "metadata/mcm-2025-a.json",
+      "category": "data"
+    },
+    {
+      "contest": "MCM",
+      "edition": 2025,
+      "problem": "C",
+      "slug": "mcm-2025-c",
+      "pdf_path": "papers/mcm-2025-c.pdf",
+      "pages": 21,
+      "pdf_sha256": "74852523e2c6f15aafd6a36c6854f97349b9cd2d75739373014ba2589ad29941",
+      "metadata": "metadata/mcm-2025-c.json",
+      "category": "data"
+    }
+  ]
+}

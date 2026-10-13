@@ -55,3 +55,33 @@ def test_cumcm_ci_uses_current_accepted_pagination():
 def test_cumcm_ci_rejects_stale_or_wrong_pagination(total, body):
     with pytest.raises(ValueError, match='Unexpected pagination'):
         ci.check_cumcm_pagination(current_cumcm_pages(), expected_total=total, expected_body=body)
+
+
+def historical_profile():
+    root = Path(__file__).resolve().parents[1]
+    return json.loads((root/'demos/mcm-2016-a/verification.json').read_text())
+
+
+def test_historical_selected_work_keeps_current_page_failure_visible():
+    result = ci.check_historical_mcm_layout(pages(27), historical_profile())
+    assert result['layout_comparison_passed']
+    assert result['historical_contest_eligibility'] == 'unverified'
+    assert not result['passed'] and '25-page limit' in result['errors'][0]
+
+
+def test_historical_layout_refuses_wrong_pagination_or_mixed_ai_page():
+    with pytest.raises(ValueError, match='Unexpected pagination'):
+        ci.check_historical_mcm_layout(pages(26), historical_profile())
+    mixed = pages(27); mixed[-1]['lines'].insert(1, 'References')
+    mixed[-1]['text'] = '\n'.join(mixed[-1]['lines'])
+    with pytest.raises(ValueError):
+        ci.check_historical_mcm_layout(mixed, historical_profile())
+
+
+def test_current_or_claimed_verified_year_cannot_use_historical_gate():
+    current = historical_profile(); current['selection']['edition'] = 2026
+    with pytest.raises(ValueError, match='explicit unverified 2016'):
+        ci.check_historical_mcm_layout(pages(27), current)
+    certified = historical_profile(); certified['format']['formal_2016_page_limit_verified'] = True
+    with pytest.raises(ValueError, match='explicit unverified 2016'):
+        ci.check_historical_mcm_layout(pages(27), certified)

@@ -30,7 +30,7 @@ uv run --locked python -m scripts.build_plugin --host codex --output dist/codex/
 
 需要隔离测试临时目录时，用源码根目录内的新路径，例如 `pytest --basetemp=.session/check-transport`。部分集成测试主动检查案例必须留在所选工作区；把 `--basetemp` 移到工作区外会触发该保护，不能通过放宽路径边界来修复测试环境。
 
-发布前按改动运行 `scripts.release_check` 和相关长检查，核对案例记录未漂移。提交推送、版本发布与商店上架分别处理，不由一次本地导出自动触发。 美赛排版 CI 按 `scripts/contest_rules.py` 的解答页数边界验收，AI 使用报告单独计页，不把历史案例的 PDF 总页数设为硬规则；三系统成品仍逐页比较文字与栅格。
+发布前按改动运行 `scripts.release_check` 和相关长检查，核对案例记录未漂移。提交推送、版本发布与商店上架分别处理，不由一次本地导出自动触发。 当前赛事候选按 `scripts/contest_rules.py` 的解答页数边界验收，AI 报告单独计页。历史阅读 Demo 的排版 CI 对照其已接受页数，保留未认证当届规则及当前页数规则失败的状态，不把版式对照通过写成参赛合规；三系统成品逐页比较文字与栅格。公开作品由 `demos/mcm-studies/catalog.json` 选择，每题只展示最好的一份，历史稿归 Git 或私有证据；升级主稿同时同步源、预览、元数据及导出。
 
 中英文首页的技能／工具表、安装下载版本与清单由 `scripts.check_presentation` 对照实际注册表检查，并进入源码测试。新版本说明先维护双语 CHANGELOG；用 `scripts.release_notes --version 版本 --assets-json 实际发布资产元数据.json --output 新说明.md` 生成同一结构的发布文案，再核对实际附件后发布。历史修订使用对应标签的更新记录，保留附件和原发布时间，不把当前能力倒写为旧包能力。
 

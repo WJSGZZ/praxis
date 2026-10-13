@@ -1,77 +1,34 @@
-# MCM and ICM Paper Studies
+# MCM and ICM Modeling Papers
 
-Explore complete Praxis reports through the questions they tackle: physical design, scarce observations, forecasting and decisions that span several years. Each paper has a version record with its page count, review coverage and main limitations.
+Ten historical contest problems, one current representative paper each. The collection is organized around physical mechanisms and engineering, data analysis and inverse problems, and long-term risk and decisions. Every row links to its paper and a concise record.
 
 [简体中文](README.md) · **English** · [All cases](../README.en.md)
 
-These are AI modeling exercises on historical problems. They were not submitted as formal COMAP entries and have no actual award results. Team numbers are demonstration identifiers. An autonomous cycle can include internal checks and disclosed scientific feedback; post-seal learning on the same problem is listed separately. Every award reference below is an **uncalibrated AI opinion**, tied to a specified manuscript. The gallery uses A4, 12 TeX pt body and figure text, and 2em paragraph indents as a consistent reading style; this does not imply that COMAP requires A4. The abstract identity page retains team and problem identifiers, and AI disclosure appears on a separate page. This round changes format only and adds no scientific or award assessment.
+These are AI modeling exercises. They were not submitted as formal COMAP entries and have no actual award results. Award references in the metadata are uncalibrated AI opinions, not official awards or human-judge results. Where no complete review is bound to the current paper, the record says so. Conclusions remain subject to each paper's real-world data and validation limits.
 
-## Physical models and engineering choices
+## Physical mechanisms and engineering
 
-| Study | Paper and version record | What it demonstrates and where the evidence stops |
+| Problem | Paper and record | Method and boundary |
 |---|---|---|
-| 2016 MCM A · A Hot Bath | [Primary demo · 26 pages](../mcm-2016-a/paper.pdf) · [Record](metadata/mcm-2016-a.json) | Water use, spatial temperature and replenishment control. An iteratively developed case; earlier reviews are not bound to this PDF. |
-| 2016 MCM A · A Hot Bath | [Complete learning revision · 28 pages](papers/mcm-2016-a-strong-learning.pdf) · [Record](metadata/mcm-2016-a-strong-learning.json) | Connects heat replacement, transport and faucet timing. Author-external AI opinion: Outstanding-centered, adjacent Finalist–Outstanding. Real baths and body motion remain uncalibrated. |
-| 2020 MCM B · Sandcastle survival | [Autonomous final · 22 pages](papers/mcm-2020-b-autonomous.pdf) · [Record](metadata/mcm-2020-b-autonomous.json) | Geometric bounds, water conservation and a rain-driven design reversal. Author-external AI review covers the full paper and added evidence: Meritorious-centered, adjacent HM–Finalist. Erosion and functional failure remain uncalibrated. |
-| 2023 MCM A · Ecological diversity | [Autonomous transfer · 17 pages](papers/mcm-2023-a.pdf) · [Record](metadata/mcm-2023-a.json) | Separates functional density from species retention. Current page-by-page development review gives no award estimate and does not inherit an earlier manuscript's opinion. |
-| 2024 MCM B · Submersible recovery | [Science-feedback successor · 25 pages](papers/mcm-2024-b.pdf) · [Record](metadata/mcm-2024-b.json) | Links drift, detection, search and recovery timing. Current page-by-page AI science acceptance: Finalist-centered, adjacent Meritorious–Finalist. Real currents and rescue outcomes remain uncalibrated. |
-| 2024 MCM B · Submersible recovery | [Complete learning revision · 23 pages](papers/mcm-2024-b-strong-learning.pdf) · [Record](metadata/mcm-2024-b-strong-learning.json) | A 34-survey plan, recovery clock and conditional readiness-cost threshold. Author-external AI opinion: Outstanding-centered, adjacent Finalist–Outstanding. Real recovery and commercial inputs remain uncalibrated. |
+| 2016 MCM A · A Hot Bath | [Paper · 28 pages](../mcm-2016-a/paper.pdf) · [Record](metadata/mcm-2016-a.json) | Connects heat replacement, transport and faucet timing; the six-stage schedule uses 21.48 L under the stated conditions. Physical parameters and human motion remain uncalibrated. |
+| 2017 MCM B · Toll-plaza merging | [Paper · 17 pages](papers/mcm-2017-b.pdf) · [Record](metadata/mcm-2017-b.json) | Combines payment compatibility, merging traffic and finite downstream storage; real traffic and toll-facility parameters require validation. |
+| 2020 MCM B · Sandcastle erosion | [Paper · 22 pages](papers/mcm-2020-b.pdf) · [Record](metadata/mcm-2020-b.json) | Geometry bounds, water conservation and rainfall scenarios can reverse the shape ranking. Measured erosion parameters are absent, and retained sand does not establish load-bearing function. |
+| 2023 MCM A · Ecological diversity | [Paper · 17 pages](papers/mcm-2023-a.pdf) · [Record](metadata/mcm-2023-a.json) | Separates functional density from species retention, using competition and filtering mechanisms; conclusions are limited to the stated mechanisms and parameters. |
+| 2024 MCM B · Submersible recovery | [Paper · 23 pages](papers/mcm-2024-b.pdf) · [Record](metadata/mcm-2024-b.json) | Connects drift, detection, a search route and the return clock. Real currents, procurement terms and rescue outcomes remain unverified. |
 
-## Reports, classification and forecasts
+## Data analysis and inverse problems
 
-| Study | Paper and version record | What it demonstrates and where the evidence stops |
+| Problem | Paper and record | Method and boundary |
 |---|---|---|
-| 2020 MCM C · Consumer reviews | [Autonomous pilot · 23 pages](papers/mcm-2020-c-autonomous.pdf) · [Record](metadata/mcm-2020-c-autonomous.json) | Review denominators, product composition and historical information. Complete AI review with an uncalibrated award opinion; no sales ground truth or human semantic labels. |
-| 2020 MCM C · Consumer reviews | [Same-task learning revision · 26 pages](papers/mcm-2020-c-learning.pdf) · [Record](metadata/mcm-2020-c-learning.json) | Initial complete paper: Meritorious candidate, adjacent HM–Meritorious. Final source changes and pages 8–10 and 20–26 were checked; the coordinator also viewed all 26 final pages. No new full final award assessment; the older O-centered opinion does not apply. |
-| 2020 MCM C · Consumer reviews | [Complete learning revision · 21 pages](papers/mcm-2020-c-strong-learning.pdf) · [Record](metadata/mcm-2020-c-strong-learning.json) | Analyzes 32,024 reviews while distinguishing product families, current-unit complaints, feature meaning and information available at the cutoff. Author-external AI opinion: Outstanding-centered, adjacent Finalist–Outstanding. Physical defect rates and prospective warning performance remain unverified. |
-| 2021 MCM C · Hornet report triage | [Autonomous final · 19 pages](papers/mcm-2021-c-autonomous.pdf) · [Record](metadata/mcm-2021-c-autonomous.json) | Sparse verification, information timing and investigation queues. Complete corrected paper and selected calculations reviewed by an author-external AI: Finalist-centered, adjacent Meritorious–Finalist. Image pixels were unavailable; this is not an image classifier. |
-| 2025 MCM A · Stair wear | [Autonomous research exercise · 19 pages](papers/mcm-2025-a.pdf) · [Record](metadata/mcm-2025-a.json) | Infers history from wear; not a timed first-pass assessment. Full AI review: Finalist-centered, adjacent Meritorious–Outstanding, with uncalibrated and non-blind review limits. |
-| 2025 MCM C · Olympic medals | [Autonomous paper · 20 pages](papers/mcm-2025-c-autonomous.pdf) · [Record](metadata/mcm-2025-c-autonomous.json) | Opportunity portfolios across sports. Page-by-page visual inspection is complete; no full scientific or award review is bound to this PDF. |
-| 2025 MCM C · Olympic medals | [Same-task learning revision · 21 pages](papers/mcm-2025-c-learning.pdf) · [Record](metadata/mcm-2025-c-learning.json) | A comparison of information boundaries, calibration and uncertainty communication. Available science comments concern an older version; this PDF was not freshly rated. |
+| 2020 MCM C · Consumer reviews | [Paper · 21 pages](papers/mcm-2020-c.pdf) · [Record](metadata/mcm-2020-c.json) | Analyzes 32,024 reviews, separating product families, current-unit problems and feature meaning. Physical defect rates and prospective warning performance remain unverified. |
+| 2021 MCM C · Asian hornet reports | [Paper · 19 pages](papers/mcm-2021-c.pdf) · [Record](metadata/mcm-2021-c.json) | Prioritizes investigations with sparse verification; the top 85 include all six later-confirmed positives. Image pixels were unavailable, so this is not image classification. |
+| 2025 MCM A · Stair wear | [Paper · 19 pages](papers/mcm-2025-a.pdf) · [Record](metadata/mcm-2025-a.json) | Infers traffic and historical scale from wear, using identifiability to bound conclusions. No real staircase field data were available. |
+| 2025 MCM C · Olympic medals | [Paper · 21 pages](papers/mcm-2025-c.pdf) · [Record](metadata/mcm-2025-c.json) | Builds cross-sport forecasts from national opportunity portfolios, with explicit data timing and uncertainty. No complete scientific review is bound to the current paper. |
 
-## Risk and decisions over time
+## Long-term risk and decisions
 
-| Study | Paper and version record | What it demonstrates and where the evidence stops |
+| Problem | Paper and record | Method and boundary |
 |---|---|---|
-| 2017 MCM B · Toll-plaza merging | [Autonomous completed paper · 17 pages](papers/mcm-2017-b.pdf) · [Record](metadata/mcm-2017-b.json) | Payment compatibility, merging and finite downstream storage. Latest semantic review abstains from an award estimate; the existing visual receipt concerns an earlier PDF. |
-| 2024 ICM E · Coastal insurance and heritage | [Autonomous final · 22 pages](papers/icm-2024-e-autonomous.pdf) · [Record](metadata/icm-2024-e-autonomous.json) | Underwriting, renewal capital, development and St Mark's Basilica. The preceding full scientific revision received a Meritorious-centered, HM–Finalist opinion; the final limited text correction was accepted incrementally and inherits that opinion under unchanged scientific content. |
+| 2024 ICM E · Coastal insurance and heritage | [Paper · 22 pages](papers/icm-2024-e.pdf) · [Record](metadata/icm-2024-e.json) | Connects annual underwriting, post-claim capital, renewal fees and heritage protection. The fee-inclusive quote exceeds the original budget; the alternative awaits approval, and real losses and funding terms remain unverified. |
 
-## What the new learning revisions add
-
-The new bath and submersible papers sit alongside the primary demonstration and its historical counterparts. They are complete revisions informed by prior learning, independent numerical checks and scientific feedback. Their author-external AI reviews indicate strong Outstanding competitiveness, without calibration by human contest judges. They do not measure first-autonomous O success. Version records state the actual reading, checks and timing limits.
-
-The bath paper turns timing into an executable strategy. For the stated 164.25 L bath, 40°C initial temperature and 30-minute horizon, the accepted constant trickle starts at minute zero and uses 24.14 L. A six-stage schedule qualified on three networks uses 21.48 L. A 1°C allowance is not an instruction to wait until cooling triggers replenishment; a closed-network mixing diagnostic is not a measured model of human motion.
-
-The submersible revision shows all 34 surveys, depth layers and the return clock, then evaluates equipment readiness against a recovery deadline. In the specified service model, equal availability and conditional intervention success give a 0.261729 opportunity difference between being ready at six versus seven hours. Ownership, long-term rental and response contracts must be compared on complete costs. That conditional value is not a real rescue success rate.
-
-The current review-data learning manuscript covers all 32,024 records. Its semantic audit fixes 58 review–topic pairs and separates previous products, packaging, negation and current-unit failures; the paper retains the small rating-forecast gain and historical field-availability limits. The 21-page feedback manuscript received a full review of the current draft. Root accepted the final three local corrections without changing the science; its version record explains the scope of this inheritance.
-
-These are reading copies. Public baseline material is available in the [fixed bath reproduction source](https://github.com/WJSGZZ/praxis/tree/0e3f29b1323486eafa74916218e72cfcb066631a/demos/mcm-2016-a/reproduce) and the [earlier study collection](https://github.com/WJSGZZ/praxis/tree/0e3f29b1323486eafa74916218e72cfcb066631a/demos/mcm-studies). New private diagnostics and complete companion packages are not distributed here; local reproduction references inside the papers are not gallery downloads.
-
-## Reading the three autonomous finals
-
-These three papers were completed within a preregistered autonomous cycle using Praxis **0.7.1**, including disclosed scientific feedback, and then sealed. Same-problem reference learning followed the seal. The files here are current-format reading successors; the original scientific seal identity and review limits remain in force. They are additional studies; [A Hot Bath](../mcm-2016-a/README.en.md) remains the primary MCM demonstration with its own explanation and reproduction instructions.
-
-### Sandcastles: a durable shape still needs a useful foundation
-
-For equal 30 L foundations, a thin oval candidate retains half its sand for 15.62 h in a synthetic dry scenario, versus 9.00 h for a circular cone. Yet the oval is only 1.94 cm high: a 10 cm useful-height requirement favors the cone. Under the specified 5 mm/h rainfall, the ordering also reverses to 1.08 h for the oval and 3.90 h for the cone. The paper separates searched candidates from geometric optimality results with explicit domains, then checks the calculations through water accounting, independent integration and fixed-resistance controls.
-
-An author-external AI read all 22 current pages, figures, tables and the two-page public article. New controls were checked separately; unchanged results retain their earlier evidence. No measured beach-erosion coefficients or link from half-volume survival to load-bearing and local scour were established. An accidental same-problem student search snippet appeared before sealing; its influence is unknown, so this is not described as a strictly blind assessment.
-
-### Hornet reports: useful ranks do not identify reliable probabilities
-
-Only 14 of 4440 reports are confirmed positive, while 2357 outcomes remain unresolved. A text, location and date model places all six later confirmed positives among its top 85 of 1697 adjudicated reports. Its probability error is nevertheless worse than the prevalence baseline; excluding explicit institutional records leaves three of four positives in the top 85. The report responds with investigation bands and exploratory capacity, separating adjudicated-report scores, unresolved-report probabilities and surveillance detection sensitivity.
-
-The same author-external AI reviewer inspected all 19 corrected pages, three figures, six tables and the two-page memorandum, with independent targeted algebra, queue and 2000-resample audits. The correction did not improve the fitted predictor's point performance. No image pixels were acquired. Label-availability times and geographic transport remain unresolved, and silence in public reporting does not establish eradication.
-
-### Insurance: a viable annual quote can fail at renewal
-
-Flood losses, affordable premiums, post-claim capital and renewal are treated as one decision chain. A finite three-year study accounts for outside funding and its price. St Mark's conditional annual quote of EUR 195,469 fits EUR 200,000; a 2% capital-commitment fee raises it to EUR 207,781 and requires EUR 1.4775 m in outside three-year capital. The original budget therefore fails. EUR 208,000 is a conditional alternative requiring approval, not secured funding.
-
-Author-external AI review covered the preceding complete 22-page scientific revision, independently checking funding paths, risk bounds and net present value. The final version changes only a local explanation and AI disclosure; pages 16–20 and 22 were inspected incrementally. It received no new holistic award assessment. Engineering performance, demand, losses and capital-provider terms remain conditional inputs. Three years of funding cannot guarantee the renewal assumed by a thirty-year development appraisal.
-
-## Version records and available materials
-
-The [`metadata/`](metadata/) directory identifies each title, PDF path, page count, SHA-256 digest, manuscript identity and actual review coverage. Copying a PDF or reorganizing its reading links creates no new computation, scientific acceptance or award assessment. Historical opinions stay attached to their original versions.
-
-This gallery provides selected papers and reader notes. It does not include problem statements, awarded reference papers, raw data, complete computational reproduction packages or private review records. Original AI disclosures remain in the PDFs. Complete raw conversations, exact model usage and formal historical contest compliance have not been authenticated.
+These are reading copies. The gallery does not include problem statements, awarded reference papers, raw data, complete computational packages or private review records. Metadata identifies each displayed paper's page count, digest, reviewer, review scope and main limitations.

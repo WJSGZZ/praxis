@@ -1,0 +1,37 @@
+{
+  "title_en": "From Review Signals to Product Decisions",
+  "title_zh": "从评论证据到产品决策",
+  "assessment_en": "Uncalibrated author-external AI opinion: Outstanding-centered, adjacent Finalist–Outstanding. The 21-page feedback version had a complete current text/all-page visual review and independent exact audit bounds. Root checked the final three local wording corrections and preserved science before accepting this delivery.",
+  "assessment_zh": "作者外AI未校准参考意见：Outstanding中心、Finalist–Outstanding相邻。21页反馈稿已全文及全页视觉复评，并独立核验精确审计界；根核对最终三处局部文字修订与科学保全后接受本交付。",
+  "strength_en": "Analyzes all 32,024 supplied reviews while distinguishing product families, current-unit complaints, feature meaning and information available at a cutoff. The evidence supports reliability investigation and simple rating-based monitoring, with a clear one-page company letter.",
+  "strength_zh": "分析全部 32,024 条评论，并区分产品家族、当前单元问题、属性词义与截止时刻的信息；据此支持可靠性调查和简单评分监测，一页公司信给出主要建议。",
+  "limits_en": "Post-learning work, not a first autonomous solution or an official award. Confidence bounds condition on a hash-rank randomization model and fixed AI coding; human semantic truth and non-hit failures remain unverified. Historical field versions, physical defects, sales effects and prospective warning performance remain unknown. No new complete public reproduction package is included.",
+  "limits_zh": "学后作品，非首次自主解题或正式获奖。区间依赖hash-rank随机化模型及固定AI编码；真人语义真值和未命中故障仍未验证。历史字段版本、物理缺陷、销售效果及前瞻预警表现未知；不附新完整公开复现包。",
+  "review_scope_en": "Initial 19-page full review retained for unchanged mathematics. Feedback 21-page full-text/all-page overview and native letter/figures/audit/actions; independent exact hypergeometric/compatible/FN bounds. The final delivery changes only closed quotes, pacifier-object wording and the forecast-reference label; root checked the three affected pages, source changes and preservation of the science. No second full award review is claimed for this cosmetic successor.",
+  "review_scope_zh": "初始19页全文数学评议按未变内容接续；反馈21页全文/全页总览及信、三图、区间、动作表原尺寸审读，独立精确超几何/相容/FN界。最终交付只改闭引号、奶嘴对象措辞与forecast参考标签，根核三页、源diff及科学保持；不称后继稿另做第二次完整奖档评阅。",
+  "id": "MCM-2020-C",
+  "pages": 21,
+  "pdf_sha256": "be9bea7a11d86be203de49a03fe8fff37e0612e74f5edb707ae389a0f7d9a862",
+  "reviewer_identity_en": "Author-external AI review; no human peer reviewer or official judge.",
+  "reviewer_identity_zh": "作者外 AI 评阅；非真人同行评审或官方评委。",
+  "current_semantic_review": {
+    "review_scope_en": "Initial 19-page full review retained for unchanged mathematics. Feedback 21-page full-text/all-page overview and native letter/figures/audit/actions; independent exact hypergeometric/compatible/FN bounds. The final delivery changes only closed quotes, pacifier-object wording and the forecast-reference label; root checked the three affected pages, source changes and preservation of the science. No second full award review is claimed for this cosmetic successor.",
+    "review_scope_zh": "初始19页全文数学评议按未变内容接续；反馈21页全文/全页总览及信、三图、区间、动作表原尺寸审读，独立精确超几何/相容/FN界。最终交付只改闭引号、奶嘴对象措辞与forecast参考标签，根核三页、源diff及科学保持；不称后继稿另做第二次完整奖档评阅。",
+    "reviewed_pdf_sha256": "517ab6dbc51a4897e81521cac6e907579ef9ef10f4a0d6e753c94b6195fdccb6"
+  },
+  "award_quality_reference": {
+    "most_likely": "Outstanding Winner",
+    "range": [
+      "Finalist",
+      "Outstanding Winner"
+    ],
+    "calibrated": false,
+    "actual_award": false
+  },
+  "pdf_path": "../papers/mcm-2020-c.pdf",
+  "pdf_path_relative_to": "this metadata file",
+  "event": "MCM",
+  "edition": 2020,
+  "problem": "C",
+  "case_identity": "MCM-2020-C"
+}

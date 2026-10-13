@@ -62,23 +62,19 @@ The [technical guide](reproduce/README.md) retains detailed checks and failed ca
 
 ## Review
 
-**Reference assessment: Outstanding-level competitiveness, with an adjacent F–O range.**
+The author-external AI opinion is **strong Outstanding competitiveness, with an adjacent Finalist–Outstanding range**. The paper connects heat balance, spatial transport, control choices, independent checks and practical action. A closed-network diagnostic explains why agreement between two probes cannot certify uniformity throughout the bath.
 
-The paper's strength is a complete decision argument. A proved ideal benchmark leads to a spatial explanation of timing, independently checked schedules, and observation-dependent actions with a qualified backup. It offers both conditional policies and mathematical limits that adjusting flow alone cannot overcome.
-
-Its principal limitation is the conditional transport closure. Observation and control results rely on synthetic scenarios and an offline-maintained model set. Connecting observable movement and mixing to effective transport parameters would most improve practical applicability.
-
-An author-external AI reviewed the preceding 26-page manuscript and its five scientific figures. Four recorded layout revisions connect that reviewed version to the current copy: the unified summary sheet, A4 with 12-point ordinary text, four clearer section titles, and consistent two-em first-line indentation after the Summary and section headings. Scientific and AI-disclosure content remains unchanged. The review is non-blind and uncalibrated against award boundaries; it is not an official award or winning probability. [Review record](verification.json)
+This is an uncalibrated reference opinion, not an official award. Physical coefficients and human motion lack experimental calibration; the historical 2016 page limit remains unauthenticated. The [verification record](verification.json) binds the current manuscript and states the scientific and format-review scopes.
 
 ## Paper and deliverables
 
 | Resource | Contents |
 |---|---|
-| <a href="paper.pdf">The complete 26-page paper</a> | English; 25 solution pages including user advice, followed by one AI-use page |
+| <a href="paper.pdf">The complete 28-page paper</a> | English; 27 solution pages including user advice, followed by one AI-use page |
 | [Delivery PDF](deliverables/paper.pdf) | Identical to the reading copy; the manuscript retains placeholder team number 7391856 |
 | [Technical guide](reproduce/README.md) | Calculations, verification, certificates and report builds |
 
-The public archive uses `paper.pdf`, as do the other demos. A live submission must follow its edition's filename requirements. Reproduction resources remain separate. The paper uses the [shared MCM v4 template](../../templates/mcm-paper.tex) and pinned Tectonic resources, with the original 2016 edition on the summary sheet. The actual copy has25 counted solution pages and a separate one-page AI report. The recorded figure-width and prior font-role checks are retained. Current font roles are checked separately against the new PDF; an old receipt does not certify the new layout. Code and mathematical scripts retain their own type roles. Historical research archives retain their original layouts.
+The reading and delivery links provide the same paper. It uses the [shared MCM v4 layout](../../templates/mcm-paper.tex): A4, 12pt ordinary text and figure text, two-em paragraph indentation and a separate AI report. The current 28-page copy has a complete page and font review. This historical learning work has no verified 2016 submission eligibility; live entries must follow their edition’s rules and filenames.
 
 ## Reproduction
 
@@ -98,7 +94,8 @@ Use the [specialist reproduction index](reproduce/README.md#复现索引) to cho
 ```text
 paper.pdf                     Public reading copy
 deliverables/paper.pdf         Archived report
-reproduce/                    Calculations, checks, evidence and report builds
+report/                       Selected manuscript source
+reproduce/                    Baseline calculations, checks and paper builds
 assets/                       Presentation images
 sources.json                  Provenance
 verification.json             Review and acceptance record

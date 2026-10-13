@@ -209,7 +209,18 @@ def test_flagship_award_assessments_bind_actual_review_or_verified_layout_inheri
         meta = json.loads((demo / 'verification.json').read_text())
         record = meta['current_award_assessment']
         current_sha = hashlib.sha256((demo / 'deliverables' / filename).read_bytes()).hexdigest()
-        if record['version_sha256'] != current_sha:
+        if slug == 'mcm-2016-a':
+            binding = meta['scientific_review_binding']
+            assert binding['reviewed_pdf_sha256'] == record['version_sha256']
+            assert binding['current_pdf_sha256'] == current_sha == meta['pdf']['sha256']
+            assert binding['new_full_award_review'] is False
+            assert binding['mathematics_and_conditions_preserved'] is True
+            source = demo / meta['pdf']['source']
+            assert hashlib.sha256(source.read_bytes()).hexdigest() == meta['pdf']['tex_sha256']
+            assert meta['selection']['new_scientific_or_award_review_this_promotion'] is False
+            # The selected work has its own real science review. Historical
+            # baseline/layout inheritance is separately checked in bath tests.
+        elif record['version_sha256'] != current_sha:
             first = meta['frontmatter_revision']
             revisions = [first]
             if 'font_layout_revision' in meta:

@@ -1,6 +1,6 @@
 {
-  "actor": "Praxis format_delivery_gate agent; current PNG viewing and literal source/context review 2026-10-13",
-  "pdf_sha256": "309b1943aca5a8eecfb4ce46236b2d660465d58679e735a1eaf88135a2327287",
+  "pdf_sha256": "15b092540b531943743ceec33f33b9cb57e6151bb2ea9286ea696a2e7626924a",
+  "actor": "Praxis root: actual final28page overview and native affected pages, 2026-10-13",
   "pages": [
     1,
     2,
@@ -27,7 +27,9 @@
     23,
     24,
     25,
-    26
+    26,
+    27,
+    28
   ],
   "format_checks": {
     "paragraph_indentation": true,
@@ -38,18 +40,24 @@
     "ai_report_boundary": true
   },
   "native_pages_viewed": [
-    1,
-    2,
+    3,
+    4,
+    5,
+    6,
     9,
     10,
-    11,
-    12,
-    13,
     14,
-    20,
-    26
+    15,
+    16,
+    18,
+    19,
+    21,
+    22,
+    23,
+    27
   ],
-  "paragraph_measurement": "qa-paragraph-indent.json",
-  "scope": "Every current page viewed in overview plus listed original-size pages including summary, TOC, all graphs and final AI; exact current font roles reviewed. No scientific rerun or new award judgment.",
-  "findings": "Actual A4 and source identities, 2em representative paragraphs, no observed clipping/overlap or unresolved references, readable figures/tables and isolated final AI report."
+  "scope": "All28 latest pages match actually viewed overview renders except page9, viewed again after preserving the constant-rate scope. Native affected pages inspected; 11 explicit table callouts restored. No numerical rerun or new whole-paper award review.",
+  "findings": "A4/v4/12pt ordinary text/2em paragraphs, no clipping or overlap observed, no unreferenced numbered floats, isolated AI page28. Recourse setup paragraph stays together without shrinking text.",
+  "parent_pdf_sha256": "e8f0feb59235827344c61cb48190e963c510ae16f694bd3a23aa2394a7b15f95",
+  "source_whitespace_equivalence": "84 trailing blanks removed in selected TeX; all28 page texts/72dpi rasters and390 small-run plus1 unmapped glyph records equal the actually viewed parent. No semantic or visible change."
 }

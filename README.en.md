@@ -54,7 +54,7 @@ The competition cases make the full workflow inspectable; they do not define the
 </tr>
 <tr>
 <td valign="top"><strong>35-page Chinese report · Six certified return targets</strong><br>At a CNY 1,000,000 budget, net returns are 21.90% for four assets at a 1% risk cap and 33.53% for fifteen assets at a 10% cap, under the problem's inputs and stated risk definition.</td>
-<td valign="top"><strong>26-page English report · 17 model checks</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a buffered six-segment schedule 21.48 L (about 11% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients come from textbook correlations, with stated ranges.</td>
+<td valign="top"><strong>28-page English report · Heat and spatial transport</strong><br>Over the 30-minute baseline, the best constant rate adds 24.14 L and a buffered six-segment schedule 21.48 L (about 11% less), against a 16.01 L ideal optimum and a 15.41 L energy bound. Coefficients come from textbook correlations, with stated ranges.</td>
 </tr>
 <tr>
 <td valign="top"><strong>Report PDF + supporting ZIP</strong><br>Modeling code and reproduction evidence are available on the case page.</td>
@@ -70,7 +70,7 @@ The competition cases make the full workflow inspectable; they do not define the
 
 Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. New MCM reports require the problem edition explicitly and use the three-column summary header. Third-level headings and contents entries are available when they aid navigation; frozen cases retain their recorded layout unless separately revised. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
 
-The active MCM gallery now uses the shared A4 layout: 12pt ordinary body and figure text, a two-em first-line indent after summary and section headings, and a separate AI-report start. Current delivery requires canonical compilation, font inspection, actual all-page review and freezing. Historical snapshots retain their identities. [Three complete learning works and their version records](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md) remain secondary cases; uncalibrated AI opinions do not establish official awards.
+The active MCM gallery now uses the shared A4 layout: 12pt ordinary body and figure text, a two-em first-line indent after summary and section headings, and a separate AI-report start. Current delivery requires canonical compilation, font inspection, actual all-page review and freezing. Historical snapshots retain their identities. [Selected MCM works](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md) remain secondary cases; uncalibrated AI opinions do not establish official awards.
 
 ## Quick start
 

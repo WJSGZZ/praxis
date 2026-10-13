@@ -154,7 +154,7 @@ def test_delivered_neighborhood_claims_match_the_bound_archive_and_retain_scope(
     lower = math.floor(min(s['temperature_bounds_c'][0] for s in selected) * 10000) / 10000
     upper = math.ceil(max(s['temperature_bounds_c'][1] for s in selected) * 10000) / 10000
     spread = math.ceil(max(s['temperature_bounds_c'][2] for s in selected) * 10000) / 10000
-    record = json.loads((HERE.parent / 'verification.json').read_text())['continuous_parameter_revision']
+    record = json.loads((HERE/'reference/baseline-verification.json').read_text())['continuous_parameter_revision']
     assert record['physical_outward_bounds_c'] == [lower, upper, spread]
     assert record['independent_cases'] == len(result['checks'])
     text = '\n'.join(p.extract_text() for p in PdfReader(HERE.parent / 'deliverables/paper.pdf').pages)

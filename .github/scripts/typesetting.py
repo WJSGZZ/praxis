@@ -67,6 +67,32 @@ def check_mcm_pagination(records):
     return rules
 
 
+def check_historical_mcm_layout(records, accepted):
+    """Compare a selected historical reading work without certifying eligibility.
+
+    The standard current page-limit failure stays visible in the returned
+    report. All other rule errors remain fatal, including a mixed AI page.
+    """
+    if (accepted['selection']['edition'] != 2016
+            or accepted['format']['formal_2016_page_limit_verified'] is not False
+            or accepted['current_award_assessment']['target'] is not None):
+        raise ValueError('Historical layout comparison requires the explicit unverified 2016 reading profile')
+    rules = evaluate(records, 'mcm', edition=2016)
+    facts = rules['facts']
+    expected = accepted['pdf']
+    if (facts['total_pages'] != expected['pages_total']
+            or facts['counted_pages'] != expected['solution_pages']
+            or facts['ai_report_from_page'] != expected['solution_pages'] + 1
+            or facts['ai_report_starts_new_page'] is not True):
+        raise ValueError('Unexpected pagination for selected historical MCM work')
+    page_error = f"{facts['counted_pages']} pages count toward the 25-page limit (summary sheet, text, contents, references, appendices, code)"
+    if any(error != page_error for error in rules['errors']):
+        raise ValueError(rules['errors'])
+    rules['layout_comparison_passed'] = True
+    rules['historical_contest_eligibility'] = 'unverified'
+    return rules
+
+
 def check_cumcm_pagination(records, *, expected_total, expected_body):
     """Compare the rebuilt paper with the current accepted version's page facts."""
     rules = evaluate(records, 'cumcm')
@@ -90,7 +116,7 @@ def main(compiler=None):
             (OUT / f'{name}.tex').write_bytes(archive.read(f'paper/{name}.tex'))
     os.environ['PATH'] = str(executable.parent) + os.pathsep + os.environ.get('PATH', '')
     bath = ROOT/'demos/mcm-2016-a/reproduce'
-    generated = subprocess.run([sys.executable, str(bath/'build_report.py'), '--run', str(bath/'reference'), '--candidate'], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
+    generated = subprocess.run([sys.executable, str(bath/'build_paper.py'), '--run', str(bath/'reference'), '--candidate'], cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
     (OUT/'bath-generator.txt').write_text(generated.stdout+generated.stderr, encoding='utf-8')
     if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
     shutil.copyfile(bath/'paper/paper.tex', OUT/'bath.tex')
@@ -132,9 +158,11 @@ def main(compiler=None):
                 extract(pdf), expected_total=accepted['report_pages'],
                 expected_body=accepted['target_inverse_revision']['answer_pages_excluding_abstract'])
             report['contest_rules'] = rules
-        if name in {'bath', 'toll'}:
-            rules = check_mcm_pagination(extract(pdf))
-            report['contest_rules'] = rules
+        if name == 'bath':
+            accepted = json.loads((ROOT/'demos/mcm-2016-a/verification.json').read_text(encoding='utf-8'))
+            report['contest_rules'] = check_historical_mcm_layout(extract(pdf), accepted)
+        if name == 'toll':
+            report['contest_rules'] = check_mcm_pagination(extract(pdf))
         if contest == 'research':
             if not any('LMRoman' in f['face'] for f in report['fonts']):
                 raise ValueError('Research font substituted')

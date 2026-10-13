@@ -28,8 +28,11 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     from pypdf import PdfReader
     demo=HERE.parent
     pdf=demo/'deliverables/paper.pdf'
-    meta=json.loads((demo/'verification.json').read_text())
-    assert meta['pdf']['sha256']==hashlib.sha256(pdf.read_bytes()).hexdigest()
+    current=json.loads((demo/'verification.json').read_text())
+    assert current['pdf']['sha256']==hashlib.sha256(pdf.read_bytes()).hexdigest()
+    assert current['scientific_review_binding']['current_pdf_sha256']==current['pdf']['sha256']
+    assert current['selection']['new_scientific_or_award_review_this_promotion'] is False
+    meta=json.loads((demo/'reproduce/reference/baseline-verification.json').read_text())
     revision=meta['frontmatter_revision']
     inheritance=revision['scientific_review_inheritance']
     assert inheritance['review_version_sha256']==meta['current_award_assessment']['version_sha256']==revision['previous_current_pdf']['sha256']
@@ -56,15 +59,18 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
     assert meta['format_gate_revision']['scientific_review_inheritance']['new_scientific_review'] is False
     assert indentation_inheritance['new_scientific_review'] is False and indentation_inheritance['new_award_assessment'] is False
     pages=PdfReader(pdf).pages
-    assert len(pages)==26
+    assert len(pages)==28
     text=' '.join(' '.join(p.extract_text().split()) for p in pages)
     assert 'Transport comparison and network infeasibility' in text
     assert '-31.51' in text.replace('−', '-') and '-26.28' in text.replace('−', '-')
     assert 'a permitted short circuit does not establish the cause' in text
     assert 'for every compatible model' in text or 'Over every compatible model' in text
-    # PDF word-spacing may be emitted as glyph placement rather than spaces.
-    assert 'remainingbackuppassforeverycompatiblemodel' in ''.join(text.replace('- ', '').split())
-    assert 'otherwisekeep thecheckedbackup'.replace(' ', '') in ''.join(text.replace('- ', '').split())
+    # The selected scientific successor states the retained-tail condition
+    # explicitly; old guide wording is not an invariant of its clearer actions.
+    compact = ''.join(text.replace('- ', '').split())
+    assert 'nextminuteandremainingbackupsatisfyallsurvivors' in compact
+    assert 'Subsequentobservationsonlyshrinktheset' in compact
+    assert 'otherwise' in compact and 'reassess' in compact
     revision=meta['transport_revision']
     assert revision['checks']==24 and revision['replays']==36
     # Historical revisions retain their own sources; only the active PDF binding
@@ -80,7 +86,7 @@ def test_delivered_paper_keeps_corrected_mechanism_and_version_identity():
 def test_four_layout_edges_keep_actual_archived_generator_sources():
     """Compare whole sources after reversing only the recorded layout edits."""
     demo=HERE.parent
-    meta=json.loads((demo/'verification.json').read_text())
+    meta=json.loads((demo/'reproduce/reference/baseline-verification.json').read_text())
     revisions=[meta[name] for name in ['frontmatter_revision','font_layout_revision','heading_layout_revision','indentation_revision']]
     old=[]
     for revision in revisions:
