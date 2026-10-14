@@ -4,6 +4,7 @@
 
 | 工具 | 字段 | 做什么 |
 |---|---|---|
+| `runtime_info` |  | Read-only diagnostics of this Python process and its Praxis resource location: installed dependency versions, declared resources and exported-file receipt hashes when present |
 | `binary_components` | mask*, connectivity, min_pixels, exclude_border, max_components, pixel_size, unit | Measure connected regions in an explicitly supplied 2-D binary mask |
 | `audit_data` | path*, sheet, encoding, sep, contract, max_rows, missing_values, keep_default_na | Read-only audit of CSV/TSV/Excel: original and parsed headers, missingness, duplicates, declared data contract and scan coverage; hashes the original |
 | `audit_join` | left*, right*, on*, how, relationship, null_policy, max_output_rows | Audit a declared table join using Pandas cardinality validation and an explicit null-key policy; returns aggregate coverage and row expansion, without joined records |

@@ -106,6 +106,8 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 路径替换为实际安装包中的 `skills/praxis`；只安装技能时使用仓库目录。仅使用分析方法无需准备环境。
 
+需要排查环境时，可以让助手调用 `runtime_info`，查看当前进程的 Python、资源位置、已安装依赖及包内文件校验。工具服务尚未启动时，用 Python 直接运行包内 `scripts/runtime_info.py`；这项只读诊断不安装依赖，也不读取你的题目和数据。文件匹配与依赖齐全仍需同实际工具调用分别验证。
+
 ### 3. 在你的项目中使用
 
 重载或重新开始会话，确认宿主加载了 Praxis，然后提出任务：
@@ -169,7 +171,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 数学工具
 
-本表对应当前源码。`asof_join`、版本补货案例及本轮数值与交付修复为未发布增量，正式0.8.0安装包尚不包含；版本记录见 [CHANGELOG](CHANGELOG.md)。
+本表对应当前源码。`asof_join`、`runtime_info`、版本补货案例及本轮数值与交付修复为未发布增量，正式0.8.0安装包尚不包含；版本记录见 [CHANGELOG](CHANGELOG.md)。
 
 `praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可从实际包目录用 `uv run --locked --directory /path/to/plugin/skills/praxis python -m scripts.mcp_server --call 工具名 '参数'` 调用。哪类问题有现成工具、没有时怎么办，见[能力覆盖地图](references/coverage-map.md)。数值工具用独立推导的闭式解、解析界和小规模穷举答案做回归；输入保护与失败恢复另行检查。
 
@@ -185,6 +187,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 | 图像测量 | `binary_components`（给定二维二值掩码的连接区域、像素面积、边界框与质心；物理尺度须显式提供） |
 | 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
 | 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`asof_join`（决策截点前的版本索引与未决项）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
+| 环境诊断 | `runtime_info`（只读进程、依赖、资源及导出收据检查；不替代实际调用或宿主重载） |
 
 通用、Codex、Claude 和 Copilot 安装包还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
 

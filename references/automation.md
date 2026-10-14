@@ -6,6 +6,8 @@
 
 工具名称与 Python 模块／函数名不保证相同。先用 `python -m scripts.mcp_server --describe 工具名` 核实际输入，再通过 MCP 或 `--call` 调用；需要直接 Python 时读实际注册适配与锁定库接口，不按类别猜 import。一次属性不存在可能只是定位错误，不能据此宣布能力缺失并重写已存在算法。先核已有实现与第一手 API 的条件，确有缺口才形成新的计算实现。
 
+环境故障先用 `runtime_info` 核当前进程的解释器、实际资源位置、依赖和导出收据；无工具服务时可直接运行 `python /实际包目录/skills/praxis/scripts/runtime_info.py`。CLI 使用标准库，未加载工具注册表时明确报告未知；MCP 调用传入该服务的真实注册名称。诊断不联网、不装依赖、不读取用户案例、不执行模型或编译器。磁盘文件匹配不证明在运行的旧进程已重载；找到 Tectonic 路径不代表其版本、资源或论文已验证，仍要真实调用及成品门禁。
+
 ## 先判断要不要走案例系统
 
 案例脚本（`init`、`run`、`status`、`evidence`）适合要保留运行快照与机器证据索引的任务。已有可复现执行链时可以沿用：报告数字能回指脚本与输出文件，检查有名字、结果与证据，最终材料有版本／哈希清单。选择不使用案例系统不等于放弃追溯，也不能声称具有 pipeline 的自动过期检测。需要 `check_pdf.py --checks` 核对检查数时，将真实检查保存成下文契约的 checks.json。
@@ -120,6 +122,8 @@ uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/check_pdf.py" /绝�
 current 美赛冻结自动执行 12 TeX pt 字号门禁；合法较小数学候选必须逐项以同 PDF 的 `--font-review` 解释，普通小字必须修源重建。逐页实际查看后保存 `--page-review`（默认 `<候选.pdf>.page-review.json`）：含当前 `pdf_sha256`、真实 `actor`、全部一基页码 `pages`，以及 `format_checks` 中 `paragraph_indentation`、`figures_tables_fonts`、`clipping_overlap`、`cross_references`、`summary_headers`、`ai_report_boundary` 六项实际核对的布尔值 true。缺项、false、旧哈希或漏页都拒绝。它记录审阅范围与判断，不能自动认证完整 TeX 宏展开或人的核验。冻结还必须提供同次 `--build-receipt`；收据保存实际格式、结构、字体、日志和页审阅结果，创建字节一致的新副本后才调用 `workflow.report`。
 
 current 编译还通过 Tectonic 的依赖清单记录实际打开的本地输入和图片，再绑定第二次构建。冻结核对这些文件的存在与字节，不能仅主 TeX 不变就接受已经改动的 `input` 或图像。旧 current 收据缺少依赖绑定时须真实重编；archive 保留原证据身份。摘要、页眉及明确的当前／模拟作者身份声明共用队号检查，历史身份和科学数字保留各自角色；静态声明检查不理解任意改写。
+
+编译器若打开本机标准空设备，收据以 `system_inputs` 明确保存其身份和即时 EOF 语义，第二次构建与冻结再次核对；不将字符设备当作普通文件读完整哈希。例外仅适用于本机标准空设备，普通同名文件、符号链接别名和其他设备仍拒绝或按真实文件绑定。这个分类不取消文稿与图像依赖的字节检查，跨系统行为由真实排版 CI 核对。
 
 历史重现必须显式选择保留的 `layout_version`，编译与布局冻结传 `--layout-mode archive`；保留版本、原件和旧哈希，不称当前交付通过。无布局 profile 的通用 PDF 快照、research 和 CUMCM 继续其各自用途与规则；它们不自动成为美赛交付，也不能冒充当前美赛字号／页面门禁成功。构建或冻结记录不是正式提交回执。
 

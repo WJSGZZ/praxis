@@ -5,12 +5,17 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 新增只读 `runtime_info` 环境诊断：当前解释器、依赖版本、资源及导出收据检查。无需数值依赖的独立 CLI 可排查服务启动失败；不联网、不读取用户案例、不安装或重载，不把磁盘身份冒称正在执行的代码。
+  New read-only `runtime_info` diagnostics report the current interpreter, dependency versions, resources and export-receipt checks. A standard-library CLI can diagnose startup failures without numerical dependencies. It does not access the network or user cases, install or reload anything, or equate disk identity with executing code.
+
 - 修复会给出错误数学保证的数值边界：LP／MILP 的极小系数、固定变量与相消；有限期 MDP 的收益相消；矩阵博弈的微小收益与大整数身份；背包的微小正收益及递推输入的隐式近似。数值认证、精确有理结果、求解器状态和未获认证的候选分别返回，并以解析界和独立穷举核验。
   Numerical corrections address small LP/MILP coefficients, fixed coordinates and cancellation; finite-horizon MDP reward cancellation; tiny and large-integer game payoffs; small positive knapsack gains; and silent approximation of recurrence inputs. Numerical certificates, exact rational accounts, solver status and uncertified candidates remain distinct, with independent bounds and exhaustive checks.
 - 统计、动力学和决策工具核对实际配对、有限初态 SIR、分数尾 CVaR、PSD 协方差、大服务台排队及吸收状态前提。专业指导、MCP 适配、教学示例与评测消费者同步；Markov 开发题在最后舍入后归一，新题面哈希可在评分时验证，旧任务与收据保留。
   Statistical, dynamical and decision tools check actual pairing, finite-initial-state SIR, fractional CVaR tails, PSD covariances, large-server queues and absorbing-state premises. Specialist guidance, MCP adapters, teaching examples and evaluation consumers agree. Markov development tasks normalize after final rounding; scoring can bind the actual task hash without rewriting earlier tasks or receipts.
 - 当前论文构建和冻结绑定编译器实际打开的本地输入与图像，不仅主 TeX。正文中的明确作者身份声明也参与共享队号检查；修订 2020B 展示稿的 AI 报告，前21页保持逐页文字与栅格一致。旋转字形按实际变换测量字号；三种论文骨架共用标题元数据。
   Current paper builds and freezing bind the local inputs and images actually opened by the compiler, beyond the main TeX file. Literal author-identity declarations share the team checks. The revised 2020B AI report preserves the first 21 pages' text and raster output. Rotated glyph sizes use their actual transformations, and all three paper skeletons consume title metadata.
+- 修复真实图像 Demo 编译时将标准空设备误判为丢失文件的问题；空设备明确分类并复核即时 EOF，其他依赖保护保持。完整掩码分析与科研制图入口加入三系统排版 CI，并比较最终图页。
+  The real image demo no longer treats a compiler-opened standard null device as a missing file. The empty input is explicitly typed and rechecked for immediate EOF; other dependency protections remain. Cross-platform typesetting now exercises the complete mask-analysis and scientific-figure consumer and compares the final figure page.
 - 导出收据绑定全部交付文件，包括包根 README 与 LICENSE；反馈包写入器保留合法重复日志且不放宽 ZIP 读取保护；引用核对保留合法 DOI 中的括号和旧角括号字段。工作流共用案例版本门禁，未知版本在写入进度前拒绝，缺版本的历史案例仍可接续。
   Export receipts bind all shipped files, including root guidance and the license. Feedback archives retain legitimate repetitive logs without relaxing ZIP reader protections. Reference checking preserves legal parenthesized and legacy angle-bracket DOI fields. Workflows use the shared case-version gate before progress writes while retaining the missing-marker legacy format.
 - 中英文首页、专业方法与安装命令按实际产品审读，明确源码增量与正式安装包的区别。新增经 CFF 1.2.0 校验的软件引用信息；关键反例回归加入三系统运行检查。保持现有版本号，整批变化留待发布。

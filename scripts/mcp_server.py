@@ -37,6 +37,7 @@ data_analysis = _Lazy('modeling.data_analysis')
 image_analysis = _Lazy('modeling.image_analysis')
 prediction_validation = _Lazy('modeling.prediction_validation')
 audit_data, check_references, literature = _Lazy('scripts.audit_data'), _Lazy('scripts.check_references'), _Lazy('scripts.literature')
+runtime_info = _Lazy('scripts.runtime_info')
 
 def _project_version():
     """The single source of the version number is pyproject.toml."""
@@ -315,6 +316,8 @@ def _tool(name, description, properties, required, function):
 
 
 TOOLS = dict([
+    _tool('runtime_info', 'Read-only diagnostics of this Python process and its Praxis resource location: installed dependency versions, declared resources and exported-file receipt hashes when present. Receives this process actual tool registry. Disk identity checks do not certify desktop hot reload, mathematical correctness or external host loading; no network, installation or model execution.',
+          {}, [], lambda a: runtime_info.inspect_runtime(tool_names=list(TOOLS))),
     _tool('binary_components', 'Measure connected regions in an explicitly supplied 2-D binary mask. Reports pixel areas, bounding boxes and pixel-center centroids; optional caller-declared [xsize, ysize] scale adds physical areas/centroids. This is not image segmentation, semantic classification, or certification of real-object counts.',
           {'mask': {'type': 'array', 'minItems': 1, 'maxItems': 512, 'items': {'type': 'array', 'minItems': 1, 'maxItems': 512, 'items': {'type': ['number', 'boolean']}, 'description': 'Each row must have equal length; total elements are limited to 65536. Values must be booleans or finite numeric 0/1.'}},
            'connectivity': {'type': 'integer', 'enum': [4, 8], 'default': 8, 'description': 'Default 8; choose 4 for edge-only adjacency or 8 to include diagonal adjacency.'},
@@ -549,6 +552,7 @@ TOOLS = dict([
 
 # One minimal, runnable call per tool that needs a shape to be guessed; a test calls every example, so they stay correct.
 EXAMPLES = {
+    'runtime_info': {},
     'asof_join': dict(queries=[dict(id='A', cutoff='2026-01-02T08:00:00Z')],
                      versions=[dict(id='A', released='2026-01-02T07:50:00Z', value=12),
                                dict(id='A', released='2026-01-03T12:00:00Z', value=19)],

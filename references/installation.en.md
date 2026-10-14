@@ -85,7 +85,11 @@ Every target includes all professional skills and `praxis-tools`. Portable, Code
 
 To update, fetch the source, export to a fresh destination and update or reinstall through your host. Do not patch an installation cache or overwrite user configuration. Keep the old source ref and export if you need a rollback.
 
-After reloading, check the plugin list, skill discovery and MCP connection separately. Startup failures usually show up in the host's MCP logs as missing uv, Python or resource paths. A direct service diagnostic is:
+After reloading, check the plugin list, skill discovery and MCP connection separately. Startup failures usually show up in the host's MCP logs as missing uv, Python or resource paths.
+
+The current source additionally includes `runtime_info` for read-only process, dependency, resource and export-receipt checks. If the service cannot start, use local Python to run `/actual/bundle/skills/praxis/scripts/runtime_info.py` without importing numerical libraries. It reports missing dependencies and does not install or reload anything. Passing this diagnostic does not certify that a current chat has loaded new code. Published 0.8.0 packages do not contain this unreleased entry.
+
+A direct service diagnostic is:
 
 ```bash
 uv run --locked --directory /absolute/path/to/plugin/skills/praxis python -m scripts.mcp_server --list

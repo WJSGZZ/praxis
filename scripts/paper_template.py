@@ -619,6 +619,59 @@ def inspect_typesetting_log(log_file, *, pdf=None):
     return result
 
 
+def _windows_null_name(name):
+    """Recognize only the standard NUL input spelling, not all DOS devices.
+
+    This is lexical recognition for Windows only. Extended/UNC namespaces can
+    address real files and are not admitted by this bounded exception.
+    """
+    from pathlib import PureWindowsPath
+    if not isinstance(name, str) or not name or '\x00' in name:
+        return False
+    value = name.replace('/', '\\')
+    if value.casefold() in (r'\\.\nul', r'\\.\nul:'):
+        return True
+    path = PureWindowsPath(value)
+    # The pinned ifplatform package probes `nul:`; both spellings name the
+    # standard Windows empty device, rather than a general DOS-device rule.
+    return not path.drive.startswith('\\\\') and path.name.casefold().removesuffix(':') == 'nul'
+
+
+def _system_null_input(path):
+    """Classify the host's stable empty input, with a real EOF probe.
+
+    An ordinary file called NUL on POSIX, a symlink alias, /dev/zero and all
+    other devices remain outside this exception. Nothing is read from them.
+    """
+    import os
+    import stat
+    opened = str(path)
+    if os.name == 'nt':
+        if not _windows_null_name(opened):
+            return None
+        # Probe the actual admitted spelling, not a possibly unrelated file.
+        with open(opened, 'rb') as stream:
+            if stream.read(1) != b'':
+                raise ValueError('System null input did not return immediate EOF')
+        kind = 'windows-null-device'
+    elif os.name == 'posix':
+        # Check the original exact path before resolving aliases. A retargeted
+        # source-local symlink must never vanish from the regular-file binding.
+        if opened != os.devnull:
+            return None
+        if not stat.S_ISCHR(Path(opened).stat().st_mode):
+            raise ValueError('System null input is not the expected character device')
+        with open(opened, 'rb') as stream:
+            if stream.read(1) != b'':
+                raise ValueError('System null input did not return immediate EOF')
+        kind = 'posix-character-device'
+    else:
+        return None
+    return {'kind': 'system-null-input', 'platform': os.name,
+            'opened_name': opened, 'device_type': kind,
+            'read_semantics': 'immediate-eof'}
+
+
 def compiler_dependencies(rules_path, source, *, output_directory=None):
     """Read Tectonic's opened-local-file list, preserving spaces in filenames.
 
@@ -636,7 +689,7 @@ def compiler_dependencies(rules_path, source, *, output_directory=None):
         raise ValueError('Missing or unsupported compiler dependency record')
     first = lines[0].split(' : ', 1)[1]
     names = [first] + [line[2:] if line.startswith('  ') else '' for line in lines[1:]]
-    dependencies = {}
+    dependencies, system_inputs = {}, []
     for index, name in enumerate(names):
         name = name.removesuffix(' \\')
         if not name or '\x00' in name:
@@ -651,6 +704,11 @@ def compiler_dependencies(rules_path, source, *, output_directory=None):
                 path = source.parent/relative
         if not path.is_absolute():
             path = source.parent/path
+        special = _system_null_input(path) if index else None
+        if special is not None:
+            if special not in system_inputs:
+                system_inputs.append(special)
+            continue
         path = path.resolve()
         if not path.is_file():
             raise ValueError('Compiler dependency is missing: ' + str(path))
@@ -663,12 +721,13 @@ def compiler_dependencies(rules_path, source, *, output_directory=None):
     if dependencies.get(source.name) != hashlib.sha256(source.read_bytes()).hexdigest():
         raise ValueError('Compiler dependency record does not include the current source')
     return {'schema_version': 1, 'method': 'tectonic-0.17-opened-local-files',
-            'files': dependencies,
-            'scope': 'Local files actually opened by the compiler; pinned bundle resources are bound separately. Two builds verify the observed file set and bytes remain stable.'}
+            'files': dependencies, 'system_inputs': sorted(system_inputs, key=lambda item: item['opened_name']),
+            'scope': 'Regular local files actually opened by the compiler; explicitly typed host null inputs return immediate EOF. Pinned bundle resources are bound separately. Two builds verify observed dependencies and regular-file bytes remain stable.'}
 
 
 def verify_compiler_dependencies(record, source):
     """Reject missing/changed resources without replacing an old receipt."""
+    import os
     if (not isinstance(record, dict) or record.get('schema_version') != 1
             or record.get('method') != 'tectonic-0.17-opened-local-files'
             or not isinstance(record.get('files'), dict) or not record['files']):
@@ -684,7 +743,20 @@ def verify_compiler_dependencies(record, source):
         path = source.parent/name
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             raise ValueError('Compiler dependency changed or was deleted: ' + name)
-    return {'passed': True, 'files': dict(files), 'method': record['method']}
+    system_inputs = record.get('system_inputs', [])
+    if not isinstance(system_inputs, list):
+        raise ValueError('Invalid compiler system-input bindings')
+    checked = []
+    for entry in system_inputs:
+        if (not isinstance(entry, dict) or entry.get('kind') != 'system-null-input'
+                or entry.get('platform') != os.name
+                or not isinstance(entry.get('opened_name'), str)):
+            raise ValueError('Invalid compiler system-input identity')
+        actual = _system_null_input(entry['opened_name'])
+        if actual is None or entry != actual or entry in checked:
+            raise ValueError('Compiler system null input differs from its recorded empty-device binding')
+        checked.append(entry)
+    return {'passed': True, 'files': dict(files), 'system_inputs': checked, 'method': record['method']}
 
 
 def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current'):
@@ -740,7 +812,8 @@ def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current')
         if run.returncode:
             raise RuntimeError(run.stdout+run.stderr)
         observed = compiler_dependencies(rules, tex, output_directory=output)
-        if dependencies is not None and observed['files'] != dependencies['files']:
+        if dependencies is not None and (observed['files'] != dependencies['files']
+                or observed['system_inputs'] != dependencies['system_inputs']):
             raise ValueError('Compiler dependencies changed during compilation; rebuild the candidate')
         dependencies = observed
     diagnostics = None

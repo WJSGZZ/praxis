@@ -1,4 +1,4 @@
-"""Clean-runner checks of both house styles and the complete Chinese submission."""
+"""Clean-runner checks of house styles, complete reports and a standalone figure."""
 import hashlib
 import json
 import platform
@@ -127,8 +127,20 @@ def main(compiler=None):
     if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
     shutil.copyfile(domino/'paper/paper.tex', OUT/'domino.tex')
     shutil.copyfile(ROOT/'demos/collatz-research/reproduce/paper/paper.tex', OUT/'collatz.tex')
+    # Exercise the real standalone-figure consumer. Tectonic can include the
+    # platform's null device in its dependency list; a report-only matrix did
+    # not expose this production-path failure.
+    image_run = OUT/'image-run'
+    image_figure = OUT/'image-figure'
+    for command in ([sys.executable, str(ROOT/'examples/image_analysis_demo.py'), '--output', str(image_run)],
+                    [sys.executable, str(ROOT/'demos/image-analysis/build_figure.py'), '--run', str(image_run), '--output', str(image_figure)]):
+        generated = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace')
+        with (OUT/'image-generator.txt').open('a', encoding='utf-8') as log:
+            log.write(generated.stdout+generated.stderr)
+        if generated.returncode: raise RuntimeError(generated.stdout+generated.stderr)
+    shutil.copyfile(image_figure/'components.tex', OUT/'image.tex')
     checks = {}
-    for name, contest in [('cumcm-template', 'cumcm'), ('mcm-template', 'mcm'), ('main', 'cumcm'), ('ai-use', None), ('bath', 'mcm'), ('toll', 'mcm'), ('research-template', 'research'), ('domino', 'research'), ('collatz', 'research')]:
+    for name, contest in [('cumcm-template', 'cumcm'), ('mcm-template', 'mcm'), ('main', 'cumcm'), ('ai-use', None), ('bath', 'mcm'), ('toll', 'mcm'), ('research-template', 'research'), ('domino', 'research'), ('collatz', 'research'), ('image', None)]:
         tex = OUT / f'{name}.tex'
         if contest: check(tex.read_text(encoding='utf-8'), contest)
         built = OUT/(name+'-build')
@@ -146,6 +158,8 @@ def main(compiler=None):
             if source.exists(): shutil.copyfile(source, OUT/(name+suffix))
         report = inspect_pdf(pdf, require_embedded_fonts=True)
         if report['errors']: raise ValueError(report['errors'])
+        if name == 'image' and report['total_pages'] != 1:
+            raise ValueError('Unexpected standalone image-figure pagination')
         if name in {'cumcm-template', 'main', 'ai-use'}:
             text = '\n'.join(r['text'] for r in extract(pdf))
             if '参考文献' not in text and name != 'ai-use': raise ValueError('Chinese text extraction failed')
@@ -183,7 +197,7 @@ def compare_artifacts(directory):
     for folder in folders:
         manifest = json.loads((folder / 'verification.json').read_text(encoding='utf-8'))
         fingerprints = {}
-        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template', 'bath', 'toll', 'research-template', 'domino', 'collatz'):
+        for name in ('main', 'ai-use', 'cumcm-template', 'mcm-template', 'bath', 'toll', 'research-template', 'domino', 'collatz', 'image'):
             path = folder / (name + '.pdf')
             if hashlib.sha256(path.read_bytes()).hexdigest() != manifest['checks'][name]['sha256']:
                 raise ValueError('Artifact differs from runner verification: ' + str(path))

@@ -85,7 +85,11 @@ uv run --locked python -m scripts.build_plugin --host cursor --output ~/.cursor/
 
 更新时先更新源码，再导出到新的目录，通过宿主更新或重新安装。直接修改源码不保证安装缓存同步；不要手改缓存，不覆盖旧导出目录或用户配置。需要退回旧版时，保留旧源码 ref 和原导出包。
 
-重载后检查三件事：Praxis 出现在插件／扩展列表；全部专业技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。可从任意目录检查底层服务（替换路径）：
+重载后检查三件事：Praxis 出现在插件／扩展列表；全部专业技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。
+
+当前源码还提供 `runtime_info`，只读检查进程、依赖、资源与导出收据。服务未启动时，使用本机 Python 直接运行 `/实际包路径/skills/praxis/scripts/runtime_info.py`，无须先导入数值库；缺依赖会明确列出。它不安装或重载插件，诊断通过也不等于当前聊天加载了新源码。正式0.8.0包不含此未发布入口。
+
+可从任意目录检查底层服务（替换路径）：
 
 ```bash
 uv run --locked --directory /absolute/path/to/plugin/skills/praxis python -m scripts.mcp_server --list

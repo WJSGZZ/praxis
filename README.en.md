@@ -106,6 +106,8 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 Point this command at `skills/praxis` inside your installed bundle, or at the repository for a skills-only installation. Guidance alone needs no Python environment.
 
+For setup problems, ask the agent to call `runtime_info`. It reports the current Python process, resource location, installed dependencies and exported-file receipt checks. If the tool service cannot start, run the bundle's `scripts/runtime_info.py` directly with Python. This read-only diagnostic neither installs dependencies nor reads your problem or data; a matching installation still needs an actual tool call.
+
 ### 3. Use Praxis in your project
 
 Reload or start a new session, confirm that your host has loaded Praxis, and describe the work:
@@ -169,7 +171,7 @@ For solo work under time pressure, Praxis defaults to one current user action an
 
 ## Math tools
 
-This table describes the current source. `asof_join`, the vintage case, and this round's numerical and delivery corrections are unreleased; the published 0.8.0 packages do not include them. See the [changelog](CHANGELOG.md).
+This table describes the current source. `asof_join`, `runtime_info`, the vintage case, and this round's numerical and delivery corrections are unreleased; the published 0.8.0 packages do not include them. See the [changelog](CHANGELOG.md).
 
 `praxis-tools` turns common methods into callable tools with JSON in and out. Without MCP, point uv at the actual bundle: `uv run --locked --directory /path/to/plugin/skills/praxis python -m scripts.mcp_server --call <tool> '<json>'`. The [coverage map](references/coverage-map.md) shows which kinds of problem have a ready tool and what to do when none exists. Numerical regression checks use independently derived closed forms, bounds and small exhaustive cases. Input validation and failure recovery have separate checks.
 
@@ -185,6 +187,7 @@ This table describes the current source. `asof_join`, the vintage case, and this
 | Image measurement | `binary_components` (connected regions, pixel areas, boxes and centroids in a supplied 2-D binary mask; physical scale must be explicit) |
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
 | Data and free literature | `audit_data` (original headers, parsing and data quality), `audit_join` (cardinality, null keys, unmatched rows and expansion limits), `asof_join` (available-version indices at decision cutoffs, including unresolved queries), `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
+| Runtime diagnostics | `runtime_info` (read-only process, dependency, resource and export-receipt checks; actual calls and host reloading remain separate) |
 
 Numerical violations are candidates until independently certified. Supported rational witnesses receive an exact check; undefined fit diagnostics carry reasons, and game enumeration reports its completeness limits. The [result and execution contract](references/automation.md#数学工具的结果契约) explains these distinctions and the bounds on expression calls.
 
