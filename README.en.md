@@ -106,7 +106,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 Point this command at `skills/praxis` inside your installed bundle, or at the repository for a skills-only installation. Guidance alone needs no Python environment.
 
-For setup problems, ask the agent to call `runtime_info`. It reports the current Python process, resource location, installed dependencies and exported-file receipt checks. If the tool service cannot start, run the bundle's `scripts/runtime_info.py` directly with Python. This read-only diagnostic neither installs dependencies nor reads your problem or data; a matching installation still needs an actual tool call.
+Bundles exported from the current source provide `runtime_info` for setup diagnostics; ask the agent to call it when needed. It reports the current Python process, resource location, installed dependencies and exported-file receipt checks. If the tool service cannot start, run the bundle's `scripts/runtime_info.py` directly with Python. This read-only diagnostic neither installs dependencies nor reads your problem or data; a matching installation still needs an actual tool call.
 
 ### 3. Use Praxis in your project
 

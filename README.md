@@ -106,7 +106,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 路径替换为实际安装包中的 `skills/praxis`；只安装技能时使用仓库目录。仅使用分析方法无需准备环境。
 
-需要排查环境时，可以让助手调用 `runtime_info`，查看当前进程的 Python、资源位置、已安装依赖及包内文件校验。工具服务尚未启动时，用 Python 直接运行包内 `scripts/runtime_info.py`；这项只读诊断不安装依赖，也不读取你的题目和数据。文件匹配与依赖齐全仍需同实际工具调用分别验证。
+使用当前源码导出的插件时，可让助手调用 `runtime_info` 排查环境，查看当前进程的 Python、资源位置、已安装依赖及包内文件校验。工具服务尚未启动时，用 Python 直接运行包内 `scripts/runtime_info.py`；这项只读诊断不安装依赖，也不读取你的题目和数据。文件匹配与依赖齐全仍需同实际工具调用分别验证。
 
 ### 3. 在你的项目中使用
 
