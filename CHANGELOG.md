@@ -5,6 +5,11 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 评审指导分开核验关键错误检出、多档真实论文排序、换序稳定性与绝对奖档偏差；一致排序不设最高奖门槛。同题学习回归、fresh 上下文和外部独立校准保持各自证据范围。W3 与现有短图题规范一致，必要条件和论断在邻近正文核查。
+  Review guidance separates critical-error detection, ranking across real award levels, order stability and absolute award bias. Agreement on ranking does not set a top-award cutoff. Same-task development, fresh contexts and external calibration retain distinct evidence scopes. W3 follows the existing short-title convention and checks claims and conditions in adjacent prose.
+- 决策指导核到具体报价及风险门槛、已声明的结构挑战、同情景逐组逐期补偿账和统一经济分母；执行金额／容量按最小单位向满足硬约束的方向取整并重验，精确阈值与近似值分别标明。新增转移不自动等于新增现金资助，扩大动作族须重验保证。下游容量选模与朴素基线逐格比较，科学检查通过的候选仍可因不改善决策而拒绝部署。
+  Decision guidance checks the actual quote and risk gates, declared structural challenges, group-by-period transfers in matched scenarios and consistent economic denominators. Executable amounts and capacities round in their smallest units toward satisfying hard constraints and are rechecked; exact thresholds and approximations remain distinct. Added transfers do not automatically require the same extra cash grant; expanded action families need their guarantees rechecked. Capacity selection compares each evaluation cell with a simple baseline, and a scientifically checked candidate may still be rejected when it does not improve decisions.
+
 - 新增只读 `runtime_info` 环境诊断：当前解释器、依赖版本、资源及导出收据检查。无需数值依赖的独立 CLI 可排查服务启动失败；不联网、不读取用户案例、不安装或重载，不把磁盘身份冒称正在执行的代码。
   New read-only `runtime_info` diagnostics report the current interpreter, dependency versions, resources and export-receipt checks. A standard-library CLI can diagnose startup failures without numerical dependencies. It does not access the network or user cases, install or reload anything, or equate disk identity with executing code.
 
