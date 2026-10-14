@@ -188,7 +188,7 @@ def dependency_snapshot():
 
 def environment_snapshot():
     import tomllib
-    declared = tomllib.loads((BUNDLE / 'pyproject.toml').read_text())['project']['dependencies']       # every declared dependency, so none is forgotten
+    declared = tomllib.loads((BUNDLE / 'pyproject.toml').read_text(encoding='utf-8'))['project']['dependencies']       # every declared dependency, so none is forgotten
     packages = [re.split(r'[<>=!~\[ ]', spec, maxsplit=1)[0] for spec in declared]
     versions = {}
     for name in packages:
@@ -236,7 +236,10 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
             step = {'stage': stage, 'argv': command, 'started_utc': stamp()}
             receipt['steps'].append(step)
             save(attempt / 'receipt.json', receipt)
-            with (attempt / (stage + '.stdout.log')).open('w') as stdout, (attempt / (stage + '.stderr.log')).open('w') as stderr:
+            # Child processes write directly to these descriptors. Preserve
+            # their actual bytes; a parent text wrapper cannot choose the
+            # child's encoding or promise that arbitrary model output is UTF-8.
+            with (attempt / (stage + '.stdout.log')).open('wb') as stdout, (attempt / (stage + '.stderr.log')).open('wb') as stderr:
                 result = subprocess.run(command, cwd=case, env=env, stdout=stdout, stderr=stderr, timeout=timeout)
             step.update({'ended_utc': stamp(), 'exit_code': result.returncode})
             if result.returncode != 0:

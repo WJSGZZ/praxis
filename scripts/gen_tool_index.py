@@ -31,6 +31,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     text = render()
     if args.check:
-        sys.exit(0 if OUT.exists() and OUT.read_text() == text else 1)
-    OUT.write_text(text)
+        sys.exit(0 if OUT.exists() and OUT.read_text(encoding='utf-8') == text else 1)
+    OUT.write_text(text, encoding='utf-8')
     print(json.dumps({'written': str(OUT), 'tools': len(mcp_server.TOOLS)}))

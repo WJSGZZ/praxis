@@ -140,8 +140,8 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
     if output.exists() or output.is_symlink():
         raise FileExistsError(f'Refusing to replace {output}')
     files = public_files(source)
-    manifest = json.loads((source / 'packaging/plugin.json').read_text())
-    version = tomllib.loads((source / 'pyproject.toml').read_text())['project']['version']
+    manifest = json.loads((source / 'packaging/plugin.json').read_text(encoding='utf-8'))
+    version = tomllib.loads((source / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
     if manifest['version'] != version:
         raise ValueError('Manifest version must match pyproject.toml')
     if manifest['name'] != 'praxis':
@@ -156,7 +156,7 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
         target = output / export_path(relative)
         target.parent.mkdir(parents=True, exist_ok=True)
         if path.suffix == '.md':
-            target.write_text(relocate_links(path.read_text(), path, source, files))
+            target.write_text(relocate_links(path.read_text(encoding='utf-8'), path, source, files), encoding='utf-8')
         else:
             shutil.copyfile(path, target)
         hashes[target.relative_to(output).as_posix()] = hashlib.sha256(target.read_bytes()).hexdigest()
@@ -165,23 +165,23 @@ def build_plugin(output: Path, source: Path = BUNDLE, host: str = 'portable') ->
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((source / source_name).read_bytes())
         hashes[target_name] = hashlib.sha256(target.read_bytes()).hexdigest()
-    (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n')
-    mcp = json.loads((source / 'packaging/mcp.json').read_text())
-    (output / 'mcp.json').write_text(json.dumps(mcp, indent=2) + '\n')
+    (output / 'plugin.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+    mcp = json.loads((source / 'packaging/mcp.json').read_text(encoding='utf-8'))
+    (output / 'mcp.json').write_text(json.dumps(mcp, indent=2) + '\n', encoding='utf-8')
     # Derive native Codex metadata from the portable manifest: one identity,
     # two host entry points, no independently maintained compatibility copy.
     native = {k: manifest[k] for k in ('name', 'version', 'description', 'author', 'repository', 'license')}
     native.update(manifest.get('extensions', {}).get('com.openai', {}))
     native.update(skills='./skills/', mcpServers='./.mcp.json')
     (output / '.codex-plugin').mkdir()
-    (output / '.codex-plugin/plugin.json').write_text(json.dumps(native, indent=2, ensure_ascii=False) + '\n')
+    (output / '.codex-plugin/plugin.json').write_text(json.dumps(native, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     legacy_mcp = {'mcpServers': {name: {k: v for k, v in server.items() if k != 'type'}
                               for name, server in mcp['mcpServers'].items()}}
-    (output / '.mcp.json').write_text(json.dumps(legacy_mcp, indent=2) + '\n')
+    (output / '.mcp.json').write_text(json.dumps(legacy_mcp, indent=2) + '\n', encoding='utf-8')
     for name, data in host_files(host, manifest, mcp).items():
         target = output / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
+        target.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
         hashes[name] = hashlib.sha256(target.read_bytes()).hexdigest()
     # A host adapter can replace an entry point; receipt always hashes final bytes.
     for name in ('plugin.json', 'mcp.json', '.codex-plugin/plugin.json', '.mcp.json'):
@@ -210,14 +210,14 @@ uv sync --locked --project /absolute/path/to/praxis-plugin/skills/praxis
 Keep problems, data and outputs in your project and pass its path to workspace-aware scripts.
 
 [技能与工具](skills/praxis/README.md#技能一览) · [Skills and tools](skills/praxis/README.en.md#skills)
-''')
+''', encoding='utf-8')
     # The package-root guidance and license are shipped resources too. The
     # receipt binds all final files except the receipt itself (no self-hash).
     for name in ('README.md', 'LICENSE'):
         hashes[name] = hashlib.sha256((output / name).read_bytes()).hexdigest()
     receipt = {'format': 'praxis-plugin-export-v1', 'name': manifest['name'],
                'version': manifest['version'], 'host': host, 'files_sha256': hashes}
-    (output / 'build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+    (output / 'build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
     return {'plugin': str(output), 'skill': str(skill), 'host': host, 'public_files': len(files)}
 
 

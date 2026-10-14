@@ -245,11 +245,11 @@ def trace_markdown(g) -> str:
 
 
 def save(g: dict, path: Path) -> None:
-    Path(path).write_text(json.dumps(g, ensure_ascii=False, indent=2))
+    Path(path).write_text(json.dumps(g, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
 def load(path: Path) -> dict:
-    return json.loads(Path(path).read_text())
+    return json.loads(Path(path).read_text(encoding='utf-8'))
 
 
 def draft_lesson(g: dict, *, problem: str, principle: str, verified_by: str = '', tags: list[str] | None = None) -> dict:

@@ -42,7 +42,7 @@ runtime_info = _Lazy('scripts.runtime_info')
 def _project_version():
     """The single source of the version number is pyproject.toml."""
     import tomllib
-    return tomllib.loads((Path(__file__).resolve().parents[1] / 'pyproject.toml').read_text())['project']['version']
+    return tomllib.loads((Path(__file__).resolve().parents[1] / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
 
 
 VERSION = _project_version()

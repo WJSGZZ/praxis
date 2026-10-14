@@ -88,7 +88,7 @@ def main():
     parser.add_argument('references', type=Path, help='Text file, one reference per line')
     parser.add_argument('--mailto', default='unknown@example.org', help='Contact address Crossref asks clients to send')
     args = parser.parse_args()
-    results = check(args.references.read_text().splitlines(), args.mailto)
+    results = check(args.references.read_text(encoding='utf-8').splitlines(), args.mailto)
     print(json.dumps(results, indent=2, ensure_ascii=False))
     sys.exit(0 if all(r['status'] in {'verified', 'no_doi'} for r in results) else 1)
 

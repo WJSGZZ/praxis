@@ -30,7 +30,7 @@ uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/pipeline.py" --works
 
 题目原文可先保存为本项目文件再传入；CLI 支持 PDF、TXT、Markdown。多个数据文件重复 `--data`。默认建在 `cases/<name>/`；名称自行根据任务取，不必为取名问用户。已有目录拒绝覆盖，接续时读取 `case.json` 与 `planning/tasks.md`。`--phase contest` 只记录比赛阶段，不能据此判断比赛时限或取得提交授权。
 
-案例保存：`raw/` 原件只读副本、`planning/` 题意与任务记录、`audits/` 数据质量报告、`code/` 可复现处理与模型、`runs/` 每次独立运行结果。副本保留来源路径、哈希和字节数。CSV 使用显式编码（默认 UTF-8；可 `--encoding gb18030`），Excel 逐表检查；其他格式或大于 50 MB 的数据明确标记延后审计，选择流式或针对性处理。延后审计不等于已核验可用。PDF 即使提取到文字仍须查看原页。
+案例保存：`raw/` 原件只读副本、`planning/` 题意与任务记录、`audits/` 数据质量报告、`code/` 可复现处理与模型、`runs/` 每次独立运行结果。副本保留来源路径、哈希和字节数。CSV 使用显式编码（默认 UTF-8；可 `--encoding gb18030`），Excel 逐表检查；其他格式或大于 50 MB 的数据明确标记延后审计，选择流式或针对性处理。延后审计不等于已核验可用。PDF 即使提取到文字仍须查看原页。 插件自己的 JSON、Markdown、TOML 元数据与中文记录用 UTF-8 显式读写；CSV 的编码仍按数据契约指定，原始模型子进程日志保留原始字节，不由系统代码页转换。
 
 ## 内容理解不是脚本替代的
 

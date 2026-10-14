@@ -13,7 +13,7 @@ WEIGHTS = {'coverage': 10, 'assumptions': 15, 'model': 15, 'correctness': 25, 'r
 CHECKLIST_IDS = {dim: [f'{prefix}{i}' for i in range(1, count + 1)] for dim, prefix, count in (
     ('coverage', 'C', 4), ('assumptions', 'A', 5), ('model', 'M', 5),
     ('correctness', 'K', 5), ('robustness', 'R', 4), ('writing', 'W', 5), ('verifiability', 'V', 5))}
-PROFILES = json.loads(Path(__file__).with_name('profiles.json').read_text())
+PROFILES = json.loads(Path(__file__).with_name('profiles.json').read_text(encoding='utf-8'))
 CONTEST_WEIGHTS = {k: v['weights'] for k, v in PROFILES.items() if k != 'general'}
 RESEARCH_CRITERIA = ('correctness', 'novelty', 'significance', 'method_depth',
                      'exposition', 'reproducibility')
@@ -222,7 +222,7 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
     reviews: dict[str, list[dict]] = {}
     kinds: dict[str, str] = {}
     for path in files:
-        for source_index, item in enumerate(json.loads(Path(path).read_text())):
+        for source_index, item in enumerate(json.loads(Path(path).read_text(encoding='utf-8'))):
             is_research = 'research_assessment' in item
             kind = 'research' if is_research else 'competition_diagnostic'
             if item['paper'] in kinds and kinds[item['paper']] != kind:

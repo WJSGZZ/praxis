@@ -59,8 +59,8 @@ def main():
                         help='Saved gh release view JSON, with its actual assets')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    names = [asset['name'] for asset in json.loads(args.assets_json.read_text())['assets']]
-    text = render(args.version, (ROOT / 'CHANGELOG.md').read_text(), names)
+    names = [asset['name'] for asset in json.loads(args.assets_json.read_text(encoding='utf-8'))['assets']]
+    text = render(args.version, (ROOT / 'CHANGELOG.md').read_text(encoding='utf-8'), names)
     if args.output.exists():
         raise FileExistsError(args.output)
     args.output.parent.mkdir(parents=True, exist_ok=True)

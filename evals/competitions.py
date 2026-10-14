@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 def lookup(contest, event, edition):
-    records = json.loads(Path(__file__).with_name('competitions.json').read_text())['records']
+    records = json.loads(Path(__file__).with_name('competitions.json').read_text(encoding='utf-8'))['records']
     exact = [r for r in records if (r['contest'], r['event'], r['edition']) == (contest, event, edition)]
     if len(exact) == 1:
         return exact[0]

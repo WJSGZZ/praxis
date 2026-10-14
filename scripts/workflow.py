@@ -145,7 +145,7 @@ def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attem
     if not isinstance(goal, str) or not goal.strip() or not isinstance(query, str):
         raise ValueError('Provide a nonempty goal and a string query')
     progress = safe_path('planning/progress.md', case)
-    if progress.exists() and (BEGIN in progress.read_text() or END in progress.read_text()):
+    if progress.exists() and (BEGIN in progress.read_text(encoding='utf-8') or END in progress.read_text(encoding='utf-8')):
         raise ValueError('Refuse to overwrite an existing or damaged workflow block')
     start = now()
     source = pipeline.source_snapshot(case)
