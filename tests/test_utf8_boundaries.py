@@ -191,3 +191,117 @@ def test_generated_index_actual_write_is_utf8(cp1252_default, tmp_path, monkeypa
     output = tmp_path / 'references/tool-index.md'
     assert value['written'] == str(output)
     assert output.read_bytes().decode('utf-8').startswith('# 工具索引\n')
+
+
+def legacy_console(module, args):
+    """Run the real CLI with actual strict legacy stdout/stderr encoders."""
+    script = '''import runpy,sys
+sys.stdout.reconfigure(encoding='cp1252',errors='strict')
+sys.stderr.reconfigure(encoding='cp1252',errors='strict')
+module=sys.argv[1]
+sys.argv=[module,*sys.argv[2:]]
+runpy.run_module(module,run_name='__main__')
+'''
+    return subprocess.run([sys.executable, '-B', '-c', script, module, *map(str, args)],
+                          cwd=SOURCE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+
+
+def decoded_console(process, expected_exit=0):
+    assert process.returncode == expected_exit, process.stderr.decode('ascii', errors='replace')
+    return json.loads(process.stdout.decode('ascii'))
+
+
+def test_actual_chinese_metadata_review_and_reference_json_clis(tmp_path):
+    competition = decoded_console(legacy_console('evals.competitions', ['--contest', 'graduate', '--event', 'main', '--edition', '2026']))
+    assert '三等奖' in competition['award_system']
+    review = tmp_path / '中文评审.json'
+    review.write_bytes(json.dumps([{'paper': '中文论文', 'scores': dict.fromkeys(
+        ['coverage', 'assumptions', 'model', 'correctness', 'robustness', 'writing', 'verifiability'], 2)}], ensure_ascii=False).encode('utf-8'))
+    aggregated = decoded_console(legacy_console('evals.aggregate', [review]))
+    assert aggregated['中文论文']['percent_mean'] == 50
+    reference = tmp_path / '中文引文.txt'
+    citation = '中文书目：数据与验证，2026。'
+    reference.write_bytes((citation + '\n').encode('utf-8'))
+    checked = decoded_console(legacy_console('scripts.check_references', [reference]))
+    assert checked[0] == {'line': 1, 'status': 'no_doi', 'citation': citation}
+
+
+def test_audit_console_ascii_keeps_utf8_file_and_input_bytes(tmp_path):
+    source = tmp_path / '中文数据.csv'
+    original = '项目,数值\n中文观察,4\n'.encode('utf-8')
+    source.write_bytes(original)
+    output = tmp_path / '审计.json'
+    value = decoded_console(legacy_console('scripts.audit_data', [source, '--output', output]))
+    file_bytes = output.read_bytes()
+    assert source.read_bytes() == original
+    assert file_bytes == json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False).encode('utf-8')
+    assert value['rows'] == 1 and value['columns'] == 2
+    assert '项目'.encode('utf-8') in file_bytes
+
+
+def test_workflow_console_and_unicode_errors_keep_json_schema(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline, 'PROJECT', tmp_path)
+    problem = tmp_path / '中文题面.md'; problem.write_bytes('合成问题：2+2=4。'.encode('utf-8'))
+    case = Path(pipeline.init_case(tmp_path / 'cases', 'console-workflow', problem)['case'])
+    value = decoded_console(legacy_console('scripts.workflow', ['--workspace', tmp_path, 'init', '--case', case,
+        '--goal', '中文目标与独立核验', '--budget-seconds', '60']))
+    assert value['state']['goal'] == '中文目标与独立核验'
+    failed = legacy_console('scripts.workflow', ['--workspace', tmp_path, 'next', '--case', '不存在的案例'])
+    assert failed.returncode == 1
+    assert 'error' in json.loads(failed.stderr.decode('ascii'))
+    assert b'UnicodeEncodeError' not in failed.stderr
+
+
+def test_feedback_console_keeps_persisted_utf8_and_error_exit(tmp_path):
+    from scripts.feedback import descriptor, encoded
+    case = tmp_path / '中文案例'; case.mkdir()
+    value = decoded_console(legacy_console('scripts.feedback', ['init', '--case', case, '--goal', '中文反馈目标']))
+    assert descriptor(case).read_bytes() == encoded(value)
+    assert value['goal'] == '中文反馈目标'
+    duplicate = legacy_console('scripts.feedback', ['init', '--case', case])
+    assert duplicate.returncode == 2
+    assert str(descriptor(case)) in json.loads(duplicate.stderr.decode('ascii'))['error']
+
+
+def test_ai_records_console_keeps_plain_error_exit_and_source_snapshot(tmp_path):
+    source = tmp_path / '中文记录.jsonl'
+    rows = [{'type': 'session_meta', 'payload': {'id': 'utf8-synthetic'}},
+            {'type': 'response_item', 'payload': {'type': 'message', 'role': 'user', 'content': '合成中文内容'}}]
+    original = b''.join((json.dumps(r, ensure_ascii=False)+'\n').encode('utf-8') for r in rows)
+    source.write_bytes(original)
+    output = tmp_path / '中文快照.json'
+    args = ['--source', source, '--output', output, '--thread-id', 'utf8-synthetic']
+    value = decoded_console(legacy_console('scripts.ai_records', args))
+    assert value['records'] == 1 and value['output'] == str(output)
+    assert source.read_bytes() == original and '合成中文内容'.encode('utf-8') in output.read_bytes()
+    duplicate = legacy_console('scripts.ai_records', args)
+    assert duplicate.returncode == 2 and b'UnicodeEncodeError' not in duplicate.stderr
+    assert '\\u' in duplicate.stderr.decode('ascii')  # Existing plain-text error, safely escaped.
+
+
+def test_structure_template_and_pdf_clis_with_chinese_artifacts(tmp_path):
+    from scripts.paper_template import preamble
+    tex = tmp_path / '中文章节.tex'
+    tex.write_bytes((preamble(None, '中文标题', 'research') +
+        r'\title[Short running title]{中文标题}\maketitle'
+        r'\section{中文论证}正文。\begin{figure}\caption{中文图名}\end{figure}\end{document}').encode('utf-8'))
+    structure = decoded_console(legacy_console('scripts.paper_structure', [tex]))
+    assert structure['headings'][0]['title'] == '中文论证'
+    template_structure = decoded_console(legacy_console('scripts.paper_template', [tex, '--contest', 'research', '--review-structure']))
+    assert template_structure['headings'][0]['title'] == '中文论证'
+    captions = decoded_console(legacy_console('scripts.paper_template', [tex, '--contest', 'research', '--review-captions']))
+    assert '中文图名' in json.dumps(captions, ensure_ascii=False)
+    fixture = SOURCE / 'tests/fixtures/fandol-cjk.pdf'
+    inspected = legacy_console('scripts.check_pdf', [fixture, '--forbidden', '中文'])
+    assert inspected.returncode in (0, 1) and b'UnicodeEncodeError' not in inspected.stderr
+    assert isinstance(json.loads(inspected.stdout.decode('ascii')), dict)
+    rules = legacy_console('scripts.contest_rules', [fixture, '--contest', 'graduate', '--edition', '2026'])
+    assert rules.returncode in (0, 1) and b'UnicodeEncodeError' not in rules.stderr
+    assert '宋体' in json.dumps(json.loads(rules.stdout.decode('ascii')), ensure_ascii=False)
+
+
+def test_presentation_and_generated_task_actual_json_console():
+    result = decoded_console(legacy_console('scripts.check_presentation', []))
+    assert result['tools'] == 68
+    task = decoded_console(legacy_console('evals.planted', ['new', 'lp', '1']))
+    assert task['score_version'] and task['task_sha256']

@@ -393,4 +393,4 @@ if __name__ == '__main__':
         contest, args = args[0].split('=', 1)[1], args[1:]
     view = view or ('user' if contest and contest != 'general' else 'internal')
     result = aggregate([Path(a) for a in args], contest)
-    print(json.dumps(user_view(result, contest) if view == 'user' else result, ensure_ascii=False, indent=1))
+    print(json.dumps(user_view(result, contest) if view == 'user' else result, ensure_ascii=True, indent=1))

@@ -21,8 +21,8 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 - 中英文首页、专业方法与安装命令按实际产品审读，明确源码增量与正式安装包的区别。新增经 CFF 1.2.0 校验的软件引用信息；关键反例回归加入三系统运行检查。保持现有版本号，整批变化留待发布。
   Both README languages, specialist methods and installation commands describe the actual product and distinguish unreleased source from published packages. Validated CFF 1.2.0 citation metadata and critical cross-platform regressions are added. This batch remains unreleased under the existing version number.
 
-- 修复真实 Windows 导出遇到中文文件时的默认编码失败；插件元数据、中文指南及 JSON／Markdown／TOML 文件接口显式使用 UTF-8，中文路线记录与评阅输入按相同格式读写。模型子进程日志仍保存原始字节。默认 CP1252 的实际读写回归检查加入三系统 CI。
-  Real Windows exports no longer decode Chinese files through the system locale. Plugin metadata, guidance and JSON/Markdown/TOML interfaces explicitly use UTF-8, including route records and review inputs. Model subprocess logs retain their original bytes. Actual I/O regressions under a CP1252 default run in the three-platform CI.
+- 修复真实 Windows 导出遇到中文文件时的默认编码失败；插件元数据、中文指南及 JSON／Markdown／TOML 文件接口显式使用 UTF-8，中文路线记录与评阅输入按相同格式读写。JSON 命令行输出使用可在默认代码页打印的字符转义，解码后的字段和值保持。模型子进程日志仍保存原始字节。默认 CP1252 的实际文件读写及命令行输出回归检查加入三系统 CI。
+  Real Windows exports no longer decode Chinese files through the system locale. Plugin metadata, guidance and JSON/Markdown/TOML interfaces explicitly use UTF-8, including route records and review inputs. JSON command output uses character escaping compatible with the default code page while retaining decoded fields and values. Model subprocess logs retain their original bytes. Actual file-I/O and command-output regressions under a CP1252 default run in the three-platform CI.
 
 ### 接口与验收更正 · Corrected contracts
 

@@ -353,7 +353,7 @@ def main():
         template = _template(truth)
         if a.kind == 'lp':
             template['x'] = [0.0] * len(t.data['c'])
-        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=template, score_version=SCORE_VERSION, task_sha256=task_sha256(t)), ensure_ascii=False))
+        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=template, score_version=SCORE_VERSION, task_sha256=task_sha256(t)), ensure_ascii=True))
     else:
         print(json.dumps(score(a.kind, a.seed, json.loads(a.answer), expected_task_sha256=a.task_sha256)))
 

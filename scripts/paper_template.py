@@ -894,12 +894,12 @@ def main():
         import json
         from scripts.paper_structure import inspect_structure
         structure = inspect_structure(args.tex.read_bytes().decode('utf-8'), args.structure_review)
-        print(json.dumps(structure, ensure_ascii=False, indent=2))
+        print(json.dumps(structure, ensure_ascii=True, indent=2))
         if not structure['passed']:
             parser.exit(1)
     elif args.review_captions:
         import json
-        print(json.dumps(review_captions(args.tex.read_text(encoding='utf-8')), ensure_ascii=False, indent=2))
+        print(json.dumps(review_captions(args.tex.read_text(encoding='utf-8')), ensure_ascii=True, indent=2))
     else:
         print(f"PASS {result['profile']} {result['style_sha256']}")
 

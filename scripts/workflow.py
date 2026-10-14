@@ -365,11 +365,11 @@ def main():
     try:
         values = vars(args); command = values.pop('command'); values.pop('workspace')
         result = globals()[command](**values)
-        print(json.dumps(result, ensure_ascii=False, allow_nan=False))
+        print(json.dumps(result, ensure_ascii=True, allow_nan=False))
         if command == 'run' and result.get('status') == 'failed':
             raise SystemExit(1)
     except (ValueError, OSError, KeyError, TypeError, OverflowError) as exc:
-        print(json.dumps({'error': f'{type(exc).__name__}: {exc}'}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({'error': f'{type(exc).__name__}: {exc}'}, ensure_ascii=True), file=sys.stderr)
         raise SystemExit(1)
 
 

@@ -159,9 +159,11 @@ def main(argv=None):
     try:
         result = capture(args.source, args.output, thread_id=args.thread_id, max_bytes=args.max_bytes)
     except (ValueError, OSError) as error:
-        print(str(error), file=sys.stderr)
+        # Retain the established plain-text error/exit-2 contract while making
+        # filenames and messages safe for legacy redirected output streams.
+        print(str(error).encode('ascii', errors='backslashreplace').decode('ascii'), file=sys.stderr)
         return 2
-    print(json.dumps(result, ensure_ascii=False, allow_nan=False))
+    print(json.dumps(result, ensure_ascii=True, allow_nan=False))
     return 0
 
 

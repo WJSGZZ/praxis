@@ -336,7 +336,7 @@ def main(argv=None):
                   'unresolved': [], 'errors': [{'kind': 'input_error', 'message': str(error)}],
                   'scope': 'literal-heading-static-review', 'limitations': list(LIMITS)}
     result['source'] = str(args.tex)
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result['passed'] else 1
 
 

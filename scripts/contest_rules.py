@@ -311,7 +311,7 @@ def main():
         parser.error('--document-kind submission is supported only for graduate')
     report = evaluate(extract(args.path), args.contest, margins=margins, forbidden=args.forbidden,
                       edition=args.edition, document_kind=args.document_kind)
-    print(json.dumps(report, ensure_ascii=False, indent=1))
+    print(json.dumps(report, ensure_ascii=True, indent=1))
     return 0 if report['passed'] else 1
 
 

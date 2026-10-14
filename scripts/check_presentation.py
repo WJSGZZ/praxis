@@ -227,7 +227,7 @@ def check(root=ROOT):
 
 def main():
     result = check()
-    print(json.dumps(result, ensure_ascii=False))
+    print(json.dumps(result, ensure_ascii=True))
     return int(bool(result['errors']))
 
 

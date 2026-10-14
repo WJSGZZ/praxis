@@ -20,4 +20,4 @@ if __name__ == '__main__':
     parser.add_argument('--event', required=True)
     parser.add_argument('--edition', required=True)
     args = parser.parse_args()
-    print(json.dumps(lookup(args.contest, args.event, args.edition), ensure_ascii=False, indent=2))
+    print(json.dumps(lookup(args.contest, args.event, args.edition), ensure_ascii=True, indent=2))

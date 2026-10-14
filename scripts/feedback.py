@@ -524,10 +524,10 @@ def main(argv=None):
             result = pack(args.source, args.output, confirm_manifest_sha256=args.confirm_manifest_sha256)
         else:
             result = inspect(args.source)
-        print(encoded(result).decode(), end='')
+        print(json.dumps(result, ensure_ascii=True, indent=2, allow_nan=False))
         return 0
     except (ValueError, OSError, zipfile.BadZipFile, KeyError, TypeError) as exc:
-        print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({'error': str(exc)}, ensure_ascii=True), file=sys.stderr)
         return 2
 
 

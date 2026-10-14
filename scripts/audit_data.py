@@ -354,9 +354,10 @@ def main():
     sheet = int(args.sheet) if args.sheet.isdecimal() else args.sheet
     contract = json.loads(args.contract.read_text(encoding="utf-8"), object_pairs_hook=unique_object_pairs) if args.contract else None
     missing_values = json.loads(args.missing_values) if args.missing_values else None
-    result = json.dumps(audit(args.path, sheet, args.encoding, args.sep, contract=contract,
-                             max_rows=args.max_rows, missing_values=missing_values,
-                             keep_default_na=not args.no_default_na), ensure_ascii=False, indent=2, allow_nan=False)
+    report = audit(args.path, sheet, args.encoding, args.sep, contract=contract,
+                   max_rows=args.max_rows, missing_values=missing_values,
+                   keep_default_na=not args.no_default_na)
+    result = json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False)
     if args.output:
         for original in [args.path] + ([args.contract] if args.contract else []):
             if (args.output.resolve() == original.resolve()
@@ -364,7 +365,7 @@ def main():
                 parser.error("Output must not overwrite input or its source contract")
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(result, encoding="utf-8")
-    print(result)
+    print(json.dumps(report, ensure_ascii=True, indent=2, allow_nan=False))
 
 
 if __name__ == "__main__":

@@ -352,7 +352,7 @@ def main():
                   a.minimum_font_tex_pt,a.font_review)
     if a.margins:
         r['margins']=margin_report(a.path)
-    print(json.dumps(r,ensure_ascii=False,indent=2))
+    print(json.dumps(r,ensure_ascii=True,indent=2))
     raise SystemExit(1 if r['errors'] else 0)
 
 
