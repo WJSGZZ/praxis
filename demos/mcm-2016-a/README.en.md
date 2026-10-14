@@ -71,7 +71,7 @@ This is an uncalibrated reference opinion, not an official award. Physical coeff
 | Resource | Contents |
 |---|---|
 | <a href="paper.pdf">The complete 28-page paper</a> | English; 27 solution pages including user advice, followed by one AI-use page |
-| [Delivery PDF](deliverables/paper.pdf) | Identical to the reading copy; the manuscript retains placeholder team number 7391856 |
+| [Delivery PDF](deliverables/paper.pdf) | Identical to the reading copy; 7391856 is the fixed simulation team identifier |
 | [Technical guide](reproduce/README.md) | Calculations, verification, certificates and report builds |
 
 The reading and delivery links provide the same paper. It uses the [shared MCM v4 layout](../../templates/mcm-paper.tex): A4, 12pt ordinary text and figure text, two-em paragraph indentation and a separate AI report. The current 28-page copy has a complete page and font review. This historical learning work has no verified 2016 submission eligibility; live entries must follow their edition’s rules and filenames.

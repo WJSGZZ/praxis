@@ -19,12 +19,12 @@
 
 ## 按题型的最短阅读路径
 
-不必读完全部参考。先读 [SKILL.md](../SKILL.md) 的“小任务直通”判断规模，再按题型走：
+不必读完全部参考。先按 [SKILL.md](../SKILL.md) 的局部请求直通规则判断规模，再按题型走：
 
 | 题型 | 先读 | 再用 |
 |---|---|---|
 | 物理、工程过程 | [domain-models.md](domain-models.md) 对应机制；[mathematical-reasoning.md](mathematical-reasoning.md) 的“数值收敛”与“阈值接近渐近值” | 正问题求解器（`solve_layered_diffusion`、`solve_diffusion`）加独立解（`layered_diffusion_laplace`、解析式）；`calibrate_curve`；`grid_convergence_index`；`sobol_convergence` |
-| 规划、调度、路径；逐日的资源与资金决策 | [structure-discovery.md](structure-discovery.md)（全单模、松弛、分阶段）；[model-library.md](model-library.md) 的规划、网络与序贯决策行；[mathematical-reasoning.md](mathematical-reasoning.md) 的“序贯决策” | `solve_lp`、`solve_milp`、`check_total_unimodularity`；状态可枚举的序贯决策先写精确动态规划、再用时间展开整数规划做独立核对；多人博弈用 `bimatrix_nash`；先手工可行解、再给界 |
+| 规划、调度、路径；逐日的资源与资金决策 | [structure-discovery.md](structure-discovery.md)（全单模、松弛、分阶段）；[model-library.md](model-library.md) 的规划、网络与序贯决策行；[mathematical-reasoning.md](mathematical-reasoning.md) 的“序贯决策” | `solve_lp`、`solve_milp`、`check_total_unimodularity`；状态可枚举的序贯决策先写精确动态规划、再用时间展开整数规划做独立核对；双人非零和可用 `bimatrix_nash` 的等支撑数值候选；多人博弈另选有依据的模型与求解器；先手工可行解、再给界 |
 | 数据与预测 | [model-library.md](model-library.md) 的预测与回归行；[scientific-foundations.md](scientific-foundations.md) 第三节 | `ols_report`、`compare_models`、`backtest_baselines` |
 | 评价、决策、政策 | [model-library.md](model-library.md) 的评价与多目标行 | `evaluate_alternatives`、`pareto_front`、`sobol_convergence` |
 | 陌生或没有标准答案 | [path-search.md](path-search.md)、[research-mode.md](research-mode.md) | `route_graph`、`probe_structure`、`guess_sequence` |
@@ -41,7 +41,7 @@
 - 有可证明或可独立核验的结论（界、守恒、极限情形），而不是只有一次仿真；
 - 敏感性和稳健性有针对性：只扰动会改变建议的因素；
 - 明确区分“计算得到”“推断”“假设”；结论强度与证据相称；
-- 图表自己能讲清楚：图题写出论断，坐标含单位，不遮挡数据；
+- 图表自己能讲清楚：图题简短定位对象或比较，必要条件与分析在相邻正文，坐标含单位且不遮挡数据；
 - 有自己的局限性与改进说明，但不堆砌自我批评；
 - 摘要写问题、方法、定量结果和结论，不是目录。
 
@@ -74,36 +74,22 @@
 
 规则每年变，必须从当届官方文件取，不凭记忆。开赛第一小时列成一页，写明出处和日期：时间与截止、队伍人数、论文格式与页数上限、文件与命名要求、匿名要求、是否允许及如何披露 AI 与外部工具、引用要求、提交方式与补交规则。其中“允许什么”不明确的，按更严格的理解执行并记录。规则清单决定哪些做法可用，进入 [context-and-team.md](context-and-team.md) 的赛事记录。
 
-## 两大赛事的格式要求（每年核对，不凭记忆）
+## 当届格式与交付入口
 
-官方文件包含提交要求与建议，但没有唯一的正文内容模板；美赛另有摘要页模板，国赛另有承诺书与编号页（电子论文按本表要求不放入）。章节怎么排由队伍决定，优秀论文的结构是惯例，不是规定。下表依据：COMAP 2027说明页（2026-10-08核对）；国赛[官方2026论文格式规范](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html)（2026-10-09核对）。
+详细赛事格式只维护在 [contest-delivery.md](contest-delivery.md) 和 [精确届次档案](../evals/competitions.json)，模板消费同一规则。这里不再复制页数、字体、AI位置或附件表；已核官方规则、项目风格默认与当前实际验收分别说明，历史稿保留其原要求。不要从优秀稿外观推定当届硬规则。
 
-| 项 | 美赛 MCM/ICM | 国赛 CUMCM |
+| 当前用途 | 进入哪里 | 必须保留的边界 |
 |---|---|---|
-| 篇幅 | 全部内容合计不超过 25 页：摘要页、正文、目录、参考文献、附录、代码都计入；AI 使用报告另起一节，不计页 | 正文不超过30页（不含摘要专用页与附录）；附录页数不限 |
-| 第一页 | 摘要页（Summary Sheet），要简洁、吸引人，不能只复述题目 | 电子版第一页为摘要专用页：标题、摘要、关键词一页内，不译成英文；承诺书与编号页不放电子版 |
-| 目录 | 允许，官方鼓励，计入页数 | **不要目录** |
-| 页码与标识 | 摘要按官方三栏（年份与题号／队号，官方样例不加运行页眉）；后页顶部队号及连续页码，文字规则与样例差异见 writing.md | 从摘要页起编页码，页脚居中，阿拉伯数字 |
-| 字号与页边 | 正文不小于 12 磅，A4/Letter 均可，PDF 单文件 | A4，四边至少 2.5 厘米；其余字号字体不作统一要求 |
-| 附录与代码 | 不要另外提交程序或数据文件；代码如写进论文则计页 | 附录必须有支撑材料清单和全部可运行源程序；缺少或与结果不符可能被取消评奖资格；无程序要写明“本论文没有用到程序” |
-| 匿名 | 除队号外不得出现姓名、导师、学校 | 摘要页、正文、附录都不得出现身份、学校、赛区信息 |
-| AI | 在正文行内引用并列入参考文献，文末另加“Report on Use of AI” | 2026细则已核：人工主导、逐项人工核实与实际使用披露，完整要求见当届档案 |
-| 提交 | 单个 PDF | 论文 PDF 或 Word（建议 PDF，不超 20 MB）加支撑材料压缩包（不超 20 MB） |
+| 美赛 MCM／ICM | 精确赛事—赛项—届次档案；contest-delivery 的共享模板与成品门禁 | 历史题可采用明确标注的现代格式演练，不能倒写为原届合规；未知届次不继承规则 |
+| 国赛 CUMCM | 对应届次的格式／AI档案与 contest-delivery；机械检查显式传届次 | 正文、摘要和附录的计页及支撑材料要求分别核验；不套美赛尾部披露 |
+| 研究生赛或其它竞赛 | 对应官方档案；[context-and-team.md](context-and-team.md) 与 [竞赛评审](../evals/contest-judging.md) | 规则接入、完整提交流程和奖项校准分别记录；无数值profile时具名定性评议，不默套general |
 
-成稿后运行 `uv run --locked python -m scripts.contest_rules 论文.pdf --contest mcm [--forbidden 学校名]`；国赛2026改为 `--contest cumcm --edition 2026`，不传届次仅兼容旧机械子集，不检查当届必需AI声明。机械核对页数、首页、目录、页码与队号、页边距和附录等。MCM字号属于规则检查，CUMCM字号只记录事实；未被正文引用的图表等属于写作提示。分清错误、警告与事实，不能把所有输出都说成官方硬规则。
+## 新增赛事或赛项
 
-研究生赛2026的具名档案、官方格式源、MD5与PDF分开提交窗口、三人资格及数模之星答辩条件见[赛事档案](../evals/competitions.json)（`graduate / main / 2026`）。按2026开赛公告，完整提交保留首页官方封面与四个原Logo，第二页开始至多两页摘要，后文无页眉且用指定中文字体；不能直接用国赛模板当作已适配。`--contest graduate --edition 2026 --document-kind submission`检查完整提交的有限结构；默认`report`仅针对匿名摘要／正文部分。2026-09-16 AI用途规定已经核对，具体标注与未验范围见档案，未验证完整提交流程；质量诊断继续用未校准的`general`，不新造研究生赛评分权重。
+先接入正式名称、赛项、届次和允许来源，记录核验日期、实际读到的范围及未知项。完整提交、AI责任、匿名、附件、资格和适用答辩可能各有不同要求；只把能可靠机械判断的部分加入原规则检查器并用有效／无效边界验证，其余保留实际审阅。档案存在不代表完整流程已经通过。
 
-模板与规则冲突时以规则为准：`templates/mcm-paper.tex` 带目录，`templates/cumcm-paper.tex` 不带，两者都不是官方模板，使用前对照当届官方文件。
+评价标准按官方指引和任务用途选择。只有确有适用的数值诊断设计时才增加 `evals/profiles.json`，并标明权重为项目自定；缺profile继续具名定性竞赛评议，不自动用general、国赛或美赛权重。需要通用数值诊断时必须明确选择general，并说明未按该赛事校准。奖项体系、未知届次与弃判断按 [contest-judging.md](../evals/contest-judging.md)，数学研究另走 [research-judging.md](../evals/research-judging.md)。
 
-## 新增一个赛事（研究生数模及其他竞赛）
-
-不新建技能，只补一份档案和一组规则：
-1. 找当届官方文件（章程、论文格式规范、评阅标准），记下出处与核对日期；找不到的写“未核实”，不凭记忆；
-2. 在 `evals/profiles.json` 加一项：官方评阅标准的名称、我们自定的权重（标明是自定的）、`source` 与 `checked`；
-3. 把能机械判断的硬性要求（页数上限、首页、目录、页码、字号、页边距、附录与代码、匿名、AI 披露）加进 `scripts/contest_rules.py` 的该赛事分支，并写对应的测试；
-4. 在上面的格式表加一列；赛事特有的交付物（承诺书、编号页、支撑材料包）写进该赛事的交付清单；
-5. 没有完成 2、3 之前，用 `general` 档案，并在结论里写明“未按该赛事校准”。
-
+共用核心专业能力；特有规则优先放档案与权威参考。确有可独立提出、方法与交付不同的赛事请求时，可依 [capabilities.md](capabilities.md) 增薄适配入口；不为赛名、年份或模块数量复制整套技能，也不强制每赛事增加profile或新格式表。
 
 规则变更按影响链闭环：核对当届第一手来源→列出受影响的常量、模板、测试、赛事档案、指导、案例与交付清单→同步当前入口→跑边界及跨入口一致性检查→核对导出包和实际PDF。按规则语义搜索，不盲目替换数字；正文页数、总页数、文件MB上限和历史记录分别判断。历史版本保留其当时规则及来源，不把当前规则回写成历史事实。

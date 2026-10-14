@@ -16,6 +16,21 @@ import sympy as sp
 from modeling.expressions import parse_bounded_expression, compile_bounded_expression, RUNTIME_FUNCTIONS
 
 
+def _exact_number(value):
+    """Retain the supplied number; no nsimplify/denominator approximation in proofs."""
+    if isinstance(value, (bool, np.bool_)):
+        raise ValueError('Sequence values and coefficients must be finite real numbers')
+    if isinstance(value, sp.Basic):
+        if value.is_number is not True or value.is_real is not True or value.is_finite is not True:
+            raise ValueError('Symbolic sequence values must be finite real numbers')
+        return value
+    try:
+        # Fraction preserves decimal strings and exact binary floating inputs.
+        return sp.Rational(Fraction(int(value) if isinstance(value, np.integer) else float(value) if isinstance(value, np.floating) else value))
+    except (ValueError, TypeError, OverflowError) as error:
+        raise ValueError('Sequence values and coefficients must be finite real numbers') from error
+
+
 def find_counterexample(claim: Callable, domain: Sequence[tuple], *, trials: int = 20000, exhaustive_limit: int = 200000, seed: int = 2027,
                         shrink_budget: int = 1000) -> dict:
     """Search for a false claim; exceptions/non-finite results are evaluation errors.
@@ -186,8 +201,10 @@ def guess_linear_recurrence(sequence: Sequence, max_order: int = 6, holdout: int
     """Smallest constant-coefficient linear recurrence a_n = c_1 a_{n-1} + ... + c_d a_{n-d} fitting the data exactly (rationals).
 
     Needs at least 2d+2 terms so that the fit is checked on more equations than unknowns; otherwise the order is not tested."""
-    full = [sp.Rational(Fraction(x).limit_denominator(10 ** 12)) if not isinstance(x, sp.Basic) else x for x in sequence]
-    if holdout < 0 or holdout >= len(full):
+    full = [_exact_number(x) for x in sequence]
+    if isinstance(max_order, bool) or not isinstance(max_order, (int, np.integer)) or max_order < 1:
+        raise ValueError('max_order must be a positive integer')
+    if isinstance(holdout, bool) or not isinstance(holdout, (int, np.integer)) or holdout < 0 or holdout >= len(full):
         raise ValueError('holdout must be between 0 and len(sequence) - 1')
     a, held = (full[:len(full) - holdout], full[len(full) - holdout:]) if holdout else (full, [])
     for d in range(1, max_order + 1):
@@ -213,7 +230,9 @@ def guess_linear_recurrence(sequence: Sequence, max_order: int = 6, holdout: int
 
 def guess_polynomial(sequence: Sequence, max_degree: int = 8) -> dict:
     """Is a_n (n = 0, 1, ...) a polynomial in n? Uses finite differences; needs degree+3 terms to test a degree."""
-    a = [sp.nsimplify(x) for x in sequence]
+    if isinstance(max_degree, bool) or not isinstance(max_degree, (int, np.integer)) or max_degree < 0:
+        raise ValueError('max_degree must be a nonnegative integer')
+    a = [_exact_number(x) for x in sequence]
     diffs = a
     for d in range(0, max_degree + 1):
         if len(a) < d + 3:
@@ -294,8 +313,10 @@ def check_linear_recurrence(sequence: Sequence, coefficients: Sequence, *, order
     b = Q(E) a, with Q the candidate recurrence, also satisfies P(E) b = Q(E) P(E) a = 0, because polynomials in the shift commute. A
     sequence obeying a monic recurrence of order N is zero as soon as its first N terms are, so `order_bound` consecutive equations holding
     from the start (order_bound + d terms of the data) prove the candidate for all n: a complete proof, not just evidence."""
-    a = [sp.nsimplify(x) for x in sequence]
-    c = [sp.nsimplify(x) for x in coefficients]
+    if order_bound is not None and (isinstance(order_bound, bool) or not isinstance(order_bound, (int, np.integer)) or order_bound < 1):
+        raise ValueError('order_bound must be a positive integer backed by a justified recurrence premise')
+    a = [_exact_number(x) for x in sequence]
+    c = [_exact_number(x) for x in coefficients]
     d = len(c)
     if len(a) <= d:
         raise ValueError('Need more terms than coefficients')

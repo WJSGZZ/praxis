@@ -111,39 +111,39 @@ def needs_collection_mapping(reader):
 
 
 def extract_pages(path):
-    """Return text and dominant font size; neither certifies visual correctness."""
+    """Return text and dominant effective font size in PDF points.
+
+    Sizes use the same transformed vertical em measurement as the complete
+    glyph gate, including rotated/nested text, CJK mappings and UserUnit.
+    The dominant statistic still does not certify every text role or layout.
+    """
     reader = PdfReader(str(path))
     if reader.is_encrypted:
         raise ValueError('Encrypted PDF must be opened by its owner first')
+    font_pages = effective_font_runs(path)
+    dominant_sizes = []
+    for record in font_pages:
+        sizes = collections.Counter()
+        for run in record['runs']:
+            sizes[round(run['size_pdf_bp'], 1)] += sum(not char.isspace() for char in run['text'])
+        dominant_sizes.append(sizes.most_common(1)[0][0] if sizes else None)
     if needs_collection_mapping(reader):
         import pypdfium2 as pdfium
-        from pypdfium2 import raw
         records = []
         with pdfium.PdfDocument(str(path)) as document:
-            for page in document:
+            for number, page in enumerate(document):
                 textpage = page.get_textpage()
                 try:
                     text = textpage.get_text_range()
-                    sizes = collections.Counter()
-                    for index in range(textpage.count_chars()):
-                        code = raw.FPDFText_GetUnicode(textpage, index)
-                        if code and not chr(code).isspace():
-                            sizes[round(raw.FPDFText_GetFontSize(textpage, index), 1)] += 1
-                    records.append({'text': text, 'body_size': sizes.most_common(1)[0][0] if sizes else None,
+                    records.append({'text': text, 'body_size': dominant_sizes[number],
                                     'text_backend': 'pdfium-standard-cjk-mapping'})
                 finally:
                     textpage.close()
                     page.close()
         return records
     records = []
-    for page in reader.pages:
-        sizes = collections.Counter()
-
-        def visitor(text, cm, tm, font, size):
-            if text.strip():
-                effective = float(size) * abs(float(tm[0]) if tm[0] else 1) * abs(float(cm[0]) if cm[0] else 1)
-                sizes[round(effective, 1)] += len(text.strip())
-        text = page.extract_text(visitor_text=visitor) or ''
-        records.append({'text': text, 'body_size': sizes.most_common(1)[0][0] if sizes else None,
+    for number, page in enumerate(reader.pages):
+        text = page.extract_text() or ''
+        records.append({'text': text, 'body_size': dominant_sizes[number],
                         'text_backend': 'pypdf'})
     return records

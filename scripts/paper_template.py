@@ -259,6 +259,9 @@ def check(text, contest='mcm', *, layout_mode='archive'):
                          r'internal control identifier\s+[0-9]+\b')
         if re.search(literal_field, identity_content):
             raise ValueError('Current team signatures and disclosure identity must use the shared PraxisTeam macro')
+        disclosure = review_mcm_identity_statements(identity_content, identity['team'])
+        if disclosure['errors']:
+            raise ValueError('Current MCM author identity: ' + '; '.join(disclosure['errors']))
         titles = review_figure_titles(rest)
         if titles['errors']:
             raise ValueError('Current MCM figure titles: ' + '; '.join(titles['errors']))
@@ -400,6 +403,31 @@ def mcm_ai_report_expected(text):
     text = re.sub(r'\\begin\s*\{(Verbatim|verbatim|lstlisting|minted)\}.*?\\end\s*\{\1\}',
                   '', text, flags=re.S)
     return bool(re.search(r'\\section\s*\*?\s*(?:\[[^\]]*\]\s*)?\{Report on Use of AI(?: Tools)?\}', text, re.I))
+
+
+def review_mcm_identity_statements(text, team):
+    """Catch literal current author-identity declarations outside header fields.
+
+    Scientific zeros, seeds, cited teams and explicitly previous identities are
+    different roles. This bounded prose check does not infer every paraphrase.
+    The TeX caller removes comments/code; the PDF caller checks the AI tail.
+    """
+    pattern = re.compile(
+        r'\b(?:template\s+team\s+number|(?:simulation|simulated|exercise)\s+team\s+(?:number|identifier)|'
+        r'internal\s+control\s+identifier|current\s+team\s+(?:control\s+)?number)'
+        r'\s*(?:is\s+)?[:#=]?\s*([0-9]{4,12})(?![0-9])', re.I)
+    statements, errors = [], []
+    for match in pattern.finditer(text):
+        prefix = text[max(0, match.start()-80):match.start()]
+        prefix = re.split(r'[.!?]\s+', prefix)[-1]
+        previous = bool(re.search(r'\b(?:old|older|previous|earlier|historical|archived|original)\s+(?:\w+\s+){0,2}$', prefix, re.I))
+        record = {'declaration': match.group(), 'team': match.group(1),
+                  'explicitly_previous_identity': previous}
+        statements.append(record)
+        if not previous and match.group(1) != team:
+            errors.append('author identity statement differs from current team: ' + match.group())
+    return {'statements': statements, 'errors': errors,
+            'scope': 'Literal template/simulation/current author-identity statements; historical attribution and numeric science retain their own roles.'}
 
 
 def check_explicit_references(text):
@@ -591,6 +619,74 @@ def inspect_typesetting_log(log_file, *, pdf=None):
     return result
 
 
+def compiler_dependencies(rules_path, source, *, output_directory=None):
+    """Read Tectonic's opened-local-file list, preserving spaces in filenames.
+
+    Tectonic 0.17 writes one dependency per physical line and does not make-
+    escape internal spaces. This deliberately is not a generic Make parser or
+    a guess from literal TeX commands; macro-resolved inputs are included.
+    The 0.17 driver prefixes relative filesystem names with its output path,
+    although they were read from the input directory. Remove that documented
+    writer prefix before resolving; never pick whichever file happens to exist.
+    Bundle resources are covered separately by the pinned runtime profile.
+    """
+    source, rules_path = Path(source).resolve(), Path(rules_path)
+    lines = rules_path.read_text(encoding='utf-8').splitlines()
+    if not lines or ' : ' not in lines[0]:
+        raise ValueError('Missing or unsupported compiler dependency record')
+    first = lines[0].split(' : ', 1)[1]
+    names = [first] + [line[2:] if line.startswith('  ') else '' for line in lines[1:]]
+    dependencies = {}
+    for index, name in enumerate(names):
+        name = name.removesuffix(' \\')
+        if not name or '\x00' in name:
+            raise ValueError('Invalid compiler dependency record')
+        path = Path(name)
+        if index and output_directory is not None and path.is_absolute():
+            try:
+                relative = path.relative_to(Path(output_directory).absolute())
+            except ValueError:
+                pass  # An explicitly absolute import retains its actual path.
+            else:
+                path = source.parent/relative
+        if not path.is_absolute():
+            path = source.parent/path
+        path = path.resolve()
+        if not path.is_file():
+            raise ValueError('Compiler dependency is missing: ' + str(path))
+        # Relative identities survive moving a complete document resource tree.
+        import os
+        key = Path(os.path.relpath(path, source.parent)).as_posix()
+        if key in dependencies:
+            raise ValueError('Duplicate compiler dependency: ' + key)
+        dependencies[key] = hashlib.sha256(path.read_bytes()).hexdigest()
+    if dependencies.get(source.name) != hashlib.sha256(source.read_bytes()).hexdigest():
+        raise ValueError('Compiler dependency record does not include the current source')
+    return {'schema_version': 1, 'method': 'tectonic-0.17-opened-local-files',
+            'files': dependencies,
+            'scope': 'Local files actually opened by the compiler; pinned bundle resources are bound separately. Two builds verify the observed file set and bytes remain stable.'}
+
+
+def verify_compiler_dependencies(record, source):
+    """Reject missing/changed resources without replacing an old receipt."""
+    if (not isinstance(record, dict) or record.get('schema_version') != 1
+            or record.get('method') != 'tectonic-0.17-opened-local-files'
+            or not isinstance(record.get('files'), dict) or not record['files']):
+        raise ValueError('Current delivery requires compiler-opened dependency bindings; rebuild the candidate')
+    source = Path(source).resolve()
+    files = record['files']
+    if files.get(source.name) != hashlib.sha256(source.read_bytes()).hexdigest():
+        raise ValueError('Compiler dependencies do not bind the current source')
+    for name, digest in files.items():
+        if (not isinstance(name, str) or not name or Path(name).is_absolute()
+                or not isinstance(digest, str) or not re.fullmatch('[0-9a-f]{64}', digest)):
+            raise ValueError('Invalid compiler dependency identity')
+        path = source.parent/name
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+            raise ValueError('Compiler dependency changed or was deleted: ' + name)
+    return {'passed': True, 'files': dict(files), 'method': record['method']}
+
+
 def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current'):
     """Canonical compiler + bundle; a receipt binds this actual source and PDF."""
     import json
@@ -626,10 +722,27 @@ def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current')
                 if hashlib.sha256(bundle_file(name)).hexdigest() != record['sha256']:
                     raise ValueError('Font differs from the pinned profile: ' + name)
     output.mkdir(parents=True)
-    run = subprocess.run([str(executable), '--bundle', runtime['bundle_url'], '--keep-logs', '--outdir', str(output), str(tex)], cwd=tex.parent, capture_output=True, text=True, encoding='utf-8', errors='replace')
-    (output/(tex.stem+'.compile.txt')).write_text(run.stdout+run.stderr, encoding='utf-8')
-    if run.returncode:
-        raise RuntimeError(run.stdout+run.stderr)
+    rules = output/(tex.stem+'.dependencies.mk')
+    command = [str(executable), '--bundle', runtime['bundle_url'], '--keep-logs',
+               '--makefile-rules', str(rules), '--outdir', str(output), str(tex)]
+    transcripts = []
+    # First discover actual opened local resources, including macro-resolved
+    # imports. The second build is the accepted candidate, with observed bytes
+    # captured before and compared after; a changed file set is refused too.
+    dependencies = None
+    for phase in ('dependency discovery', 'bound candidate'):
+        if dependencies is not None:
+            verify_compiler_dependencies(dependencies, tex)
+        run = subprocess.run(command, cwd=tex.parent, capture_output=True, text=True,
+                             encoding='utf-8', errors='replace')
+        transcripts.append('=== ' + phase + ' ===\n' + run.stdout + run.stderr)
+        (output/(tex.stem+'.compile.txt')).write_text('\n'.join(transcripts), encoding='utf-8')
+        if run.returncode:
+            raise RuntimeError(run.stdout+run.stderr)
+        observed = compiler_dependencies(rules, tex, output_directory=output)
+        if dependencies is not None and observed['files'] != dependencies['files']:
+            raise ValueError('Compiler dependencies changed during compilation; rebuild the candidate')
+        dependencies = observed
     diagnostics = None
     if contest == 'mcm' and layout_mode == 'current':
         log_file = output/(tex.stem+'.log')
@@ -648,6 +761,7 @@ def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current')
                'layout_mode': layout_mode,
                'tex_sha256': hashlib.sha256(source).hexdigest(),
                'pdf_sha256': hashlib.sha256(pdf.read_bytes()).hexdigest(),
+               'compiler_dependencies': dependencies,
                'visual_review_required': True}
     if final_format is not None:
         receipt['current_mcm_format'] = final_format
@@ -664,7 +778,7 @@ def compile_in_place(tex, contest, compiler=None, *, layout_mode='current'):
     with tempfile.TemporaryDirectory(prefix='paper-build-', dir=session) as directory:
         output = Path(directory)/'compiled'
         receipt = compile_paper(tex, contest, output, compiler, layout_mode=layout_mode)
-        for suffix in ('.pdf', '.build.json', '.compile.txt', '.log'):
+        for suffix in ('.pdf', '.build.json', '.compile.txt', '.log', '.dependencies.mk'):
             path = output/(Path(tex).stem+suffix)
             if path.exists():
                 shutil.copyfile(path, Path(tex).with_suffix(suffix))

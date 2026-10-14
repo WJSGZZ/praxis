@@ -59,12 +59,22 @@ def rolling_origin(series, horizon, *, min_train=None, season=None):
     A candidate model must beat the best baseline here, with the final test period kept apart
     from anything used to choose the candidate."""
     y = np.asarray(series, float)
-    min_train = min_train or max(8, len(y) // 2)
+    if y.ndim != 1 or not np.isfinite(y).all() or len(y) < 3:
+        raise ValueError('series must be a finite one-dimensional series with at least three observations')
+    if isinstance(horizon, bool) or not isinstance(horizon, (int, np.integer)) or horizon < 1:
+        raise ValueError('horizon must be a positive integer')
+    min_train = max(8, len(y) // 2) if min_train is None else min_train
+    if isinstance(min_train, bool) or not isinstance(min_train, (int, np.integer)) or min_train < 2:
+        raise ValueError('min_train must be an integer of at least two')
+    if season is not None and (isinstance(season, bool) or not isinstance(season, (int, np.integer)) or season < 1):
+        raise ValueError('season must be a positive integer when supplied')
     if len(y) < min_train + horizon:
         raise ValueError('Series too short for the requested training size and horizon')
     errors = {}
     for origin in range(min_train, len(y) - horizon + 1):
         for name, f in _forecasts(y[:origin], horizon, season).items():
             errors.setdefault(name, []).append(float(np.abs(f - y[origin:origin + horizon]).mean()))
+    if not all(np.isfinite(values).all() for values in errors.values()):
+        raise ValueError('Baseline forecasts or errors exceed finite numerical range')
     mae = {k: float(np.mean(v)) for k, v in errors.items()}
     return dict(mae=mae, best=min(mae, key=mae.get), origins=len(next(iter(errors.values()))))

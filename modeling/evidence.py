@@ -10,6 +10,10 @@ def rational_witness(lhs, rhs, names, point, relation, bounds):
     functions remain unverified. Box endpoints use their JSON decimal spellings;
     membership is checked exactly rather than assumed from a float comparison.
     """
+    if relation not in ('==', '<=', '>='):
+        raise ValueError('relation must be ==, <= or >=')
+    if not names or len(names) != len(point) or len(bounds) != len(names) or len(set(names)) != len(names):
+        raise ValueError('Unique names, point coordinates and bounds must have matching nonempty lengths')
     scope = dict(zip(names, map(Fraction.from_float, point)))
     if any(not Fraction(str(lo)) <= scope[name] <= Fraction(str(hi)) for name, (lo, hi) in zip(names, bounds)):
         return dict(status='unverified', method='exact_rational_witness', reason='The binary-rational sample is outside an exact decimal box endpoint')

@@ -12,7 +12,7 @@ def ahp(matrix, *, tolerance=1e-6):
     a = np.asarray(matrix, float)
     if a.ndim != 2 or a.shape[0] != a.shape[1] or not 1 <= a.shape[0] <= 10:
         raise ValueError('Pairwise matrix must be square with order 1-10')
-    if (a <= 0).any() or not np.allclose(a * a.T, 1., atol=tolerance):
+    if not np.isfinite(tolerance) or tolerance < 0 or not np.isfinite(a).all() or (a <= 0).any() or not np.allclose(a * a.T, 1., atol=tolerance, rtol=0):
         raise ValueError('Matrix must be positive and reciprocal (a_ij * a_ji = 1)')
     values, vectors = np.linalg.eig(a)
     k = int(np.argmax(values.real))

@@ -173,6 +173,13 @@ def inspect_mcm_delivery_format(path, identity, *, ai_report_expected=False):
         errors.append('PDF AI-report presence differs from the checked TeX source')
     if observed_ai and not facts['ai_report_starts_new_page']:
         errors.append('PDF AI-report boundary is mixed or ambiguous')
+    if observed_ai:
+        from scripts.paper_template import review_mcm_identity_statements
+        tail = '\n'.join(record['text'] for record in records[facts['ai_report_heading_on_page']-1:])
+        declaration_review = review_mcm_identity_statements(tail, identity['team'])
+        errors.extend(declaration_review['errors'])
+    else:
+        declaration_review = {'statements': [], 'errors': [], 'scope': 'No AI tail present'}
     # evaluate rejects duplicate literal headings; retain that boundary error
     # without importing a latest-edition page-count or dominant-font policy.
     for error in evaluated['errors']:
@@ -181,6 +188,7 @@ def inspect_mcm_delivery_format(path, identity, *, ai_report_expected=False):
                 errors.append(error)
     return {'pdf_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
             'identity': identity, 'page_boxes': page_boxes, 'a4_tolerance_bp': tolerance,
+            'author_identity_statements': declaration_review,
             'pdf_boundaries': {key: facts[key] for key in (
                 'total_pages', 'counted_pages', 'ai_report_from_page',
                 'ai_report_heading_on_page', 'ai_report_starts_new_page')},

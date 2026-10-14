@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import itertools
 import math
+from fractions import Fraction
 
 import numpy as np
 from scipy.stats import norm
@@ -11,12 +12,16 @@ from modeling import optimize
 from modeling.contracts import stochastic_matrix
 
 
+def _finite_economic_result(result):
+    if not all(np.isfinite(value) for value in result.values()):
+        raise ValueError('Economic model outputs exceed finite numerical range')
+    return result
+
+
 def markov_stationary(P) -> dict:
     """Stationary distribution of an irreducible finite chain: solve pi P = pi, sum pi = 1. Reports irreducibility and the residual."""
-    P = np.asarray(P, float)
+    P = stochastic_matrix(P)
     n = P.shape[0]
-    if P.ndim != 2 or P.shape[1] != n or not np.isfinite(P).all() or (P < -1e-12).any() or not np.allclose(P.sum(axis=1), 1, atol=1e-9):
-        raise ValueError('P must be a square row-stochastic matrix')
     reach = np.linalg.matrix_power((P > 0).astype(float) + np.eye(n), n) > 0
     irreducible = bool(reach.all())
     A = np.vstack([P.T - np.eye(n), np.ones(n)])
@@ -34,8 +39,8 @@ def markov_absorption(P, absorbing) -> dict:
         raise ValueError('absorbing must contain valid integer state indices')
     absorbing = sorted(set(absorbing))
     for i in absorbing:
-        if not np.isclose(P[i, i], 1.0):
-            raise ValueError(f'State {i} is not absorbing (P[i,i] must be 1)')
+        if P[i, i] != 1.0 or np.any(np.delete(P[i], i) != 0.0):
+            raise ValueError(f'State {i} is not absorbing (its row must be a point mass at itself)')
     transient = [i for i in range(n) if i not in absorbing]
     Q, R = P[np.ix_(transient, transient)], P[np.ix_(transient, absorbing)]
     # Every state must have a positive-probability path to the declared absorbing set.
@@ -49,47 +54,83 @@ def markov_absorption(P, absorbing) -> dict:
 
 
 def matrix_game(payoff) -> dict:
-    """Value and optimal mixed strategies of a zero-sum matrix game (row player maximises), by linear programming."""
+    """Zero-sum minimax game with centered/scaled payoffs and checked strategies.
+
+    Affine transformation is formed with exact binary-input differences before
+    numerical solution, so a unit shift cannot swallow small payoff differences.
+    Original-unit exploitability is recomputed from the actual returned strategies.
+    """
     A = np.asarray(payoff, float)
+    if A.ndim != 2 or not all(A.shape) or not np.isfinite(A).all():
+        raise ValueError('payoff must be a nonempty finite matrix')
     m, n = A.shape
-    shift = 1 - A.min()          # make all payoffs positive so the value is positive
-    B = A + shift
-    # row player: minimise sum(u) s.t. B^T u >= 1, u >= 0; value = 1/sum(u)
-    row = optimize.solve_lp(np.ones(m), A_ub=(-B.T).tolist(), b_ub=(-np.ones(n)).tolist())
-    col = optimize.solve_lp(-np.ones(n), A_ub=B.tolist(), b_ub=np.ones(m).tolist())
-    u, v = np.array(row['x']), np.array(col['x'])
-    value = 1 / u.sum()
-    return dict(value=float(value - shift), row_strategy=(u * value).tolist(), column_strategy=(v / v.sum()).tolist(),
-                has_saddle=bool(np.isclose(A.min(axis=1).max(), A.max(axis=0).min())))
+    raw = np.asarray(payoff, object)
+    original = [[Fraction(int(v)) if isinstance(v, (int, np.integer)) and not isinstance(v, (bool, np.bool_)) else Fraction.from_float(float(v)) for v in row] for row in raw]
+    origin = original[0][0]
+    span = max(abs(v-origin) for row in original for v in row)
+    saddle = max(min(row) for row in original) == min(max(original[i][j] for i in range(m)) for j in range(n))
+    if span == 0:
+        return dict(value=float(origin), value_exact=str(origin), row_strategy=[1/m]*m, column_strategy=[1/n]*n,
+                    has_saddle=True, exploitability=0.0, exploitability_exact='0', certified=True,
+                    certificate_scope='Constant supplied payoff matrix has this exact game value.')
+    B = np.array([[float((v-origin)/span) for v in row] for row in original])
+    # p and unrestricted guaranteed value t; q and unrestricted upper value u.
+    row = optimize.solve_lp([0]*m+[1], A_ub=np.c_[-B.T, np.ones(n)], b_ub=np.zeros(n),
+                            A_eq=[([1]*m+[0])], b_eq=[1], bounds=[(0, None)]*m+[(None, None)], maximize=True)
+    col = optimize.solve_lp([0]*n+[1], A_ub=np.c_[B, -np.ones(m)], b_ub=np.zeros(m),
+                            A_eq=[([1]*n+[0])], b_eq=[1], bounds=[(0, None)]*n+[(None, None)])
+    if not all(r.get('success') and r.get('certified') for r in [row, col]):
+        raise ValueError('No numerically verified minimax strategies accepted for the supplied payoff matrix')
+    p, q = np.array(row['x'][:m]), np.array(col['x'][:n])
+    if (p < 0).any() or (q < 0).any() or p.sum() <= 0 or q.sum() <= 0:
+        raise ValueError('Minimax solver returned invalid probabilities')
+    p, q = p/p.sum(), q/q.sum()
+    fp, fq = [Fraction.from_float(float(v)) for v in p], [Fraction.from_float(float(v)) for v in q]
+    ps, qs = sum(fp), sum(fq)
+    fp, fq = [v/ps for v in fp], [v/qs for v in fq]
+    low = min(sum((fp[i]*original[i][j] for i in range(m)), Fraction(0)) for j in range(n))
+    high = max(sum((fq[j]*original[i][j] for j in range(n)), Fraction(0)) for i in range(m))
+    gap = max(Fraction(0), high-low)
+    if gap/span > Fraction.from_float(1e-7):
+        raise ValueError('Returned minimax strategies fail the original-payoff exploitability check')
+    return dict(value=float((low+high)/2), value_exact=str((low+high)/2), row_strategy=p.tolist(), column_strategy=q.tolist(),
+                has_saddle=bool(saddle), row_guaranteed_value=float(low), column_upper_value=float(high),
+                exploitability=float(gap), exploitability_exact=str(gap), normalized_exploitability=float(gap/span), certified=True,
+                certificate_scope='Numerical minimax strategies within 1e-7 of the exact supplied payoff range; exploitability recomputed in original units.')
 
 
 def eoq(demand: float, order_cost: float, holding_cost: float, *, stockout_cost: float | None = None) -> dict:
     """Economic order quantity Q* = sqrt(2 D S / H); with planned shortages (backorder cost b per unit-year) Q* = sqrt(2DS/H) sqrt((H+b)/b)."""
-    if min(demand, order_cost, holding_cost) <= 0:
+    if not np.isfinite([demand, order_cost, holding_cost]).all() or min(demand, order_cost, holding_cost) <= 0:
         raise ValueError('demand, order_cost and holding_cost must be positive')
     q = math.sqrt(2 * demand * order_cost / holding_cost)
     if stockout_cost is None:
-        return dict(order_quantity=q, cycle_time=q / demand, annual_cost=math.sqrt(2 * demand * order_cost * holding_cost))
+        return _finite_economic_result(dict(order_quantity=q, cycle_time=q / demand, annual_cost=math.sqrt(2 * demand * order_cost * holding_cost)))
     b = float(stockout_cost)
-    if b <= 0:
+    if not np.isfinite(b) or b <= 0:
         raise ValueError('stockout_cost must be positive')
     q = q * math.sqrt((holding_cost + b) / b)
     s = q * b / (holding_cost + b)                  # maximum on-hand inventory; the rest of the cycle is backordered
     cost = order_cost * demand / q + holding_cost * s ** 2 / (2 * q) + b * (q - s) ** 2 / (2 * q)
-    return dict(order_quantity=q, max_inventory=s, max_backorder=q - s, annual_cost=cost)
+    return _finite_economic_result(dict(order_quantity=q, max_inventory=s, max_backorder=q - s, annual_cost=cost))
 
 
 def newsvendor(price: float, cost: float, salvage: float, mean: float, sd: float) -> dict:
     """Optimal order for normal demand: critical fractile F(Q*) = (p - c) / (p - s); expected profit by the standard loss function."""
-    if not price > cost > salvage or sd <= 0:
+    if not np.isfinite([price, cost, salvage, mean, sd]).all() or not price > cost > salvage or sd <= 0:
         raise ValueError('Need price > cost > salvage and sd > 0')
     ratio = (price - cost) / (price - salvage)
     z = float(norm.ppf(ratio))
-    q = mean + sd * z
+    unconstrained_q = mean + sd * z
+    q = max(0.0, unconstrained_q)
+    z = (q - mean) / sd
     loss = sd * (norm.pdf(z) - z * (1 - norm.cdf(z)))      # expected lost sales E[(D - Q)+]
     sales = mean - loss
     profit = price * sales + salvage * (q - sales) - cost * q
-    return dict(critical_fractile=float(ratio), order_quantity=float(q), expected_lost_sales=float(loss), expected_profit=float(profit), service_level=float(ratio))
+    result = _finite_economic_result(dict(critical_fractile=float(ratio), order_quantity=float(q), unconstrained_order_quantity=float(unconstrained_q),
+                                          expected_lost_sales=float(loss), expected_profit=float(profit), service_level=float(norm.cdf(z))))
+    result['note'] = 'Nonnegative order quantity under an untruncated normal demand approximation; negative demand mass is a modeling limitation.'
+    return result
 
 
 def cvar_portfolio(returns, target: float, *, alpha: float = 0.95, long_only: bool = True) -> dict:
@@ -114,14 +155,26 @@ def cvar_portfolio(returns, target: float, *, alpha: float = 0.95, long_only: bo
         return r
     w = np.array(r['x'][:n])
     losses = -(R @ w)
-    k = max(1, int(math.ceil((1 - alpha) * S)))
+    # A fractional tail includes only the necessary fraction of the next
+    # ordered scenario, exactly as the empirical Rockafellar-Uryasev LP does.
+    mass = (1 - alpha) * S
+    k = int(math.floor(mass))
+    ordered = np.sort(losses)[::-1]
+    tail_sum = ordered[:k].sum()
+    if k < S:
+        tail_sum += (mass - k) * ordered[k]
+    tail_mean = tail_sum / mass
     return dict(success=True, status=r['status'], message=r['message'], certified=r['certified'], weights=w.tolist(), cvar=float(r['objective']), var=float(r['x'][n]), expected_return=float(R.mean(axis=0) @ w),
-                empirical_tail_mean=float(np.sort(losses)[::-1][:k].mean()))
+                empirical_tail_mean=float(tail_mean), empirical_tail_mass=float(mass))
 
 
 def pareto_front(points, senses) -> dict:
     """Non-dominated rows of a table of objective values. senses: +1 to maximise a column, -1 to minimise."""
-    X = np.asarray(points, float) * np.asarray(senses, float)
+    raw = np.asarray(points, float)
+    directions = np.asarray(senses, float)
+    if raw.ndim != 2 or not all(raw.shape) or not np.isfinite(raw).all() or directions.shape != (raw.shape[1],) or not np.isin(directions, [-1, 1]).all():
+        raise ValueError('points must be a nonempty finite objective matrix with one sense +1 or -1 per column')
+    X = raw * directions
     n = len(X)
     keep = []
     for i in range(n):

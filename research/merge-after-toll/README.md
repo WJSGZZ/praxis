@@ -73,7 +73,7 @@ uv run --locked python research/merge-after-toll/reproduce.py --baseline --outpu
 uv run --locked python research/merge-after-toll/paper/build_report.py \
   --results research/merge-after-toll/reference/accepted.json --output .session/merge-paper
 uv run --locked python -m scripts.paper_template research/merge-after-toll/paper/paper.tex \
-  --contest mcm --compile --output-directory outputs/toll-build-001
+  --contest mcm --layout-mode archive --compile --output-directory outputs/toll-build-001
 ```
 
 第三条从冻结结果生成可编辑源码；第四条用固定 Tectonic 环境编译归档论文源，各自要求新输出目录。构建回执记录源码与 PDF 身份；新 PDF 需逐页检查后再采用。

@@ -14,7 +14,7 @@ from urllib.parse import unquote, urlsplit
 from scripts.plugin_hosts import HOSTS, host_files
 
 BUNDLE = Path(__file__).resolve().parents[1]
-FILES = ('SKILL.md', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'SECURITY.md', 'THIRD_PARTY_NOTICES.md',
+FILES = ('SKILL.md', 'README.md', 'README.en.md', 'CHANGELOG.md', 'LICENSE', 'SECURITY.md', 'THIRD_PARTY_NOTICES.md', 'CITATION.cff',
          'pyproject.toml', 'uv.lock', 'demos/mcm-2016-a/paper.pdf')
 # Explicit public resources, never the repository, environment or user cases.
 TREES = {
@@ -211,6 +211,10 @@ Keep problems, data and outputs in your project and pass its path to workspace-a
 
 [技能与工具](skills/praxis/README.md#技能一览) · [Skills and tools](skills/praxis/README.en.md#skills)
 ''')
+    # The package-root guidance and license are shipped resources too. The
+    # receipt binds all final files except the receipt itself (no self-hash).
+    for name in ('README.md', 'LICENSE'):
+        hashes[name] = hashlib.sha256((output / name).read_bytes()).hexdigest()
     receipt = {'format': 'praxis-plugin-export-v1', 'name': manifest['name'],
                'version': manifest['version'], 'host': host, 'files_sha256': hashes}
     (output / 'build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')

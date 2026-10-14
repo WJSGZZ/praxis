@@ -43,6 +43,29 @@ def initialise(case, **kw):
     return w.init(case, 'Solve the known integer case', query='integer bound', budget_seconds=120, max_attempts=3, per_run_timeout=5, **kw)
 
 
+@pytest.mark.parametrize('schema', [999, True, '1'])
+def test_unknown_case_schema_is_refused_before_workflow_write(case, schema):
+    config = case / 'case.json'
+    value = w.pipeline.read_json(config)
+    value['schema'] = schema
+    w.pipeline.save(config, value)
+    progress = case / 'planning/progress.md'
+    before = progress.read_bytes()
+    with pytest.raises(ValueError, match='Unsupported case schema'):
+        initialise(case)
+    assert progress.read_bytes() == before
+
+
+def test_legacy_case_without_schema_remains_usable_and_unchanged(case):
+    config = case / 'case.json'
+    value = w.pipeline.read_json(config)
+    value.pop('schema')
+    w.pipeline.save(config, value)
+    before = config.read_bytes()
+    assert initialise(case)['state']['schema'] == 1
+    assert config.read_bytes() == before
+
+
 def execute(case):
     return w.run(case, w.next(case)['expected_source_sha256'])
 

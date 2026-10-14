@@ -58,7 +58,20 @@ def kalman_filter(F, H, Q, R, x0, P0, observations) -> dict:
     F, H, Q, R = (np.atleast_2d(np.asarray(a, float)) for a in (F, H, Q, R))
     x, P = np.asarray(x0, float).reshape(-1), np.atleast_2d(np.asarray(P0, float))
     Y = np.asarray(observations, float)
-    Y = Y.reshape(len(Y), -1)
+    if not len(x) or H.ndim != 2 or not H.shape[0] or H.shape[1] != len(x) or F.shape != (len(x), len(x)):
+        raise ValueError('F and H must have matching finite state and observation dimensions')
+    ny, ns = H.shape[0], len(x)
+    if not all(np.isfinite(value).all() for value in (F, H, x)):
+        raise ValueError('F, H and x0 must be finite')
+    for name, matrix, shape in [('Q', Q, (ns, ns)), ('R', R, (ny, ny)), ('P0', P, (ns, ns))]:
+        if matrix.shape != shape or not np.isfinite(matrix).all() or not np.allclose(matrix, matrix.T, rtol=0, atol=1e-12):
+            raise ValueError(f'{name} must be a finite symmetric covariance matrix of the required shape')
+        if np.linalg.eigvalsh(matrix).min() < 0:
+            raise ValueError(f'{name} must be positive semidefinite')
+    if Y.ndim == 1 and ny == 1:
+        Y = Y[:, None]
+    if Y.ndim != 2 or Y.shape[1] != ny or np.isinf(Y).any():
+        raise ValueError('observations must have one row per time and the required columns; only NaN denotes missing data')
     means, covs, preds, ll = [], [], [], 0.0
     for y in Y:
         x_pred, P_pred = F @ x, F @ P @ F.T + Q
@@ -67,10 +80,17 @@ def kalman_filter(F, H, Q, R, x0, P0, observations) -> dict:
             x, P = x_pred, P_pred
         else:
             S = H @ P_pred @ H.T + R
-            K = P_pred @ H.T @ np.linalg.inv(S)
+            if np.linalg.eigvalsh(S).min() <= 0:
+                raise ValueError('Observed innovation covariance must be positive definite for Gaussian likelihood and update')
+            K = np.linalg.solve(S, H @ P_pred).T
             r = y - H @ x_pred
-            x, P = x_pred + K @ r, (np.eye(len(x)) - K @ H) @ P_pred
+            x = x_pred + K @ r
+            identity_minus = np.eye(len(x)) - K @ H
+            P = identity_minus @ P_pred @ identity_minus.T + K @ R @ K.T
+            P = (P + P.T) / 2
             ll += -.5 * (len(y) * np.log(2 * np.pi) + np.linalg.slogdet(S)[1] + r @ np.linalg.solve(S, r))
         means.append(x.copy())
         covs.append(P.copy())
+        if not np.isfinite(x).all() or not np.isfinite(P).all() or not np.isfinite(ll):
+            raise ValueError('Kalman update exceeds finite numerical range')
     return dict(filtered_mean=np.array(means).tolist(), filtered_cov=np.array(covs).tolist(), predicted_mean=np.array(preds).tolist(), log_likelihood=float(ll))

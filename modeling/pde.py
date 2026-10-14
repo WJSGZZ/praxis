@@ -14,7 +14,12 @@ from scipy.linalg import solve_banded
 
 def _boundary(bc, k, dx, u_cell):
     """Return (a, b) so that the boundary flux INTO the first/last cell is a + b * u_cell."""
+    if not isinstance(bc, (list, tuple)) or not bc:
+        raise ValueError('A boundary must be a nonempty boundary specification')
     kind = bc[0]
+    expected = 3 if kind == 'robin' else 2
+    if len(bc) != expected or not np.isfinite(bc[1:]).all() or kind == 'robin' and bc[1] <= 0:
+        raise ValueError('Boundary values must be finite; Robin film coefficient must be positive')
     if kind == 'dirichlet':
         g = 2 * k / dx          # half-cell conduction to the face value
         return g * bc[1], -g
@@ -30,12 +35,16 @@ def _boundary(bc, k, dx, u_cell):
 def solve_diffusion(length: float, cells: int, k: float, rho_c: float, initial: Callable[[np.ndarray], np.ndarray], t_end: float, steps: int, *,
                     left=('neumann', 0.0), right=('neumann', 0.0), source: Callable[[np.ndarray], np.ndarray] | None = None, theta: float = 0.5) -> dict:
     """Cell-centred finite-volume solution. Returns x, u(t_end), and an energy account (stored change vs boundary flux plus sources)."""
-    if min(length, cells, k, rho_c, t_end, steps) <= 0 or not 0.5 <= theta <= 1:
+    if (not np.isfinite([length, k, rho_c, t_end, theta]).all()
+            or any(isinstance(value, (bool, np.bool_)) or not isinstance(value, (int, np.integer)) for value in (cells, steps))
+            or min(length, cells, k, rho_c, t_end, steps) <= 0 or not 0.5 <= theta <= 1):
         raise ValueError('Positive sizes are required and theta must lie in [0.5, 1]')
     dx, dt = length / cells, t_end / steps
     x = (np.arange(cells) + .5) * dx
     u = np.asarray(initial(x), float).copy()
     s = np.zeros(cells) if source is None else np.asarray(source(x), float)
+    if u.shape != x.shape or s.shape != x.shape or not np.isfinite(u).all() or not np.isfinite(s).all():
+        raise ValueError('initial and source must return one finite value per cell; broadcasting is not allowed')
     c = k / dx ** 2
     # d u / dt = (c * (u[i-1] - 2 u[i] + u[i+1]) + boundary + s) / rho_c, assembled as banded A u + f
     lo, hi = np.full(cells, c), np.full(cells, c)
@@ -80,6 +89,10 @@ def values_at(result: dict, points, *, left: float | None = None, right: float |
     """Linear interpolation of a cell-centred solution at points. The cell centres exclude the ends, so give the boundary values (left, right)
     for Dirichlet ends; without them, points outside the first and last centre are rejected."""
     x, u = np.asarray(result['x'], float), np.asarray(result['u'], float)
+    if x.ndim != 1 or not len(x) or u.shape != x.shape or not np.isfinite(x).all() or not np.isfinite(u).all() or (np.diff(x) <= 0).any():
+        raise ValueError('Interpolation needs matching finite values at strictly increasing cell centres')
+    if any(value is not None and not np.isfinite(value) for value in (left, right)):
+        raise ValueError('Boundary interpolation values must be finite')
     length = float(x[-1] + x[0])
     xs, us = list(x), list(u)
     if left is not None:
@@ -87,6 +100,8 @@ def values_at(result: dict, points, *, left: float | None = None, right: float |
     if right is not None:
         xs, us = xs + [length], us + [right]
     pts = np.asarray(points, float)
+    if not np.isfinite(pts).all():
+        raise ValueError('Interpolation points must be finite')
     if (pts < xs[0] - 1e-12).any() or (pts > xs[-1] + 1e-12).any():
         raise ValueError('A point lies outside the interpolation range; pass the boundary values left/right')
     return np.interp(pts, xs, us).tolist()
@@ -113,6 +128,8 @@ def grid_convergence_index(f_fine: float, f_medium: float, f_coarse: float, refi
     Needs monotone convergence: (f_coarse - f_medium) and (f_medium - f_fine) of the same sign. The GCI is an error band on the fine-grid
     value, not a bound; a safety factor of 1.25 is conventional for three grids."""
     r = float(refinement_ratio)
+    if not np.isfinite([f_fine, f_medium, f_coarse, r, safety_factor]).all() or safety_factor <= 0:
+        raise ValueError('Finite solution values, refinement ratio and positive safety factor required')
     d21, d32 = f_medium - f_fine, f_coarse - f_medium
     if r <= 1 or d21 == 0 or d32 == 0 or d21 * d32 < 0:
         raise ValueError('Need refinement_ratio > 1 and monotone, non-zero differences between the three solutions')

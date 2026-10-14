@@ -63,6 +63,8 @@ def check_convexity(f: Callable, bounds: Sequence[Sequence[float]], *, trials: i
 
 def check_monotone(f: Callable, bounds: Sequence[Sequence[float]], variable: int, *, trials: int = 2000, seed: int = 2027) -> dict:
     """Is f nondecreasing/nonincreasing in one variable, others fixed at random points?"""
+    if isinstance(variable, bool) or not isinstance(variable, (int, np.integer)) or not 0 <= variable < len(bounds):
+        raise ValueError('variable must index one of the declared bounds')
     f = _finite_function(f)
     rng = np.random.default_rng(seed)
     base = _points(bounds, trials, rng)
@@ -155,6 +157,8 @@ def check_invariant(rhs: Callable, invariant: Callable, bounds: Sequence[Sequenc
     The rate is judged relative to |grad g| |rhs|, so the verdict does not depend on the units of g."""
     if finite_real(tol, 'tol') < 0:
         raise ValueError('tol must be nonnegative')
+    if finite_real(step, 'step') <= 0:
+        raise ValueError('step must be positive')
     rng = np.random.default_rng(seed)
     x = _points(bounds, trials, rng)
     n = x.shape[1]
@@ -187,9 +191,19 @@ def buckingham_pi(dimension_matrix: Sequence[Sequence[float]], names: Sequence[s
 
     Each group is a vector of exponents; the number of groups is n_variables - rank. Dimensional analysis finds candidate
     groups; it does not tell which of them matter."""
-    m = sp.Matrix(dimension_matrix)
-    if m.shape[1] != len(names):
-        raise ValueError('One name per column')
+    array = np.asarray(dimension_matrix, dtype=object)
+    if array.ndim != 2 or not all(array.shape):
+        raise ValueError('dimension_matrix must be a nonempty 2-D matrix')
+    if array.shape[1] != len(names) or any(not isinstance(name, str) or not name.strip() for name in names) or len(set(names)) != len(names):
+        raise ValueError('One unique nonempty name per column')
+    try:
+        # Decimal spellings of dimensions are exact rationals, including 1.0.
+        # Do not send SymPy Float terms to integer-denominator extraction.
+        m = sp.Matrix([[sp.Rational(str(value)) for value in row] for row in array])
+    except (ValueError, TypeError) as error:
+        raise ValueError('Dimension exponents must be finite rational numbers') from error
+    if any(value.is_finite is not True for value in m):
+        raise ValueError('Dimension exponents must be finite rational numbers')
     basis = m.nullspace()
     groups = []
     for v in basis:
@@ -236,6 +250,10 @@ def is_network_matrix(a: Sequence[Sequence[float]], *, brute_limit: int = 12) ->
     Exact for matrices with entries in {-1,0,1} and at most two nonzeros per column (directed or bipartite incidence matrices
     pass); for other small matrices every square submatrix determinant is checked; larger ones are reported as undecided."""
     A = np.asarray(a, float)
+    if A.ndim != 2 or not all(A.shape) or not np.isfinite(A).all():
+        raise ValueError('A must be a nonempty finite 2-D matrix')
+    if isinstance(brute_limit, bool) or not isinstance(brute_limit, (int, np.integer)) or not 1 <= brute_limit <= 12:
+        raise ValueError('brute_limit must be an integer from 1 to 12')
     if not np.isin(A, [-1, 0, 1]).all():
         return dict(totally_unimodular=False, proved=True, reason='entry outside {-1,0,1}')
     if (np.count_nonzero(A, axis=0) <= 2).all():
@@ -246,7 +264,8 @@ def is_network_matrix(a: Sequence[Sequence[float]], *, brute_limit: int = 12) ->
         for k in range(1, min(m, n) + 1):
             for rows in itertools.combinations(range(m), k):
                 for cols in itertools.combinations(range(n), k):
-                    if round(abs(np.linalg.det(A[np.ix_(rows, cols)]))) > 1:
-                        return dict(totally_unimodular=False, proved=True, witness=dict(rows=list(rows), columns=list(cols)))
-        return dict(totally_unimodular=True, proved=True, method='every square submatrix checked')
+                    determinant = sp.Matrix(A[np.ix_(rows, cols)].astype(int).tolist()).det()
+                    if abs(determinant) > 1:
+                        return dict(totally_unimodular=False, proved=True, witness=dict(rows=list(rows), columns=list(cols), determinant=int(determinant)))
+        return dict(totally_unimodular=True, proved=True, method='every square submatrix checked with exact integer determinants')
     return dict(totally_unimodular=None, proved=False, note='Too large to enumerate; look for an incidence or interval structure.')

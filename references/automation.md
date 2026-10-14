@@ -69,6 +69,11 @@ mapping = asof_join(queries, versions, "id", "cutoff", "released")
 
 - `probe_structure` 的违例是浮点或有限差分候选，始终 `proved: false`。`test_conjecture` 的 `holds`／`numerical_holds` 描述采样计算；普遍命题状态另读 `claim_status`，候选核验另读 `verification`。只有支持的有理算术在箱内一个精确点严格违例，才给 `exact_rational_witness` 和 `claim_status: refuted`；候选被精确核验否定或含未支持函数时仍未决。mpmath高精度本身不升级证据。`find_counterexample` 只有忠实精确的整数谓词才保留有限域证明；浮点常量、实变量、真正除法及未认证的负／变量幂不因穷举而成为严格保证。精确组合判据、条件性递推证明等原保证继续按自身前提使用。
 - 拟合／回归保留有限的参数、拟合误差及真实收敛状态。未定义、无穷、不适用和不可识别的诊断以 `null` 加对应状态与原因表达；秩亏拟合的一组系数不代表唯一识别，局部区间不得抹去秩亏或失败。严格JSON继续拒绝NaN／Infinity，不对所有结果自动清洗。
+- LP 的 `certified` 与 MILP 的 `proved_optimal` 是数值门禁结果，不是精确数学证明。LP 检查缩放后的原始可行性、对偶可行性与差距；MILP 另核实际整数性和求解器界／差距。先读 `success` 再读对应认证字段，不可把求解器返回成功或限时可行解当成认证最优。极端尺度可能被拒绝；影子价格按原问题单位返回；无法表示为有限浮点值时为 null，`diagnostics.rhs_shadow_prices` 保存 `not_representable`。严格结论需要独立界或精确答案。
+- `knapsack` 对提供的整数与二进制浮点值做精确有理运算，`value_exact` 保存最优总值；它不追认未提供的理想十进制值。权重、数量和容量为非负整数，容量最多1000000，动态规划最多5000000表格单元。微小正收益不因数值容差被丢弃。
+- `solve_mdp` 的有限期分支对整数及实际二进制浮点值做精确有理 DP，`value_exact` 保存值，浮点 `value` 可有显示舍入。通过随机矩阵前提后，转移行按实际行和精确归一，`transition_rows_normalized` 记录是否发生改变；保证只归这个明确的模型。最多2000000次非零转移／奖励运算，值的有理数位数最多32768。折现无穷期仍用数值迭代，误差界从返回值的精确 Bellman 残差计算；`error_bound_exact` 保留精确界，浮点界向上取整，不可表示时为 null 加原因。这不认证状态、奖励或信息结构符合现实。
+- `matrix_game` 保留原收益的整数／二进制身份，以精确差值居中缩放，再求数值 LP 策略并核原单位 exploitability。`value_exact` 是策略下界和上界中点的精确有理账目，不普遍等于精确均衡值；读 `certificate_scope` 的数值容差。`has_saddle` 比较原收益的纯策略极小极大；吸收链指定状态必须是真正无出边的自吸收行，极小正转移也不能当作零。
+- `hypothesis_test` 的未定义检验保留本检验字段名，以 null 和原因记录；t 检验用 `p`，相关检验用 `pearson_p`／`spearman_p`，`significant` 同为 null；配对样本必须长度一致。`bootstrap_ci` 的退化 BCa 区间以 `ci: null` 保留状态，估计值或标准误不能代替有效区间。检验、区间及折间误差的解释仍依实际抽样设计。
 - `bimatrix_nash.count` 只数返回候选。`completeness` 明确浮点等支撑枚举未认证完整性；退化连续均衡族和奇异支撑可能遗漏，不把有限列表当全部均衡。策略建议另核最优反应及适用条件。
 - 输入由同一 `TOOLS` 注册描述和校验；校验器仅实现当前使用的JSON Schema 2020-12关键词子集，未知约束词拒绝。最小费用流边为异构四元组；JSON demand键为字符串，整数端点（包括数学整数 `1.0`）规范化为整数字符串，拒绝整数与相同文本字符串混用。
 - MCP stdio 每帧至多8 MiB UTF-8字节（包括换行）；超限帧只排空、不解析、不执行工具。无效UTF-8、重复JSON键及解析深度溢出拒绝，下一帧仍可处理。CLI JSON参数同样拒绝重复键。注册表达式子进程最多保留4 MiB stdout与64 KiB stderr；超限终止并回收直接子进程、不接受结果。上述边界不限制工作进程的内存、CPU、子孙进程、文件或网络权限；普通数值工具及案例脚本另按实际预算和宿主隔离执行。
@@ -113,6 +118,8 @@ uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/check_pdf.py" /绝�
 当前美赛交付必须依次完成：current 编译 → 当前 PDF 字体候选和全部页面实际审阅 → current 冻结 → `workflow.report` 登记当前冻结副本与证据。首次交付任一门禁失败就保留候选和失败，不登记为成品。唯一执行入口为 scripts.paper_template 的 `--compile` 和 scripts.freeze_pdf 的 `--tex`／`--contest mcm`：默认 `--layout-mode current` 要求当前 v4，固定运行时和资源包，并核对实际 A4 页框、摘要年份／题号／队号、完整页眉身份及 AI 报告独立边界。编译和最终冻结共用真实 `.log` 检查，Overfull hbox/vbox 或 Float too large 均拒绝；冻结要求 PDF 同目录同名的完整日志，记录日志与 PDF 修改时间供诊断，并保存日志 SHA256。有诊断的构建收据须匹配该日志哈希；历史 current 收据缺此字段时允许以实际新鲜零溢出日志补验，记录该兼容路径而不改旧收据。编译器可能先落日志后写 PDF，因此不以二者时间先后判定有效性；日志、源码和 PDF 哈希也不代替视觉或科学核验。
 
 current 美赛冻结自动执行 12 TeX pt 字号门禁；合法较小数学候选必须逐项以同 PDF 的 `--font-review` 解释，普通小字必须修源重建。逐页实际查看后保存 `--page-review`（默认 `<候选.pdf>.page-review.json`）：含当前 `pdf_sha256`、真实 `actor`、全部一基页码 `pages`，以及 `format_checks` 中 `paragraph_indentation`、`figures_tables_fonts`、`clipping_overlap`、`cross_references`、`summary_headers`、`ai_report_boundary` 六项实际核对的布尔值 true。缺项、false、旧哈希或漏页都拒绝。它记录审阅范围与判断，不能自动认证完整 TeX 宏展开或人的核验。冻结还必须提供同次 `--build-receipt`；收据保存实际格式、结构、字体、日志和页审阅结果，创建字节一致的新副本后才调用 `workflow.report`。
+
+current 编译还通过 Tectonic 的依赖清单记录实际打开的本地输入和图片，再绑定第二次构建。冻结核对这些文件的存在与字节，不能仅主 TeX 不变就接受已经改动的 `input` 或图像。旧 current 收据缺少依赖绑定时须真实重编；archive 保留原证据身份。摘要、页眉及明确的当前／模拟作者身份声明共用队号检查，历史身份和科学数字保留各自角色；静态声明检查不理解任意改写。
 
 历史重现必须显式选择保留的 `layout_version`，编译与布局冻结传 `--layout-mode archive`；保留版本、原件和旧哈希，不称当前交付通过。无布局 profile 的通用 PDF 快照、research 和 CUMCM 继续其各自用途与规则；它们不自动成为美赛交付，也不能冒充当前美赛字号／页面门禁成功。构建或冻结记录不是正式提交回执。
 
@@ -166,3 +173,5 @@ evidence-linked 只表示清单中的连接存在；不能证明所有任务已�
 正常任务可同步用 `scripts/feedback.py init/record` 记录实际模型／宿主来源、工作模式、材料接触、阶段、评审／候选、介入与停止事件；不可取得的信息保留 `unknown`，不会自动捕获聊天。记录放用户案例的 `feedback/`，不纳入计算定义，不改变数值证据有效性规则。已有非 pipeline 目录也可适配。
 
 交付或实际停止后，可用 `stage` 按显式文件清单生成独立分享副本与摘要，查看删减／缺失和原件／分享哈希；确认实际清单后才 `pack`。同一只读 `inspect` 接受目录和 ZIP，不执行包内代码、不上传。完整字段、事件样例、分享边界和限制见 [运行反馈](feedback.md)。反馈记录完整、ZIP 字节完好与整题研究完成分别验收。
+
+分享包写入器对压缩比过高的合法重复日志使用无压缩条目，保持读取器的膨胀比限制。拒绝的 ZIP 同样关闭资源；此措施不取消总字节、路径、符号链接和文件数检查。插件导出收据绑定实际交付文件，包括包根 README 与 LICENSE；收据自身不递归绑定，哈希也不等于信任或功能验证。

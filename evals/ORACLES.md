@@ -8,11 +8,11 @@
 |---|---|---|
 | LP | Constructed primal/dual complementary-slackness certificate | HiGHS; checks value **and** vector feasibility, objective consistency and optimality; alternative optima accepted |
 | Queue | Rational birth-death stationary weights plus infinite geometric tail | Erlang M/M/c calculation; separate implementation, same stationary Poisson/exponential assumptions; waiting time in reciprocal rate units |
-| SIR | Known beta/gamma; finite-initial-condition final-size invariant solved by bisection | Fitting shares the forward simulator that synthesized observations; not a fully independent forward-model check. S0=999990, I0=10, initial recovered=0, N=1e6, rates per day. Attack fraction includes initial cases; production final-size approximation neglects finite initial infection, within tolerance here |
+| SIR | Known beta/gamma; finite-initial-condition final-size invariant solved by bisection | Fitting shares the forward simulator that synthesized observations; not a fully independent forward-model check. S0=999990, I0=10, initial recovered=0, N=1e6, rates per day. Attack fraction includes initial cases. The current solver consumes the fitted model's actual-initial-state final_size; older solver receipts used the infinitesimal-seed approximation and retain their original scope |
 | Assignment | Enumeration of 6! permutations | Hungarian algorithm; exact discrete optimum |
 | Structure | Analytic labels for nine finite families, positive integer coefficients 1..3, domain [1,3]^2 | Production probes are diagnostics; ground-truth labels no longer come from a finite grid |
 | Heat PDE | Fourier sine-mode decay | Finite-volume integration and interpolation; consistent input units |
-| Markov | Eigenvector nearest eigenvalue 1 of the displayed matrix | Stationary linear-system calculation; floating rounding makes this a numerical oracle |
+| Markov | Eigenvector nearest eigenvalue 1 of the displayed matrix, after its final rounding and row normalization | Stationary linear-system calculation; independent exact balance checks use the serialized normalized rows. This generator correction does not rewrite historical tasks or receipts. |
 | Game | Closed-form 2x2 mixed-strategy value without saddle point | Linear programming; row-player payoff convention |
 | Inventory | Normal-density quadrature on mean +/- 8 sd and bounded scalar optimization on mean +/- 4 sd | Critical-fractile formula; approximate reference, not brute force. Mathematical untruncated normal demand includes a negative tail; not a physically nonnegative demand model |
 

@@ -12,7 +12,7 @@
 | 背包、指派、旅行商、匹配 | 工具 | `knapsack`、`solve_assignment`、`solve_tsp`（带下界） | 更大规模调度、装箱：OR-Tools CP-SAT／MILP 建模并报告间隙 |
 | 车辆路径、作业车间调度、设施选址 | 库 | MILP 建模或 OR-Tools | 先用小规模精确解校验启发式，报告与下界的差距 |
 | 网络：最短路、最大流、最小生成树、最小费用流 | 工具 | `shortest_path`、`max_flow`、`minimum_spanning_tree`、`min_cost_flow` | 中心性、社区：networkx |
-| 分阶段决策、马尔可夫决策 | 工具 | `solve_mdp`（精确逆向递推或值迭代）、`markov_*` | 状态空间过大：近似动态规划，须与小规模精确解对照 |
+| 分阶段决策、马尔可夫决策 | 工具 | `solve_mdp`（有限期有理 DP 或折现数值迭代；条件和预算见自动化契约）、`markov_*` | 状态空间过大：近似动态规划，须与小规模精确解对照 |
 | 博弈 | 工具 | `matrix_game`、`bimatrix_nash` | 多人、动态博弈：库，写清均衡概念 |
 | 评价、权重、方案排序 | 工具 | `evaluate_alternatives`、`ahp_weights`、`entropy_weights`、`pareto_front` | 先查支配，再谈权重 |
 | 回归与预测 | 工具 | `ols_report`、`compare_models`、`cross_validate_predictor`（数值Ridge／二分类，独立行或留组）、`backtest_baselines`、`arima_forecast`、`gm11_forecast` | 结构时间序列、面板数据：statsmodels |
@@ -26,7 +26,8 @@
 | 库存、金融 | 工具 | `eoq`、`newsvendor`、`cvar_portfolio` | 期权定价：解析式见 domain-models.md |
 | 结构探索、反例、猜想 | 工具 | `probe_structure`、`find_counterexample`、`guess_sequence`、`find_relation`、`dimensional_analysis` | — |
 | 空间度量、覆盖与地理优化 | 库 | [空间分析](spatial-analysis.md)：明确CRS／单位的SciPy点查询、已有LP／网络分配；矢量／栅格按需用成熟GIS库 | 地理／高程基准、局部可达与位置误差另核；专业GIS库非默认依赖，不冒充通用水动力 |
-| 空间统计、图像与信号 | 缺 | — | 空间抽样／相关先按[空间分析](spatial-analysis.md)与统计设计，估计器／图像／信号处理再选成熟库和独立检查 |
+| 给定二值掩码的区域测量 | 工具 | `binary_components`：连通域、像素面积、边界过滤；[图像测量](image-analysis.md) | 实际图像的分割、语义识别及空间标定另核；有工具不代表能从原图直接识别真实对象 |
+| 空间统计、真实图像分割与信号处理 | 库／按需适配 | [空间分析](spatial-analysis.md)、[图像测量](image-analysis.md)及成熟库条件路线 | 当前没有专用空间统计、原图分割或信号MCP工具；先核采样／相关、测量目标和独立答案，不把mask几何工具当语义识别 |
 | 符号推导 | 库 | sympy | 推导后用 `test_conjecture` 数值核对 |
 
 ## 用法

@@ -7,7 +7,7 @@ from pathlib import Path
 from pypdf import PdfReader
 
 from scripts import build_plugin, mcp_server
-from scripts.paper_template import MCM_SIMULATION_TEAM
+from scripts.paper_template import MCM_SIMULATION_TEAM, review_mcm_identity_statements
 
 ROOT = Path(__file__).resolve().parents[1]
 GALLERY = Path('demos/mcm-studies')
@@ -118,6 +118,9 @@ def check_gallery(root=ROOT):
                 fields = re.findall(r'(?:From:\s*Team\s+|(?:Respectfully|Sincerely),\s*Team\s+|internal control identifier\s+)([0-9]+)\b', page_text)
                 if any(team != MCM_SIMULATION_TEAM for team in fields):
                     errors.append(f'{slug}: page {number} has a conflicting team signature or disclosure')
+                identity_review = review_mcm_identity_statements(page_text, MCM_SIMULATION_TEAM)
+                errors.extend(f'{slug}: page {number}: {error}'
+                              for error in identity_review['errors'])
             if pages != entry.get('pages'):
                 errors.append(f'{slug}: PDF has {pages} pages; catalog says {entry.get("pages")}')
             if metadata.get('pdf_sha256') != expected_sha or metadata.get('pages') != entry.get('pages'):

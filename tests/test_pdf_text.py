@@ -34,3 +34,39 @@ def test_chinese_identifying_metadata_is_not_hidden_by_json_escaping(tmp_path):
         writer.write(stream)
     report = inspect_pdf(path, forbidden=['测试大学'])
     assert report['errors'] == ['Configured forbidden term found: 测试大学']
+
+
+def test_rotated_body_size_uses_effective_vertical_em(tmp_path):
+    from pypdf import PdfWriter
+    from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject
+    from scripts.contest_rules import evaluate
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=500, height=700)
+    font = writer._add_object(DictionaryObject({
+        NameObject('/Type'): NameObject('/Font'),
+        NameObject('/Subtype'): NameObject('/Type1'),
+        NameObject('/BaseFont'): NameObject('/Helvetica'),
+    }))
+    page[NameObject('/Resources')] = DictionaryObject({
+        NameObject('/Font'): DictionaryObject({NameObject('/F1'): font})})
+    stream = DecodedStreamObject()
+    stream.set_data(b'BT /F1 12 Tf 0 .5 -.5 0 150 150 Tm '
+                    b'(Rotated body with six-point effective letters) Tj ET')
+    page[NameObject('/Contents')] = writer._add_object(stream)
+    path = tmp_path/'rotated.pdf'
+    writer.write(path)
+    records = extract(path)
+    assert records[0]['body_size'] == 6.0
+    assert not evaluate(records, 'mcm')['passed']
+
+
+def test_scaled_standard_cjk_size_does_not_keep_nominal_twelve(tmp_path):
+    from pypdf import PdfReader, PdfWriter
+    writer = PdfWriter()
+    page = writer.add_page(PdfReader(FIXTURE).pages[0])
+    page.scale_by(.5)
+    path = tmp_path/'scaled-cjk.pdf'
+    writer.write(path)
+    record = extract_pages(path)[0]
+    assert '数学建模与独立验证' in record['text']
+    assert record['body_size'] == 6.0

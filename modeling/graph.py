@@ -5,6 +5,13 @@ import networkx as nx
 import math
 
 
+def _finite_total(value):
+    result = float(value)
+    if not math.isfinite(result):
+        raise ValueError('Graph objective exceeds finite numerical range')
+    return result
+
+
 def _simple_edge(g, u, v, value):
     if not math.isfinite(value):
         raise ValueError('Edge values must be finite')
@@ -23,7 +30,7 @@ def shortest_path(edges, source, target, *, directed=True):
     if source not in g or target not in g or not nx.has_path(g, source, target):
         return dict(reachable=False)
     path = nx.dijkstra_path(g, source, target)
-    return dict(reachable=True, path=path, length=float(nx.dijkstra_path_length(g, source, target)))
+    return dict(reachable=True, path=path, length=_finite_total(nx.dijkstra_path_length(g, source, target)))
 
 
 def max_flow(edges, source, sink):
@@ -36,7 +43,7 @@ def max_flow(edges, source, sink):
         g.add_edge(u, v, capacity=cap)
     value, (reach, rest) = nx.minimum_cut(g, source, sink)
     cut = [[u, v] for u in reach for v in g[u] if v in rest]
-    return dict(flow=float(value), cut_edges=cut, cut_capacity=float(sum(g[u][v]['capacity'] for u, v in cut)))
+    return dict(flow=_finite_total(value), cut_edges=cut, cut_capacity=_finite_total(sum(g[u][v]['capacity'] for u, v in cut)))
 
 
 def minimum_spanning_tree(edges):
@@ -47,4 +54,4 @@ def minimum_spanning_tree(edges):
     if not nx.is_connected(g):
         raise ValueError('Graph is not connected: no spanning tree')
     tree = nx.minimum_spanning_tree(g)
-    return dict(edges=[[u, v, d['weight']] for u, v, d in tree.edges(data=True)], total=float(tree.size(weight='weight')))
+    return dict(edges=[[u, v, d['weight']] for u, v, d in tree.edges(data=True)], total=_finite_total(tree.size(weight='weight')))

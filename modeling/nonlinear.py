@@ -5,9 +5,10 @@ often the best one was found, never "global"."""
 from __future__ import annotations
 
 from typing import Callable, Sequence
+from fractions import Fraction
 
 import numpy as np
-from scipy.optimize import linprog, minimize
+from scipy.optimize import minimize
 from modeling.contracts import finite_real, stochastic_matrix
 
 
@@ -75,21 +76,42 @@ def minimize_nlp(objective: Callable, bounds: Sequence[Sequence[float]], constra
 
 
 def knapsack(values: Sequence[float], weights: Sequence[int], capacity: int, *, copies: Sequence[int] | None = None) -> dict:
-    """Exact 0/1 (or bounded) knapsack by dynamic programming over integer weights."""
-    w = [int(x) for x in weights]
-    if any(x != y for x, y in zip(w, weights)) or int(capacity) != capacity or min(w) < 0:
-        raise ValueError('Weights and capacity must be non-negative integers (scale decimals first)')
-    n, cap = len(values), int(capacity)
+    """Exact bounded knapsack for the supplied binary-rational numeric values.
+
+    No improvement tolerance discards small positive gains. Integer weights and
+    copies are validated before expansion; the DP table has a finite size budget.
+    """
+    def nonnegative_integer(value, name):
+        if isinstance(value, (bool, np.bool_)):
+            raise ValueError(f'{name} must be nonnegative integers')
+        number = finite_real(value, name)
+        if number < 0 or not number.is_integer():
+            raise ValueError(f'{name} must be nonnegative integers')
+        return int(value)
+
+    raw = np.asarray(values, dtype=object)
+    if raw.ndim != 1:
+        raise ValueError('values must be a finite vector')
+    v = [Fraction(int(value)) if isinstance(value, (int, np.integer)) and not isinstance(value, (bool, np.bool_))
+         else Fraction.from_float(finite_real(value, 'values')) for value in raw]
+    w = [nonnegative_integer(value, 'weights') for value in weights]
+    cap = nonnegative_integer(capacity, 'capacity')
+    n = len(v)
+    counts = [1] * n if copies is None else [nonnegative_integer(value, 'copies') for value in copies]
+    if len(w) != n or len(counts) != n:
+        raise ValueError('values, weights and copies must have matching lengths')
+    if cap > 1_000_000 or (sum(counts) + 1) * (cap + 1) > 5_000_000:
+        raise ValueError('Knapsack DP exceeds the 5000000 table-cell budget or 1000000 capacity limit')
     items = []
     for i in range(n):
-        for _ in range(1 if copies is None else int(copies[i])):
+        for _ in range(counts[i]):
             items.append(i)
-    best = np.zeros(cap + 1)
+    best = [Fraction(0)] * (cap + 1)
     take = np.zeros((len(items), cap + 1), bool)
     for j, i in enumerate(items):
-        wi, vi = w[i], float(values[i])
+        wi, vi = w[i], v[i]
         for c in range(cap, wi - 1, -1):
-            if best[c - wi] + vi > best[c] + 1e-12:
+            if best[c - wi] + vi > best[c]:
                 best[c] = best[c - wi] + vi
                 take[j, c] = True
     c, chosen = cap, [0] * n
@@ -97,7 +119,9 @@ def knapsack(values: Sequence[float], weights: Sequence[int], capacity: int, *, 
         if take[j, c]:
             chosen[items[j]] += 1
             c -= w[items[j]]
-    return dict(value=float(best[cap]), chosen=chosen, weight=int(sum(w[i] * k for i, k in enumerate(chosen))), proved=True)
+    return dict(value=finite_real(float(best[cap]), 'optimal value'), value_exact=str(best[cap]),
+                chosen=chosen, weight=int(sum(w[i] * k for i, k in enumerate(chosen))), proved=True,
+                arithmetic='exact_binary_rational_input_values')
 
 
 def min_cost_flow(edges: Sequence[Sequence[float]], demand: dict) -> dict:
@@ -126,8 +150,14 @@ def robust_lp(c, A_ub, b_ub, delta, gamma, *, maximize: bool = False) -> dict:
 
     gamma = 0 is the nominal problem; gamma = number of columns is the full box. The price of robustness is the objective difference."""
     c, A, b, D = (np.asarray(v, float) for v in (c, A_ub, b_ub, delta))
+    if (c.ndim != 1 or not len(c) or A.ndim != 2 or not all(A.shape)
+            or A.shape[1] != len(c) or b.shape != (A.shape[0],) or D.shape != A.shape
+            or not all(np.isfinite(value).all() for value in (c, A, b, D)) or (D < 0).any()):
+        raise ValueError('Finite matching c, A_ub, b_ub and nonnegative delta are required')
     m, n = A.shape
-    g = float(gamma)
+    g = finite_real(gamma, 'gamma')
+    if not 0 <= g <= n:
+        raise ValueError('gamma must lie between zero and the number of columns')
     # variables: x (n), z (m), p (m*n); row i: A_i x + g z_i + sum_j p_ij <= b_i ; z_i + p_ij - D_ij x_j >= 0
     nv = n + m + m * n
     rows, rhs = [], []
@@ -144,23 +174,33 @@ def robust_lp(c, A_ub, b_ub, delta, gamma, *, maximize: bool = False) -> dict:
             r[n + m + i * n + j] = -1
             rows.append(r); rhs.append(0.0)
     cost = np.r_[-c if maximize else c, np.zeros(m + m * n)]
-    res = linprog(cost, A_ub=np.array(rows), b_ub=np.array(rhs), bounds=[(0, None)] * nv, method='highs')
-    if res.status != 0:
-        return dict(feasible=False, status=res.message)
-    x = res.x[:n]
+    from modeling.optimize import solve_lp
+    solved = solve_lp(cost, A_ub=np.array(rows), b_ub=np.array(rhs), bounds=[(0, None)] * nv)
+    if not solved['success'] or not solved.get('certified', False):
+        return dict(feasible=False, status=solved.get('verification_error', solved['message']),
+                    solver_status=solved['status'], lp_result=solved,
+                    note='No numerically verified optimum accepted; solver status is not a mathematical infeasibility proof.')
+    x = np.asarray(solved['x'][:n])
 
     def worst(i):
         d = np.sort(D[i] * x)[::-1]
         k = int(np.floor(g))
         return float(A[i] @ x + d[:k].sum() + ((g - k) * d[k] if k < n else 0.0))
-    return dict(feasible=True, x=x.tolist(), value=float(c @ x), gamma=g, worst_case_row_use=[worst(i) for i in range(m)])
+    return dict(feasible=True, x=x.tolist(), value=finite_real(c @ x, 'objective'), gamma=g,
+                worst_case_row_use=[finite_real(worst(i), 'worst-case row use') for i in range(m)],
+                certified=solved['certified'], certificate=solved['certificate'])
 
 
 def solve_mdp(P, R, *, horizon: int | None = None, discount: float = 1.0, terminal=None, maximize: bool = True, tol: float = 1e-10) -> dict:
-    """Finite-state decision process. P[a][s][s'] transition probabilities, R[s][a] rewards.
+    """Finite-state MDP: exact rational finite-horizon DP, numerical discounted VI.
 
-    With `horizon` it does exact backward induction (policy per stage); without, value iteration for discount < 1 (error bound reported)."""
-    P, R = np.asarray(P, float), np.asarray(R, float)
+    Accepted stochastic rows are normalized exactly by their supplied row sums.
+    Finite-horizon values preserve integer and binary-float input identity. The
+    infinite-horizon bound uses an exact Bellman residual of the returned values,
+    rather than a rounded difference between successive numerical iterations.
+    """
+    raw_P, raw_R = np.asarray(P, object), np.asarray(R, object)
+    P, R = np.array(P, dtype=float, copy=True), np.asarray(R, float)
     if P.ndim != 3 or not P.shape[0]:
         raise ValueError('P must have shape (actions, states, states)')
     for matrix in P:
@@ -172,26 +212,72 @@ def solve_mdp(P, R, *, horizon: int | None = None, discount: float = 1.0, termin
         raise ValueError('discount must lie in [0,1] and tol must be finite and positive')
     if horizon is not None and (isinstance(horizon, bool) or not isinstance(horizon, (int, np.integer)) or horizon < 0):
         raise ValueError('horizon must be a nonnegative integer')
-    if terminal is not None and (np.asarray(terminal).shape != (ns,) or not np.isfinite(terminal).all()):
+    if terminal is not None and (np.asarray(terminal).shape != (ns,) or not np.isfinite(np.asarray(terminal, float)).all()):
         raise ValueError('terminal must be a finite vector with one value per state')
-    pick = np.argmax if maximize else np.argmin
+
+    def rational(v):
+        return Fraction(int(v)) if isinstance(v, (int, np.integer)) and not isinstance(v, (bool, np.bool_)) else Fraction.from_float(float(v))
+
+    # Converting sparse supports once avoids arithmetic on zero transitions.
+    transitions, normalized = [], False
+    for a in range(na):
+        states = []
+        for st in range(ns):
+            row = [(j, rational(raw_P[a, st, j])) for j in range(ns) if P[a, st, j] != 0]
+            mass = sum((p for _, p in row), Fraction(0))
+            normalized |= mass != 1
+            states.append([(j, p/mass) for j, p in row])
+            for j, p in states[-1]:
+                P[a, st, j] = float(p)
+        transitions.append(states)
+    nonzeros = sum(len(row) for action in transitions for row in action)
+    if nonzeros > 2_000_000 or horizon is not None and int(horizon)*(nonzeros+ns*na) > 2_000_000:
+        raise ValueError('MDP exact arithmetic exceeds the 2000000 transition/reward operation budget')
+    rewards = [[rational(raw_R[st, a]) for a in range(na)] for st in range(ns)]
+    rate = rational(discount)
+
+    def bellman(v):
+        q = [[rewards[st][a]+rate*sum((p*v[j] for j, p in transitions[a][st]), Fraction(0)) for a in range(na)] for st in range(ns)]
+        policies = [(max if maximize else min)(range(na), key=lambda a: q[st][a]) for st in range(ns)]
+        values = [q[st][a] for st, a in enumerate(policies)]
+        if any(max(value.numerator.bit_length(), value.denominator.bit_length()) > 32768 for value in values):
+            raise ValueError('MDP exact arithmetic exceeds the 32768-bit rational value budget')
+        return values, policies
+
+    scope = dict(transition_rows_normalized=bool(normalized),
+                 arithmetic='exact_integer_and_binary_rational_inputs' if horizon is not None else 'numerical_iteration_with_exact_binary_rational_bellman_residual',
+                 note='Values and guarantees are conditional on the supplied MDP; accepted transition rows are normalized by their exact row sums.')
     if horizon is not None:
-        V = np.zeros(ns) if terminal is None else np.asarray(terminal, float)
-        policy, values = [], [V.copy()]
+        values = [Fraction(0)]*ns if terminal is None else [rational(v) for v in terminal]
+        policy = []
         for _ in range(int(horizon)):
-            Q = np.array([[R[s, a] + discount * P[a, s] @ V for a in range(na)] for s in range(ns)])
-            policy.append(pick(Q, axis=1).tolist())
-            V = Q.max(axis=1) if maximize else Q.min(axis=1)
-            values.append(V.copy())
-        return dict(value=V.tolist(), policy_by_stages_remaining=policy, method='backward induction', exact=True)
+            values, action = bellman(values)
+            policy.append(action)
+        return dict(value=[finite_real(float(v), 'MDP value') for v in values], value_exact=[str(v) for v in values],
+                    policy_by_stages_remaining=policy, method='backward induction', exact=True, **scope)
     if not 0 <= discount < 1:
         raise ValueError('Infinite horizon needs discount in [0, 1)')
     V = np.zeros(ns)
     for it in range(1, 100001):
-        Q = np.array([[R[s, a] + discount * P[a, s] @ V for a in range(na)] for s in range(ns)])
+        Q = np.array([[R[st, a]+discount*P[a, st]@V for a in range(na)] for st in range(ns)])
         Vn = Q.max(axis=1) if maximize else Q.min(axis=1)
-        delta = np.max(np.abs(Vn - V))
+        if not np.isfinite(Vn).all():
+            raise ValueError('MDP numerical value iteration exceeds finite numerical range')
+        delta = np.max(np.abs(Vn-V))
         V = Vn
-        if delta < tol:
+        if delta <= tol*(1-discount):
             break
-    return dict(value=V.tolist(), policy=pick(Q, axis=1).tolist(), iterations=it, error_bound=float(discount * delta / (1 - discount)), method='value iteration')
+    actual = [rational(v) for v in V]
+    checked, policy = bellman(actual)
+    residual = max(abs(a-b) for a, b in zip(checked, actual))
+    bound = residual/(1-rate)
+    try:
+        numerical_bound = float(bound)
+        if np.isfinite(numerical_bound) and Fraction.from_float(numerical_bound) < bound:
+            numerical_bound = float(np.nextafter(numerical_bound, np.inf))
+    except OverflowError:
+        numerical_bound = np.inf
+    return dict(value=V.tolist(), policy=policy, iterations=it, error_bound=numerical_bound if np.isfinite(numerical_bound) else None,
+                error_bound_exact=str(bound), bellman_residual_exact=str(residual),
+                error_bound_reason=None if np.isfinite(numerical_bound) else 'Exact bound exceeds finite float range; see error_bound_exact',
+                converged=bool(bound <= rational(tol)), method='value iteration', **scope)

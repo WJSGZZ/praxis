@@ -37,7 +37,10 @@ def _bc(spec, name):
 
 def solve_layered(layers: Sequence[dict], *, t_end: float, t_initial: float, left, right, times: Sequence[float] | None = None,
                   cells_per_layer: int | Sequence[int] = 20, rtol: float = 1e-8, atol: float = 1e-8) -> dict:
-    """Method-of-lines finite volumes with a stiff adaptive integrator (Radau): the only discretisation error left is spatial.
+    """Method-of-lines finite volumes with a stiff adaptive integrator (Radau).
+
+    Time integration still has numerical error controlled by the requested
+    tolerances; refining space alone does not establish that time error is negligible.
 
     A step change of a surface temperature at t = 0 is singular, so near the start the error is first order in the cell size; smooth
     (Robin) boundaries give second order. Returns the times, the temperatures of the two outer surfaces and of every interface (interpolated with flux continuity), and the
@@ -103,23 +106,29 @@ def laplace_layered(layers: Sequence[dict], *, times: Sequence[float], t_initial
     solution that a finite-volume or finite-difference result must match."""
     _check(layers)
     lbc, rbc = _bc(left, 'left'), _bc(right, 'right')
-    mp.mp.dps = dps
-    h1 = mp.mpf(lbc[1]) if lbc[0] == 'robin' else None
-    h2 = mp.mpf(rbc[1]) if rbc[0] == 'robin' else None
-    u1 = mp.mpf(lbc[2] - t_initial)
-    u2 = mp.mpf(rbc[2] - t_initial)
+    if isinstance(dps, bool) or not isinstance(dps, (int, np.integer)) or not 15 <= dps <= 1000:
+        raise ValueError('dps must be an integer between 15 and 1000')
+    grid = np.asarray(times, float)
+    if grid.ndim != 1 or not len(grid) or not np.isfinite(grid).all() or (grid <= 0).any() or not np.isfinite(t_initial):
+        raise ValueError('times must be nonempty finite positive values and t_initial finite')
+    ctx = mp.mp.clone()
+    ctx.dps = int(dps)
+    h1 = ctx.mpf(lbc[1]) if lbc[0] == 'robin' else None
+    h2 = ctx.mpf(rbc[1]) if rbc[0] == 'robin' else None
+    u1 = ctx.mpf(lbc[2] - t_initial)
+    u2 = ctx.mpf(rbc[2] - t_initial)
 
     def layer_matrix(layer, s):
-        alpha = mp.mpf(layer['k']) / mp.mpf(layer['rho_c'])
-        lam = mp.sqrt(s / alpha)
-        d, kk = mp.mpf(layer['thickness']), mp.mpf(layer['k'])
-        ch, sh = mp.cosh(lam * d), mp.sinh(lam * d)
-        return mp.matrix([[ch, -sh / (kk * lam)], [-kk * lam * sh, ch]])
+        alpha = ctx.mpf(layer['k']) / ctx.mpf(layer['rho_c'])
+        lam = ctx.sqrt(s / alpha)
+        d, kk = ctx.mpf(layer['thickness']), ctx.mpf(layer['k'])
+        ch, sh = ctx.cosh(lam * d), ctx.sinh(lam * d)
+        return ctx.matrix([[ch, -sh / (kk * lam)], [-kk * lam * sh, ch]])
 
     def fields(s):
         """Transform of the temperature rise at the left surface, at every interface and at the right surface."""
         mats = [layer_matrix(layer, s) for layer in layers]
-        total = mp.eye(2)
+        total = ctx.eye(2)
         for m in mats:
             total = m * total
         a, b, c, d = total[0, 0], total[0, 1], total[1, 0], total[1, 1]
@@ -137,7 +146,7 @@ def laplace_layered(layers: Sequence[dict], *, times: Sequence[float], t_initial
         else:
             u0 = U1
             q0 = (U2 - a * u0) / b
-        state = mp.matrix([[u0], [q0]])
+        state = ctx.matrix([[u0], [q0]])
         values = [u0]
         for m in mats:
             state = m * state
@@ -154,10 +163,12 @@ def laplace_layered(layers: Sequence[dict], *, times: Sequence[float], t_initial
 
     n_points = len(layers) + 1
     series = [[] for _ in range(n_points)]
-    for t in times:
-        t = mp.mpf(t)
+    for t in grid:
+        t = ctx.mpf(t)
         for j in range(n_points):
             f = (lambda s, j=j: cached(s)[j])
-            series[j].append(float(mp.invertlaplace(f, t, method='talbot')) + t_initial)
-    return dict(times=[float(t) for t in times], surface_left=series[0], surface_right=series[-1], interfaces=series[1:-1],
+            series[j].append(float(ctx.invertlaplace(f, t, method='talbot')) + t_initial)
+    if not all(np.isfinite(values).all() for values in series):
+        raise ValueError('Laplace inversion exceeds finite numerical range')
+    return dict(times=grid.tolist(), surface_left=series[0], surface_right=series[-1], interfaces=series[1:-1],
                 note='Talbot inversion of the transfer-matrix solution; accurate for t > 0, no discretisation.')

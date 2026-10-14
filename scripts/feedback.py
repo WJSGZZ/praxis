@@ -14,6 +14,7 @@ import stat
 import sys
 import uuid
 import zipfile
+import zlib
 
 SCHEMA = 'praxis-feedback/1'
 MAX_FILE_BYTES = 20 * 1024 * 1024
@@ -360,22 +361,31 @@ class Reader:
                 self.local_descriptor = True
         else:
             self.archive = zipfile.ZipFile(self.source)
-            self.members = {}
-            total = 0
-            for item in self.archive.infolist():
-                name = safe_name(item.filename)
-                if name in self.members:
-                    raise ValueError('Duplicate ZIP member: ' + name)
-                mode = item.external_attr >> 16
-                if stat.S_ISLNK(mode) or (stat.S_IFMT(mode) not in {0, stat.S_IFREG}):
-                    raise ValueError('Non-regular ZIP member: ' + name)
-                if item.file_size > MAX_FILE_BYTES or item.file_size > max(item.compress_size, 1) * 200:
-                    raise ValueError('Abnormal ZIP expansion: ' + name)
-                total += item.file_size
-                if total > MAX_TOTAL_BYTES or len(self.members) >= MAX_MEMBERS:
-                    raise ValueError('ZIP size/member limit exceeded')
-                self.members[name] = item
-            self.manifest_name = 'manifest.json'
+            try:
+                self._validate_archive()
+            except BaseException:
+                # Construction failed before inspect() can enter its finally.
+                # Release the handle now, including on Windows cleanup paths.
+                self.archive.close()
+                raise
+
+    def _validate_archive(self):
+        self.members = {}
+        total = 0
+        for item in self.archive.infolist():
+            name = safe_name(item.filename)
+            if name in self.members:
+                raise ValueError('Duplicate ZIP member: ' + name)
+            mode = item.external_attr >> 16
+            if stat.S_ISLNK(mode) or (stat.S_IFMT(mode) not in {0, stat.S_IFREG}):
+                raise ValueError('Non-regular ZIP member: ' + name)
+            if item.file_size > MAX_FILE_BYTES or item.file_size > max(item.compress_size, 1) * 200:
+                raise ValueError('Abnormal ZIP expansion: ' + name)
+            total += item.file_size
+            if total > MAX_TOTAL_BYTES or len(self.members) >= MAX_MEMBERS:
+                raise ValueError('ZIP size/member limit exceeded')
+            self.members[name] = item
+        self.manifest_name = 'manifest.json'
 
     def read(self, name):
         name = safe_name(name)
@@ -468,7 +478,15 @@ def pack(source, output, *, confirm_manifest_sha256):
         with zipfile.ZipFile(output, 'x', compression=zipfile.ZIP_DEFLATED) as archive:
             for name in names:
                 # Store bytes read through the same traversal/symlink boundary.
-                archive.writestr(name, safe_file(source, name).read_bytes())
+                data = safe_file(source, name).read_bytes()
+                compressor = zlib.compressobj(wbits=-15)
+                compressed_size = len(compressor.compress(data)) + len(compressor.flush())
+                # A legitimate repetitive log can exceed the untrusted reader's
+                # expansion limit. Store that entry uncompressed; keep the
+                # reader's byte, member and ratio protections unchanged.
+                method = (zipfile.ZIP_STORED if len(data) > max(compressed_size, 1) * 200
+                          else zipfile.ZIP_DEFLATED)
+                archive.writestr(name, data, compress_type=method)
         archived = inspect(output)
         if archived != report:
             raise ValueError('Directory/ZIP inspection mismatch')

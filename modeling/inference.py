@@ -10,6 +10,7 @@ from typing import Callable, Sequence
 
 import numpy as np
 from scipy import stats
+from modeling.contracts import diagnostic, finite_real
 
 
 def adjust_pvalues(pvalues: Sequence[float], *, hypothesis_ids: Sequence[str], family_id: str,
@@ -91,10 +92,23 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
     """kind: welch_t, paired_t, mann_whitney, ks_2samp, anova, kruskal, chi2_independence (table), shapiro (a), correlation (a, b).
 
     Returns statistic, p-value, an effect size, a confidence interval where one is standard, and flags for violated assumptions."""
+    alpha = finite_real(alpha, 'alpha')
+    if not 0 < alpha < 1:
+        raise ValueError('alpha must lie strictly between zero and one')
+
+    def sample(value, name, minimum=2):
+        result = np.asarray(value, float)
+        if result.ndim != 1 or len(result) < minimum or not np.isfinite(result).all():
+            raise ValueError(f'{name} must be a finite one-dimensional sample with at least {minimum} observations')
+        return result
+
     flags = []
     out: dict = dict(kind=kind, alpha=alpha)
     if kind in ('welch_t', 'paired_t', 'mann_whitney', 'ks_2samp', 'correlation'):
-        a, b = np.asarray(a, float), np.asarray(b, float)
+        minimum = 1 if kind in ('mann_whitney', 'ks_2samp') else 2
+        a, b = sample(a, 'a', minimum), sample(b, 'b', minimum)
+        if kind in ('paired_t', 'correlation') and a.shape != b.shape:
+            raise ValueError('Paired samples and correlation require matching sample lengths; broadcasting is not allowed')
     if kind == 'welch_t':
         r = stats.ttest_ind(a, b, equal_var=False)
         sp = np.sqrt((a.var(ddof=1) + b.var(ddof=1)) / 2)
@@ -102,14 +116,14 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
         ci = r.confidence_interval(1 - alpha)
         out.update(statistic=float(r.statistic), p=float(r.pvalue), difference=float(diff), ci=[float(ci.low), float(ci.high)], effect_size_cohen_d=float(diff / sp))
         for name, x in (('a', a), ('b', b)):
-            if len(x) < 30 and stats.shapiro(x).pvalue < alpha:
+            if 3 <= len(x) < 30 and stats.shapiro(x).pvalue < alpha:
                 flags.append(f'sample {name} departs from normality (Shapiro p<{alpha}); this is a diagnostic, not a rule for choosing another test. Assess outliers, sample size and independence for the mean-difference target; a rank test is not a general substitute for comparing means')
     elif kind == 'paired_t':
         r = stats.ttest_rel(a, b)
         d = a - b
         ci = r.confidence_interval(1 - alpha)
         out.update(statistic=float(r.statistic), p=float(r.pvalue), mean_difference=float(d.mean()), ci=[float(ci.low), float(ci.high)], effect_size_dz=float(d.mean() / d.std(ddof=1)))
-        if len(d) < 30 and stats.shapiro(d).pvalue < alpha:
+        if 3 <= len(d) < 30 and stats.shapiro(d).pvalue < alpha:
             flags.append('paired differences depart from normality; assess pair alignment, independence across pairs, outliers and the mean-difference target. Do not switch tests from this diagnostic p-value alone; signed-rank inference has a different target and additional symmetry assumptions')
     elif kind == 'mann_whitney':
         r = stats.mannwhitneyu(a, b, alternative='two-sided')
@@ -118,7 +132,9 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
         r = stats.ks_2samp(a, b)
         out.update(statistic=float(r.statistic), p=float(r.pvalue))
     elif kind in ('anova', 'kruskal'):
-        gs = [np.asarray(g, float) for g in groups]
+        if groups is None or len(groups) < 2:
+            raise ValueError('At least two finite group samples are required')
+        gs = [sample(g, f'groups[{i}]') for i, g in enumerate(groups)]
         r = stats.f_oneway(*gs) if kind == 'anova' else stats.kruskal(*gs)
         out.update(statistic=float(r.statistic), p=float(r.pvalue), group_means=[float(g.mean()) for g in gs])
         if kind == 'anova':
@@ -131,12 +147,16 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
             out['n'] = n
     elif kind == 'chi2_independence':
         t = np.asarray(table, float)
+        if (t.ndim != 2 or min(t.shape) < 2 or not np.isfinite(t).all()
+                or (t < 0).any() or (t.sum(axis=0) <= 0).any() or (t.sum(axis=1) <= 0).any()):
+            raise ValueError('table must be a finite nonnegative 2-D table with at least two positive rows and columns')
         chi2, p, dof, expected = stats.chi2_contingency(t)
         out.update(statistic=float(chi2), p=float(p), dof=int(dof), effect_size_cramers_v=float(np.sqrt(stats.chi2_contingency(t, correction=False)[0] / (t.sum() * (min(t.shape) - 1)))))
         if (expected < 5).any():
             flags.append('some expected counts are below 5; the chi-square approximation is poor (consider Fisher exact for 2x2)')
     elif kind == 'shapiro':
-        r = stats.shapiro(np.asarray(a, float))
+        a = sample(a, 'a', 3)
+        r = stats.shapiro(a)
         out.update(statistic=float(r.statistic), p=float(r.pvalue))
     elif kind == 'correlation':
         pr, ps = stats.pearsonr(a, b), stats.spearmanr(a, b)
@@ -161,7 +181,39 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
         out['estimand'], requirements = design_targets[kind]
         out['sample_design'] = dict(status='not_checked', requirements=requirements,
                                     note='Diagnostic p-values neither verify these design requirements nor select another estimand or test automatically.')
-    out['significant'] = bool(out.get('p', out.get('pearson_p', 1.0)) < alpha)
+    # A numerical infinity or an undefined test cannot become JSON NaN or a
+    # positive scientific finding. Keep descriptive differences, but withhold
+    # t inference when its estimated standard error is zero.
+    diagnostics = {}
+    degenerate_t = ((kind == 'welch_t' and a.var(ddof=1) == 0 and b.var(ddof=1) == 0)
+                    or (kind == 'paired_t' and (a - b).std(ddof=1) == 0))
+    if degenerate_t:
+        reason = 'Estimated standard error is zero; ordinary t inference is undefined for these samples'
+        for key in ('statistic', 'p', 'ci', 'effect_size_cohen_d', 'effect_size_dz'):
+            if key in out:
+                out[key] = None
+                diagnostics[key] = dict(status='undefined', reason=reason)
+        flags.append(reason)
+    if kind == 'correlation' and (np.ptp(a) == 0 or np.ptp(b) == 0):
+        reason = 'Correlation is undefined when either aligned sample is constant'
+        for key in ('pearson', 'pearson_p', 'pearson_ci', 'spearman', 'spearman_p'):
+            out[key] = None
+            diagnostics[key] = dict(status='undefined', reason=reason)
+        flags.append(reason)
+
+    def finite_diagnostics(value, path):
+        if isinstance(value, list):
+            return [finite_diagnostics(item, f'{path}[{i}]') for i, item in enumerate(value)]
+        if isinstance(value, float) and not np.isfinite(value):
+            result, diagnostics[path] = diagnostic(value, reason='This statistic is undefined or exceeds finite numerical range for the supplied samples')
+            return result
+        return value
+
+    out = {key: finite_diagnostics(value, key) for key, value in out.items()}
+    p_value = out.get('p', out.get('pearson_p'))
+    out['significant'] = None if p_value is None else bool(p_value < alpha)
+    if diagnostics:
+        out['diagnostics'] = diagnostics
     out['flags'] = flags
     out['note'] = 'Significance is not importance: read the effect size and interval. Several tests on one data set need a multiplicity correction.'
     return out
@@ -170,16 +222,32 @@ def hypothesis_test(kind: str, a: Sequence[float], b: Sequence[float] | None = N
 def bootstrap_ci(data: Sequence[float], statistic: str = 'mean', *, n_resamples: int = 5000, confidence: float = 0.95, seed: int = 2027, method: str = 'BCa') -> dict:
     """Bootstrap confidence interval for mean, median, std or a quantile such as q0.9. Independent observations are assumed."""
     x = np.asarray(data, float)
+    if x.ndim != 1 or len(x) < 2 or not np.isfinite(x).all():
+        raise ValueError('data must be a finite one-dimensional sample with at least two observations')
+    if isinstance(n_resamples, bool) or not isinstance(n_resamples, (int, np.integer)) or n_resamples < 2:
+        raise ValueError('n_resamples must be an integer of at least two')
+    if not np.isfinite(confidence) or not 0 < confidence < 1:
+        raise ValueError('confidence must lie strictly between zero and one')
+    if not isinstance(method, str) or method.lower() not in ('bca', 'basic', 'percentile'):
+        raise ValueError('method must be BCa, basic or percentile')
+    if not isinstance(statistic, str):
+        raise ValueError('statistic must be a supported statistic name')
     fn: Callable
     if statistic in ('mean', 'median', 'std'):
         fn = {'mean': np.mean, 'median': np.median, 'std': lambda v, axis=-1: np.std(v, ddof=1, axis=axis)}[statistic]
     elif statistic.startswith('q'):
         q = float(statistic[1:])
+        if not np.isfinite(q) or not 0 <= q <= 1:
+            raise ValueError('quantile level must lie in [0,1]')
         fn = lambda v, axis=-1: np.quantile(v, q, axis=axis)
     else:
         raise ValueError("statistic: mean, median, std, or q<level> such as q0.9")
     res = stats.bootstrap((x,), fn, n_resamples=n_resamples, confidence_level=confidence, method=method, random_state=np.random.default_rng(seed))
-    return dict(statistic=statistic, estimate=float(fn(x)), ci=[float(res.confidence_interval.low), float(res.confidence_interval.high)], standard_error=float(res.standard_error),
+    interval = np.array([res.confidence_interval.low, res.confidence_interval.high], float)
+    se, se_status = diagnostic(res.standard_error, reason='Bootstrap standard error is undefined for this resampling distribution')
+    interval_status = dict(status='computed') if np.isfinite(interval).all() else dict(status='undefined', reason='The requested bootstrap interval is undefined for this resampling distribution; BCa can degenerate even when the estimate is finite')
+    return dict(statistic=statistic, estimate=finite_real(fn(x), 'statistic estimate'), ci=interval.tolist() if np.isfinite(interval).all() else None,
+                standard_error=se, diagnostics=dict(ci=interval_status, standard_error=se_status),
                 n=len(x), method=method, note='For time series or clustered data resample blocks instead; with very small n the interval is itself unreliable.')
 
 
@@ -295,12 +363,20 @@ def pca_report(X: Sequence[Sequence[float]], names: Sequence[str] | None = None,
     """Principal components: explained variance, cumulative share and loadings; standardise unless all columns share one unit."""
     from sklearn.decomposition import PCA
     A = np.asarray(X, float)
-    Z = (A - A.mean(0)) / A.std(0, ddof=1) if standardise else A - A.mean(0)
+    if A.ndim != 2 or A.shape[0] < 2 or not A.shape[1] or not np.isfinite(A).all():
+        raise ValueError('X must be a finite matrix with at least two observations and one feature')
+    if not np.any(np.ptp(A, axis=0) > 0):
+        raise ValueError('PCA variance ratios are undefined when every feature is constant')
+    scale = A.std(0, ddof=1)
+    Z = (A - A.mean(0)) / np.where(scale > 0, scale, 1) if standardise else A - A.mean(0)
     pca = PCA().fit(Z)
-    names = list(names) if names else [f'x{i}' for i in range(A.shape[1])]
+    names = list(names) if names is not None else [f'x{i}' for i in range(A.shape[1])]
+    if len(names) != A.shape[1] or any(not isinstance(name, str) or not name.strip() for name in names) or len(set(names)) != len(names):
+        raise ValueError('names must contain one unique nonempty label per feature')
     return dict(explained_ratio=pca.explained_variance_ratio_.tolist(), cumulative=np.cumsum(pca.explained_variance_ratio_).tolist(),
                 loadings=[dict(zip(names, row)) for row in pca.components_.tolist()], scores=pca.transform(Z).tolist(), standardised=standardise,
-                note='Components are directions of variance, not of importance for any outcome; sign is arbitrary.')
+                constant_features=np.flatnonzero(scale == 0).tolist(),
+                note='Components are directions of variance, not of importance for any outcome; sign is arbitrary. Constant features are centered to zero and have no variance contribution.')
 
 
 def cluster_report(X: Sequence[Sequence[float]], k_range: Sequence[int] = (2, 3, 4, 5, 6), *, seed: int = 2027, standardise: bool = True) -> dict:
@@ -308,20 +384,39 @@ def cluster_report(X: Sequence[Sequence[float]], k_range: Sequence[int] = (2, 3,
     from sklearn.cluster import KMeans
     from sklearn.metrics import adjusted_rand_score, silhouette_score
     A = np.asarray(X, float)
-    Z = (A - A.mean(0)) / A.std(0, ddof=1) if standardise else A
+    if A.ndim != 2 or len(A) < 3 or not A.shape[1] or not np.isfinite(A).all():
+        raise ValueError('X must be a finite matrix with at least three observations and one feature')
+    scale = A.std(0, ddof=1)
+    Z = (A - A.mean(0)) / np.where(scale > 0, scale, 1) if standardise else A
+    counts = list(k_range)
+    if not counts or any(isinstance(k, bool) or not isinstance(k, (int, np.integer)) or k < 2 for k in counts):
+        raise ValueError('k_range must contain integers of at least two')
+    unique_count = len(np.unique(Z, axis=0))
     rows = []
-    for k in k_range:
-        if k >= len(Z):
+    skipped = []
+    for k in dict.fromkeys(counts):
+        if k >= len(Z) or k > unique_count:
+            skipped.append(dict(k=int(k), reason='Needs k < observation count and k <= distinct observation count'))
             continue
         km = KMeans(k, n_init=10, random_state=seed).fit(Z)
         rows.append(dict(k=int(k), silhouette=float(silhouette_score(Z, km.labels_)), inertia=float(km.inertia_)))
+    if not rows:
+        raise ValueError('No admissible k can be assessed by silhouette on these observations')
     best = max(rows, key=lambda r: r['silhouette'])
     rng = np.random.default_rng(seed)
     base = KMeans(best['k'], n_init=10, random_state=seed).fit(Z)
     ari = []
+    skipped_subsamples = 0
     for _ in range(20):
         idx = rng.choice(len(Z), int(.8 * len(Z)), replace=False)
+        if len(idx) < best['k'] or len(np.unique(Z[idx], axis=0)) < best['k']:
+            skipped_subsamples += 1
+            continue
         sub = KMeans(best['k'], n_init=10, random_state=int(rng.integers(1 << 30))).fit(Z[idx])
         ari.append(adjusted_rand_score(base.labels_[idx], sub.labels_))
-    return dict(by_k=rows, best_k=best['k'], labels=base.labels_.tolist(), centres=base.cluster_centers_.tolist(), stability_ari_mean=float(np.mean(ari)),
+    return dict(by_k=rows, skipped_k=skipped, best_k=best['k'], labels=base.labels_.tolist(), centres=base.cluster_centers_.tolist(),
+                stability_ari_mean=float(np.mean(ari)) if ari else None,
+                stability=dict(status='computed' if ari else 'undefined', successful_subsamples=len(ari), skipped_subsamples=skipped_subsamples,
+                               reason=None if ari else 'No subsample had enough distinct observations for the selected k'),
+                constant_features=np.flatnonzero(scale == 0).tolist(),
                 note='Silhouette below about 0.25 means little cluster structure; a stability ARI below 0.7 means the grouping depends on the sample.')

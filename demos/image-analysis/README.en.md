@@ -4,7 +4,7 @@ This fixed teaching case isolates the measurement step after a mask already exis
 
 ![Three retained components and excluded pixels in the synthetic mask](assets/components.png)
 
-*Figure 1. Outlines mark the retained components; colors distinguish them and grey marks excluded foreground pixels. Coordinates are zero-based columns and rows, with row 0 at the top. A [vector PDF](assets/components.pdf) is also available.*
+*Figure 1. Retained components and excluded pixels.* Outlines mark the retained components; colors distinguish them and grey marks excluded foreground pixels. Coordinates are zero-based columns and rows, with row 0 at the top. A [vector PDF](assets/components.pdf) is also available.
 
 ## Results
 

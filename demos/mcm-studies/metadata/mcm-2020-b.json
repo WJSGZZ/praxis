@@ -14,7 +14,7 @@
   "edition": 2020,
   "problem": "B",
   "pages": 22,
-  "pdf_sha256": "17169fdfc8b3ff9321bca8bfb68b82f99898caa8f0c4d5ef33dc7152b856b66c",
+  "pdf_sha256": "9af2ed1a28ccbab9c7d1608d24b80a84e4bd2bd8470cec18a99f2c115d19657a",
   "reviewer_identity_en": "Author-external AI review with follow-up by the same reviewer; neither human nor technically blind. Exact served model identity is unknown.",
   "reviewer_identity_zh": "作者外 AI 评阅，同一评阅者复核；非真人或技术盲审。确切实际模型身份未知。",
   "current_semantic_review": {
@@ -93,5 +93,38 @@
     "science_preserved": true,
     "new_science_runs": 0,
     "new_award_review": false
+  },
+  "identity_disclosure_revision": {
+    "parent_pdf_sha256": "17169fdfc8b3ff9321bca8bfb68b82f99898caa8f0c4d5ef33dc7152b856b66c",
+    "current_pdf_sha256": "9af2ed1a28ccbab9c7d1608d24b80a84e4bd2bd8470cec18a99f2c115d19657a",
+    "source_sha256": "70d9380ca22658fcc43d4e4ad87da2035c1591c4398e1b65ecd06b876f0eaae3",
+    "scope": "Corrected a stale all-zero simulation identifier in the current AI disclosure and recorded the later presentation-only AI edit. Original scientific manuscript, results, full scientific-review identities and award opinion remain unchanged.",
+    "scientific_pages_exact_text_and_raster_equal": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "actual_revised_page_review": 22,
+    "current_font_and_format_review_passed": true,
+    "new_science_runs": 0,
+    "new_award_assessment": false
   }
 }

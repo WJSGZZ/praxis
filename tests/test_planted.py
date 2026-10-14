@@ -7,6 +7,23 @@ import pytest
 from evals import planted
 
 
+@pytest.mark.parametrize('seed', range(1, 9))
+def test_markov_task_rounding_preserves_stochastic_input_and_independent_oracle(seed):
+    from fractions import Fraction
+    import sympy as sp
+    task, truth = planted.gen_markov(seed)
+    # Independent exact balance equations for the serialized probability model.
+    rows = [[Fraction.from_float(value) for value in row] for row in task.data['P']]
+    normalized = [[value / sum(row) for value in row] for row in rows]
+    matrix = sp.Matrix(normalized).T - sp.eye(4)
+    matrix[3, :] = sp.ones(1, 4)
+    exact = matrix.inv() * sp.Matrix([0, 0, 0, 1])
+    expected = float(exact[0])
+    assert truth['state0'] == pytest.approx(expected, abs=1e-12)
+    actual = planted.solve_with_tools(task)
+    assert actual['state0'] == pytest.approx(expected, abs=1e-12)
+
+
 @pytest.mark.parametrize('kind', sorted(planted.GENERATORS))
 def test_tools_recover_planted_truth_on_fixed_development_seeds(kind):
     for seed in range(1, 9):
@@ -33,8 +50,18 @@ def test_command_line_round_trip():
     task = json.loads(out)
     assert 'total' in task['report'] and 'cost' in task['data']
     truth = planted.GENERATORS['assignment'](5)[1]['total']
-    ok = subprocess.run([sys.executable, '-m', 'evals.planted', 'check', 'assignment', '5', json.dumps(dict(total=truth))], capture_output=True, text=True, check=True).stdout
+    ok = subprocess.run([sys.executable, '-m', 'evals.planted', 'check', 'assignment', '5', json.dumps(dict(total=truth)), '--task-sha256', task['task_sha256']], capture_output=True, text=True, check=True).stdout
     assert json.loads(ok)['correct']
+    assert json.loads(ok)['task_sha256'] == task['task_sha256']
+
+
+def test_changed_task_identity_is_rejected_before_scoring():
+    task, truth = planted.gen_queue(3)
+    saved = planted.task_sha256(task)
+    assert planted.score('queue', 3, truth, expected_task_sha256=saved)['correct']
+    task.data['lam'] += 1
+    with pytest.raises(ValueError, match='Task identity differs'):
+        planted.score('queue', 3, truth, expected_task_sha256=planted.task_sha256(task))
 
 
 def test_non_object_answers_get_a_helpful_error_and_the_task_carries_a_template():

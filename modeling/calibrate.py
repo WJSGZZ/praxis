@@ -27,13 +27,16 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
     labels = list(names) if names else [f'p{i + 1}' for i in range(k)]
     if len(labels) != k:
         raise ValueError('names must match the parameters')
-    if holdout < 0 or holdout >= len(x) - k:
+    if isinstance(holdout, bool) or not isinstance(holdout, (int, np.integer)) or holdout < 0 or holdout >= len(x) - k:
         raise ValueError('holdout must leave more fitted points than parameters')
     n_fit = len(x) - holdout
     lo, hi = (np.full(k, -np.inf), np.full(k, np.inf)) if bounds is None else (np.asarray([b[0] for b in bounds], float), np.asarray([b[1] for b in bounds], float))
 
     def residual(theta, upto):
-        return np.asarray(model(theta, x[:upto]), float) - y[:upto]
+        prediction = np.asarray(model(theta, x[:upto]), float)
+        if prediction.shape != y[:upto].shape or not np.isfinite(prediction).all():
+            raise ValueError('model must return one finite prediction per x value; broadcasting is not allowed')
+        return prediction - y[:upto]
 
     fit = least_squares(residual, theta0, args=(n_fit,), bounds=(lo, hi))
     J = fit.jac
@@ -94,5 +97,10 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
                note='Confidence intervals are local and conditional on the model being right; they do not include structural error.')
     if holdout:
         pred = np.asarray(model(fit.x, x[n_fit:]), float)
-        out['holdout'] = dict(points=holdout, rmse=float(np.sqrt(np.mean((pred - y[n_fit:]) ** 2))), fit_rmse=rmse)
+        if pred.shape != y[n_fit:].shape or not np.isfinite(pred).all():
+            raise ValueError('model must return one finite holdout prediction per x value')
+        holdout_rmse = float(np.sqrt(np.mean((pred - y[n_fit:]) ** 2)))
+        if not np.isfinite(holdout_rmse):
+            raise ValueError('Holdout error exceeds finite numerical range')
+        out['holdout'] = dict(points=holdout, rmse=holdout_rmse, fit_rmse=rmse)
     return out

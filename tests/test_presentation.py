@@ -72,6 +72,8 @@ def test_single_best_gallery_has_unique_problem_identity_and_bound_papers():
 @pytest.mark.parametrize('line, expected_error', [
     ('Team Control Number 0000000', 'summary does not use'),
     ('From: Team 7391861', 'conflicting team signature'),
+    ('This paper uses the template team number 0000000.', 'author identity statement'),
+    ('The current team control number is 0000000.', 'author identity statement'),
 ])
 def test_gallery_reads_actual_pdf_identity_even_with_fresh_hashes(tmp_path, line, expected_error):
     import hashlib

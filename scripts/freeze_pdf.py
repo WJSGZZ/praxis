@@ -15,6 +15,7 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
     layout = None
     structure = None
     diagnostics = None
+    dependency_review = None
     if layout_mode not in {'current', 'archive'}:
         raise ValueError('Layout mode must be current or archive')
     current_mcm = tex is not None and contest == 'mcm' and layout_mode == 'current'
@@ -50,6 +51,9 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
                 or build.get('tex_sha256') != hashlib.sha256(tex_bytes).hexdigest()
                 or build.get('pdf_sha256') != hashlib.sha256(raw).hexdigest()):
             raise ValueError('Canonical build receipt does not match runtime, layout, source or PDF')
+        if build.get('compiler_dependencies') is not None or layout_mode == 'current':
+            from scripts.paper_template import verify_compiler_dependencies
+            dependency_review = verify_compiler_dependencies(build.get('compiler_dependencies'), tex)
         if current_mcm:
             from scripts.paper_template import inspect_typesetting_log
             log_file = source.with_suffix('.log')
@@ -103,6 +107,8 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
             raise ValueError('Current MCM PDF format failed: ' + '; '.join(delivery_format['errors']))
         pages = inspect_mcm_page_review(source, page_review)
     digest = hashlib.sha256(raw).hexdigest()
+    if dependency_review is not None:
+        verify_compiler_dependencies(build['compiler_dependencies'], tex)
     if (source.read_bytes() != raw or (tex is not None and tex.read_bytes() != tex_bytes)
             or (sizes is not None and sizes['pdf_sha256'] != digest)
             or (diagnostics is not None and hashlib.sha256(log_file.read_bytes()).hexdigest()
@@ -123,6 +129,8 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
             **({'layout_mode': layout_mode} if layout is not None else {}),
             **({'current_mcm_format': delivery_format, 'page_format_review': pages} if current_mcm else {}),
             **({'typesetting_diagnostics': diagnostics} if diagnostics is not None else {}),
+            **({'compiler_dependency_review': dependency_review} if dependency_review is not None else
+               {'compiler_dependency_review': {'passed': None, 'status': 'historical receipt lacks compiler-opened file bindings'}} if layout is not None else {}),
             **({"heading_structure_review": structure} if structure is not None else {}),
             **({"font_size_review": sizes} if sizes is not None else {}),
             "source": str(source.resolve()), "snapshot": str(destination.resolve()),

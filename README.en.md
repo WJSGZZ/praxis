@@ -169,19 +169,19 @@ For solo work under time pressure, Praxis defaults to one current user action an
 
 ## Math tools
 
-This table describes the current source. The `asof_join` tool and vintage case are unreleased additions; the published 0.8.0 package does not yet include them. See the [changelog](CHANGELOG.md).
+This table describes the current source. `asof_join`, the vintage case, and this round's numerical and delivery corrections are unreleased; the published 0.8.0 packages do not include them. See the [changelog](CHANGELOG.md).
 
-`praxis-tools` turns common methods into callable tools with JSON in and out. Hosts without MCP can run `python -m scripts.mcp_server --call <tool> '<json>'`. The [coverage map](references/coverage-map.md) shows which kinds of problem have a ready tool and what to do when none exists. Every tool is tested against an answer derived separately: a textbook example, a closed form, or brute-force enumeration.
+`praxis-tools` turns common methods into callable tools with JSON in and out. Without MCP, point uv at the actual bundle: `uv run --locked --directory /path/to/plugin/skills/praxis python -m scripts.mcp_server --call <tool> '<json>'`. The [coverage map](references/coverage-map.md) shows which kinds of problem have a ready tool and what to do when none exists. Numerical regression checks use independently derived closed forms, bounds and small exhaustive cases. Input validation and failure recovery have separate checks.
 
 | Group | Tools |
 |---|---|
-| Programming and networks | `solve_lp` (dual-gap certificate), `solve_milp` (proved bound and gap), `solve_assignment`, `solve_tsp` (with a lower bound), `knapsack` (exact), `shortest_path`, `max_flow` (with the minimum cut), `min_cost_flow`, `minimum_spanning_tree` |
-| Nonlinear and robust optimisation | `minimize_nlp` (multi-start, distinguishes converged candidates from failed feasible points), `robust_lp` (budgeted robustness with its price), `solve_mdp` (exact backward induction or value iteration) |
+| Programming and networks | `solve_lp` (numerical primal-dual checks), `solve_milp` (solver bound and checked gap), `solve_assignment`, `solve_tsp` (with a lower bound), `knapsack` (exact), `shortest_path`, `max_flow` (with the minimum cut), `min_cost_flow`, `minimum_spanning_tree` |
+| Nonlinear and robust optimisation | `minimize_nlp` (multi-start, distinguishes converged candidates from failed feasible points), `robust_lp` (budgeted robustness with its price), `solve_mdp` (rational finite-horizon DP or discounted numerical iteration) |
 | Regression, tests and statistics | `ols_report` (ordinary or explicitly clustered inference), `adjust_pvalues` (Holm, BH, BY and Bonferroni with a declared comparison family), `compare_models` (cross-validated against a baseline), `cross_validate_predictor` (numeric Ridge/binary Logistic, group splits and fold-local preprocessing), `hypothesis_test` (effect sizes and assumption flags), `bootstrap_ci`, `arima_forecast`, `pca_report`, `cluster_report` (with stability), `calibrate_curve` (identifiability and hold-out) |
 | Evaluation and weights | `ahp_weights` (consistency ratio), `entropy_weights`, `evaluate_alternatives` (TOPSIS with weight-stability) |
 | Forecasting and dynamics | `backtest_baselines` (rolling-origin), `gm11_forecast`, `sir_simulate`, `sir_fit` (reports identifiability), `queue_mmc`, `equilibria` (equilibria and stability), `kalman_filter`, `solve_ode` (re-run at tighter tolerance), `solve_layered_diffusion` with the independent `layered_diffusion_laplace`, `grid_convergence_index`, `solve_diffusion` (finite volumes with an energy account) |
 | Decisions and risk | `markov_stationary`, `markov_absorption`, `matrix_game`, `bimatrix_nash`, `eoq`, `newsvendor`, `cvar_portfolio` (minimum CVaR over scenarios), `pareto_front` |
-| Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `check_recurrence` (finite-check proof), `find_relation`, `route_to_lesson`, `lesson_add`, `lesson_search` |
+| Structure and exploration | `probe_structure` (convexity, monotonicity, symmetry, power laws, invariants), `dimensional_analysis`, `check_total_unimodularity`, `route_graph` (route records), `test_conjecture`, `find_counterexample`, `guess_sequence`, `check_recurrence` (conditional finite check), `find_relation`, `route_to_lesson`, `lesson_add`, `lesson_search` |
 | Image measurement | `binary_components` (connected regions, pixel areas, boxes and centroids in a supplied 2-D binary mask; physical scale must be explicit) |
 | Uncertainty | `sobol_sensitivity`, `sobol_convergence`, `monte_carlo` (with a settled check) |
 | Data and free literature | `audit_data` (original headers, parsing and data quality), `audit_join` (cardinality, null keys, unmatched rows and expansion limits), `asof_join` (available-version indices at decision cutoffs, including unresolved queries), `search_literature` (OpenAlex, with free full-text links), `find_open_access` (Unpaywall), `check_references` (DOI, title and year against Crossref) |
@@ -190,7 +190,7 @@ Numerical violations are candidates until independently certified. Supported rat
 
 Portable, Codex, Claude and Copilot exports also include the open-source [arXiv server](https://github.com/blazickjp/arxiv-mcp-server) (Apache-2.0, pinned version) for preprint full text, LaTeX sections, and BibTeX export. For paywalled journal papers the tools find legal free copies; the rest can come from a school library.
 
-When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). Python covers the ordinary uses of MATLAB and R.
+When to use each method, what to check, and the usual misuse are in the [method and tool library](references/model-library.md). For methods outside the tool registry, the specialist skill selects an appropriate scientific library and applies the same implementation and verification workflow.
 
 ## Agent compatibility
 
@@ -211,7 +211,7 @@ These commands use POSIX shell syntax. Replace the paths with your actual locati
 BUNDLE="$HOME/.agents/skills/praxis"
 WORKSPACE="/absolute/path/to/your/project"
 
-"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" \
+uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/pipeline.py" \
   --workspace "$WORKSPACE" init \
   --name example \
   --problem "$WORKSPACE/problem.pdf" \
@@ -239,10 +239,9 @@ praxis-plugin/
   # Other manifests are generated by --host
   skills/
     praxis/                 # entry skill, with all references, scripts and tool code
-    praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
-    praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
-    praxis-spatial-analysis/  praxis-image-analysis/
-    praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
+    praxis-model/           # Example specialist: define and design a model
+    praxis-verify/          # Example specialist: independent checks
+    praxis-*/               # Remaining specialists are listed in the skills table
 ```
 
 Your problems, data, and cases stay in your own workspace, never in the plugin.
@@ -266,6 +265,8 @@ The agent coordinates the work using deterministic scripts and your project's ru
 <details>
 <summary><strong>Development and exercise commands</strong></summary>
 
+Run these in a source checkout. Installation bundles contain selected user-facing resources; tests and CI stay in the repository.
+
 ```bash
 uv sync --locked --group dev
 uv run --locked python -m pytest -q
@@ -281,3 +282,5 @@ uv run --locked python -m examples.exploration_demo
 ## Sources and licensing
 
 Original code and documentation use the [MIT License](LICENSE). Workflow design references MathModelHub; Sobol analysis and TOPSIS use SALib and pyMCDM. See [Third-party notices](THIRD_PARTY_NOTICES.md) for reuse scope and upstream licenses. Cite methods, data, and tools where they are actually used in your report.
+
+For research using Praxis, consult the [software citation metadata](CITATION.cff) and identify the release or commit actually used.

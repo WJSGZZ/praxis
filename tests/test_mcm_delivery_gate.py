@@ -70,6 +70,31 @@ def actual_pdf(path, *, letter=False, small_math=False, small_prose=False, unmap
         writer.write(output)
 
 
+@pytest.mark.parametrize('statement,valid', [
+    ('Template team number 0000000 is an unassigned exercise identifier.', False),
+    ('The current team control number is 0000000.', False),
+    ('The earlier template team number 0000000 was replaced.', True),
+    ('The simulation team number is 1234567; seed 0000000 remains scientific data.', True),
+])
+def test_actual_pdf_ai_narrative_identity_has_the_same_guard(tmp_path, statement, valid):
+    from pypdf import PdfReader
+    original = tmp_path/'summary.pdf'; actual_pdf(original)
+    writer = PdfWriter()
+    first = writer.add_page(PdfReader(original).pages[0])
+    page = writer.add_blank_page(width=float(first.mediabox.width), height=float(first.mediabox.height))
+    page[NameObject('/Resources')] = first[NameObject('/Resources')]
+    lines = ['Team #1234567 Page 2 of 2', 'Report on Use of AI', statement]
+    stream = DecodedStreamObject()
+    stream.set_data(b'BT /F1 11.95517 Tf 72 770 Td '+
+                    b' 0 -40 Td '.join(('('+line+') Tj').encode() for line in lines)+b' ET')
+    page[NameObject('/Contents')] = writer._add_object(stream)
+    pdf=tmp_path/'current.pdf'; writer.write(pdf)
+    result=inspect_mcm_delivery_format(pdf, {'team':'1234567','edition':'2020','problem':'C'}, ai_report_expected=True)
+    assert result['passed'] is valid, result['errors']
+    if not valid:
+        assert any('identity statement' in error for error in result['errors'])
+
+
 def candidate(tmp_path, *, version=4, mode='current', **pdf_options):
     tex = tmp_path / 'main.tex'; tex.write_text(source(version))
     pdf = tmp_path / 'main.pdf'; actual_pdf(pdf, **pdf_options)
@@ -82,6 +107,10 @@ def candidate(tmp_path, *, version=4, mode='current', **pdf_options):
         'layout': check(tex.read_text()), 'layout_mode': mode,
         'tex_sha256': hashlib.sha256(tex.read_bytes()).hexdigest(),
         'pdf_sha256': hashlib.sha256(pdf.read_bytes()).hexdigest(),
+        # Synthetic binding fixture, not an actual compiler-opened receipt.
+        'compiler_dependencies': {'schema_version': 1,
+            'method': 'tectonic-0.17-opened-local-files',
+            'files': {tex.name: hashlib.sha256(tex.read_bytes()).hexdigest()}},
     }))
     review = tmp_path / 'main.pdf.page-review.json'
     review.write_text(json.dumps({

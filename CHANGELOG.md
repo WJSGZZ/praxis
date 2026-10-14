@@ -5,6 +5,22 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修复会给出错误数学保证的数值边界：LP／MILP 的极小系数、固定变量与相消；有限期 MDP 的收益相消；矩阵博弈的微小收益与大整数身份；背包的微小正收益及递推输入的隐式近似。数值认证、精确有理结果、求解器状态和未获认证的候选分别返回，并以解析界和独立穷举核验。
+  Numerical corrections address small LP/MILP coefficients, fixed coordinates and cancellation; finite-horizon MDP reward cancellation; tiny and large-integer game payoffs; small positive knapsack gains; and silent approximation of recurrence inputs. Numerical certificates, exact rational accounts, solver status and uncertified candidates remain distinct, with independent bounds and exhaustive checks.
+- 统计、动力学和决策工具核对实际配对、有限初态 SIR、分数尾 CVaR、PSD 协方差、大服务台排队及吸收状态前提。专业指导、MCP 适配、教学示例与评测消费者同步；Markov 开发题在最后舍入后归一，新题面哈希可在评分时验证，旧任务与收据保留。
+  Statistical, dynamical and decision tools check actual pairing, finite-initial-state SIR, fractional CVaR tails, PSD covariances, large-server queues and absorbing-state premises. Specialist guidance, MCP adapters, teaching examples and evaluation consumers agree. Markov development tasks normalize after final rounding; scoring can bind the actual task hash without rewriting earlier tasks or receipts.
+- 当前论文构建和冻结绑定编译器实际打开的本地输入与图像，不仅主 TeX。正文中的明确作者身份声明也参与共享队号检查；修订 2020B 展示稿的 AI 报告，前21页保持逐页文字与栅格一致。旋转字形按实际变换测量字号；三种论文骨架共用标题元数据。
+  Current paper builds and freezing bind the local inputs and images actually opened by the compiler, beyond the main TeX file. Literal author-identity declarations share the team checks. The revised 2020B AI report preserves the first 21 pages' text and raster output. Rotated glyph sizes use their actual transformations, and all three paper skeletons consume title metadata.
+- 导出收据绑定全部交付文件，包括包根 README 与 LICENSE；反馈包写入器保留合法重复日志且不放宽 ZIP 读取保护；引用核对保留合法 DOI 中的括号和旧角括号字段。工作流共用案例版本门禁，未知版本在写入进度前拒绝，缺版本的历史案例仍可接续。
+  Export receipts bind all shipped files, including root guidance and the license. Feedback archives retain legitimate repetitive logs without relaxing ZIP reader protections. Reference checking preserves legal parenthesized and legacy angle-bracket DOI fields. Workflows use the shared case-version gate before progress writes while retaining the missing-marker legacy format.
+- 中英文首页、专业方法与安装命令按实际产品审读，明确源码增量与正式安装包的区别。新增经 CFF 1.2.0 校验的软件引用信息；关键反例回归加入三系统运行检查。保持现有版本号，整批变化留待发布。
+  Both README languages, specialist methods and installation commands describe the actual product and distinguish unreleased source from published packages. Validated CFF 1.2.0 citation metadata and critical cross-platform regressions are added. This batch remains unreleased under the existing version number.
+
+### 接口与验收更正 · Corrected contracts
+
+- 未定义的检验／BCa区间可为原因化 null；严格配对、TSP 非负完全对称距离、PSD 协方差及回调数组形状会拒绝旧版误接受的输入。背包和有限期 MDP 执行预算明确。当前论文冻结须有实际编译依赖绑定，旧 current 收据需重编；历史归档保持原身份。
+  Undefined inference and BCa intervals can be reasoned nulls. Actual pairing, nonnegative exactly symmetric TSP distances, PSD covariances and callback array shapes reject inputs incorrectly accepted before. Knapsack and finite-horizon MDP enforce explicit budgets. Current freezing requires real compiler-dependency bindings; earlier current receipts need rebuilding, while archives keep their original identities.
+
 - 当前美赛图题只保留简短名称，说明移到附近正文；图框内的居中段落与小框说明同样检查。默认当前编译／冻结拒绝多句、过长图题和图框内的普通说明，同时支持正规缩写与历史手工图号。科研数据、公式及必要的条件和不确定性保留，历史原稿另存。
   Current MCM figure captions contain short titles, with necessary explanation in adjacent prose. The checks cover centered paragraphs and note boxes inside figures. Current compilation and freezing reject long or multi-sentence titles and narrative figure notes, while accepting ordinary abbreviations and historical manual figure counters. Scientific inputs, formulas and essential conditions remain preserved.
 

@@ -524,3 +524,30 @@ def test_current_summary_heading_uses_shared_component_and_escapes_title():
     assert summary_heading('A & B') == '\\PraxisSummaryHeading{A \\& B}\n'
     with pytest.raises(ValueError, match='version'):
         summary_heading(layout_version=5)
+
+
+def test_visible_skeleton_title_uses_one_metadata_value():
+    for contest in ('mcm', 'cumcm', 'research'):
+        text = (ROOT/f'templates/{contest}-paper.tex').read_text()
+        body = text.split(r'\begin{document}',1)[-1] if contest != 'research' else text
+        assert r'\PraxisTitle' in body
+
+
+def test_current_zero_disclosure_identity_is_refused_but_history_and_science_remain():
+    from scripts.paper_template import review_mcm_identity_statements
+    for text in ('Template team number 0000000 is an unassigned exercise identifier.',
+                 'Current team control number: 1234567.',
+                 'The current team control number is 0000000.',
+                 'Simulation team identifier 0000000.'):
+        assert review_mcm_identity_statements(text, '7391856')['errors']
+    for text in ('The earlier template team number 0000000 was replaced for current simulation.',
+                 'The earlier current team control number is 0000000 in the historical receipt.',
+                 'The archived internal control identifier 1234567 is retained in the old receipt.',
+                 'Scientific seed 0000000 and x=0 are data.',
+                 'Template team number 7391856 is an unassigned simulation identifier.'):
+        assert not review_mcm_identity_statements(text, '7391856')['errors']
+    source = paper().replace('Body.', ai_report('Template team number 0000000 is unassigned.'))
+    with pytest.raises(ValueError, match='author identity'):
+        check(source, layout_mode='current')
+    historical = source.replace('Template team', 'The earlier template team')
+    check(historical, layout_mode='current')

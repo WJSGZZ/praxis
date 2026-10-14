@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use Praxis in research, cite this software and identify the exact release or commit used."
+type: software
+title: Praxis
+authors:
+  - name: WJSGZZ
+repository-code: "https://github.com/WJSGZZ/praxis"
+url: "https://github.com/WJSGZZ/praxis"
+license: MIT
+abstract: "Agent skills, mathematical tools and a reproducible evidence workflow for mathematical modeling."
+keywords:
+  - mathematical modeling
+  - scientific computing
+  - agent skills
+  - reproducible research

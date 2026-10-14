@@ -169,26 +169,26 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 数学工具
 
-本表对应当前源码。`asof_join` 与版本补货案例是未发布增量，正式0.8.0安装包尚不包含；版本记录见 [CHANGELOG](CHANGELOG.md)。
+本表对应当前源码。`asof_join`、版本补货案例及本轮数值与交付修复为未发布增量，正式0.8.0安装包尚不包含；版本记录见 [CHANGELOG](CHANGELOG.md)。
 
-`praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可用 `python -m scripts.mcp_server --call 工具名 '参数'`。哪类问题有现成工具、没有时怎么办，见[能力覆盖地图](references/coverage-map.md)。每个工具都有独立答案的测试：教科书例题、闭式解或暴力枚举。
+`praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可从实际包目录用 `uv run --locked --directory /path/to/plugin/skills/praxis python -m scripts.mcp_server --call 工具名 '参数'` 调用。哪类问题有现成工具、没有时怎么办，见[能力覆盖地图](references/coverage-map.md)。数值工具用独立推导的闭式解、解析界和小规模穷举答案做回归；输入保护与失败恢复另行检查。
 
 | 类别 | 工具 |
 |---|---|
-| 规划与网络 | `solve_lp`（对偶间隙证书）、`solve_milp`（证明界与间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
-| 非线性与稳健优化 | `minimize_nlp`（多起点，区分收敛候选与失败可行点）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（精确逆向递推或值迭代） |
+| 规划与网络 | `solve_lp`（数值原始—对偶检查）、`solve_milp`（求解器界与核验间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
+| 非线性与稳健优化 | `minimize_nlp`（多起点，区分收敛候选与失败可行点）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（有限期有理 DP 或折现数值迭代） |
 | 回归、检验与统计 | `ols_report`（常规或显式按组的区间与诊断）、`adjust_pvalues`（Holm、BH、BY、Bonferroni及比较族声明）、`compare_models`（对基线的交叉验证比较）、`cross_validate_predictor`（Ridge／二分类、留组与折内填补）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |
 | 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
-| 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（有限核对证明）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
+| 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（带已知阶数前提的有限核验）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
 | 图像测量 | `binary_components`（给定二维二值掩码的连接区域、像素面积、边界框与质心；物理尺度须显式提供） |
 | 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
 | 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`asof_join`（决策截点前的版本索引与未决项）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 
 通用、Codex、Claude 和 Copilot 安装包还接入开源的 [arXiv 服务](https://github.com/blazickjp/arxiv-mcp-server)（Apache-2.0，固定版本），可读预印本全文和 LaTeX 分节、导出 BibTeX。付费期刊论文由工具找合法的免费版本，其余可通过学校图书馆或知网获取。
 
-每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。常规的 MATLAB 与 R 用法，Python 基本都能覆盖。
+每种方法什么时候用、必须做哪些检查、常见误用，见 [方法与工具库](references/model-library.md)。现有工具之外的方法由专业技能选择相应科学库，并沿同一证据流程实现和核验。
 
 数值违例先作为候选，支持的有理算术反例另做精确核验；拟合诊断未定义时给出原因，博弈枚举说明完整性边界。结果与执行限制见[工具结果契约](references/automation.md#数学工具的结果契约)，不会把运行成功当作数学保证。
 
@@ -211,7 +211,7 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 BUNDLE="$HOME/.agents/skills/praxis"
 WORKSPACE="/absolute/path/to/your/project"
 
-"$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/pipeline.py" \
+uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/pipeline.py" \
   --workspace "$WORKSPACE" init \
   --name example \
   --problem "$WORKSPACE/problem.pdf" \
@@ -239,10 +239,9 @@ praxis-plugin/
   # 其他宿主由 --host 生成对应清单
   skills/
     praxis/                 # 入口技能，带全部参考、脚本与工具代码
-    praxis-model/  praxis-assumptions/  praxis-compute/  praxis-verify/  praxis-review/  praxis-explore/  praxis-dialogue/  praxis-report/
-    praxis-data-analysis/  praxis-statistics/  praxis-text-analysis/
-    praxis-spatial-analysis/  praxis-image-analysis/
-    praxis-time-series/  praxis-causal-analysis/  praxis-visualization/
+    praxis-model/           # 专业入口示例：问题定义与模型设计
+    praxis-verify/          # 专业入口示例：独立核验
+    praxis-*/               # 其余专业入口；完整职责见上方技能表
 ```
 
 用户的题目、数据与案例继续保存在你的工作区，不进入插件。
@@ -266,6 +265,8 @@ praxis-plugin/
 <details>
 <summary><strong>开发与演练命令</strong></summary>
 
+这些命令在源码检出目录运行；安装包按使用需要导出，测试与 CI 保留在源码仓库。
+
 ```bash
 uv sync --locked --group dev
 uv run --locked python -m pytest -q
@@ -281,3 +282,5 @@ uv run --locked python -m examples.exploration_demo
 ## 来源与许可
 
 本地原创代码与文档采用 [MIT](LICENSE)。工作流参考 MathModelHub，Sobol 与 TOPSIS 分别使用 SALib 和 pyMCDM；实际复用范围与上游许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。报告中实际使用的方法、数据与工具仍需在使用处引用原始来源。
+
+研究中使用 Praxis 时可参考 [软件引用信息](CITATION.cff)，并记录实际使用的发布版或提交编号。

@@ -4,7 +4,7 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 
 | 能力 | 输入与要解决的问题 | 产出与验收 | 专业参考与入口 |
 |---|---|---|---|
-| 问题分析 | 原题、目标、约束；哪些解释改变答案？ | 明确任务、定义与成功条件，不遗漏原始要求 | methods.md；定义歧义时 definition-review.md |
+| 问题分析 | 原题、目标、约束；哪些解释改变答案？ | 明确任务、定义与成功条件，不遗漏原始要求 | [praxis-model](../skills/praxis-model/SKILL.md)；methods.md；定义歧义时 definition-review.md |
 | 文献与来源 | 待核验的机制、参数、方法或论断 | 支持具体用途的第一手来源，记录位置、条件与许可，不把引用数量当证据 | writing.md 的来源部分；实际研究领域的原始论文与官方数据 |
 | 假设与适用条件 | 原题、模型／数据及拟写结论；前提是否充分、实际使用、合理？ | 显式与隐含前提、依据、作用位置及失效影响；明确检查和未验证条件 | [praxis-assumptions](../skills/praxis-assumptions/SKILL.md)；[methods.md](methods.md#假设理由与结论范围) |
 | 模型设计 | 任务定义、机制、数据能力 | 基线与必要扩展、假设和验证设计；组合关系明确 | [praxis-model](../skills/praxis-model/SKILL.md)；mathematical-reasoning.md与成熟库条件路线 |
@@ -23,7 +23,7 @@ methods.md 决定任务如何推进，本文件决定当前缺口需要哪种专
 | 不确定性传播 | 参数与结构未知、联合依赖及目标 | 条件分布／界、敏感性、精度与建议翻转 | [praxis-uncertainty-analysis](../skills/praxis-uncertainty-analysis/SKILL.md)；SALib、SciPy |
 | 科研表达 | 原稿、读者、有效结果及改动范围 | 论证、段落／公式连接及事实保真 | [praxis-scientific-writing](../skills/praxis-scientific-writing/SKILL.md)；scientific-writing.md |
 | 数据与计算 | 已明确模型、原始输入、参数 | 可复现处理与实际运行；变换遵守信息边界 | [praxis-compute](../skills/praxis-compute/SKILL.md)；data-computing.md；执行用 automation.md |
-| 独立验证 | 原始目标、模型、有效结果及拟写结论 | 与结论强度相称的对照、界、失败或限制 | methods.md 的证据与反馈；现有解析演练、SALib 和 DoWhy 的条件参考 |
+| 独立验证 | 原始目标、模型、有效结果及拟写结论 | 与结论强度相称的对照、界、失败或限制 | [praxis-verify](../skills/praxis-verify/SKILL.md)；methods.md 的证据与反馈；现有解析演练及专业条件参考 |
 | 作品评审 | 原题／研究问题、当前完整稿与有效证据、目标与版本 | 按交付用途评价主要答案、证据、作品质量与修改优先级；竞赛和研究标准分开 | [praxis-review](../skills/praxis-review/SKILL.md)；[judging.md](../evals/judging.md) 分类导航 |
 | 图表表达 | 有效结果、单位、不确定性与需要表达的判断 | 回指数据版本的图与图注，实际数组、曲线与图例对应，最终尺寸可读 | [praxis-visualization](../skills/praxis-visualization/SKILL.md)；唯一规范 visualization.md |
 | 论文与报告 | 任务答案、有效证据、图表和来源 | 读者能理解的论证，数字与引用一致，符合实际规范 | [praxis-report](../skills/praxis-report/SKILL.md)；writing.md、共享模板及披露 |

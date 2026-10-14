@@ -33,12 +33,16 @@ def transport_case():
 
 
 def structure_case():
-    """Which properties does a function have? A refutation is a proof; survival is evidence."""
+    """Floating-point structure probes give candidates, not certified refutations."""
     f = lambda x: x[0] ** 2 + x[0] * x[1] + x[1] ** 2
     box = [[-2, 2], [-2, 2]]
-    return dict(convex=structure.check_convexity(f, box)['convex'],
-                symmetric=structure.check_symmetry(f, box, [1, 0])['symmetric'],
-                monotone_in_x=structure.check_monotone(f, box, 0)['kind'])
+    convexity = structure.check_convexity(f, box)
+    symmetry = structure.check_symmetry(f, box, [1, 0])
+    monotonicity = structure.check_monotone(f, box, 0)
+    return dict(convex=convexity['convex'], symmetric=symmetry['symmetric'],
+                monotone_in_x=monotonicity['kind'], proved=False,
+                probes=dict(convexity=convexity, symmetry=symmetry, monotonicity=monotonicity),
+                scope='Sampled floating-point probes; violations need independent verification and survival is not a proof.')
 
 
 def experiment_case():

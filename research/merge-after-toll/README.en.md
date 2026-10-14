@@ -73,7 +73,7 @@ uv run --locked python research/merge-after-toll/reproduce.py --baseline --outpu
 uv run --locked python research/merge-after-toll/paper/build_report.py \
   --results research/merge-after-toll/reference/accepted.json --output .session/merge-paper
 uv run --locked python -m scripts.paper_template research/merge-after-toll/paper/paper.tex \
-  --contest mcm --compile --output-directory outputs/toll-build-001
+  --contest mcm --layout-mode archive --compile --output-directory outputs/toll-build-001
 ```
 
 The third command generates editable source from the frozen results; the fourth compiles the archived source with pinned Tectonic resources. Both require fresh output destinations. Build receipts bind source and PDF; inspect every page before adopting a new report.

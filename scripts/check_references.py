@@ -13,8 +13,20 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-DOI = re.compile(r'10\.\d{4,9}/[^\s"<>]+')
+# Early Wiley identifiers contain balanced angle-bracket fields; a surrounding
+# <https://doi.org/...> wrapper has an unmatched final > and is excluded.
+# DOI/citation punctuation is inherently ambiguous: this extracts a candidate,
+# whose metadata must still be checked, rather than validating all DOI syntax.
+DOI = re.compile(r'10\.\d{4,9}/(?:[^\s"<>]|<[^\s"<>]+>)+')
 WORD = re.compile(r'[a-z0-9]+')
+
+
+def citation_doi(match):
+    value = match.group(0).rstrip('.,;')
+    # Strip a citation wrapper, not a legal balanced parenthesized DOI suffix.
+    while value.endswith(')') and value.count(')') > value.count('('):
+        value = value[:-1].rstrip('.,;')
+    return value
 
 
 def fetch(doi, mailto):
@@ -57,7 +69,7 @@ def check(lines, mailto='unknown@example.org', get=fetch):
         if not found:
             results.append(dict(line=number, status='no_doi', citation=line))
             continue
-        doi = found.group(0).rstrip('.,;)')
+        doi = citation_doi(found)
         try:
             record = get(doi, mailto)
         except urllib.error.HTTPError as error:

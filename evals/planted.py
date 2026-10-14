@@ -10,11 +10,12 @@ See ORACLES.md for oracle independence, mathematical scope and tolerances.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import itertools
 import json
 import math
 from fractions import Fraction
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Callable
 
 import numpy as np
@@ -30,6 +31,13 @@ class Task:
     statement: str
     data: dict
     answer_keys: list[str]
+
+
+def task_sha256(task: Task) -> str:
+    """Bind actual task content; a generator seed or score version is insufficient."""
+    data = json.dumps(asdict(task), sort_keys=True, separators=(',', ':'),
+                      ensure_ascii=True, allow_nan=False).encode('utf-8')
+    return hashlib.sha256(data).hexdigest()
 
 
 def _rng(kind, seed):
@@ -164,19 +172,16 @@ def gen_pde(seed):
 
 
 def gen_markov(seed):
+    """Rounded development parameters, normalized before task and oracle binding."""
     r = _rng('markov', seed)
     P = r.random((4, 4)) + .05
     P /= P.sum(axis=1, keepdims=True)
-    w, v = np.linalg.eig(P.T)
-    pi = np.real(v[:, np.argmin(abs(w - 1))])
-    pi = pi / pi.sum()
-    task = Task('markov', seed, 'A system moves among 4 states with the given one-step transition matrix. Report the long-run fraction of time spent in state 0 (index 0).',
-                dict(P=np.round(P, 6).tolist()), ['state0'])
     P = np.round(P, 6)
-    P /= P.sum(axis=1, keepdims=True)          # the matrix the solver sees is the rounded one, renormalised
-    w, v = np.linalg.eig(P.T)
-    pi = np.real(v[:, np.argmin(abs(w - 1))])
-    task.data['P'] = np.round(P, 9).tolist()
+    P /= P.sum(axis=1, keepdims=True)
+    P = np.round(P, 9)
+    P /= P.sum(axis=1, keepdims=True)  # Final rounding must precede normalization.
+    task = Task('markov', seed, 'A system moves among 4 states with the given row-normalized one-step transition matrix (decimal rounding has been normalized before delivery). Report the long-run fraction of time spent in state 0 (index 0).',
+                dict(P=P.tolist()), ['state0'])
     P = np.array(task.data['P'])
     w, v = np.linalg.eig(P.T)
     pi = np.real(v[:, np.argmin(abs(w - 1))])
@@ -237,10 +242,13 @@ def _finite_number(value):
         return False
 
 
-def score(kind: str, seed: int, answer: dict) -> dict:
+def score(kind: str, seed: int, answer: dict, *, expected_task_sha256=None) -> dict:
     if kind not in GENERATORS or type(seed) is not int or seed < 0:
         raise ValueError('Expected a known task kind and a nonnegative integer seed')
     task, truth = GENERATORS[kind](seed)
+    identity = task_sha256(task)
+    if expected_task_sha256 is not None and expected_task_sha256 != identity:
+        raise ValueError('Task identity differs from the supplied task SHA-256; do not rescore an older task using a changed generator')
     if not isinstance(answer, dict):
         raise ValueError(f'The answer must be a JSON object with the keys {task.answer_keys}, e.g. {json.dumps(_template(truth))}')
     detail = {}
@@ -273,7 +281,7 @@ def score(kind: str, seed: int, answer: dict) -> dict:
             optimal = abs(objective - truth['value']) <= tol
             detail['x'] = dict(ok=feasible and consistent and optimal, feasible=feasible,
                                objective_consistent=consistent, optimal=optimal)
-    return dict(score_version=SCORE_VERSION, kind=kind, seed=seed,
+    return dict(score_version=SCORE_VERSION, kind=kind, seed=seed, task_sha256=identity,
                 correct=all(d['ok'] for d in detail.values()), detail=detail)
 
 
@@ -291,7 +299,7 @@ def solve_with_tools(task: Task) -> dict:
     if task.kind == 'sir':
         fit = epidemic.fit_sir(d['infected'], d['population'])
         r0 = fit['beta'] / fit['gamma']
-        return dict(r0=r0, final_size=epidemic.final_size(r0))
+        return dict(r0=r0, final_size=fit['final_size'])
     if task.kind == 'assignment':
         return dict(total=optimize.assignment(d['cost'])['total'])
     if task.kind == 'structure':
@@ -336,6 +344,7 @@ def main():
     c.add_argument('kind', choices=GENERATORS)
     c.add_argument('seed', type=int)
     c.add_argument('answer')
+    c.add_argument('--task-sha256', help='Reject if the generated task differs from the saved new-task output')
     a = p.parse_args()
     if a.cmd == 'list':
         print('\n'.join(GENERATORS))
@@ -344,9 +353,9 @@ def main():
         template = _template(truth)
         if a.kind == 'lp':
             template['x'] = [0.0] * len(t.data['c'])
-        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=template, score_version=SCORE_VERSION), ensure_ascii=False))
+        print(json.dumps(dict(statement=t.statement, data=t.data, report=t.answer_keys, answer_template=template, score_version=SCORE_VERSION, task_sha256=task_sha256(t)), ensure_ascii=False))
     else:
-        print(json.dumps(score(a.kind, a.seed, json.loads(a.answer))))
+        print(json.dumps(score(a.kind, a.seed, json.loads(a.answer), expected_task_sha256=a.task_sha256)))
 
 
 if __name__ == '__main__':

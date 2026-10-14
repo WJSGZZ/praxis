@@ -63,7 +63,7 @@ def case_path(value):
     # Pipeline snapshots and output receipts must never follow links introduced elsewhere.
     if any(p.is_symlink() for p in case.rglob('*')):
         raise ValueError('Symlinks are forbidden inside a workflow case')
-    pipeline.read_json(case / 'case.json')
+    pipeline.read_case_config(case)
     return case
 
 

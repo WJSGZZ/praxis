@@ -205,7 +205,7 @@ def test_current_cumcm_page_rule_is_consistent_across_entry_points():
     import json
     import re
     assert contest_rules.CUMCM_BODY_PAGES == 30
-    for name in ('references/contest-playbook.md', 'templates/cumcm-paper.tex'):
+    for name in ('references/contest-delivery.md', 'templates/cumcm-paper.tex'):
         text = (ROOT / name).read_text()
         assert re.search(r'正文[^\n|]*30\s*页', text)
         assert not re.search(r'正文[^\n|]*20\s*页', text)
