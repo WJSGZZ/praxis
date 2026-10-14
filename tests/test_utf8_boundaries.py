@@ -1,5 +1,6 @@
 """UTF-8 project formats must not depend on the host's legacy default codec."""
 import json
+import os
 from pathlib import Path
 import runpy
 import subprocess
@@ -51,7 +52,10 @@ def test_workflow_retains_existing_chinese_progress(cp1252_default, tmp_path, mo
     result = workflow.init(case, '明确本轮中文目标', budget_seconds=60, per_run_timeout=5)
     state, prefix, _ = workflow.read_state(case)
     assert state['goal'] == result['state']['goal'] == '明确本轮中文目标'
-    assert prefix == before and progress.read_bytes().startswith(before.encode('utf-8'))
+    # Existing progress is a mutable text document, with native newlines from
+    # the unchanged text writer; raw problem/log inputs retain exact bytes.
+    expected_prefix = before.replace('\n', os.linesep).encode('utf-8')
+    assert prefix == before and progress.read_bytes().startswith(expected_prefix)
 
 
 def test_competition_registry_preserves_actual_chinese_labels(cp1252_default):
@@ -190,7 +194,7 @@ def test_generated_index_actual_write_is_utf8(cp1252_default, tmp_path, monkeypa
     value = json.loads(capsys.readouterr().out)
     output = tmp_path / 'references/tool-index.md'
     assert value['written'] == str(output)
-    assert output.read_bytes().decode('utf-8').startswith('# 工具索引\n')
+    assert output.read_bytes().decode('utf-8').startswith('# 工具索引' + os.linesep)
 
 
 def legacy_console(module, args):
@@ -234,7 +238,9 @@ def test_audit_console_ascii_keeps_utf8_file_and_input_bytes(tmp_path):
     value = decoded_console(legacy_console('scripts.audit_data', [source, '--output', output]))
     file_bytes = output.read_bytes()
     assert source.read_bytes() == original
-    assert file_bytes == json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False).encode('utf-8')
+    # Preserve the established UTF-8 text writer's platform newline policy.
+    expected = json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False)
+    assert file_bytes == expected.replace('\n', os.linesep).encode('utf-8')
     assert value['rows'] == 1 and value['columns'] == 2
     assert '项目'.encode('utf-8') in file_bytes
 
