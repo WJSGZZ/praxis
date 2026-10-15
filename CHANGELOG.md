@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 服务定价指导连接付款方、可计量增量、可实现工时价值和双方成本，分别核客户账户、服务资产、支持容量、同一报价与逐期现金。连续可行区间须包含可执行货币单位，条件场景不冒称真实愿付或部署资格。
+  Service-pricing guidance connects the payer, measurable incremental outcome, realizable time value and both parties' costs. It checks customer accounts, served assets, support capacity, one executable quote and cash over time; a feasible scenario does not establish actual willingness to pay or deployment readiness.
+
 - 决策比较在同一未知情景上核成本区间与实际增量，避免把两个上界的差当作收益保证；查受限动作基线与已有专业工具能力，同策略／共享物理结果作零效应对照，保留未计量流程收益和实际工具未运行的边界。单次价值折算保留事件当量和年度生存、频次及重复费用边界。
   Decision comparisons now check incremental cost within the same unknown scenario; differences between upper-bound objectives do not guarantee gains. Guidance checks restricted baselines against existing professional capabilities and uses identical policies with shared outcomes as a zero-effect control, without claiming a real tool was run or excluding unmeasured workflow benefits. Per-event conversions retain event-equivalent and annual survival, frequency and repeated-cost limits.
 
