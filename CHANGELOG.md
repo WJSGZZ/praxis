@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 动力学与不确定性指导区分物理事件、决策起点和剩余寿命，保留共同隐状态及未归一质量／条件后验。数值比较同时重放原、新方案，明确有限模型改善与分辨率稳定的现实排序；合法新增证据的条件化仍允许。
+  Dynamics and uncertainty guidance distinguish event time, decision time and remaining lifetime, preserving shared latent states and the difference between residual mass and conditional posteriors. Numerical comparisons reevaluate both policies and separate finite-model gains from resolution-stable physical rankings. Conditioning on genuine additional evidence remains valid.
+
 - 评审指导分开核验关键错误检出、多档真实论文排序、换序稳定性与绝对奖档偏差；一致排序不设最高奖门槛。同题学习回归、fresh 上下文和外部独立校准保持各自证据范围。W3 与现有短图题规范一致，必要条件和论断在邻近正文核查。
   Review guidance separates critical-error detection, ranking across real award levels, order stability and absolute award bias. Agreement on ranking does not set a top-award cutoff. Same-task development, fresh contexts and external calibration retain distinct evidence scopes. W3 follows the existing short-title convention and checks claims and conditions in adjacent prose.
 - 决策指导核到具体报价及风险门槛、已声明的结构挑战、同情景逐组逐期补偿账和统一经济分母；执行金额／容量按最小单位向满足硬约束的方向取整并重验，精确阈值与近似值分别标明。新增转移不自动等于新增现金资助，扩大动作族须重验保证。下游容量选模与朴素基线逐格比较，科学检查通过的候选仍可因不改善决策而拒绝部署。
