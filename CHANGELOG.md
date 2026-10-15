@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 资金与服务决策使用同一事件序列连接实际交付、提前退出及付款，在相同期限重新核买方收益；区分非线性路径期望、条件均场界和现实随机过程。已核收益上界可导出采购所需额外价值的必要条件，保留适用域与向外舍入，不要求先穷举全部路径。
+  Funding and service decisions now connect delivery, early stopping and payments through the same event history and recheck purchaser benefits over the same horizon. Guidance distinguishes nonlinear path expectations, conditional mean-field bounds and real stochastic processes. Valid benefit upper bounds can establish necessary additional-value thresholds without first enumerating every path, while retaining their domain and outward rounding.
+
 - 机制建模补充有限状态转移的方向、零分母与吸收边界，区分连续速率、一步概率及净变化率；不确定性分析分别解释最可能、均值和样本极值。资金决策同时核名义现金到账与NPV，不把折现率当实际账户收益，预付／授信变更后重验付款方边界。工具接口、依赖和版本号保持。
   Mechanistic guidance now checks finite-state transition orientation, zero denominators and absorbing boundaries, distinguishing continuous rates, step probabilities and net changes. Uncertainty guidance separates modes, means and sampled extremes. Funding decisions check nominal cash timing alongside NPV; discount rates do not imply earned account returns, and advances or credit require new payer-side checks. Tool interfaces, dependencies and the version number remain unchanged.
 
