@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 决策比较在同一未知情景上核成本区间与实际增量，避免把两个上界的差当作收益保证；单次价值折算保留事件当量和年度生存、频次及重复费用边界。
+  Decision comparisons now evaluate cost intervals and incremental value within the same unknown scenario. A change between two upper-bound objectives does not establish actual gain, and per-event value conversions retain event-equivalent and annual survival, frequency and repeated-cost limits.
+
 - 资金与服务决策使用同一事件序列连接实际交付、提前退出及付款，在相同期限重新核买方收益；区分非线性路径期望、条件均场界和现实随机过程。已核收益上界可导出采购所需额外价值的必要条件，保留适用域与向外舍入，不要求先穷举全部路径。
   Funding and service decisions now connect delivery, early stopping and payments through the same event history and recheck purchaser benefits over the same horizon. Guidance distinguishes nonlinear path expectations, conditional mean-field bounds and real stochastic processes. Valid benefit upper bounds can establish necessary additional-value thresholds without first enumerating every path, while retaining their domain and outward rounding.
 
