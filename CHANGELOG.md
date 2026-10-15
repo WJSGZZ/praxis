@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 评阅统一局部复算、特例、读者导航和历史格式人工核验的范围，修正固定模型情景被误要求重拟合的问题；区分简单回收、折现回收与有限期NPV，比较依据不足时允许并列或不可比。联合不确定性指导补充直接界定行动总量及量化外盒放松代价。
+  Align review scope for partial recomputation, limiting cases, answer navigation and sourced manual format checks; distinguish fixed-model scenarios from recalibration. Separate simple payback, discounted payback and finite-horizon NPV, permit unresolved comparisons, and bound decision totals on the retained joint domain before relaxing to component boxes.
+
 - 修复锁定 Statsmodels 下 Holt 基线的初始化，保留逐起点失败／跳过与实际参与数；只在相同完整起点集上比较 MAE。聚合器 CLI 支持标准帮助与参数错误；经验检索过滤少量完整英文虚词，保留中文、专业词及显式标签。评审反例须区分参数上限和实际取值，避免制造超载误报。
   Holt now initializes correctly with the locked Statsmodels version and reports per-origin failures, skips and participation; MAE rankings require the same complete origin set. The aggregation CLI supports standard help and argument errors. Lesson search filters a small set of whole English function words while retaining Chinese terms, technical words and explicit tags. Review counterexamples distinguish limits from actual values to avoid unsupported overload claims.
 
