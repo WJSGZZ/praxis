@@ -15,7 +15,8 @@ import pytest
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
-from scripts.check_pdf import MCM_PAGE_REVIEW_CHECKS, inspect_font_sizes, inspect_mcm_delivery_format
+from scripts.check_pdf import (MCM_PAGE_REVIEW_CHECKS, inspect_font_sizes,
+                               inspect_mcm_delivery_format, inspect_mcm_summary_boundary)
 from scripts.freeze_pdf import freeze
 from scripts.paper_template import (ROOT, check, compile_paper, inspect_typesetting_log,
                                    preamble, summary_header, summary_heading)
@@ -37,7 +38,7 @@ def actual_pdf(path, *, letter=False, small_math=False, small_prose=False, unmap
                              NameObject('/BaseFont'): NameObject('/Times-Roman')})
     page[NameObject('/Resources')] = DictionaryObject({NameObject('/Font'): DictionaryObject({NameObject('/F1'): writer._add_object(font)})})
     lines = ['Problem Chosen', 'C', edition, 'MCM/ICM', 'Summary Sheet',
-             'Team Control Number', team, 'Summary', 'Ordinary summary evidence.']
+             'Team Control Number', team, 'Summary']
     data = b'BT /F1 11.95517 Tf 72 770 Td '
     data += b' 0 -22 Td '.join(('(' + line + ') Tj').encode() for line in lines)
     if small_math:
@@ -56,7 +57,8 @@ def actual_pdf(path, *, letter=False, small_math=False, small_prose=False, unmap
         math_font[NameObject('/ToUnicode')] = writer._add_object(cmap)
         page[NameObject('/Resources')][NameObject('/Font')][NameObject('/F2')] = writer._add_object(math_font)
         data += b' /F2 11.95517 Tf 0 -25 Td (!) Tj'
-    data += b' ET'
+    # The visible Summary tail follows any glyph/size boundary being tested.
+    data += b' /F1 11.95517 Tf 0 -25 Td (Ordinary summary evidence.) Tj ET'
     stream = DecodedStreamObject(); stream.set_data(data)
     page[NameObject('/Contents')] = writer._add_object(stream)
     if running_header is not None:
@@ -89,7 +91,8 @@ def test_actual_pdf_ai_narrative_identity_has_the_same_guard(tmp_path, statement
                     b' 0 -40 Td '.join(('('+line+') Tj').encode() for line in lines)+b' ET')
     page[NameObject('/Contents')] = writer._add_object(stream)
     pdf=tmp_path/'current.pdf'; writer.write(pdf)
-    result=inspect_mcm_delivery_format(pdf, {'team':'1234567','edition':'2020','problem':'C'}, ai_report_expected=True)
+    result=inspect_mcm_delivery_format(pdf, {'team':'1234567','edition':'2020','problem':'C'},
+                                      source_text=source(), ai_report_expected=True)
     assert result['passed'] is valid, result['errors']
     if not valid:
         assert any('identity statement' in error for error in result['errors'])
@@ -322,7 +325,8 @@ def test_actual_summary_identity_is_bound_to_current_tex(tmp_path, option):
 ])
 def test_pdf_joined_running_header_tokens_keep_exact_numeric_identity(tmp_path, header, passed):
     pdf = tmp_path / 'running.pdf'; actual_pdf(pdf, running_header=header)
-    result = inspect_mcm_delivery_format(pdf, {'team': '1234567', 'edition': '2020', 'problem': 'C'})
+    result = inspect_mcm_delivery_format(pdf, {'team': '1234567', 'edition': '2020', 'problem': 'C'},
+                                        source_text=source())
     assert result['passed'] is passed
 
 
@@ -390,3 +394,160 @@ def test_crlf_style_inspection_preserves_actual_source_binding(tmp_path):
     assert tex.read_bytes() == raw
     assert record['tex_sha256'] == hashlib.sha256(raw).hexdigest()
     assert record['current_mcm_format']['passed']
+
+
+@pytest.mark.parametrize('tail', [
+    'Ordinary summary evidence.',
+    r'Ordinary {\textbf{summary \emph{evidence}}}.',
+    'Ordinary summary evidence. % fake tail and \\clearpage\n\\label{summary:end}\n',
+    r'Ordinary summary evidence.\newcommand{\NotPrinted}{Fake ending.\clearpage}',
+])
+def test_summary_literal_tail_uses_real_nodes_and_binds_source(tail):
+    text = source(body=tail + r'\clearpage\section{Method}Post-summary material.')
+    records = [{'text': 'Summary\nOrdinary summary evidence.'},
+               {'text': 'Method\nPost-summary material.'}]
+    result = inspect_mcm_summary_boundary(text, records)
+    assert result['passed'], result
+    assert result['source_boundary'] == 'clearpage'
+    assert result['source_sha256'] == hashlib.sha256(text.encode()).hexdigest()
+    assert result['anchor_matches'][0]['page'] == 1
+    altered = text.replace('summary evidence.', 'different evidence.')
+    if altered != text:
+        assert not inspect_mcm_summary_boundary(altered, records)['passed']
+
+
+@pytest.mark.parametrize('body, reason', [
+    (r'Ordinary summary evidence.\UnknownTail', 'macro'),
+    (r'Ordinary summary evidence.\input{external}', 'macro'),
+    (r'Ordinary summary evidence.\includegraphics{image}', 'macro'),
+    (r'Ordinary summary evidence.\begin{figure}Figure.\end{figure}', 'environment'),
+    (r'Ordinary summary evidence.\begin{verbatim}Fake ending.\end{verbatim}', 'environment'),
+    (r'Ordinary summary evidence.\(x=1\)', 'final visible literal'),
+    (r'Ordinary summary evidence.\iftrue Fake.\fi', 'macro'),
+])
+def test_summary_unsupported_or_nonliteral_tail_cannot_certify_earlier_text(body, reason):
+    with pytest.raises(ValueError, match=reason):
+        inspect_mcm_summary_boundary(source(body=body), [{'text': 'Ordinary summary evidence.'}])
+
+
+@pytest.mark.parametrize('body', [
+    r'Ordinary summary evidence.\clearpage More Summary prose.\clearpage\section{Method}Body.',
+    r'{Ordinary summary evidence.\clearpage More Summary prose.}\clearpage\section{Method}Body.',
+    r'\textbf{Ordinary summary evidence.\clearpage More Summary prose.}\clearpage\section{Method}Body.',
+    r'Ordinary summary evidence.\clearpage\UnknownComponent',
+])
+def test_summary_first_clearpage_cannot_hide_continued_summary(body):
+    with pytest.raises(ValueError, match='continued prose or unknown content'):
+        inspect_mcm_summary_boundary(source(body=body), [{'text': 'Ordinary summary evidence.'},
+                                                       {'text': 'More Summary prose.'}])
+
+
+@pytest.mark.parametrize('following', [
+    r'\section*{Executive Summary}The decision.',
+    r'\tableofcontents\clearpage\section{Method}Body.',
+    r'\renewcommand{\contentsname}{Contents}\tableofcontents',
+    r'\section*{Report on Use of AI}The assistance.',
+    r'% Comment after the real boundary.' + '\n' + r'\label{end}\section{Method}Body.',
+    '',
+])
+def test_summary_boundary_confirms_a_real_following_component_or_document_end(following):
+    result = inspect_mcm_summary_boundary(source(body='Ordinary summary evidence.' + r'\clearpage' + following),
+                                         [{'text': 'Ordinary summary evidence.'}])
+    assert result['passed']
+
+
+def test_summary_anchor_requires_one_match_as_the_actual_page_one_tail():
+    text = source()
+    for records, expected in [
+        ([{'text': 'Summary'}, {'text': 'Ordinary summary evidence.'}], 'beyond page 1'),
+        ([{'text': 'Ordinary summary evidence. Extra text.'}], 'final extractable'),
+        ([{'text': 'Ordinary summary evidence. Ordinary summary evidence.'}], 'ambiguous'),
+        ([{'text': 'Ordinary summary evidence.'}, {'text': 'Ordinary summary evidence.'}], 'ambiguous'),
+        ([{'text': 'Missing boundary.'}], 'missing'),
+    ]:
+        result = inspect_mcm_summary_boundary(text, records)
+        assert not result['passed'] and any(expected in error for error in result['errors'])
+    with pytest.raises(ValueError, match='checked TeX source'):
+        inspect_mcm_summary_boundary(None, [{'text': 'Ordinary summary evidence.'}])
+    overlapping = inspect_mcm_summary_boundary(source(body='abab'), [{'text': 'ababab'}])
+    assert not overlapping['passed'] and len(overlapping['anchor_matches']) == 2
+
+
+def test_summary_normalization_preserves_words_and_handles_actual_line_splits():
+    text = source(body='A justified finding -- an efficient time-series workflow offers sufficient effectiveness evidence.')
+    records = [{'text': 'A justified finding – an efﬁcient time-\nseries work-\nflow offers sufﬁcient effect-\niveness evidence.'}]
+    assert inspect_mcm_summary_boundary(text, records)['passed']
+    assert not inspect_mcm_summary_boundary(text, [{'text': records[0]['text'].replace('offers', 'omits')}])['passed']
+    assert not inspect_mcm_summary_boundary(text, [{'text': records[0]['text'].replace('work-\nflow', 'work-flow')}])['passed']
+    assert not inspect_mcm_summary_boundary(text, [{'text': records[0]['text'].replace('time-\nseries', 'timeseries')}])['passed']
+
+
+def test_freeze_refuses_a_bound_pdf_whose_summary_tail_is_on_page_two(tmp_path):
+    from pypdf import PdfReader
+    tex, pdf, build, review = candidate(tmp_path)
+    writer = PdfWriter()
+    original = PdfReader(pdf).pages[0]
+    page = writer.add_page(original)
+    first = DecodedStreamObject()
+    first.set_data(b'BT /F1 11.95517 Tf 72 770 Td (Problem Chosen C 2020 MCM/ICM Summary Sheet Team Control Number 1234567) Tj ET')
+    page[NameObject('/Contents')] = writer._add_object(first)
+    second = writer.add_blank_page(width=float(original.mediabox.width), height=float(original.mediabox.height))
+    second[NameObject('/Resources')] = page[NameObject('/Resources')]
+    tail = DecodedStreamObject()
+    tail.set_data(b'BT /F1 11.95517 Tf 72 770 Td (Team #1234567 Page 2 of 2) Tj 0 -40 Td (Ordinary summary evidence.) Tj ET')
+    second[NameObject('/Contents')] = writer._add_object(tail)
+    writer.write(pdf)
+    data = json.loads(build.read_text()); data['pdf_sha256'] = hashlib.sha256(pdf.read_bytes()).hexdigest()
+    build.write_text(json.dumps(data))
+    # A fabricated complete visual checklist cannot bypass the actual boundary.
+    data = json.loads(review.read_text()); data.update(pdf_sha256=hashlib.sha256(pdf.read_bytes()).hexdigest(), pages=[1, 2])
+    review.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match='Summary extends beyond page 1'):
+        freeze(pdf, tmp_path / 'refused.pdf', tex=tex, contest='mcm', build_receipt=build)
+    assert not (tmp_path / 'refused.pdf').exists()
+
+
+@pytest.mark.skipif(shutil.which('tectonic') is None, reason='Canonical Tectonic compiler is unavailable')
+def test_actual_compiler_summary_spill_without_overfull_is_refused_and_archive_retained(tmp_path):
+    paragraph = ('The independent measurements support a conditional comparison with explicit units '
+                 'and a reproducible baseline. ' * 7)
+    body = '\n\n'.join([paragraph] * 9) + '\n\nFinal boundary evidence is reported here.'
+    body += r'\clearpage\section{Method}The body starts separately.'
+    tex = tmp_path / 'spill.tex'; tex.write_text(source(body=body))
+    raw = tex.read_bytes()
+    with pytest.raises(ValueError, match='Summary extends beyond page 1'):
+        compile_paper(tex, 'mcm', tmp_path / 'current')
+    pdf = tmp_path / 'current/spill.pdf'
+    assert inspect_typesetting_log(pdf.with_suffix('.log'), pdf=pdf)['passed']
+    assert not (tmp_path / 'current/spill.build.json').exists()
+    assert tex.read_bytes() == raw
+    archive = compile_paper(tex, 'mcm', tmp_path / 'archive', layout_mode='archive')
+    assert archive['layout_mode'] == 'archive' and 'current_mcm_format' not in archive
+    assert tex.read_bytes() == raw
+
+
+@pytest.mark.skipif(shutil.which('tectonic') is None, reason='Canonical Tectonic compiler is unavailable')
+def test_actual_compiler_summary_then_executive_and_ai_pages_do_not_extend_summary(tmp_path):
+    body = r'Ordinary {\textbf{summary \emph{evidence}}}.% A fake ending.\clearpage' + '\n'
+    body += (r'\label{summary:end}\clearpage\section*{Executive Summary}An executive decision.'
+             r'\clearpage\section*{Report on Use of AI}The actual assistance is disclosed.')
+    tex = tmp_path / 'valid.tex'; tex.write_text(source(body=body))
+    original = tex.read_bytes()
+    result = compile_paper(tex, 'mcm', tmp_path / 'valid')
+    boundary = result['current_mcm_format']['summary_boundary']
+    assert boundary['passed'] and boundary['anchor_matches'][0]['page'] == 1
+    assert boundary['source_sha256'] == hashlib.sha256(original).hexdigest()
+    assert result['current_mcm_format']['pdf_boundaries']['total_pages'] == 3
+    assert tex.read_bytes() == original
+
+
+@pytest.mark.skipif(shutil.which('tectonic') is None, reason='Canonical Tectonic compiler is unavailable')
+def test_actual_compiler_explicit_page_break_does_not_hide_a_summary_continuation(tmp_path):
+    body = (r'Ordinary summary evidence.\clearpage More Summary prose.'
+            r'\clearpage\section{Method}The body starts here.')
+    tex = tmp_path / 'continued.tex'; tex.write_text(source(body=body))
+    with pytest.raises(ValueError, match='continued prose or unknown content'):
+        compile_paper(tex, 'mcm', tmp_path / 'continued')
+    pdf = tmp_path / 'continued/continued.pdf'
+    assert inspect_typesetting_log(pdf.with_suffix('.log'), pdf=pdf)['passed']
+    assert not pdf.with_suffix('.build.json').exists()

@@ -102,6 +102,7 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
         from scripts.check_pdf import inspect_mcm_delivery_format, inspect_mcm_page_review
         from scripts.paper_template import mcm_identity, mcm_ai_report_expected
         delivery_format = inspect_mcm_delivery_format(source, mcm_identity(text),
+                                                      source_text=text,
                                                       ai_report_expected=mcm_ai_report_expected(text))
         if not delivery_format['passed']:
             raise ValueError('Current MCM PDF format failed: ' + '; '.join(delivery_format['errors']))

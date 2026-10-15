@@ -827,6 +827,7 @@ def compile_paper(tex, contest, output, compiler=None, *, layout_mode='current')
     if contest == 'mcm' and layout_mode == 'current':
         from scripts.check_pdf import inspect_mcm_delivery_format
         final_format = inspect_mcm_delivery_format(pdf, mcm_identity(text),
+                                                  source_text=text,
                                                   ai_report_expected=mcm_ai_report_expected(text))
         if not final_format['passed']:
             raise ValueError('Current MCM PDF format failed: ' + '; '.join(final_format['errors']))

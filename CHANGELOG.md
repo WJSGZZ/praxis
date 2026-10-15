@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 当前美赛编译与冻结从绑定源码提取摘要末尾，核对它在实际 PDF 第 1 页唯一且最后出现；自然跨页即使零 Overfull 也拒绝。未知展开、外部内容、浮动体或非普通文字结尾不能凭前文自动认证，保留逐页审阅和显式 archive 复现边界。
+  Current MCM compilation and freezing bind the source-derived Summary tail to its unique final position on PDF page 1, refusing natural overflow even with no Overfull warning. Unsupported expansion, external content, floats and non-prose tails cannot be certified by earlier text; actual page review and explicit archive reproduction retain their separate roles.
+
 - 服务定价指导连接付款方、可计量增量、可实现工时价值和双方成本，分别核客户账户、服务资产、支持容量、同一报价与逐期现金。连续可行区间须包含可执行货币单位，条件场景不冒称真实愿付或部署资格。
   Service-pricing guidance connects the payer, measurable incremental outcome, realizable time value and both parties' costs. It checks customer accounts, served assets, support capacity, one executable quote and cash over time; a feasible scenario does not establish actual willingness to pay or deployment readiness.
 

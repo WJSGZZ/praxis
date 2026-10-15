@@ -117,7 +117,193 @@ def inspect_font_sizes(path, minimum_tex_pt, review_path=None):
             'scope': 'Effective vertical em sizes of extractable text after PDF transforms; no automatic prose/math classification or raster/outline-text certification'}
 
 
-def inspect_mcm_delivery_format(path, identity, *, ai_report_expected=False):
+def inspect_mcm_summary_boundary(source_text, records):
+    """Locate the literal Summary tail in the actual PDF, without expanding TeX.
+
+    This is deliberately a bounded prose check. Unsupported expansion, floats,
+    imports or a non-prose tail cannot be certified by an earlier text anchor.
+    It neither rewrites nor recompiles the source and does not replace rendering
+    review. Definitions and comments never supply a visible anchor.
+    """
+    import unicodedata
+    from pylatexenc.latexwalker import (
+        LatexCharsNode, LatexCommentNode, LatexEnvironmentNode, LatexGroupNode,
+        LatexMacroNode, LatexMathNode, LatexSpecialsNode, LatexWalker, LatexWalkerError,
+    )
+    from pylatexenc.macrospec import MacroSpec
+    from scripts.paper_structure import _context, DEFINITIONS, PRIMITIVE_DEFINITIONS
+
+    if not isinstance(source_text, str) or not source_text:
+        raise ValueError('Summary boundary requires the checked TeX source')
+    context = _context()
+    context.add_context_category('praxis-summary-boundary', prepend=True,
+                                 macros=[MacroSpec('PraxisSummaryHeading', '{')])
+    try:
+        nodes, _, _ = LatexWalker(source_text, latex_context=context,
+                                 tolerant_parsing=False).get_latex_nodes()
+    except LatexWalkerError as exc:
+        raise ValueError('Summary boundary could not parse the checked source: ' + str(exc)) from exc
+    documents = [node for node in nodes if isinstance(node, LatexEnvironmentNode)
+                 and node.environmentname == 'document']
+    if len(documents) != 1:
+        raise ValueError('Summary boundary requires one literal document environment')
+    text_macros = {'textbf', 'textit', 'emph', 'textrm', 'textsf', 'texttt',
+                   'textnormal', 'textup', 'textsl', 'textsc', 'underline'}
+    invisible = {'label', 'par', 'relax', 'ignorespaces', 'unskip'}
+    symbols = {'%': '%', '$': '$', '&': '&', '#': '#', '_': '_',
+               '{': '{', '}': '}', 'textendash': '–', 'textemdash': '—',
+               'textquotesingle': "'", 'textquotedbl': '"'}
+    state = {'started': False, 'ended': False, 'headings': 0, 'tail': '',
+             'boundary': 'end{document}', 'summary_start': None, 'summary_end': None,
+             'boundary_node_end': None}
+
+    def walk(items):
+        for node in items:
+            if state['ended']:
+                return
+            if isinstance(node, LatexCommentNode):
+                continue
+            if isinstance(node, LatexMacroNode) and node.macroname in set(DEFINITIONS) | PRIMITIVE_DEFINITIONS:
+                continue
+            if isinstance(node, LatexMacroNode) and node.macroname == 'PraxisSummaryHeading':
+                state['headings'] += 1
+                if state['started']:
+                    raise ValueError('Summary boundary requires one literal Summary heading')
+                state['started'] = True
+                state['summary_start'] = node.pos + node.len
+                continue
+            if not state['started']:
+                if isinstance(node, LatexGroupNode):
+                    walk(node.nodelist)
+                continue
+            if isinstance(node, LatexMacroNode) and node.macroname == 'clearpage':
+                state.update(ended=True, boundary='clearpage', summary_end=node.pos,
+                             boundary_node_end=node.pos + node.len)
+                return
+            if isinstance(node, LatexCharsNode):
+                state['tail'] += node.chars.replace('~', ' ')
+            elif isinstance(node, LatexSpecialsNode) and node.specials_chars in {'~', '--', '---', '``', "''"}:
+                state['tail'] += {'~': ' ', '--': '–', '---': '—', '``': '"', "''": '"'}[node.specials_chars]
+            elif isinstance(node, LatexGroupNode):
+                walk(node.nodelist)
+            elif isinstance(node, LatexMathNode):
+                # Mathematics before a later literal tail is legal. A terminal
+                # equation needs a different actual boundary review, not a pass
+                # based on the preceding paragraph.
+                state['tail'] = ''
+            elif isinstance(node, LatexEnvironmentNode):
+                raise ValueError('Summary boundary cannot certify environment ' + node.environmentname
+                                 + '; use a literal prose Summary with an explicit clearpage')
+            elif isinstance(node, LatexMacroNode):
+                name = node.macroname
+                if name in text_macros:
+                    args = node.nodeargd.argnlist if node.nodeargd else []
+                    if not args or not isinstance(args[-1], LatexGroupNode):
+                        raise ValueError('Summary boundary cannot read text macro ' + name)
+                    walk(args[-1].nodelist)
+                elif name in symbols:
+                    state['tail'] += symbols[name]
+                elif name in invisible:
+                    continue
+                else:
+                    raise ValueError('Summary boundary cannot certify macro \\' + name
+                                     + '; unknown expansion cannot establish a one-page Summary')
+            else:
+                raise ValueError('Summary boundary cannot certify this source node')
+    walk(documents[0].nodelist)
+    if state['headings'] != 1:
+        raise ValueError('Summary boundary requires one literal Summary heading')
+    if state['summary_end'] is None:
+        state['summary_end'] = documents[0].pos + documents[0].len - len(r'\end{document}')
+    else:
+        def next_component(items):
+            for node in items:
+                if node.pos + node.len <= state['boundary_node_end']:
+                    continue
+                # A page break nested in a group or text-format argument does
+                # not hide following prose in that same container.
+                if node.pos < state['boundary_node_end']:
+                    if isinstance(node, LatexGroupNode):
+                        result = next_component(node.nodelist)
+                    elif isinstance(node, LatexMacroNode) and node.macroname in text_macros:
+                        result = next_component(node.nodeargd.argnlist[-1].nodelist)
+                    else:
+                        raise ValueError('Summary boundary cannot determine content after a nested clearpage')
+                    if result is not None:
+                        return result
+                    continue
+                if isinstance(node, LatexCommentNode):
+                    continue
+                if isinstance(node, LatexCharsNode) and not node.chars.strip():
+                    continue
+                if isinstance(node, LatexGroupNode):
+                    result = next_component(node.nodelist)
+                    if result is not None:
+                        return result
+                    continue
+                if isinstance(node, LatexMacroNode):
+                    name = node.macroname
+                    if name in set(DEFINITIONS) | PRIMITIVE_DEFINITIONS | invisible:
+                        continue
+                    if name in {'section', 'chapter', 'part', 'tableofcontents'}:
+                        return name
+                raise ValueError('Summary boundary cannot certify continued prose or unknown content after '
+                                 'its first clearpage; the next visible component must be a literal heading or contents')
+            return None
+        state['next_component'] = next_component(documents[0].nodelist) or 'end{document}'
+
+    split_hyphen = '\ufdd0'  # Reserved internal marker, never ordinary PDF text.
+
+    def normalized(value, *, pdf=False):
+        if split_hyphen in value:
+            raise ValueError('Summary boundary cannot normalize a reserved text marker')
+        value = unicodedata.normalize('NFKC', value)
+        # Only a PDF word split across a physical line has uncertain hyphen
+        # provenance: either a real compound or TeX's discretionary line break.
+        # Retain that uncertainty locally instead of deleting visible hyphens.
+        if pdf:
+            value = re.sub(r'(?<=\w)-[^\S\n]*\n\s*(?=\w)', split_hyphen, value)
+        value = value.translate(str.maketrans({'–': '-', '—': '-', '−': '-',
+                                              '‘': "'", '’': "'", '“': '"', '”': '"'}))
+        value = re.sub(r'-{2,}', '-', value)
+        return re.sub(r'\s+', '', value)
+
+    # Prefer the complete final literal sentence/paragraph, so an earlier
+    # sentence on the preceding page cannot obscure a real spill of the tail.
+    # Long final sentences retain a bounded suffix; matching is still exact and
+    # must be unique throughout the PDF, with no fuzzy word deletion.
+    final_sentence = re.split(r'(?<=[.!?])\s+(?=[A-Z])|\n\s*\n', state['tail'].strip())[-1]
+    literal_tail = normalized(final_sentence)
+    if not re.search(r'[\w]', literal_tail):
+        raise ValueError('Summary boundary cannot determine a final visible literal prose anchor')
+    anchor = literal_tail[-160:]
+    pages = [normalized(record['text'], pdf=True) for record in records]
+    # Each physical split may realize zero characters or the source's literal
+    # hyphen. Mandatory source characters separate these local alternatives;
+    # the bounded anchor does not enumerate exponentially many page variants.
+    pattern = (split_hyphen + '?').join(
+        '(?:-|' + split_hyphen + ')' if char == '-' else re.escape(char)
+        for char in anchor)
+    matches = [{'page': number, 'offset': match.start(),
+                'end_offset': match.start() + len(match.group(1))}
+               for number, page in enumerate(pages, 1)
+               for match in re.finditer('(?=(' + pattern + '))', page)]
+    errors = []
+    if len(matches) != 1:
+        errors.append('Summary end anchor is missing or ambiguous in the actual PDF; one-page boundary cannot be certified')
+    elif matches[0]['page'] != 1:
+        errors.append(f'Summary extends beyond page 1: its source-derived end is on page {matches[0]["page"]}')
+    elif matches[0]['end_offset'] != len(pages[0]):
+        errors.append('Summary end anchor is not the final extractable text on page 1; its boundary cannot be certified')
+    return {'source_sha256': hashlib.sha256(source_text.encode('utf-8')).hexdigest(),
+            'source_start_offset': state['summary_start'], 'source_end_offset': state['summary_end'],
+            'source_boundary': state['boundary'], 'literal_tail_anchor': anchor,
+            'next_component': state.get('next_component', 'end{document}'),
+            'anchor_matches': matches, 'errors': errors, 'passed': not errors,
+            'scope': 'Unique literal prose tail from the checked source through its first clearpage or document end, matched as the final extractable text on PDF page 1; no arbitrary TeX expansion, floats, external inputs, raster or outlined text certification'}
+
+
+def inspect_mcm_delivery_format(path, identity, *, source_text, ai_report_expected=False):
     """Bounded checks of the actual current MCM PDF, separate from edition rules.
 
     A4 is the project delivery choice. This does not impose the latest contest's
@@ -146,6 +332,8 @@ def inspect_mcm_delivery_format(path, identity, *, ai_report_expected=False):
                 or any(abs(a - b) > tolerance for a, b in zip(media, crop))):
             errors.append(f'page {number}: current MCM requires an uncropped portrait A4 page box')
     records = extract(path)
+    summary_boundary = inspect_mcm_summary_boundary(source_text, records)
+    errors.extend(summary_boundary['errors'])
     first = ' '.join(records[0]['lines'][:16])
     for label in ('Problem Chosen', 'Team Control Number', 'Summary Sheet'):
         if label.casefold() not in first.casefold():
@@ -189,11 +377,12 @@ def inspect_mcm_delivery_format(path, identity, *, ai_report_expected=False):
     return {'pdf_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
             'identity': identity, 'page_boxes': page_boxes, 'a4_tolerance_bp': tolerance,
             'author_identity_statements': declaration_review,
+            'summary_boundary': summary_boundary,
             'pdf_boundaries': {key: facts[key] for key in (
                 'total_pages', 'counted_pages', 'ai_report_from_page',
                 'ai_report_heading_on_page', 'ai_report_starts_new_page')},
             'errors': errors, 'passed': not errors, 'visual_review_required': True,
-            'scope': 'Actual page boxes and extractable summary/running-header/AI-boundary identity; no arbitrary TeX expansion, paragraph measurement, raster/outline QA or edition compliance certification'}
+            'scope': 'Actual page boxes, source-derived literal one-page Summary tail and extractable summary/running-header/AI-boundary identity; no arbitrary TeX expansion, paragraph measurement, raster/outline QA or edition compliance certification'}
 
 
 MCM_PAGE_REVIEW_CHECKS = (
