@@ -1,6 +1,6 @@
 ---
 name: praxis-dynamical-modeling
-description: 建立和核查随时间／空间演化的机制模型：守恒、ODE/PDE、初值边界、状态与观测、平衡稳定性、参数辨识及数值收敛。用于“写动力学方程、扩散／传热／种群模型、为何不守恒、边界怎么设、平衡稳定吗、步长和网格”。Mechanistic dynamics, ODE/PDE, conservation, initial and boundary conditions and numerical modeling. 纯时间序列预测归 praxis-time-series；一维求解器不冒充通用CFD或PDE软件。
+description: 建立和核查随时间／空间演化的机制模型：守恒、ODE/PDE、有限状态转移、初值边界、状态与观测、平衡稳定性、参数辨识及数值收敛。用于“写动力学方程、扩散／传热／种群模型、马尔可夫迁移、转移矩阵、为何不守恒、边界怎么设、步长和网格”。Mechanistic dynamics, ODE/PDE, Markov population transitions, conservation, initial and boundary conditions and numerical modeling. 纯时间序列预测归 praxis-time-series，决策优化归 praxis-optimization；一维求解器不冒充通用CFD或PDE软件。
 license: MIT
 ---
 
@@ -16,6 +16,7 @@ license: MIT
 
 - 区分守恒机制、经验状态模型和纯统计时序；先用足够回答任务的平衡或解析关系，只有时空异质性会改变答案才增加ODE/PDE。
 - 方程含所有参与动力学的状态；逐项核流入流出、源项、参数与量纲。说明初态如何获得、边界作用及观测对应，不以隐藏真值作为可免费测量的状态。
+- 有限状态转移按专业参考核索引方向、非负质量、零分母／吸收边界及真实多步传播；连续速率、一步概率与平稳分布分别解释，不用净变化率代替存量密度。
 - 现有 `solve_ode`、`sir_simulate`、`sir_fit`、`equilibria`、一维 `solve_diffusion`／`solve_layered_diffusion` 按实际范围选择；需要时用原模型代码调用成熟SciPy，不能向MCP传未注册的events等字段。
 - 校准误差、机制适用与求解误差分别判断。核守恒、非负性、解析特例、有效初值与相同物理量的网格／时间比较；有限多起点平衡搜索或数值稳定性不作完整证明。
 - 受约束动态决策须查控制切换、极值及采样之间；只有方案自己的证据才能支持它。数值失败、模型失配和真实不可行分别记录。

@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 机制建模补充有限状态转移的方向、零分母与吸收边界，区分连续速率、一步概率及净变化率；不确定性分析分别解释最可能、均值和样本极值。资金决策同时核名义现金到账与NPV，不把折现率当实际账户收益，预付／授信变更后重验付款方边界。工具接口、依赖和版本号保持。
+  Mechanistic guidance now checks finite-state transition orientation, zero denominators and absorbing boundaries, distinguishing continuous rates, step probabilities and net changes. Uncertainty guidance separates modes, means and sampled extremes. Funding decisions check nominal cash timing alongside NPV; discount rates do not imply earned account returns, and advances or credit require new payer-side checks. Tool interfaces, dependencies and the version number remain unchanged.
+
 - 评阅统一局部复算、特例、读者导航和历史格式人工核验的范围，修正固定模型情景被误要求重拟合的问题；区分简单回收、折现回收与有限期NPV，比较依据不足时允许并列或不可比。联合不确定性指导补充直接界定行动总量及量化外盒放松代价。
   Align review scope for partial recomputation, limiting cases, answer navigation and sourced manual format checks; distinguish fixed-model scenarios from recalibration. Separate simple payback, discounted payback and finite-horizon NPV, permit unresolved comparisons, and bound decision totals on the retained joint domain before relaxing to component boxes.
 
