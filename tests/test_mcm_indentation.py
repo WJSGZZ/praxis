@@ -35,9 +35,13 @@ HANGING_ROLES = ['MReferenceContinuation']
 
 
 def fixture_source(version):
+    # Current delivery separates the one-page Summary from the body. Keep the
+    # archived v3 fixture unchanged while measuring the same paragraph roles.
+    body = BODY if version == 3 else BODY.replace(
+        r'\section{First-level heading}', r'\clearpage\section{First-level heading}', 1)
     return (preamble('1234567', 'Indentation regression fixture', layout_version=version)
             + summary_header('C', edition=2020, layout_version=version)
-            + summary_heading(layout_version=version) + BODY)
+            + summary_heading(layout_version=version) + body)
 
 
 def marker_left_edges(pdf):
@@ -71,6 +75,13 @@ def test_compiled_heading_and_summary_indentation(tmp_path, version, first_em, l
     receipt = compile_paper(tex, 'mcm', tmp_path / 'compiled',
                             layout_mode='archive' if version == 3 else 'current')
     assert receipt['layout']['profile'] == f'praxis-mcm-v{version}'
+    if version == 4:
+        from scripts.contest_rules import extract
+        pages = extract(tmp_path / 'compiled/indentation-v4.pdf')
+        assert 'MSummaryFirst' in pages[0]['text'] and 'MSectionFirst' not in pages[0]['text']
+        assert 'MSectionFirst' in pages[1]['text']
+        boundary = receipt['current_mcm_format']['summary_boundary']
+        assert boundary['passed'] and boundary['anchor_matches'][0]['page'] == 1
     measured = marker_left_edges(tmp_path / f'compiled/indentation-v{version}.pdf')
     # newtx 12pt regular body: one em is 12 TeX pt; PDF uses 72/72.27 units.
     em_pdf = 12 * 72 / 72.27
