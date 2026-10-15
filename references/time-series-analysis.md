@@ -30,7 +30,11 @@
 
 `backtest_baselines` 的 `origins` 是计划起点数，起点索引等于训练前缀长度（首个留出值为 `series[origin]`）。`mae` 保持纯数字映射，且只收录完成全部计划起点的方法，`best` 也只从中选择。独立的 `methods` 返回各方法实际成功的 `origins`、`complete/partial/failed/skipped` 状态，以及逐起点 `failures`（异常类型与原因）和 `skipped` 原因。Holt 显式用 `initialization_method='estimated'`；拟合／预测异常、优化不收敛警告和非有限／错误长度的预测均保留为失败。未给季节周期或训练前缀不足一个周期时，季节朴素会保留跳过状态；部分成功的方法不与完整基线排名，也不把其少量成功起点均值混入同条件比较。
 
-多类数量、份额和对数比的“保持不变”是不同基线。联合组成中的一个分量增长，会通过共同分母改变其他分量；保持某类对数比不等于保持它的原始数量。用同信息的数量保持对照检验这种竞争，显式记录总量约束和截断。若为匹配候选保留的分量而投影朴素预测，同时保存原始朴素值与投影后对照，后者不能直接称为原始数量基线。投影、截断或资源分配后，重新计算实际执行值的全部误差、份额和告警，而非沿用修正前的好指标。多类别逐通道汇总与“任一类别告警”的实体并集分别定义真实事件、FP／FN和分母：对某一起点／跨度，完整C类×N实体有CN通道，但并集最多N实体，不能互换成本或覆盖率。在全部起点／跨度保留各类取舍；降低某类误差但增加重要漏报不自动支持替换主模型。看过结果后的结构诊断不恢复为独立留出选型。
+多类数量、份额和对数比的“保持不变”是不同基线。联合组成中的一个分量增长，会通过共同分母改变其他分量；保持某类对数比不等于保持它的原始数量。用同信息的数量保持对照检验这种竞争，显式记录总量约束和截断。若为匹配候选保留的分量而投影朴素预测，同时保存原始朴素值与投影后对照，后者不能直接称为原始数量基线。内层选型应包含实际执行的投影、截断与资源分配，按修正后的目标评分；修正前选中候选再修正，不保证仍优化原目标。外层也重新计算实际执行值的全部误差、份额和告警。多类别逐通道汇总与“任一类别告警”的实体并集分别定义真实事件、FP／FN和分母：对某一起点／跨度，完整C类×N实体有CN通道，但并集最多N实体，不能互换成本或覆盖率。在全部起点／跨度保留各类取舍；降低某类误差但增加重要漏报不自动支持替换主模型。看过结果后的结构诊断不恢复为独立留出选型。
+
+数量点预测与事件预警也有不同目标。若行动针对未来事件 $E=1\{Y\ge a,\ Y/D\ge b\}$，不能用点预测是否越界代替事件概率；混合 WAPE、份额误差与告警成本的加权分数只是声明的取舍，不能由总分下降推断每项改善。必要时把固定事件的概率预测与数量中心分开，并在真实目标值上定义事件。对二元行动、正确判断成本为零、误报成本 $c_{FP}>0$、漏报成本 $c_{FN}>0$ 的情形，发出告警的期望成本为 $c_{FP}(1-p)$，不发为 $c_{FN}p$，故按事前固定的平局规则在 $p=c_{FP}/(c_{FP}+c_{FN})$ 两侧选择。这是概率动作阈值，不是改变原事件的 $a,b$；它依赖适用人群的概率与成本，不能自动沿用到多行动或有正确行动成本的问题。
+
+事件概率路线仍需同一前缀、跨度和目标名册上的强简基线，例如有明确平滑先验的历史事件率或事件状态转移率；不只把零一硬告警当概率对照。报告实际 FP/FN 与代价，另在共同有概率的配对集合上核 Brier 和预先声明的风险分组／事件率。Brier 更低并不单独证明校准更好。无支持的状态、单类训练、拟合失败及概率 null 保留分母和回退动作，不能补成零或删后称完整概率评价。各年度的边际事件概率不是首达时间分布，首次超过动作阈值的年份也不是已确定的真实首次发生年。
 
 已有Statsmodels `SARIMAX`／状态空间可处理有理由的趋势、季节、动态回归和误差结构；先核季节s、差分和外生项的含义、辨识与样本支持。`kalman_filter(F,H,Q,R,x0,P0,observations)`提供限定的线性高斯filter：核状态／观察单位、矩阵维度、过程／观察协方差及初值；过滤历史状态不自动成为任意h预测或因果模型。`enforce_stationarity`或诊断不拒绝不证明整个现实过程平稳。AIC与残差诊断只在相称设定中解释，不代替未来回测；拟合优度不认证机制。
 
@@ -58,3 +62,4 @@ Scikit-learn `TimeSeriesSplit(gap=..., test_size=..., max_train_size=...)`是行
 
 - Statsmodels固定 `35a8e0b`，BSD-3-Clause：[SARIMAX](https://github.com/statsmodels/statsmodels/blob/35a8e0b7483211f5be7e60926be082136263cac3/statsmodels/tsa/statespace/sarimax.py)、[MLEModel及get_forecast](https://github.com/statsmodels/statsmodels/blob/35a8e0b7483211f5be7e60926be082136263cac3/statsmodels/tsa/statespace/mlemodel.py)。[官方预测示例](https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_forecasting.html)说明结果对象与逐起点评价；接口以实际锁定安装核对。
 - Scikit-learn `1.9.1`固定 `866c0f51`，BSD-3-Clause：[TimeSeriesSplit实际实现](https://github.com/scikit-learn/scikit-learn/blob/866c0f51e7560ef0303cbcc5f159df5382ea9e3f/sklearn/model_selection/_split.py)。本参考不声明所有时序或状态空间算法已经执行／验证。
+- 二元概率模型可复用已锁定的 [LogisticRegression](https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression)，核惩罚归一化、截距、类别权重及训练内变换；[概率校准说明](https://scikit-learn.org/stable/modules/calibration.html)区分概率误差与校准。算法名称和低 Brier 均不提供未来可靠性保证。

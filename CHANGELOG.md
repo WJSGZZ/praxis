@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 时序指导把数量中心、固定事件概率与预警代价分别评价，明确成本所决定的概率动作阈值、前缀事件转移基线和失败／回退分母；选型须按实际投影后的值评分，年度边际风险不冒称首次发生时间。工具接口与版本号保持。
+  Forecasting guidance separates count centres, fixed-event probabilities and warning costs, with cost-based probability decisions, prefix transition baselines and explicit failure coverage. Selection scores executable transformed predictions; annual marginal risk does not identify a first-event date. Tool interfaces and version number are unchanged.
+
 - 当前美赛编译与冻结从绑定源码提取摘要末尾，核对它在实际 PDF 第 1 页唯一且最后出现；自然跨页即使零 Overfull 也拒绝。未知展开、外部内容、浮动体或非普通文字结尾不能凭前文自动认证，保留逐页审阅和显式 archive 复现边界。
   Current MCM compilation and freezing bind the source-derived Summary tail to its unique final position on PDF page 1, refusing natural overflow even with no Overfull warning. Unsupported expansion, external content, floats and non-prose tails cannot be certified by earlier text; actual page review and explicit archive reproduction retain their separate roles.
 
