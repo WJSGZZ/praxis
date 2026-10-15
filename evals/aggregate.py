@@ -4,9 +4,9 @@
 """
 from __future__ import annotations
 
+import argparse
 import json
 import math
-import sys
 from pathlib import Path
 
 WEIGHTS = {'coverage': 10, 'assumptions': 15, 'model': 15, 'correctness': 25, 'robustness': 10, 'writing': 10, 'verifiability': 15}
@@ -379,18 +379,18 @@ def user_view(report: dict, contest: str | None = None) -> dict:
     return out
 
 
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
+    parser.add_argument('--contest', choices=sorted(PROFILES), help='diagnostic weight profile')
+    parser.add_argument('--view', choices=('user', 'internal'),
+                        help='default: user for a non-general contest, internal otherwise')
+    parser.add_argument('files', nargs='+', type=Path, help='one or more reviewer JSON files')
+    # Preserve --view between file names as well as the original equals forms.
+    args = parser.parse_intermixed_args(argv)
+    view = args.view or ('user' if args.contest and args.contest != 'general' else 'internal')
+    result = aggregate(args.files, args.contest)
+    print(json.dumps(user_view(result, args.contest) if view == 'user' else result, ensure_ascii=True, indent=1))
+
+
 if __name__ == '__main__':
-    args = sys.argv[1:]
-    view = None
-    if '--view=user' in args:
-        args.remove('--view=user')
-        view = 'user'
-    if '--view=internal' in args:
-        args.remove('--view=internal')
-        view = 'internal'
-    contest = None
-    if args and args[0].startswith('--contest='):
-        contest, args = args[0].split('=', 1)[1], args[1:]
-    view = view or ('user' if contest and contest != 'general' else 'internal')
-    result = aggregate([Path(a) for a in args], contest)
-    print(json.dumps(user_view(result, contest) if view == 'user' else result, ensure_ascii=True, indent=1))
+    main()

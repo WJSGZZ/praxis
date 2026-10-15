@@ -19,6 +19,8 @@
 
 ## 工具、效果与区间要绑定同一个设计
 
+先核实际设计矩阵的秩与可估计对象，再解释协方差和区间。含截距并保留一组穷尽类别的全部指示列时，列和等于截距，不能套满秩的普通逆矩阵公式；可明确基准类别或使用有条件的约束表示。广义逆仍能给一组拟合值，不说明全部系数唯一；删掉冗余列也不自动修复残差依赖或预测区间覆盖。现有 `ols_report` 已对秩亏保留一组系数并抑制个别系数推断，不能用另写的普通逆绕过该状态。[Statsmodels 的秩亏说明](https://www.statsmodels.org/stable/pitfalls.html#rank-deficient-exog-perfect-multicollinearity)与 [NumPy 逆矩阵说明](https://numpy.org/doc/stable/reference/generated/numpy.linalg.inv.html)均要求区分可计算结果与矩阵条件。
+
 已有 `ols_report(X, y, ..., covariance="cluster", groups=...)`提供显式一维分组的CRV1协方差和基于G−1自由度的t推断；使用前核该版本的支持选项、对齐、组间独立与簇数。小样本修正不能保证少量簇下有效，需设计相称的限制／敏感性。其他结构用Statsmodels GEE或MixedLM：前者估群体平均关联，后者需随机效应分布／组间结构。不要把两个软件输出相似当设计证据。
 
 已有 `bootstrap_ci`假设独立观察。重复测量需按实体或簇抽整个单位；配对须一起重采样，时序可考虑有理由的block方案。库版本和“bootstrap”名称不确认重采样单位正确。其他API是可选成熟路线，只有实际执行与核过的部分才写通过。

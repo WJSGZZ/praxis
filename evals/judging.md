@@ -34,6 +34,8 @@
 
 竞赛七维诊断与 `schema_version:2`／旧直接分数的兼容契约见 [竞赛评分表与输出](contest-judging.md#评分表)。研究独立 `research_assessment` 契约见 [研究评价](research-judging.md)。保留现有聚合器、旧 schema、评委—主张—根因关联和历史绑定；不用新增入口重评全部归档。聚合器验证结构和算术，不读取论文认证证据或评委能力。
 
+`python -m evals.aggregate --help` 查看参数。输入一个或多个评审 JSON 文件；`--contest=mcm`／`--contest mcm` 与 `--view=user`／`--view user` 两种写法均可，选项可放在文件名前后或之间。未指定视图时，无赛事或 `general` 输出 `internal`，其它已配置赛事输出 `user`。无文件、未知选项或无效选项值以参数错误退出，不作为文件读取。
+
 ## 阅读评委（另一种模式）
 
 限时读取摘要、图表与结论的模式只诊断阅读，按 [对应赛事标准](contest-judging.md#阅读评委另一种模式) 或 [研究表达维度](research-judging.md) 选择，不冒充整稿科学审阅。

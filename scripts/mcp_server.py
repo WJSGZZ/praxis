@@ -399,7 +399,7 @@ TOOLS = dict([
           lambda a: epidemic.fit_sir(a['infected'], a['population'], recovered=a.get('recovered'))),
     _tool('gm11_forecast', 'Grey GM(1,1) forecast of a short finite positive series; posterior diagnostics are null for constant input. Compare with backtest_baselines first.',
           {'series': SERIES, 'horizon': {'type': 'integer'}}, ['series'], lambda a: forecast.gm11(a['series'], a.get('horizon', 3))),
-    _tool('backtest_baselines', 'Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines.',
+    _tool('backtest_baselines', 'Rolling-origin comparison of naive, seasonal naive, drift, linear trend and Holt baselines. mae/best rank only methods covering all origins; methods reports successful origin counts, failures and skips.',
           {'series': SERIES, 'horizon': {'type': 'integer'}, 'min_train': {'type': 'integer'}, 'season': {'type': 'integer'}}, ['series', 'horizon'],
           lambda a: forecast.rolling_origin(a['series'], a['horizon'], min_train=a.get('min_train'), season=a.get('season'))),
     _tool('probe_structure', 'Numerical probes for convexity, monotonicity, symmetry, power laws and invariants. Violations are candidate counterexamples, never certified refutations; proved is false for these floating-point and finite-difference probes.',

@@ -14,6 +14,8 @@ OPTIONAL = ('failure_pattern', 'detected_by', 'signal')      # the faulty way of
 REQUIRED = ('problem', 'structure', 'recognized', 'routes_tried', 'what_failed', 'what_worked', 'verified_by', 'principle')
 LEVEL = ('candidate', 'observed once', 'seen repeatedly', 'derived', 'checked on a held-out problem')
 SOURCES = ('legacy_unspecified', 'external_proposal', 'task_observation', 'mathematical_derivation')
+# Keep this list small: logical qualifiers and domain abbreviations may carry meaning.
+ENGLISH_FUNCTION_WORDS = frozenset({'an', 'and', 'of', 'the'})
 
 
 def _entries(path: Path) -> list[dict]:
@@ -140,9 +142,9 @@ def load(path: Path) -> list[dict]:
 
 
 def _tokens(text: str) -> set[str]:
-    """Latin words (two letters or more) plus Chinese character bigrams, so a query without spaces still finds lessons."""
+    """Content words (two letters or more) plus Chinese character bigrams, including unspaced queries."""
     text = text.lower()
-    words = {w for w in re.findall(r'[a-z0-9_]+', text) if len(w) > 1}
+    words = {w for w in re.findall(r'[a-z0-9_]+', text) if len(w) > 1 and w not in ENGLISH_FUNCTION_WORDS}
     for run in re.findall(r'[\u4e00-\u9fff]+', text):
         words |= {run[i:i + 2] for i in range(len(run) - 1)} if len(run) > 1 else {run}
     return words
@@ -153,7 +155,8 @@ def search_lessons(path: Path, query: str = '', *, tags: list[str] | None = None
     Returns the best few, strongest evidence first on ties."""
     words = _tokens(query.replace(',', ' '))
     want = {t.lower() for t in (tags or [])}
-    lowered = query.lower()
+    # Use the same whole-word filter for inferred tags; explicit tags remain literal.
+    lowered = re.sub(r'[a-z0-9_]+', lambda m: ' ' if m[0] in ENGLISH_FUNCTION_WORDS else m[0], query.lower())
     ranked = []
     if type(limit) is not int or limit < 0: raise ValueError('limit must be a nonnegative integer')
     for rec in active(path):

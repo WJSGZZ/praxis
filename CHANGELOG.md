@@ -5,6 +5,12 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 修复锁定 Statsmodels 下 Holt 基线的初始化，保留逐起点失败／跳过与实际参与数；只在相同完整起点集上比较 MAE。聚合器 CLI 支持标准帮助与参数错误；经验检索过滤少量完整英文虚词，保留中文、专业词及显式标签。评审反例须区分参数上限和实际取值，避免制造超载误报。
+  Holt now initializes correctly with the locked Statsmodels version and reports per-origin failures, skips and participation; MAE rankings require the same complete origin set. The aggregation CLI supports standard help and argument errors. Lesson search filters a small set of whole English function words while retaining Chinese terms, technical words and explicit tags. Review counterexamples distinguish limits from actual values to avoid unsupported overload claims.
+
+- 科学审查明确连续密度的积分测度、非单调及截断／重归一映射的区间传播、秩亏设计的可估计对象，以及退出时刻变化下平均值与固定期限总值的区别。只核角点、逆矩阵返回成功或存活期平均值较高，均不能代替相应数学依据。
+  Scientific review now checks the measure of continuous densities, interval propagation through nonmonotone and clipped or renormalized maps, estimable quantities in rank-deficient designs, and the difference between survival-period averages and fixed-horizon totals. Corner checks, a returned inverse or a higher pre-exit average do not establish the corresponding mathematical claim.
+
 - 动力学与不确定性指导区分物理事件、决策起点和剩余寿命，保留共同隐状态及未归一质量／条件后验。数值比较同时重放原、新方案，明确有限模型改善与分辨率稳定的现实排序；合法新增证据的条件化仍允许。
   Dynamics and uncertainty guidance distinguish event time, decision time and remaining lifetime, preserving shared latent states and the difference between residual mass and conditional posteriors. Numerical comparisons reevaluate both policies and separate finite-model gains from resolution-stable physical rankings. Conditioning on genuine additional evidence remains valid.
 

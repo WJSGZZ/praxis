@@ -65,6 +65,44 @@ def test_seed_lessons_are_valid_and_found_by_a_new_problem(tmp_path):
     lessons.add_lesson(target, dict(records[0], id=None, problem='another'))     # the seed file remains appendable
 
 
+@pytest.mark.parametrize('query', ['', '   ', 'the of and', 'THE, OF; AND!', 'an the of and'])
+def test_empty_and_function_word_queries_do_not_retrieve_seed_lessons(query):
+    from pathlib import Path
+    seed = Path(__file__).resolve().parents[1] / 'templates/lessons-seed.jsonl'
+    original = seed.read_bytes()
+    assert lessons.search_lessons(seed, query) == []
+    assert seed.read_bytes() == original
+
+
+def test_function_words_do_not_change_content_ranking_or_explicit_tags(tmp_path):
+    from pathlib import Path
+    import shutil
+    target = tmp_path / 'lessons.jsonl'
+    shutil.copy(Path(__file__).resolve().parents[1] / 'templates/lessons-seed.jsonl', target)
+    original = target.read_bytes()
+    for plain, padded, expected in (
+        ('mesh refinement point source inlet constraint', 'THE mesh refinement OF point source AND inlet constraint!', 'S0001'),
+        ('三维热网络中带入口点源的温度约束', 'the 三维热网络中带入口点源的温度约束 of and', 'S0001'),
+        ('整数规划 二元变量 容差 MILP', 'the 整数规划 and 二元变量 of 容差 MILP', 'S0004'),
+    ):
+        found = lessons.search_lessons(target, plain)
+        assert found[0]['id'] == expected
+        assert lessons.search_lessons(target, padded) == found
+    assert lessons.search_lessons(target, 'the of and', tags=['MILP'])[0]['id'] == 'S0004'
+    assert lessons.search_lessons(target, '', tags=['MILP'])[0]['id'] == 'S0004'
+    assert target.read_bytes() == original
+
+
+def test_filter_matches_whole_words_and_keeps_domain_terms_and_tag_identity(tmp_path):
+    target = tmp_path / 'lessons.jsonl'
+    record = lessons.add_lesson(target, sample(problem='theory of bandwidth and software proofs',
+                                             tags=['and', 'x']))
+    for query in ('THEORY', 'bandwidth', 'software', 'proofs', 'x'):
+        assert lessons.search_lessons(target, query)[0]['id'] == record['id']
+    assert lessons.search_lessons(target, 'the of and') == []
+    assert lessons.search_lessons(target, tags=['AND'])[0]['id'] == record['id']
+
+
 def test_route_graph_returns_related_lessons_for_a_new_record(tmp_path):
     import shutil
     from pathlib import Path
