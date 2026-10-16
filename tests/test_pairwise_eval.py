@@ -12,6 +12,32 @@ from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 from scripts import pairwise_eval as pe
 
 
+@pytest.mark.parametrize('metadata', [None, 7, False, {'known': False}, ['not-disclosed']])
+def test_optional_nontext_judge_metadata_is_preserved(tmp_path, metadata):
+    # Exact model identity is unavailable in actual fresh-agent returns. An
+    # honest null must not be changed into an invented model name to analyse it.
+    path = tmp_path / 'returned.json'
+    item = {'schema': 1, 'key_sha256': '1' * 64,
+            'judge': {'id': 'one', 'family': 'GPT', 'instance': 'actual-context',
+                      'exact_model_id': metadata}, 'judgments': []}
+    pe.write_json(path, item)
+    before = path.read_bytes()
+    assert pe._judgments([path])[0][0] == item
+    assert path.read_bytes() == before
+
+
+@pytest.mark.parametrize('field', ['id', 'family', 'instance', 'exact_model_id'])
+def test_placeholder_judge_text_is_still_rejected(tmp_path, field):
+    path = tmp_path / 'returned.json'
+    judge = {'id': 'one', 'family': 'GPT', 'instance': 'actual-context',
+             'exact_model_id': None}
+    judge[field] = 'external-fill-in'
+    pe.write_json(path, {'schema': 1, 'key_sha256': '1' * 64,
+                         'judge': judge, 'judgments': []})
+    with pytest.raises(ValueError, match='actual judge identity'):
+        pe._judgments([path])
+
+
 def pdf(path, text):
     writer = PdfWriter()
     page = writer.add_blank_page(width=600, height=800)

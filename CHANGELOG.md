@@ -7,6 +7,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 本地候选版，尚未发布。Local candidate; publication is pending.
 
+- 成对评审解析保留未知型号等附加元数据的 null／非文本值；必填评委身份与文本占位符仍拒绝。修复真实返回触发的类型异常，不改原始判断、奖档标签或评测阈值。
+  Pairwise review parsing preserves null or nontext optional metadata, including an unavailable exact model identifier. Required judge identity and textual placeholders remain checked. This fixes a type error from actual returns without changing raw judgments, award labels or evaluation thresholds.
+
 ### 数学工具 · Mathematical tools
 
 - OLS 新增拟合值、残差、HC3 与新样本区间；Sobol 支持独立非均匀边际及二阶作用；标定可用至少八个随机起点与随机留出，报告同一最佳盆地比例，不据此证明全局最优。

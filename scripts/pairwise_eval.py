@@ -505,7 +505,7 @@ def _judgments(paths, key=None):
             raise ValueError("Judgment requires a valid key SHA256 identity")
         if data.get("schema") != 1 or any(not isinstance(judge.get(k), str) or not judge[k].strip() for k in ("id", "family", "instance")):
             raise ValueError("Judgment requires schema:1 and explicit judge id/family/instance")
-        if any("fill-in" in judge[k] for k in judge):
+        if any(isinstance(value, str) and "fill-in" in value for value in judge.values()):
             raise ValueError("Complete actual judge identity before analysis")
         if key is not None and data.get("key_sha256") != sha256(key):
             raise ValueError("Judgment/key SHA256 mismatch")
