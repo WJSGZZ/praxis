@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 竞赛评审改为三遍阅读：先只读 Summary、图表与结论做分诊，再全文核组成并对决定主要答案的方程做机制审计和主张攻击，最后与同届同题真实论文两两比较定档。问题按会改变结论、影响可信度、仅表述三级记录，只有会改变主要答案且不能局部修复的错误可单独压档；没有同题参照时不给档次，只报告分诊结果、问题清单与 O 稿结构分布的对比：同一篇官方 Outstanding 论文在新旧规则下都被判为 Honorable Mention，无参照定档不可靠。评自家作品时使用全新上下文，不读作者记录。评审 JSON 新增可选的 `reader`、`comparison` 块和问题 `severity`，聚合器与旧记录不变。
+  Contest review now proceeds in three passes: a triage read of the Summary, figures and conclusions; a full read with a mechanism audit and attacks on the claims behind the main answers; and pairwise comparison with real same-problem papers of known award. Issues are graded as decisive, substantive or local, and only a decisive error that changes a main answer and cannot be repaired locally lowers the level on its own. Without same-problem references the review abstains from a level and reports triage results, graded issues and structural comparison with Outstanding papers: in a single-paper check, an official Outstanding paper was rated Honorable Mention under both the old and new rules. Self-review uses a fresh context without the author's records. Review JSON gains optional `reader` and `comparison` blocks and an issue `severity`; the aggregator and legacy records are unchanged.
+
 - 机制指导区分活动压力与服务对象存量，加入固定存量／充足供给的控制和耦合修复后的结论重算。不确定性指导核总体比例到组别风险及事件率的识别条件，使用相容域上的界与可达见证，并区别零设备的付费服务和不服务。工具、依赖与版本号保持。
   Mechanistic guidance separates activity pressure from the stock receiving a service, with fixed-stock controls and recomputation of affected coupled results. Uncertainty guidance checks what pooled incidence identifies about group risks and event rates, uses bounds and attainable witnesses on the compatible domain, and distinguishes paid services with no new equipment from no service. Tools, dependencies and version number are unchanged.
 

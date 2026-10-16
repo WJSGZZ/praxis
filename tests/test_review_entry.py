@@ -94,3 +94,23 @@ def test_research_contract_remains_distinct_and_old_weights_are_unchanged():
     research_mode = (BUNDLE / 'references/research-mode.md').read_text()
     assert '探索难度，不是用途路由' in research_mode
     assert '研究生竞赛仍按竞赛题意' in research_mode
+
+
+def test_contest_review_separates_findings_from_level():
+    """The rubric keeps error grading and level comparison as distinct, documented steps."""
+    contest = (BUNDLE / 'evals/contest-judging.md').read_text()
+    review = (BUNDLE / 'skills/praxis-review/SKILL.md').read_text()
+    for phrase in ('## 评审流程：三遍阅读', '## 档次判断：先比较，后定档', '`decisive`', '`substantive`', '`local`',
+                   '只有 `decisive` 可以单独压低档次', '不读作者的任务记录'):
+        assert phrase in contest, phrase
+    for phrase in ('分诊阅读', '全文阅读', '比较定档', '只有这一级可以单独压档', '评自家作品'):
+        assert phrase in review, phrase
+    # Protect the adopted abstention decision at both entry points; the previous
+    # residual wording still invited an unsupported range without comparators.
+    assert '没有同题参照时弃判断' in contest
+    assert '没有参照时按无参照规则给范围' not in contest
+    assert '无参照时的弃判断' in review
+    assert '有理由的档次范围' not in review
+    judging = (BUNDLE / 'evals/judging.md').read_text()
+    assert 'contest-judging.md#评审流程三遍阅读' in judging
+    assert 'contest-judging.md#档次判断先比较后定档' in judging
