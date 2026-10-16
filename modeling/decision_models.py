@@ -235,3 +235,159 @@ def _indifference(M: np.ndarray, k: int):
         return None
     z = solution[:k]
     return z if (z > 1e-12).all() else None
+
+
+def _epsilon_inputs(count, senses, epsilon_grid, primary, tol, max_points):
+    if isinstance(primary, (bool, np.bool_)) or not isinstance(primary, (int, np.integer)) or not 0 <= primary < count:
+        raise ValueError('primary must be an objective index')
+    if count < 2:
+        raise ValueError('At least two objectives are required')
+    directions = np.asarray(senses, float)
+    if directions.shape != (count,) or not np.isin(directions, [-1, 1]).all() or any(isinstance(v, (bool, np.bool_)) for v in np.asarray(senses, object).flat):
+        raise ValueError('senses must contain +1 to maximize or -1 to minimize each objective')
+    grid = np.asarray(epsilon_grid, float)
+    if grid.ndim != 2 or not len(grid) or grid.shape[1] != count-1 or not np.isfinite(grid).all():
+        raise ValueError('epsilon_grid must be a nonempty finite matrix with one threshold per nonprimary objective')
+    if type(max_points) is not int or not 1 <= max_points <= 10000:
+        raise ValueError('max_points must be an integer from 1 to 10000')
+    if len(grid) > max_points:
+        raise ValueError('epsilon_grid exceeds max_points budget')
+    if isinstance(tol, (bool, np.bool_)) or not np.isfinite(tol) or tol < 0:
+        raise ValueError('tol must be finite and nonnegative')
+    secondary = [j for j in range(count) if j != primary]
+    return directions, grid, secondary
+
+
+def _epsilon_summary(points, senses, grid, primary, secondary, method):
+    accepted = [point for point in points if point['accepted']]
+    front = pareto_front([point['objectives'] for point in accepted], senses)['indices'] if accepted else []
+    return dict(method=method, primary=int(primary), senses=list(map(int, senses)),
+                epsilon_objectives=secondary, epsilon_grid=grid.tolist(),
+                epsilon_rule='For sense +1: objective >= epsilon; for sense -1: objective <= epsilon.',
+                points=points, frontier=[accepted[i] for i in front],
+                coverage=dict(requested_points=len(grid), attempted_points=len(points), accepted_points=len(accepted),
+                              unique_epsilon_rows=len(np.unique(grid, axis=0)),
+                              complete_frontier=False,
+                              scope='Only the supplied epsilon rows were scanned. Dominance filtering compares accepted returned objective vectors only; ties and weakly efficient scalar optima can remain. No complete/global Pareto-front proof.'))
+
+
+def epsilon_constraint_lp(objectives, senses, epsilon_grid, *, primary=0,
+                          A_ub=None, b_ub=None, A_ge=None, b_ge=None, A_eq=None, b_eq=None,
+                          bounds=None, tol=1e-7, max_points=1000):
+    """Scan explicit epsilon thresholds, solving one existing HiGHS LP per grid row.
+
+    objectives contains one linear coefficient vector per objective. Constraints and
+    default nonnegative variables follow solve_lp. Threshold columns correspond to
+    nonprimary objectives in their original order. Returned frontier is the exact
+    existing dominance filter on accepted numerical LP answers, not a continuous
+    frontier or an exact-arithmetic proof. Scalar ties can be weakly efficient.
+    """
+    coefficients = np.asarray(objectives, float)
+    if coefficients.ndim != 2 or not all(coefficients.shape) or not np.isfinite(coefficients).all() or any(isinstance(v, (bool, np.bool_)) for v in np.asarray(objectives, object).flat):
+        raise ValueError('objectives must be a nonempty finite matrix of linear objective coefficients')
+    directions, grid, secondary = _epsilon_inputs(len(coefficients), senses, epsilon_grid, primary, tol, max_points)
+    n = coefficients.shape[1]
+    base_rows, base_rhs = [], []
+    for A, b, sense in [(A_ub, b_ub, 1), (A_ge, b_ge, -1)]:
+        if A is None:
+            if b is not None:
+                raise ValueError('Each constraint RHS requires its matrix')
+            continue
+        matrix, rhs = np.asarray(A, float), np.asarray(b, float)
+        if matrix.ndim != 2 or matrix.shape[1] != n or rhs.shape != (len(matrix),) or not np.isfinite(matrix).all() or not np.isfinite(rhs).all():
+            raise ValueError('Finite constraint matrices and RHS must match the objective dimensions')
+        base_rows.extend((sense*matrix).tolist())
+        base_rhs.extend((sense*rhs).tolist())
+    # The existing solver validates equality rows and variable bounds before its
+    # first solve. Preserve the original constraints in the returned definition.
+    points = []
+    for index, thresholds in enumerate(grid):
+        rows = base_rows + [(-directions[j]*coefficients[j]).tolist() for j in secondary]
+        rhs = base_rhs + [-directions[j]*float(epsilon) for j, epsilon in zip(secondary, thresholds)]
+        solved = optimize.solve_lp(coefficients[primary], A_ub=rows, b_ub=rhs, A_eq=A_eq, b_eq=b_eq,
+                                   bounds=bounds, maximize=directions[primary] == 1, tol=tol)
+        point = dict(grid_index=index, epsilon=thresholds.tolist(), status=solved['status'], message=solved['message'],
+                     feasible=bool(solved.get('incumbent_feasible', False)), accepted=bool(solved.get('success') and solved.get('certified')),
+                     scalar_optimum_verified=bool(solved.get('certified')), solver_result=solved)
+        if 'x' in solved:
+            values = coefficients @ np.asarray(solved['x'])
+            if not np.isfinite(values).all():
+                raise ValueError('Objective values exceed finite numerical range')
+            point.update(x=solved['x'], objectives=values.tolist(),
+                         epsilon_slacks=(directions[secondary]*(values[secondary]-thresholds)).tolist(),
+                         feasibility=dict(status='checked_by_existing_lp_certificate',
+                                          scaled_max_violation=solved['certificate']['scaled_primal_violation'], tolerance=tol))
+        else:
+            point['feasibility'] = dict(status='no_candidate', note='Solver failure is not an exact mathematical infeasibility proof.')
+        points.append(point)
+    out = _epsilon_summary(points, directions, grid, primary, secondary, 'epsilon_constraint_lp')
+    out['problem'] = dict(objectives=coefficients.tolist(),
+                          constraints={key: None if value is None else np.asarray(value).tolist()
+                                       for key, value in dict(A_ub=A_ub, b_ub=b_ub, A_ge=A_ge, b_ge=b_ge, A_eq=A_eq, b_eq=b_eq).items()},
+                          bounds=None if bounds is None else [list(row) for row in bounds],
+                          default_bounds='x >= 0 when bounds is None')
+    return out
+
+
+def epsilon_constraint_nlp(objectives, senses, epsilon_grid, bounds, constraints=(), *, primary=0,
+                           starts=8, seed=2027, tol=1e-8, max_points=1000):
+    """Scan thresholds through existing multi-start SLSQP; report local candidates only.
+
+    objectives are scalar callables. Base constraints use minimize_nlp's convention:
+    type='ineq' means fun(x)>=0, type='eq' means fun(x)=0. Only converged feasible
+    candidates enter the returned dominance filter; failed feasible attempts are
+    retained separately as incumbents. Neither search failure nor sampled agreement
+    establishes infeasibility, global optimality, or a complete Pareto frontier.
+    """
+    from modeling.nonlinear import minimize_nlp
+    from modeling.contracts import finite_real
+    objectives = list(objectives)
+    if not all(callable(fun) for fun in objectives):
+        raise ValueError('Each NLP objective must be a scalar callable')
+    directions, grid, secondary = _epsilon_inputs(len(objectives), senses, epsilon_grid, primary, tol, max_points)
+    box = np.asarray(bounds, float)
+    if box.ndim != 2 or not len(box) or box.shape[1] != 2 or not np.isfinite(box).all() or np.any(box[:, 0] > box[:, 1]):
+        raise ValueError('NLP bounds must be a finite ordered box')
+    if isinstance(starts, (bool, np.bool_)) or not isinstance(starts, (int, np.integer)) or starts < 1 or starts*len(grid) > 10000:
+        raise ValueError('starts must be a positive integer within the 10000 total local-start budget')
+    if isinstance(seed, (bool, np.bool_)) or not isinstance(seed, (int, np.integer)) or seed < 0:
+        raise ValueError('seed must be a nonnegative integer')
+    constraints = list(constraints)
+    if any(not isinstance(c, dict) or c.get('type') not in ('eq', 'ineq') or not callable(c.get('fun')) for c in constraints):
+        raise ValueError('Each constraint needs type eq/ineq and a scalar callable fun')
+    probe = box[:, 0]/2 + box[:, 1]/2
+    for fun in objectives:
+        finite_real(fun(probe.copy()), 'objective at box midpoint')
+    for c in constraints:
+        finite_real(c['fun'](probe.copy()), 'constraint at box midpoint')
+    points = []
+    for index, thresholds in enumerate(grid):
+        cons = constraints + [dict(type='ineq', fun=lambda x, j=j, threshold=threshold: directions[j]*(finite_real(objectives[j](x), 'epsilon objective')-threshold))
+                              for j, threshold in zip(secondary, thresholds)]
+        solved = minimize_nlp(objectives[primary], box, cons, starts=starts, seed=int(seed),
+                              maximize=directions[primary] == 1, tol=tol)
+        point = dict(grid_index=index, epsilon=thresholds.tolist(), status=solved.get('status', 'no_feasible_candidate'),
+                     feasible=solved['feasible'], accepted=bool(solved['feasible'] and solved['converged']),
+                     scalar_optimum_verified=False, solver_result=solved,
+                     failed_feasible_incumbents=[attempt for attempt in solved['attempts'] if attempt.get('feasible') and not attempt.get('success')])
+        if solved['feasible']:
+            x = np.asarray(solved['x'])
+            values = np.array([finite_real(fun(x.copy()), 'objective at returned point') for fun in objectives])
+            constraint_values = [finite_real(c['fun'](x.copy()), 'constraint at returned point') for c in constraints]
+            epsilon_slacks = directions[secondary]*(values[secondary]-thresholds)
+            violation = max([0., float(np.max(box[:, 0]-x)), float(np.max(x-box[:, 1]))] +
+                            [max(0., -v) if c['type'] == 'ineq' else abs(v) for c, v in zip(constraints, constraint_values)] +
+                            [max(0., -float(v)) for v in epsilon_slacks])
+            point.update(x=x.tolist(), objectives=values.tolist(), epsilon_slacks=epsilon_slacks.tolist(),
+                         feasibility=dict(status='recomputed_original_constraints_and_thresholds', max_violation=violation, tolerance=max(tol, 1e-7)))
+            point['feasible'] = bool(violation <= max(tol, 1e-7))
+            point['accepted'] = bool(point['feasible'] and solved['converged'])
+        else:
+            point['feasibility'] = dict(status='no_candidate', note='No feasible point found; infeasibility is not established.')
+        points.append(point)
+    out = _epsilon_summary(points, directions, grid, primary, secondary, 'epsilon_constraint_nlp_local_candidates')
+    out['problem'] = dict(objectives=[dict(index=i, callable_name=getattr(fun, '__name__', 'callable')) for i, fun in enumerate(objectives)],
+                          constraints=[dict(index=i, type=c['type'], callable_name=getattr(c['fun'], '__name__', 'callable')) for i, c in enumerate(constraints)],
+                          bounds=box.tolist(), starts_per_epsilon=int(starts), seed=int(seed),
+                          note='Callable definitions are supplied by the caller; names are identifiers, not serialized equations.')
+    return out

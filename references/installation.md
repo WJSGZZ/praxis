@@ -4,11 +4,13 @@
 
 可以直接下载已发布的宿主安装包，或从源码导出，再使用宿主的安装入口。每种包共用全部专业技能、数学工具和证据工作流；差异只在清单、路径变量和安装方式，不依赖官方商店收录。
 
-## 下载已发布的安装包
+## 版本下载入口
 
-[0.8.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.8.0) 提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
+**0.9.0 候选版尚未发布。** 获准发布前请使用下方源码导出方式；本节链接预留给该版本正式附件。
 
-解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定Release与后续main改动分别保留，下载0.8.0不会自动带入未发布修复。
+计划的 [0.9.0 Release](https://github.com/WJSGZZ/praxis/releases/tag/v0.9.0) 将提供 [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-codex.zip)、[Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-claude.zip)、[Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-gemini.zip)、[Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-copilot.zip)、[Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-cursor.zip) 和 [portable](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-portable.zip) ZIP；用同页 [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/SHA256SUMS.txt) 核对所选文件。PowerShell 可用 `Get-FileHash 文件名.zip -Algorithm SHA256`，macOS 可用 `shasum -a 256 文件名.zip`，Linux 可用 `sha256sum 文件名.zip`，逐字比较该文件的64位摘要。
+
+解压到新目录后，使用下方宿主对应的安装命令，跳过 clone 与 build_plugin。安装路径是含宿主清单的包根目录，计算环境位于其中的 `skills/praxis`。包不携带Python环境；运行工具仍需uv与锁定依赖。固定 Release 与后续 main 改动分别保留，下载包不会自动带入后续修复。
 
 ## 从源码导出
 
@@ -87,7 +89,7 @@ uv run --locked python -m scripts.build_plugin --host cursor --output ~/.cursor/
 
 重载后检查三件事：Praxis 出现在插件／扩展列表；全部专业技能可发现；`praxis-tools` 能响应。遇到问题先看宿主 MCP 日志中的 uv、Python 和路径错误。
 
-当前源码还提供 `runtime_info`，只读检查进程、依赖、资源与导出收据。服务未启动时，使用本机 Python 直接运行 `/实际包路径/skills/praxis/scripts/runtime_info.py`，无须先导入数值库；缺依赖会明确列出。它不安装或重载插件，诊断通过也不等于当前聊天加载了新源码。正式0.8.0包不含此未发布入口。
+当前源码还提供 `runtime_info`，只读检查进程、依赖、资源与导出收据。服务未启动时，使用本机 Python 直接运行 `/实际包路径/skills/praxis/scripts/runtime_info.py`，无须先导入数值库；缺依赖会明确列出。它不安装或重载插件，诊断通过也不等于当前聊天加载了新源码。0.9.0 候选版包含该诊断；磁盘检查与运行宿主的实际状态分别验证。
 
 可从任意目录检查底层服务（替换路径）：
 

@@ -171,21 +171,21 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 
 ## 数学工具
 
-本表对应当前源码。`asof_join`、`runtime_info`、版本补货案例及本轮数值与交付修复为未发布增量，正式0.8.0安装包尚不包含；版本记录见 [CHANGELOG](CHANGELOG.md)。
+0.9.0 源码候选版包含 24 项技能、73 个工具，尚待发布；最新正式安装包与源码版本分别保留。变更见 [CHANGELOG](CHANGELOG.md)，当前可[从源码安装](references/installation.md#从源码导出)。
 
 `praxis-tools` 把常用方法做成可直接调用的计算工具，输入输出都是 JSON；没有 MCP 的宿主可从实际包目录用 `uv run --locked --directory /path/to/plugin/skills/praxis python -m scripts.mcp_server --call 工具名 '参数'` 调用。哪类问题有现成工具、没有时怎么办，见[能力覆盖地图](references/coverage-map.md)。数值工具用独立推导的闭式解、解析界和小规模穷举答案做回归；输入保护与失败恢复另行检查。
 
 | 类别 | 工具 |
 |---|---|
-| 规划与网络 | `solve_lp`（数值原始—对偶检查）、`solve_milp`（求解器界与核验间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree` |
+| 规划与网络 | `solve_lp`（数值原始—对偶检查）、`solve_milp`（求解器界与核验间隙）、`solve_assignment`、`solve_tsp`（附下界）、`knapsack`（精确）、`shortest_path`、`max_flow`（附最小割）、`min_cost_flow`、`minimum_spanning_tree`、`pagerank`、`betweenness`、`greedy_modularity_communities`（附明确的随机图基线） |
 | 非线性与稳健优化 | `minimize_nlp`（多起点，区分收敛候选与失败可行点）、`robust_lp`（预算型稳健，给出稳健的代价）、`solve_mdp`（有限期有理 DP 或折现数值迭代） |
-| 回归、检验与统计 | `ols_report`（常规或显式按组的区间与诊断）、`adjust_pvalues`（Holm、BH、BY、Bonferroni及比较族声明）、`compare_models`（对基线的交叉验证比较）、`cross_validate_predictor`（Ridge／二分类、留组与折内填补）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性与留出） |
+| 回归、检验与统计 | `ols_report`（常规、HC3 或显式按组推断，附拟合值、残差与预测区间）、`adjust_pvalues`（Holm、BH、BY、Bonferroni及比较族声明）、`compare_models`（对基线的交叉验证比较）、`cross_validate_predictor`（Ridge／二分类、留组与折内填补）、`hypothesis_test`（含效应量与假设提示）、`bootstrap_ci`、`arima_forecast`（外生输入与滚动重拟合）、`pca_report`、`cluster_report`（含稳定性）、`calibrate_curve`（可辨识性、随机留出与启用后至少八个随机起点） |
 | 评价与权重 | `ahp_weights`（一致性比）、`entropy_weights`、`evaluate_alternatives`（TOPSIS 与权重稳定性） |
 | 预测与动态 | `backtest_baselines`（滚动起点基线）、`gm11_forecast`、`sir_simulate`、`sir_fit`（报可辨识性）、`queue_mmc`、`equilibria`（平衡点与稳定性）、`kalman_filter`、`solve_ode`（紧容差复算）、`solve_diffusion`（有限体积，附能量收支）、`solve_layered_diffusion` 与独立的 `layered_diffusion_laplace`、`grid_convergence_index` |
-| 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front` |
+| 决策与风险 | `markov_stationary`、`markov_absorption`、`matrix_game`、`bimatrix_nash`、`eoq`、`newsvendor`、`cvar_portfolio`（情景下最小 CVaR）、`pareto_front`（已有方案筛选）、`epsilon_constraint_lp`、`epsilon_constraint_nlp`（有限扫描，保留局部求解限制） |
 | 结构与探索 | `probe_structure`（凸、单调、对称、幂律、守恒量）、`dimensional_analysis`（量纲分析）、`check_total_unimodularity`、`route_graph`（路线记录）、`test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`（带已知阶数前提的有限核验）、`find_relation`、`route_to_lesson`、`lesson_add`、`lesson_search` |
 | 图像测量 | `binary_components`（给定二维二值掩码的连接区域、像素面积、边界框与质心；物理尺度须显式提供） |
-| 不确定性 | `sobol_sensitivity`、`sobol_convergence`、`monte_carlo`（附收敛检查） |
+| 不确定性 | `sobol_sensitivity`、`sobol_convergence`（独立非均匀边际、可选二阶作用）、`monte_carlo`（相关输入、拉丁超立方与匹配抽样方式的不确定性） |
 | 数据与文献（均免费） | `audit_data`（原始表头、解析与数据质量）、`audit_join`（关联基数、空键、未匹配与扩张上界）、`asof_join`（决策截点前的版本索引与未决项）、`search_literature`（OpenAlex，附免费全文链接）、`find_open_access`（Unpaywall）、`check_references`（对照 Crossref 核对 DOI、题名与年份） |
 | 环境诊断 | `runtime_info`（只读进程、依赖、资源及导出收据检查；不替代实际调用或宿主重载） |
 

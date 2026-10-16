@@ -3,7 +3,28 @@
 版本号按语义版本：0.x 表示仍在快速变化，技能名或工具接口有不兼容改动时升次版本号。只记录对使用者有影响的变化。
 Versions follow semantic versioning; 0.x means the skills and tools are still changing. Only user-visible changes are listed.
 
-## 未发布 · Unreleased
+## 0.9.0 · 2026-10-16
+
+本地候选版，尚未发布。Local candidate; publication is pending.
+
+### 数学工具 · Mathematical tools
+
+- OLS 新增拟合值、残差、HC3 与新样本区间；Sobol 支持独立非均匀边际及二阶作用；标定可用至少八个随机起点与随机留出，报告同一最佳盆地比例，不据此证明全局最优。
+  OLS adds fitted values, residuals, HC3 and intervals for new rows. Sobol supports declared independent nonuniform marginals and second-order effects. Calibration can use at least eight random starts and random hold-out, with the share reaching the best observed basin rather than a global-optimality claim.
+- Monte Carlo 新增正态协方差、Gaussian copula 相关输入、拉丁超立方与随机抽样下的分位数 bootstrap 区间；LHS 不套用独立同分布的标准误、Wilson 或 bootstrap 区间，未支持项返回原因化 null。
+  Monte Carlo adds normal covariance, Gaussian-copula dependence, Latin hypercube sampling and quantile bootstrap intervals for random sampling. IID standard errors, Wilson intervals and IID bootstrap intervals are explicitly unavailable for LHS.
+- 新增 PageRank、最短路径中介中心性、贪婪社区与明确的固定节点／边数随机图基线，以及调用现有求解器的 LP／NLP ε 约束扫描。原 pareto_front 仍只筛选已有方案；有限扫描与局部求解不认证完整前沿。
+  New tools compute PageRank, shortest-path betweenness and greedy modularity with a stated fixed-node/edge-count graph baseline, and scan LP/NLP epsilon constraints through the existing solvers. pareto_front keeps its original filtering behavior; a finite scan with local solves does not certify a complete frontier.
+- 受限表达式支持 where(cond, a, b)，保留嵌套幂拒绝和子进程截止；ARIMA 支持外生输入、残差与逐前缀重选模型的滚动回测。未来外生变量须提供，回测须声明其在起点可知。
+  Restricted expressions accept where(cond, a, b), retaining power guards and the subprocess deadline. ARIMA adds exogenous inputs, residuals and rolling evaluation with model selection repeated inside each prefix. Future exogenous values are required, and backtests require an explicit availability declaration.
+
+### 不兼容项 · Breaking changes
+
+- 当前美赛模板使用 v5；v4 稿件须显式 archive 重现。新案例默认 schema 2，运行／验收须满足建模契约和逐问证据要求；旧 schema 1 不追套新门禁。
+  Current MCM delivery uses template v5; reproduce v4 explicitly in archive mode. New cases default to schema 2 and require model-contract and question-level evidence gates. Existing schema 1 cases keep their original behavior.
+- 新增统计字段和原因化 null 需要调用方按实际状态读取；OLS 的观测区间依赖合并残差方差，不由 HC3 自动获得逐行异方差。ARIMA 拒绝形状不符、缺失未来外生输入和未声明信息可用性的回测；抽样／求解预算内的坏输入会明确拒绝。
+  Callers must handle added diagnostic fields and reasoned nulls. OLS observation intervals use pooled residual variance; HC3 does not identify row-specific future noise. ARIMA rejects shape mismatches, missing future exogenous inputs and backtests without a stated information assumption. Invalid inputs and unsupported execution budgets are refused.
+
 
 - 新增同题匿名成对评阅的准备、单对导出、聚类区间与跨家族一致性工具；每对独立上下文、换序及完整覆盖单独检查，文本匿名化与提取局限保留。聚合器保留阅读、比较和问题严重度，竞赛加权分标为诊断用途；真实评委辨别力仍须经获准实验验证。
   New pairwise review tools prepare anonymous same-problem inputs, export isolated comparisons, estimate problem-cluster intervals and compare judge families. Fresh contexts, reversed orders and complete planned coverage are checked separately, with anonymisation and extraction limits retained. Aggregation preserves reader/comparison blocks and issue severity while marking weighted contest scores as diagnostic; actual discrimination awaits an authorised real-paper experiment.
@@ -102,8 +123,8 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 - 公开美赛作品按题目展示，每题只保留最好的一份；十题十稿使用固定文件名与统一选择清单。主 Demo 同步为完整 28 页稿，旧研究版与失败证据保全到历史。双语入口、生成源、预览和导出同步，检查器拒绝重复题目及残留稿。
   The public MCM gallery selects one best paper per problem, with ten works under stable filenames and a shared catalog. The primary demo now presents the complete 28-page manuscript; earlier research versions and failures remain preserved in history. Bilingual links, source, previews and exports agree, with checks against duplicate problems and orphan papers.
 
-- 当前美赛交付统一使用共享 v4：A4、普通正文和图表文字 12pt、摘要与标题后首段缩进 2em、身份一致的摘要页和独立起页的 AI 报告。15 份研究稿已完成格式迁移与逐页检查，公开展示按每题一份的清单选择成品；旧科学记录与冻结原件保留。
-  Current MCM delivery uses the shared v4 layout: A4, 12pt ordinary prose and figure text, two-em indentation after summary and section headings, consistent identities and a separate AI-report start. Fifteen active reading copies were rebuilt and visually reviewed; frozen originals and scientific records retain their versions.
+- 本轮早期的 v4 迁移统一了：A4、普通正文和图表文字 12pt、摘要与标题后首段缩进 2em、身份一致的摘要页和独立起页的 AI 报告。15 份研究稿已完成格式迁移与逐页检查，公开展示按每题一份的清单选择成品；旧科学记录与冻结原件保留。
+  Earlier in this development cycle, the v4 migration established: A4, 12pt ordinary prose and figure text, two-em indentation after summary and section headings, consistent identities and a separate AI-report start. Fifteen active reading copies were rebuilt and visually reviewed; frozen originals and scientific records retain their versions.
 - 构建拒绝实际页框／身份不符及文字或浮动体溢出；冻结强制检查当前构建、真实字号、数学例外说明和绑定当前 PDF 的全部页面审阅。共用成熟 LaTeX/PDF 工具，不新增运行依赖。历史稿显式选择 archive，研究与国赛保持各自规则。
   Compilation rejects mismatched page geometry or identity and actual typesetting overflow. Freezing requires a current build, measured font sizes, explicit mathematical-role reviews and an exact-PDF all-page review. Existing LaTeX and PDF libraries are reused; archived layouts require explicit archive mode, while research and CUMCM keep their profiles.
 - 次要案例增加三份完整学习作品，按问题类型组织版本、方法和局限；中英文首页、图库、复现入口和安装说明同步。AI 参考意见未校准，不等于正式获奖或首次自主 O 成功。

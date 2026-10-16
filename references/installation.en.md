@@ -4,9 +4,11 @@
 
 Download a released package for your host or build one from source, then use that host's plugin installer. Each target includes the same professional skills and mathematical engine. The adapter supplies the host metadata and paths; no marketplace listing is required.
 
-## Released packages
+## Release download links
 
-The [0.8.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.8.0) contains ZIPs for [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-codex.zip), [Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-claude.zip), [Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-gemini.zip), [Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-copilot.zip), [Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-cursor.zip), and [portable use](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/praxis-0.8.0-portable.zip). Compare your chosen ZIP's SHA-256 with its entry in [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.8.0/SHA256SUMS.txt): use `Get-FileHash filename.zip -Algorithm SHA256` in PowerShell, `shasum -a 256 filename.zip` on macOS, or `sha256sum filename.zip` on Linux.
+**The 0.9.0 candidate has not been published.** Use the source build below until publication is approved. The links in this section are reserved for its release assets.
+
+The planned [0.9.0 release](https://github.com/WJSGZZ/praxis/releases/tag/v0.9.0) will provide ZIPs for [Codex](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-codex.zip), [Claude](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-claude.zip), [Gemini](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-gemini.zip), [Copilot](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-copilot.zip), [Cursor](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-cursor.zip), and [portable use](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/praxis-0.9.0-portable.zip). Compare your chosen ZIP's SHA-256 with its entry in [SHA256SUMS.txt](https://github.com/WJSGZZ/praxis/releases/download/v0.9.0/SHA256SUMS.txt): use `Get-FileHash filename.zip -Algorithm SHA256` in PowerShell, `shasum -a 256 filename.zip` on macOS, or `sha256sum filename.zip` on Linux.
 
 Extract into a fresh directory. Skip cloning and building, and use the matching installation command below with the extracted bundle root. The computational resource is its `skills/praxis` directory. These packages include the locked Python project, not a Python environment; tools still need uv and its prepared dependencies. A fixed release remains separate from subsequent changes on main.
 
@@ -87,7 +89,7 @@ To update, fetch the source, export to a fresh destination and update or reinsta
 
 After reloading, check the plugin list, skill discovery and MCP connection separately. Startup failures usually show up in the host's MCP logs as missing uv, Python or resource paths.
 
-The current source additionally includes `runtime_info` for read-only process, dependency, resource and export-receipt checks. If the service cannot start, use local Python to run `/actual/bundle/skills/praxis/scripts/runtime_info.py` without importing numerical libraries. It reports missing dependencies and does not install or reload anything. Passing this diagnostic does not certify that a current chat has loaded new code. Published 0.8.0 packages do not contain this unreleased entry.
+The current source additionally includes `runtime_info` for read-only process, dependency, resource and export-receipt checks. If the service cannot start, use local Python to run `/actual/bundle/skills/praxis/scripts/runtime_info.py` without importing numerical libraries. It reports missing dependencies and does not install or reload anything. Passing this diagnostic does not certify that a current chat has loaded new code. The 0.9.0 candidate includes this diagnostic; file checks and a running host session remain separate observations.
 
 A direct service diagnostic is:
 

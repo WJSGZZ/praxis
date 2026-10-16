@@ -251,33 +251,120 @@ def bootstrap_ci(data: Sequence[float], statistic: str = 'mean', *, n_resamples:
                 n=len(x), method=method, note='For time series or clustered data resample blocks instead; with very small n the interval is itself unreliable.')
 
 
-def monte_carlo(model: Callable, distributions: dict, *, n: int = 20000, seed: int = 2027, threshold: float | None = None) -> dict:
-    """Propagate inputs through model(dict of arrays) -> exactly n finite scalar outcomes.
+def monte_carlo(model: Callable, distributions: dict, *, n: int = 20000, seed: int = 2027,
+                threshold: float | None = None, covariance=None, correlation=None,
+                sampling: str = 'random', bootstrap_resamples: int = 200,
+                confidence: float = .95) -> dict:
+    """Propagate declared marginals with independent, normal-covariance or Gaussian-copula inputs.
 
-    distributions: {name: {'dist': 'norm'|'uniform'|'lognorm'|'triang'|..., 'params': {...}}}
-    (scipy.stats names and keywords: norm loc/scale, uniform loc/scale, expon scale, triang c/loc/scale, ...).
-
-    Reports the mean with its Monte Carlo standard error, quantiles, optional exceedance probability with an interval, and
-    whether the estimate has settled (second half of the sample against the first)."""
-    if isinstance(n, bool) or not isinstance(n, (int, np.integer)) or n < 2:
-        raise ValueError('n must be an integer of at least two')
-    if threshold is not None and not np.isfinite(threshold):
+    Matrix order is distributions insertion order. Covariance requires normal marginals
+    and diagonal agreement with their declared variances. Copula correlation is LATENT
+    Gaussian correlation, not generally the output marginals' Pearson correlation.
+    LHS stratifies independent latent uniforms before the Gaussian transform; dependent
+    transformed marginals are not claimed to retain marginal Latin stratification.
+    Ordinary row-bootstrap intervals and iid MC errors are unavailable for LHS.
+    """
+    from scipy.stats import qmc
+    if isinstance(n, bool) or not isinstance(n, (int, np.integer)) or not 2 <= n <= 1_000_000:
+        raise ValueError('n must be an integer from two to 1000000')
+    if sampling not in ('random', 'lhs'):
+        raise ValueError("sampling must be 'random' or 'lhs'")
+    if type(bootstrap_resamples) is not int or not 100 <= bootstrap_resamples <= 2000 or n * bootstrap_resamples > 200_000_000:
+        raise ValueError('bootstrap_resamples must be 100..2000 with at most 200 million resampled values')
+    if isinstance(confidence, bool) or not np.isfinite(confidence) or not 0 < confidence < 1:
+        raise ValueError('confidence must be strictly between zero and one')
+    if threshold is not None and (isinstance(threshold, bool) or not np.isfinite(threshold)):
         raise ValueError('threshold must be finite')
+    if not isinstance(distributions, dict) or len(distributions) > 32 or any(not isinstance(k, str) or not k.strip() for k in distributions):
+        raise ValueError('distributions must be a dictionary with at most 32 nonempty input names')
+    names = list(distributions); d = len(names)
+    if n * d > 2_000_000:
+        raise ValueError('At most two million input sample values are supported')
+    marginals, point_masses = [], {}
+    for name, spec in distributions.items():
+        if not isinstance(spec, dict) or not isinstance(spec.get('params', {}), dict):
+            raise ValueError('Each distribution requires dist and a params dictionary')
+        family = getattr(stats, spec.get('dist', ''), None)
+        if not isinstance(family, (stats.rv_continuous, stats.rv_discrete)):
+            raise ValueError('Only scipy.stats continuous or discrete probability families are supported')
+        try:
+            marginal = family(**spec.get('params', {}))
+            if not np.isfinite(marginal.ppf([.25, .5, .75])).all():
+                # SciPy rvs accepts a valid zero-scale location family even
+                # though its ppf is undefined. Preserve that point-mass input.
+                probe = marginal.rvs(size=2, random_state=np.random.default_rng(0))
+                if spec.get('params', {}).get('scale') != 0 or not np.isfinite(probe).all() or probe[0] != probe[1]:
+                    raise ValueError('Invalid distribution parameters')
+                point_masses[name] = float(probe[0])
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f'Invalid marginal {name}: {exc}') from exc
+        marginals.append(marginal)
+    if covariance is not None and correlation is not None:
+        raise ValueError('Supply covariance or latent correlation, not both')
+    matrix = covariance if covariance is not None else correlation
+    factor = None
+    if matrix is not None:
+        M = np.asarray(matrix, float)
+        if not d or M.shape != (d, d) or not np.isfinite(M).all() or not np.allclose(M, M.T, rtol=0, atol=1e-12):
+            raise ValueError('Dependence matrix must be finite, symmetric, and match input order')
+        if covariance is not None:
+            if any(v.dist.name != 'norm' for v in marginals):
+                raise ValueError('Covariance input requires normal marginals; use latent correlation for a copula')
+            scales = np.array([v.std() for v in marginals])
+            if not np.isfinite(scales).all() or np.any(scales <= 0) or not np.allclose(np.diag(M), scales ** 2, rtol=1e-10, atol=0):
+                raise ValueError('Covariance diagonal must match positive declared normal variances')
+            M = M / np.outer(scales, scales)
+        if not np.allclose(np.diag(M), 1, rtol=0, atol=1e-12):
+            raise ValueError('Latent correlation diagonal must be one')
+        eigenvalues, eigenvectors = np.linalg.eigh(M)
+        if eigenvalues.min() < -1e-12:
+            raise ValueError('Dependence matrix must be positive semidefinite')
+        factor = eigenvectors @ np.diag(np.sqrt(np.maximum(eigenvalues, 0)))
     rng = np.random.default_rng(seed)
-    sample = {k: getattr(stats, d['dist'])(**d.get('params', {})).rvs(size=n, random_state=rng) for k, d in distributions.items()}
+    if sampling == 'random' and factor is None:
+        sample = {k: marginal.rvs(size=n, random_state=rng) for k, marginal in zip(names, marginals)}
+    elif d:
+        u = qmc.LatinHypercube(d, seed=seed).random(n) if sampling == 'lhs' else rng.random((n, d))
+        if factor is not None:
+            latent = stats.norm.ppf(np.clip(u, np.finfo(float).eps, 1 - np.finfo(float).eps)) @ factor.T
+            u = stats.norm.cdf(latent)
+        u = np.clip(u, np.finfo(float).eps, 1 - np.finfo(float).eps)
+        sample = {k: np.full(n, point_masses[k]) if k in point_masses else marginal.ppf(u[:, i])
+                  for i, (k, marginal) in enumerate(zip(names, marginals))}
+    else:
+        sample = {}
+    if any(not np.isfinite(v).all() for v in sample.values()):
+        raise ValueError('Input sampling produced nonfinite values')
     y = np.asarray(model(sample), float)
     if y.shape != (n,) or not np.isfinite(y).all():
         raise ValueError('model must return exactly n finite scalar outcomes')
-    mean, se = y.mean(), y.std(ddof=1) / np.sqrt(n)
-    h = n // 2
-    out = dict(n=n, mean=float(mean), mc_standard_error=float(se), sd=float(y.std(ddof=1)), quantiles={q: float(np.quantile(y, q)) for q in (.025, .05, .5, .95, .975)},
+    mean, sd = float(y.mean()), float(y.std(ddof=1)); h = n // 2
+    if not np.isfinite([mean, sd]).all():
+        raise ValueError('Output summary exceeds finite numerical range')
+    qs = (.025, .05, .5, .95, .975)
+    out = dict(n=int(n), mean=mean, sd=sd, mc_standard_error=sd / np.sqrt(n) if sampling == 'random' else None,
+               quantiles={q: float(np.quantile(y, q)) for q in qs},
                half_sample_means=[float(y[:h].mean()), float(y[h:].mean())],
-               settled=bool(abs(y[:h].mean() - y[h:].mean()) <= 3 * np.sqrt(2) * y.std(ddof=1) / np.sqrt(h)))
+               settled=bool(abs(y[:h].mean() - y[h:].mean()) <= 3 * np.sqrt(2) * sd / np.sqrt(h)) if sampling == 'random' else None,
+               sampling=sampling, input_order=names,
+               dependence='normal_covariance' if covariance is not None else 'gaussian_copula_latent_correlation' if correlation is not None else 'independent')
+    intervals = None
+    if sampling == 'random':
+        # One resample at a time bounds memory independently of the replicate count.
+        brng = np.random.default_rng(np.random.SeedSequence(seed).spawn(1)[0])
+        boot = np.array([np.quantile(y[brng.integers(0, n, n)], qs) for _ in range(bootstrap_resamples)])
+        tails = ((1-confidence)/2, (1+confidence)/2)
+        intervals = {q: np.quantile(boot[:, i], tails).tolist() for i, q in enumerate(qs)}
+    out['quantile_bootstrap'] = dict(intervals=intervals, confidence=confidence, resamples=bootstrap_resamples if intervals is not None else 0,
+        method='ordinary iid row percentile bootstrap' if intervals is not None else None,
+        reason=None if intervals is not None else 'LHS rows are dependent; iid row bootstrap does not estimate this sampling design error. Independent LHS design replicates are needed.')
     if threshold is not None:
         k = int((y > threshold).sum())
-        ci = stats.binomtest(k, n).proportion_ci(method='wilson')
-        out['exceedance'] = dict(threshold=threshold, probability=k / n, ci=[float(ci.low), float(ci.high)])
-    out['note'] = 'Monte Carlo error falls as 1/sqrt(n); the result is only as good as the input distributions, whose sources must be stated.'
+        ci = stats.binomtest(k, n).proportion_ci(confidence_level=confidence, method='wilson') if sampling == 'random' else None
+        out['exceedance'] = dict(threshold=threshold, probability=k / n, ci=[float(ci.low), float(ci.high)] if ci else None,
+            reason=None if ci else 'Wilson iid-binomial sampling interval is not valid for a single LHS design')
+    out['note'] = ('Input laws and dependence are caller assumptions. Bootstrap intervals quantify finite iid sampling only, not input-law or structural uncertainty. '
+                   'Copula uniforms are clipped at machine epsilon for finite numerical transforms. LHS has no iid MC SE, settled test or bootstrap/Wilson coverage claim.')
     return out
 
 
@@ -321,44 +408,114 @@ def solve_ode(rhs: Callable, y0: Sequence[float], t_span: Sequence[float], t_eva
     return out
 
 
-def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max_d: int = 2, max_q: int = 3, seasonal_period: int | None = None) -> dict:
-    """ARIMA: differencing order from ADF unit-root tests, p and q by AICc over a small grid; returns the forecast with 95% intervals and a residual autocorrelation test (Ljung-Box).
+def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max_d: int = 2,
+                   max_q: int = 3, seasonal_period: int | None = None, exog=None,
+                   future_exog=None, backtest=False) -> dict:
+    """Training-only ADF/AICc ARIMA selection, optional future-known exogenous regressors.
 
-    Compare with `backtest_baselines` first: a model that does not beat naive and drift out of sample is not worth its complexity."""
+    Backtesting reselects the model at every origin through rolling_origin; actual
+    held-out exog are allowed only with explicit exog_known_at_origin=True. That
+    declaration is an information assumption, not evidence of historical availability.
+    """
     from statsmodels.stats.diagnostic import acorr_ljungbox
     from statsmodels.tsa.arima.model import ARIMA
+    from statsmodels.tsa.stattools import adfuller
     y = np.asarray(series, float)
+    if y.ndim != 1 or len(y) < 12 or not np.isfinite(y).all():
+        raise ValueError('ARIMA needs at least12 finite one-dimensional observations')
+    if isinstance(horizon, bool) or not isinstance(horizon, (int, np.integer)) or not 1 <= horizon <= 1000:
+        raise ValueError('horizon must be an integer from1 to1000')
+    for key, v in [('max_p', max_p), ('max_d', max_d), ('max_q', max_q)]:
+        if isinstance(v, bool) or not isinstance(v, (int, np.integer)) or not 0 <= v <= 10:
+            raise ValueError(f'{key} must be an integer from0 to10')
+    if 2 * (max_p+1) * (max_q+1) > 128:
+        raise ValueError('ARIMA search grid may contain at most128 trend/order candidates')
+    if seasonal_period is not None and (isinstance(seasonal_period, bool) or not isinstance(seasonal_period, (int, np.integer)) or seasonal_period < 2 or seasonal_period * 2 > len(y)):
+        raise ValueError('seasonal_period needs at least two full seasons and an integer period>=2')
+    X = F = None
+    if exog is not None:
+        X = np.asarray(exog, float)
+        if X.ndim == 1: X = X[:, None]
+        if X.ndim != 2 or X.shape[0] != len(y) or not X.shape[1] or X.shape[1] > 16 or not np.isfinite(X).all():
+            raise ValueError('exog must be a finite training-row matrix with1..16 columns')
+        if np.linalg.matrix_rank(np.column_stack([np.ones(len(y)), X])) != X.shape[1]+1:
+            raise ValueError('exog must have full column rank and no constant/duplicate column')
+        if future_exog is None:
+            raise ValueError('future_exog is required for every forecast horizon and exog column')
+        F = np.asarray(future_exog, float)
+        if F.ndim == 1 and X.shape[1] == 1: F = F[:, None]
+        if F.shape != (horizon, X.shape[1]) or not np.isfinite(F).all():
+            raise ValueError('future_exog must match horizon and exog columns and be finite')
+    elif future_exog is not None:
+        raise ValueError('future_exog requires training exog')
+    if type(backtest) is not bool and not isinstance(backtest, dict):
+        raise ValueError('backtest must be a boolean or options dictionary')
+    options = dict(backtest) if isinstance(backtest, dict) else {}
+    if set(options) - {'min_train', 'exog_known_at_origin'}:
+        raise ValueError('backtest options are min_train and exog_known_at_origin')
+    do_backtest = isinstance(backtest, dict) or backtest
+    if do_backtest and X is not None and options.get('exog_known_at_origin') is not True:
+        raise ValueError('Exogenous backtest requires explicit exog_known_at_origin=True')
     best = None
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        # AICc is not comparable across differencing orders, so d comes from unit-root tests (ADF), and only p and q are chosen by AICc
-        from statsmodels.tsa.stattools import adfuller
-        z, d = y, 0
-        while d < max_d and adfuller(z)[1] > .05:
-            z, d = np.diff(z), d + 1
-        for p in range(max_p + 1):
-            for q in range(max_q + 1):
-                # Stationary series can have a nonzero level, with or without
-                # a linear trend. Differenced series retain no added trend.
+        z = y if X is None else y - np.column_stack([np.ones(len(y)), X]) @ np.linalg.lstsq(np.column_stack([np.ones(len(y)), X]), y, rcond=None)[0]
+        d = 0
+        while d < max_d and len(z) >= 8 and np.ptp(z) > np.finfo(float).eps * max(1, np.abs(z).max()):
+            try: unit_root = adfuller(z)[1] > .05
+            except ValueError: break
+            if not unit_root: break
+            z, d = np.diff(z), d+1
+        for p in range(max_p+1):
+            for q in range(max_q+1):
                 for trend in ('c', 'ct') if d == 0 else ('n',):
+                    if X is not None and trend == 'ct' and np.linalg.matrix_rank(np.column_stack([np.ones(len(y)), np.arange(len(y)), X])) < X.shape[1]+2:
+                        continue
                     try:
                         seasonal = (1, 0, 0, seasonal_period) if seasonal_period else (0, 0, 0, 0)
-                        fit = ARIMA(y, order=(p, d, q), seasonal_order=seasonal, trend=trend).fit()
-                    except Exception:
+                        fit = ARIMA(y, exog=X, order=(p, d, q), seasonal_order=seasonal, trend=trend).fit()
+                        k = len(fit.params); denom = len(y)-d-k-1
+                        if denom <= 0 or not np.isfinite(fit.aic) or not np.isfinite(fit.params).all(): continue
+                        aicc = fit.aic + 2*k*(k+1)/denom
+                        if best is None or aicc < best[0]: best = (aicc, (p, d, q), fit)
+                    except (ValueError, np.linalg.LinAlgError, RuntimeError):
                         continue
-                    k = len(fit.params)
-                    aicc = fit.aic + 2 * k * (k + 1) / max(len(y) - d - k - 1, 1)
-                    if best is None or aicc < best[0]:
-                        best = (aicc, (p, d, q), fit)
-        if best is None:
-            raise RuntimeError('No ARIMA model could be fitted')
-        aicc, order, fit = best
-        fc = fit.get_forecast(horizon)
-        ci = fc.conf_int(alpha=.05)
-        lb = acorr_ljungbox(fit.resid[max(order[1], 1):], lags=[min(10, len(y) // 5)], return_df=True)
-    return dict(order=list(order), aicc=float(aicc), forecast=np.asarray(fc.predicted_mean).tolist(), lower=np.asarray(ci)[:, 0].tolist(), upper=np.asarray(ci)[:, 1].tolist(),
-                ljung_box_p=float(lb['lb_pvalue'].iloc[0]), residuals_white=bool(lb['lb_pvalue'].iloc[0] > .05), parameters={str(k): float(v) for k, v in zip(fit.param_names, fit.params)},
-                note='Intervals assume the order is right and errors are Gaussian; they are too narrow when the order was chosen from the same data.')
+        if best is None: raise RuntimeError('No finite ARIMA model could be fitted')
+        aicc, order, fit = best; fc = fit.get_forecast(horizon, exog=F); ci = np.asarray(fc.conf_int(alpha=.05)); prediction = np.asarray(fc.predicted_mean)
+        if prediction.shape != (horizon,) or ci.shape != (horizon, 2) or not np.isfinite(prediction).all() or not np.isfinite(ci).all():
+            raise ValueError('ARIMA forecast or interval is nonfinite or incorrectly shaped')
+        resid = np.asarray(fit.resid, float)
+        lb = acorr_ljungbox(resid[max(order[1], 1):], lags=[min(10, len(y)//5)], return_df=True)
+    lb_value = float(lb['lb_pvalue'].iloc[0]); lb_valid = np.isfinite(lb_value)
+    out = dict(order=list(order), aicc=float(aicc), forecast=prediction.tolist(), lower=ci[:,0].tolist(), upper=ci[:,1].tolist(),
+               residuals=resid.tolist(), ljung_box_p=lb_value if lb_valid else None,
+               residuals_white=bool(lb_value>.05) if lb_valid else None,
+               parameters={str(k):float(v) for k,v in zip(fit.param_names, fit.params)},
+               converged=bool(fit.mle_retvals.get('converged', False)),
+               exog_columns=0 if X is None else X.shape[1],
+               differencing_basis='training response' if X is None else 'training OLS residual after intercept and exog',
+               note='Intervals condition on selected order, Gaussian errors and supplied future exog. Selection/parameter/future-regressor uncertainty is not fully included; optimizer convergence is reported separately.')
+    if not lb_valid: out['ljung_box_reason'] = 'Residual test is undefined for these fitted residuals'
+    if do_backtest:
+        from modeling.forecast import rolling_origin
+        minimum = options.get('min_train', max(12, len(y)//2, len(y)-horizon-9))
+        if isinstance(minimum, bool) or not isinstance(minimum, (int, np.integer)) or minimum < 12:
+            raise ValueError('ARIMA backtest min_train must be an integer>=12')
+        origins = len(y)-horizon-minimum+1
+        if origins > 50: raise ValueError('At most50 rolling origins; declare a later min_train or a smaller series')
+        def candidate(train, h, origin):
+            candidate_result = arima_forecast(train, h, max_p=max_p, max_d=max_d, max_q=max_q,
+                                  seasonal_period=seasonal_period, exog=None if X is None else X[:origin],
+                                  future_exog=None if X is None else X[origin:origin+h])
+            if not candidate_result['converged']:
+                raise RuntimeError('ARIMA optimizer did not converge at this origin')
+            return candidate_result['forecast']
+        report = rolling_origin(y, horizon, min_train=minimum, season=seasonal_period, candidates={'arima': candidate})
+        report['min_train'] = int(minimum); report['horizon'] = int(horizon)
+        report['information_assumption'] = 'No exog' if X is None else 'Caller explicitly declares each held-out exog row known at its forecast origin; no availability audit supplied'
+        report['selection'] = 'ADF/order/trend/parameters reselected using each training prefix only'
+        out['backtest'] = report
+    return out
 
 
 def pca_report(X: Sequence[Sequence[float]], names: Sequence[str] | None = None, *, standardise: bool = True) -> dict:

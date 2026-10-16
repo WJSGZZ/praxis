@@ -163,7 +163,8 @@ def test_cluster_roundoff_guard_respects_response_units_and_keeps_resolvable_sma
     assert resolvable['coefficients'][0]['std_error'] / scale == pytest.approx(np.sqrt(7/12) * 1e-8, rel=1e-6)
 
 
-@pytest.mark.parametrize('override', [dict(covariance='HC3'), dict(groups=[0]*12), dict(covariance='cluster'),
+# C5 adds HC3 explicitly; HC0 remains unsupported, and all group guards stay covered.
+@pytest.mark.parametrize('override', [dict(covariance='HC0'), dict(groups=[0]*12), dict(covariance='cluster'),
     dict(covariance='cluster', groups=[0]*11), dict(covariance='cluster', groups=[[0]]*12),
     dict(covariance='cluster', groups=[False]*12), dict(covariance='cluster', groups=[None]*12),
     dict(covariance='cluster', groups=[' ']*12), dict(covariance='cluster', groups=[1.2]*12)])

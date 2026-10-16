@@ -61,7 +61,7 @@ def _forecasts(train, h, season):
     return out, failures, skipped
 
 
-def rolling_origin(series, horizon, *, min_train=None, season=None):
+def rolling_origin(series, horizon, *, min_train=None, season=None, candidates=None):
     """Mean absolute error of baselines completing every requested rolling origin.
 
     A candidate model must beat the best baseline here, with the final test period kept apart
@@ -81,12 +81,24 @@ def rolling_origin(series, horizon, *, min_train=None, season=None):
         raise ValueError('season must be a positive integer when supplied')
     if len(y) < min_train + horizon:
         raise ValueError('Series too short for the requested training size and horizon')
+    candidates = {} if candidates is None else candidates
+    baseline_names = {'naive', 'drift', 'linear_trend', 'seasonal_naive', 'holt'}
+    if not isinstance(candidates, dict) or any(not isinstance(k, str) or not k.strip() or k in baseline_names or not callable(v) for k, v in candidates.items()):
+        raise ValueError('candidates must map distinct nonbaseline names to forecast callables')
     origins = len(y) - horizon - min_train + 1
     methods = {name: dict(origins=0, failures=[], skipped=[])
-               for name in ('naive', 'drift', 'linear_trend', 'seasonal_naive', 'holt')}
+               for name in ('naive', 'drift', 'linear_trend', 'seasonal_naive', 'holt', *candidates)}
     errors = {}
     for origin in range(min_train, len(y) - horizon + 1):
         forecasts, failures, skipped = _forecasts(y[:origin], horizon, season)
+        for name, candidate in candidates.items():
+            try:
+                values = np.asarray(candidate(y[:origin].copy(), horizon, origin), float)
+                if values.shape != (horizon,) or not np.isfinite(values).all():
+                    raise ValueError('Candidate must return one finite forecast per horizon step')
+                forecasts[name] = values
+            except Exception as error:
+                failures[name] = dict(error_type=type(error).__name__, reason=str(error))
         for name, f in forecasts.items():
             errors.setdefault(name, []).append(float(np.abs(f - y[origin:origin + horizon]).mean()))
             methods[name]['origins'] += 1

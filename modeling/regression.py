@@ -16,7 +16,8 @@ from modeling.contracts import diagnostic
 
 
 def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Sequence[str] | None = None, add_constant: bool = True,
-               alpha: float = 0.05, covariance: str = 'nonrobust', groups: Sequence[str | int] | None = None) -> dict:
+               alpha: float = 0.05, covariance: str = 'nonrobust', groups: Sequence[str | int] | None = None,
+               X_new: Sequence[Sequence[float]] | None = None) -> dict:
     """Ordinary least squares with confidence intervals and the usual checks; `flags` lists every problem found.
 
     Checks: normality of residuals (Jarque-Bera), heteroscedasticity (Breusch-Pagan), autocorrelation (Durbin-Watson, meaningful only
@@ -25,6 +26,9 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     retains one coefficient solution but no individual inference. With covariance='cluster', groups declares one cluster per row;
     Statsmodels supplies one-way CRV1 covariance, its finite-sample correction, and t intervals with G-1 degrees of freedom.
     Clusters must be independent of each other; dependence within a cluster is allowed. Few clusters can give unreliable inference.
+    HC3 estimates heteroscedasticity-robust coefficient covariance. X_new uses input columns before adding a constant.
+    Mean intervals use the selected covariance; observation intervals additionally assume an independent new error with
+    pooled residual variance, so HC3/cluster observation intervals do not estimate a new row's conditional noise variance.
     A clean report does not make the model right, and clustering does not remove confounding or repair the conditional mean model."""
     X = np.asarray(X, float)
     y = np.asarray(y, float).reshape(-1)
@@ -35,10 +39,10 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     if not np.isfinite(alpha) or not 0 < alpha < 1:
         raise ValueError('alpha must be between zero and one')
     n, k = X.shape
-    if covariance not in ('nonrobust', 'cluster'):
-        raise ValueError("covariance must be 'nonrobust' or 'cluster'")
+    if covariance not in ('nonrobust', 'HC3', 'cluster'):
+        raise ValueError("covariance must be 'nonrobust', 'HC3' or 'cluster'")
     cluster_codes, cluster_counts = None, None
-    if covariance == 'nonrobust' and groups is not None:
+    if covariance != 'cluster' and groups is not None:
         raise ValueError("groups requires covariance='cluster'; group dependence must not be silently ignored")
     if covariance == 'cluster':
         if groups is None or isinstance(groups, (str, bytes)):
@@ -73,6 +77,24 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     inference_status, inference_reason = None, None
     covariance_report = None
     cluster_roundoff = None
+    if covariance == 'HC3':
+        if not identified:
+            inference_status = 'not_reported_rank_deficient'
+            inference_reason = 'Rank-deficient design; individual HC3 inference is not reported'
+        elif np.any(fit.get_influence().hat_matrix_diag >= 1 - np.finfo(float).eps):
+            inference_status = 'undefined'
+            inference_reason = 'HC3 needs leverage strictly below one; a unit-leverage row makes its variance correction undefined'
+        else:
+            inference_fit = fit.get_robustcov_results(cov_type='HC3', use_t=True)
+            if not np.isfinite(inference_fit.cov_params()).all():
+                inference_status = 'undefined'
+                inference_reason = 'HC3 covariance is nonfinite for this design and residuals'
+        covariance_report = dict(type='HC3', estimator='HC3', status=inference_status or 'computed',
+                                 matrix=None if inference_status else inference_fit.cov_params().tolist(),
+                                 reference_distribution='student_t', df_inference=float(fit.df_resid),
+                                 note='HC3 corrects coefficient covariance for heteroscedasticity; t intervals are approximate and independent rows are required.')
+        if inference_reason:
+            covariance_report['reason'] = inference_reason
     if covariance == 'cluster':
         cluster_count = len(cluster_counts)
         if not identified:
@@ -148,7 +170,7 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     influential = [int(i) for i in np.flatnonzero(np.isfinite(cooks) & (cooks > 4 / n))]
     status['cooks_distance'] = dict(status='computed') if len(finite_cooks) == n else dict(status='partly_undefined' if len(finite_cooks) else 'undefined', reason='Zero residual variance or unit leverage makes some Cook distances undefined', undefined_rows=np.flatnonzero(~np.isfinite(cooks)).tolist())
     flags = []
-    if covariance_report is not None:
+    if covariance == 'cluster':
         if covariance_report['clusters'] < 30:
             flags.append(f"few clusters ({covariance_report['clusters']}): t intervals and p-values can be unreliable; 30 is a warning heuristic, not a validity threshold")
         if covariance_report['status'] != 'computed':
@@ -157,6 +179,8 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
             flags.append('cluster covariance is singular: joint coefficient inference is not established')
         elif covariance_report['joint_inference_status'] == 'numerically_degenerate':
             flags.append('cluster standard errors are at numerical roundoff scale: coefficient t inference is not reported')
+    elif covariance_report is not None and covariance_report['status'] != 'computed':
+        flags.append(covariance_report['reason'])
     if not identified:
         flags.append(f'rank-deficient design ({rank}/{design.shape[1]}): not all individual coefficients are uniquely identified')
     if jb_p is not None and jb_p < alpha:
@@ -192,11 +216,53 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
                 r2=scalar('r2', fit.rsquared, 'Zero total variation makes R squared undefined'),
                 adj_r2=scalar('adj_r2', fit.rsquared_adj, 'Adjusted R squared is undefined for this response or degrees of freedom'),
                 rmse=float(np.sqrt(np.mean(resid ** 2))), coefficients=coefficients,
+                fitted=fit.fittedvalues.tolist(), residuals=resid.tolist(),
                 diagnostics=dict(jarque_bera_p=jb_p, breusch_pagan_p=bp_p, breusch_pagan=status['breusch_pagan_p'], durbin_watson=dw,
                                  vif=vif, vif_status=vif_status, condition_number=scalar('condition_number', np.linalg.cond(design), 'Singular design has an unbounded condition number'),
                                  status=status, influential_rows=influential[:20]), flags=flags)
     if covariance_report is not None:
         out['covariance'] = covariance_report
+    if X_new is not None:
+        new = np.asarray(X_new, float)
+        if new.ndim == 1 and k == 1:
+            new = new[:, None]
+        if new.ndim != 2 or not len(new) or new.shape[1] != k or not np.isfinite(new).all():
+            raise ValueError('X_new must be a nonempty finite matrix with the original input columns')
+        new_design = sm.add_constant(new, has_constant='add') if add_constant else new
+        predicted = fit.predict(new_design)
+        if not np.isfinite(predicted).all():
+            raise ValueError('New predictions exceed finite numerical range')
+        prediction = dict(predicted=predicted.tolist(), alpha=alpha, covariance=covariance,
+                          status=inference_status or ('computed' if identified else 'not_reported_rank_deficient'),
+                          mean_ci=None, observation_ci=None,
+                          note='Mean intervals use the selected coefficient covariance. Observation intervals are a homoscedastic reference: an independent new error with pooled residual variance. HC3 or clustering does not estimate row-specific noise or future cluster dependence.')
+        if identified and not inference_status:
+            # Build intervals explicitly: robust/cluster results can use a
+            # different t reference df from the residual-variance estimate.
+            from scipy.stats import t as student
+            df = getattr(inference_fit, 'df_resid_inference', fit.df_resid)
+            crit = student.ppf(1 - alpha / 2, df)
+            mean_variance = np.einsum('ij,jk,ik->i', new_design, inference_fit.cov_params(), new_design)
+            noise_variance = float(fit.scale)
+            if np.isfinite(mean_variance).all() and np.all(mean_variance >= 0) and np.isfinite(noise_variance):
+                mean_half = crit * np.sqrt(mean_variance)
+                observation_half = crit * np.sqrt(mean_variance + noise_variance)
+                if np.isfinite(mean_half).all() and np.isfinite(observation_half).all():
+                    with np.errstate(over='ignore'):
+                        mean_interval = np.column_stack([predicted-mean_half, predicted+mean_half])
+                        observation_interval = np.column_stack([predicted-observation_half, predicted+observation_half])
+                    if np.isfinite(mean_interval).all() and np.isfinite(observation_interval).all():
+                        prediction.update(mean_ci=mean_interval.tolist(), observation_ci=observation_interval.tolist(),
+                                          df_inference=float(df), pooled_noise_variance=noise_variance)
+                    else:
+                        prediction.update(status='undefined', reason='Prediction interval endpoints exceed finite numerical range')
+                else:
+                    prediction.update(status='undefined', reason='Prediction interval exceeds finite numerical range')
+            else:
+                prediction.update(status='undefined', reason='Prediction variance is nonfinite or negative')
+        else:
+            prediction['reason'] = inference_reason or 'Rank-deficient design; prediction estimability has not been checked'
+        out['prediction'] = prediction
     return out
 
 

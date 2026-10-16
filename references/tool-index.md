@@ -19,8 +19,13 @@
 | `ahp_weights` | matrix* | AHP weights and consistency ratio from a reciprocal pairwise-comparison matrix (order 1-10) |
 | `entropy_weights` | matrix*, directions | Entropy weights from a decision matrix (rows alternatives, columns criteria); a dispersion measure, not importance |
 | `evaluate_alternatives` | matrix*, weights*, directions*, alternatives, criteria, trials, weight_sigma, seed | TOPSIS ranking with min-max normalisation and rank stability under perturbed weights |
-| `sobol_sensitivity` | expression*, names*, bounds*, n, seed | Sobol indices for a scalar arithmetic expression over independent uniform inputs |
+| `sobol_sensitivity` | expression*, names*, bounds*, n, seed, second_order, distributions | Sobol indices for independent marginals (SALib distributions); optional second-order interactions |
 | `shortest_path` | edges*, source*, target*, directed | Dijkstra shortest path of a simple graph (no duplicate edges); edges [[u, v, weight]], non-negative weights |
+| `pagerank` | edges*, nodes, directed, alpha, tol, max_iter | PageRank of a simple weighted graph; optional isolated nodes; weights are positive transition strengths |
+| `betweenness` | edges*, nodes, directed, normalized | Exact shortest-path betweenness; strictly positive weights are distances, not tie strengths; optional isolated nodes |
+| `greedy_modularity_communities` | edges*, nodes, resolution, baseline_trials, seed | Greedy weighted undirected communities, modularity and seeded fixed-n/m random graph baseline |
+| `epsilon_constraint_lp` | objectives*, senses*, epsilon_grid*, primary, A_ub, b_ub, A_ge, b_ge, A_eq, b_eq, bounds, tol, max_points | Scan explicit epsilon constraints using the existing LP solver |
+| `epsilon_constraint_nlp` | objectives*, names*, senses*, epsilon_grid*, bounds*, constraints, primary, starts, seed, tol, max_points | Scan explicit epsilon constraints with multistart NLP |
 | `max_flow` | edges*, source*, sink* | Maximum flow and a minimum cut of a simple directed graph (no duplicate edges); edges [[u, v, capacity]] |
 | `minimum_spanning_tree` | edges* | Minimum spanning tree of a connected simple undirected graph (no duplicate edges); edges [[u, v, weight]] |
 | `queue_mmc` | arrival_rate*, service_rate*, servers* | M/M/c steady-state queue: utilization, Erlang C, mean waits and lengths |
@@ -42,12 +47,12 @@
 | `lesson_search` | path*, query, tags, limit, compact | Search the project memory for lessons by keywords and tags before starting a new problem; also returns recurring structures |
 | `solve_diffusion` | length*, cells, k*, rho_c*, initial*, t_end*, steps, left, right, source, theta, points | One-dimensional heat/diffusion equation rho_c u_t = (k u_x)_x + s by finite volumes (theta scheme), with an energy account |
 | `grid_convergence_index` | f_fine*, f_medium*, f_coarse*, refinement_ratio*, safety_factor | Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity |
-| `ols_report` | X*, y*, names, add_constant, alpha, covariance, groups | Ordinary least squares with confidence intervals and diagnostics; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters |
+| `ols_report` | X*, y*, names, add_constant, alpha, covariance, groups, X_new | OLS fitted values, residuals, coefficient intervals and optional X_new prediction intervals; HC3 mean covariance does not identify future heteroskedastic noise; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters |
 | `compare_models` | X*, y*, scheme, folds | Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting |
 | `solve_layered_diffusion` | layers*, t_end*, t_initial*, left*, right*, times, cells_per_layer | Heat conduction through layers in series (1-D): finite volumes with a stiff integrator |
 | `layered_diffusion_laplace` | layers*, times*, t_initial*, left*, right*, dps | Independent semi-analytic solution of the same layered conduction problem by transfer matrices in the Laplace domain (no mesh, no time step); the result a finite-volume solution must match |
-| `calibrate_curve` | expression*, parameters*, x*, y*, theta0*, bounds, holdout | Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation and an optional hold-out of the last points |
-| `sobol_convergence` | expression*, names*, bounds*, n, seed | Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged |
+| `calibrate_curve` | expression*, parameters*, x*, y*, theta0*, bounds, holdout, multistart, holdout_scheme, seed | Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation optional tail or seeded random holdout, and optional at least8 finite-bounds random multistarts plus theta0; basin agreement does not prove global optimality |
+| `sobol_convergence` | expression*, names*, bounds*, n, seed, second_order, distributions | Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged |
 | `bimatrix_nash` | A*, B* | Numerical equal-support Nash candidates for a two-player game, up to 6 actions each |
 | `markov_stationary` | matrix* | Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility |
 | `markov_absorption` | matrix*, absorbing* | Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states |
@@ -60,9 +65,9 @@
 | `adjust_pvalues` | pvalues*, hypothesis_ids*, family_id*, method, alpha, effects, effect_definition | Adjust a complete named hypothesis family by Holm/Bonferroni (FWER) or BH/BY (FDR), preserving original p-values and order; records dependence conditions and caller-supplied effects |
 | `cross_validate_predictor` | X*, y*, task*, split*, n_splits, groups, seed, ridge_alpha, logistic_c | Fold-local supervised prediction with Ridge regression or binary logistic classification; explicitly choose iid exchangeable rows or disjoint groups |
 | `bootstrap_ci` | data*, statistic, n_resamples, confidence, seed, method | Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations |
-| `monte_carlo` | expression*, distributions*, n, seed, threshold | Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check |
+| `monte_carlo` | expression*, distributions*, n, seed, threshold, covariance, correlation, sampling, bootstrap_resamples, confidence | Propagate input distributions through an expression: iid MC or Latin hypercube with optional normal covariance or latent Gaussian-copula correlation |
 | `solve_ode` | rhs*, names*, y0*, t_span*, t_eval, method, rtol | Integrate dy/dt = rhs(t, y) for expressions in t and the named states; compares dense interpolants with 100 times tighter tolerance at common times before either run terminates |
-| `arima_forecast` | series*, horizon*, max_p, max_d, max_q, seasonal_period | ARIMA forecast: differencing by ADF, p and q by AICc, 95% intervals, Ljung-Box residual test |
+| `arima_forecast` | series*, horizon*, max_p, max_d, max_q, seasonal_period, exog, future_exog, backtest | ARIMA with optional future-known exog, residuals, intervals and optimizer status; optional rolling backtest reselects at every origin against the same baselines |
 | `pca_report` | X*, names, standardise | Principal components: explained variance, loadings, scores (standardised by default) |
 | `cluster_report` | X*, k_range, seed, standardise | K-means for several k with silhouette, inertia and resampling stability (adjusted Rand index) of the best k |
 | `matrix_game` | payoff* | Zero-sum game (row player maximises): centered/scaled LP strategies checked by original-payoff exploitability |

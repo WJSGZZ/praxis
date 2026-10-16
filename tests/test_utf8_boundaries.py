@@ -309,6 +309,7 @@ def test_structure_template_and_pdf_clis_with_chinese_artifacts(tmp_path):
 
 def test_presentation_and_generated_task_actual_json_console():
     result = decoded_console(legacy_console('scripts.check_presentation', []))
-    assert result['tools'] == 68
+    # C5 adds three graph and two epsilon tools; still check the real console count.
+    assert result['tools'] == 73
     task = decoded_console(legacy_console('evals.planted', ['new', 'lp', '1']))
     assert task['score_version'] and task['task_sha256']

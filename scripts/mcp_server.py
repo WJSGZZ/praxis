@@ -53,9 +53,9 @@ MAX_MCP_REQUEST_BYTES = 8 * 1024 * 1024
 # this roster, then exercise both external routes with a controlled short cutoff.
 EXPRESSION_TOOLS = frozenset({'sobol_sensitivity', 'sobol_convergence', 'probe_structure', 'test_conjecture',
                              'find_counterexample', 'find_relation', 'calibrate_curve', 'solve_diffusion',
-                             'solve_ode', 'equilibria', 'minimize_nlp', 'monte_carlo'})
+                             'solve_ode', 'equilibria', 'minimize_nlp', 'monte_carlo', 'epsilon_constraint_nlp'})
 FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
-             'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum}
+             'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum, 'where': np.where}
 
 
 def _compile(expression, names):
@@ -73,7 +73,14 @@ def _compile(expression, names):
                 raise ValueError(f'Unknown name: {node.id}')
         elif isinstance(node, ast.Call):
             if not (isinstance(node.func, ast.Name) and node.func.id in FUNCTIONS and not node.keywords):
-                raise ValueError('Only simple calls to exp, log, sqrt, sin, cos, tan, abs, minimum, maximum are allowed')
+                raise ValueError('Only simple calls to exp, log, sqrt, sin, cos, tan, abs, minimum, maximum, where are allowed')
+            if node.func.id == 'where' and len(node.args) != 3:
+                raise ValueError('where requires exactly condition, true value, false value')
+        elif isinstance(node, ast.Compare):
+            if len(node.ops) != 1:
+                raise ValueError('Use one comparison per where condition; chained array comparisons are unsupported')
+        elif isinstance(node, (ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.Eq, ast.NotEq)):
+            pass
         else:
             raise ValueError(f'Disallowed syntax: {type(node).__name__}')
     code = compile_bounded_expression(tree, filename='<expression>')
@@ -164,7 +171,7 @@ def _calibrate(a):
         x = np.asarray(x, float)
         columns = np.column_stack([x] + [np.full(len(x), t) for t in theta])
         return model(columns)
-    return calibrate.calibrate(fn, a['x'], a['y'], a['theta0'], bounds=a.get('bounds'), names=params, holdout=a.get('holdout', 0))
+    return calibrate.calibrate(fn, a['x'], a['y'], a['theta0'], bounds=a.get('bounds'), names=params, holdout=a.get('holdout', 0), multistart=a.get('multistart', 0), holdout_scheme=a.get('holdout_scheme', 'tail'), seed=a.get('seed', 2027))
 
 
 def _min_cost_flow(a):
@@ -266,7 +273,7 @@ def _equilibria(a):
 
 def _sobol(a):
     return sensitivity.sobol_sensitivity(_compile(a['expression'], a['names']), a['names'], a['bounds'],
-                                         n=a.get('n', 1024), seed=a.get('seed', 2027))
+                                         n=a.get('n', 1024), seed=a.get('seed', 2027), second_order=a.get('second_order', False), distributions=a.get('distributions'))
 
 
 def _num(description='', **extra):
@@ -296,7 +303,17 @@ def _nlp(a):
 def _monte_carlo(a):
     names = list(a['distributions'])
     model = _compile(a['expression'], names)
-    return inference.monte_carlo(lambda s: model(np.column_stack([s[k] for k in names])), a['distributions'], n=a.get('n', 20000), seed=a.get('seed', 2027), threshold=a.get('threshold'))
+    return inference.monte_carlo(lambda s: model(np.column_stack([s[k] for k in names])), a['distributions'], n=a.get('n', 20000), seed=a.get('seed', 2027), threshold=a.get('threshold'), covariance=a.get('covariance'), correlation=a.get('correlation'), sampling=a.get('sampling', 'random'), bootstrap_resamples=a.get('bootstrap_resamples', 200), confidence=a.get('confidence', .95))
+
+
+def _epsilon_nlp(a):
+    names = a['names']
+    objectives = [_scalar(e, names) for e in a['objectives']]
+    cons = [dict(type=c.get('type', 'ineq'), fun=_scalar(c['expression'], names)) for c in a.get('constraints', [])]
+    result = decision_models.epsilon_constraint_nlp(objectives, a['senses'], a['epsilon_grid'], a['bounds'], cons,
+        primary=a.get('primary', 0), starts=a.get('starts', 8), seed=a.get('seed', 2027), tol=a.get('tol', 1e-8), max_points=a.get('max_points', 1000))
+    result['expression_inputs'] = dict(names=names, objectives=a['objectives'], constraints=a.get('constraints', []))
+    return result
 
 
 def _ode(a):
@@ -375,13 +392,23 @@ TOOLS = dict([
           {'matrix': MATRIX, 'weights': SERIES, 'directions': SERIES, 'alternatives': {'type': 'array'}, 'criteria': {'type': 'array'},
            'trials': {'type': 'integer'}, 'weight_sigma': _num(), 'seed': {'type': 'integer'}}, ['matrix', 'weights', 'directions'],
           lambda a: decision.evaluate_alternatives(**a)),
-    _tool('sobol_sensitivity', 'Sobol indices for a scalar arithmetic expression over independent uniform inputs. n must be a power of two >= 64.',
+    _tool('sobol_sensitivity', 'Sobol indices for independent marginals (SALib distributions); optional second-order interactions. n must be a power of two >= 64.',
           {'expression': {'type': 'string', 'description': 'e.g. "2*a + b*b"; functions: exp log sqrt sin cos tan abs minimum maximum'},
-           'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}},
+           'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'second_order': {'type': 'boolean'}, 'distributions': {'type': 'array', 'items': {'type': 'string'}}},
           ['expression', 'names', 'bounds'], _sobol),
     _tool('shortest_path', 'Dijkstra shortest path of a simple graph (no duplicate edges); edges [[u, v, weight]], non-negative weights.',
           {'edges': EDGES, 'source': {}, 'target': {}, 'directed': {'type': 'boolean'}}, ['edges', 'source', 'target'],
           lambda a: graph.shortest_path(a['edges'], a['source'], a['target'], directed=a.get('directed', True))),
+    _tool('pagerank', 'PageRank of a simple weighted graph; optional isolated nodes; weights are positive transition strengths.',
+          {'edges': EDGES, 'nodes': {'type': 'array'}, 'directed': {'type': 'boolean'}, 'alpha': _num(), 'tol': _num(), 'max_iter': {'type': 'integer'}}, ['edges'], lambda a: graph.pagerank(**a)),
+    _tool('betweenness', 'Exact shortest-path betweenness; strictly positive weights are distances, not tie strengths; optional isolated nodes.',
+          {'edges': EDGES, 'nodes': {'type': 'array'}, 'directed': {'type': 'boolean'}, 'normalized': {'type': 'boolean'}}, ['edges'], lambda a: graph.betweenness(**a)),
+    _tool('greedy_modularity_communities', 'Greedy weighted undirected communities, modularity and seeded fixed-n/m random graph baseline. This null does not preserve degree/strength; no significance claim.',
+          {'edges': EDGES, 'nodes': {'type': 'array'}, 'resolution': _num(), 'baseline_trials': {'type': 'integer'}, 'seed': {'type': 'integer'}}, ['edges'], lambda a: graph.greedy_modularity_communities(**a)),
+    _tool('epsilon_constraint_lp', 'Scan explicit epsilon constraints using the existing LP solver. senses +1 max/-1 min; each grid row has one threshold per nonprimary objective. Returns feasible scan solutions and nondominated subset, not the entire Pareto set.',
+          {'objectives': MATRIX, 'senses': SERIES, 'epsilon_grid': MATRIX, 'primary': {'type': 'integer'}, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_ge': MATRIX, 'b_ge': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'tol': _num(), 'max_points': {'type': 'integer'}}, ['objectives', 'senses', 'epsilon_grid'], lambda a: decision_models.epsilon_constraint_lp(**a)),
+    _tool('epsilon_constraint_nlp', 'Scan explicit epsilon constraints with multistart NLP. Only converged recomputed-feasible candidates enter the reported nondominated subset; no global Pareto or infeasibility proof. Constraint expression>=0 for ineq.',
+          {'objectives': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'senses': SERIES, 'epsilon_grid': MATRIX, 'bounds': MATRIX, 'constraints': {'type': 'array', 'items': {'type': 'object'}}, 'primary': {'type': 'integer'}, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'tol': _num(), 'max_points': {'type': 'integer'}}, ['objectives', 'names', 'senses', 'epsilon_grid', 'bounds'], _epsilon_nlp),
     _tool('max_flow', 'Maximum flow and a minimum cut of a simple directed graph (no duplicate edges); edges [[u, v, capacity]].',
           {'edges': EDGES, 'source': {}, 'sink': {}}, ['edges', 'source', 'sink'],
           lambda a: graph.max_flow(a['edges'], a['source'], a['sink'])),
@@ -453,9 +480,9 @@ TOOLS = dict([
     _tool('grid_convergence_index', 'Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity.',
           {'f_fine': _num(), 'f_medium': _num(), 'f_coarse': _num(), 'refinement_ratio': _num(), 'safety_factor': _num()}, ['f_fine', 'f_medium', 'f_coarse', 'refinement_ratio'],
           lambda a: pde.grid_convergence_index(a['f_fine'], a['f_medium'], a['f_coarse'], a['refinement_ratio'], safety_factor=a.get('safety_factor', 1.25))),
-    _tool('ols_report', 'Ordinary least squares with confidence intervals and diagnostics; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters.',
+    _tool('ols_report', 'OLS fitted values, residuals, coefficient intervals and optional X_new prediction intervals; HC3 mean covariance does not identify future heteroskedastic noise; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters.',
           {'X': MATRIX, 'y': SERIES, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'add_constant': {'type': 'boolean'}, 'alpha': _num(),
-           'covariance': {'type': 'string', 'enum': ['nonrobust', 'cluster']}, 'groups': {'type': 'array', 'items': {'type': ['string', 'integer']}}}, ['X', 'y'],
+           'covariance': {'type': 'string', 'enum': ['nonrobust', 'HC3', 'cluster']}, 'groups': {'type': 'array', 'items': {'type': ['string', 'integer']}}, 'X_new': MATRIX}, ['X', 'y'],
           lambda a: regression.ols_report(**a)),
     _tool('compare_models', 'Cross-validated RMSE of a baseline, OLS, ridge and gradient boosting. Fold standard errors and the one-SE selection rule are descriptive, not calibrated superiority tests. scheme: kfold or time (rows in time order); time uses fixed training origins and a constant last-training-value baseline over each whole test block.',
           {'X': MATRIX, 'y': SERIES, 'scheme': {'type': 'string', 'enum': ['kfold', 'time']}, 'folds': {'type': 'integer'}}, ['X', 'y'],
@@ -468,13 +495,13 @@ TOOLS = dict([
           {'layers': {'type': 'array', 'items': {'type': 'object'}}, 'times': SERIES, 't_initial': _num(), 'left': {'type': 'array'}, 'right': {'type': 'array'}, 'dps': {'type': 'integer'}},
           ['layers', 'times', 't_initial', 'left', 'right'],
           lambda a: layered.laplace_layered(a['layers'], times=a['times'], t_initial=a['t_initial'], left=a['left'], right=a['right'], dps=a.get('dps', 25))),
-    _tool('calibrate_curve', 'Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation and an optional hold-out of the last points.',
-          {'expression': {'type': 'string'}, 'parameters': {'type': 'array', 'items': {'type': 'string'}}, 'x': SERIES, 'y': SERIES, 'theta0': SERIES, 'bounds': MATRIX, 'holdout': {'type': 'integer'}},
+    _tool('calibrate_curve', 'Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation optional tail or seeded random holdout, and optional at least8 finite-bounds random multistarts plus theta0; basin agreement does not prove global optimality.',
+          {'expression': {'type': 'string'}, 'parameters': {'type': 'array', 'items': {'type': 'string'}}, 'x': SERIES, 'y': SERIES, 'theta0': SERIES, 'bounds': MATRIX, 'holdout': {'type': 'integer'}, 'multistart': {'type': 'integer'}, 'holdout_scheme': {'type': 'string', 'enum': ['tail', 'random']}, 'seed': {'type': 'integer'}},
           ['expression', 'parameters', 'x', 'y', 'theta0'], _calibrate),
     _tool('sobol_convergence', 'Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged.',
-          {'expression': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}},
+          {'expression': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'second_order': {'type': 'boolean'}, 'distributions': {'type': 'array', 'items': {'type': 'string'}}},
           ['expression', 'names', 'bounds'],
-          lambda a: sensitivity.sobol_convergence(_compile(a['expression'], a['names']), a['names'], a['bounds'], n=a.get('n', 512), seed=a.get('seed', 2027))),
+          lambda a: sensitivity.sobol_convergence(_compile(a['expression'], a['names']), a['names'], a['bounds'], n=a.get('n', 512), seed=a.get('seed', 2027), second_order=a.get('second_order', False), distributions=a.get('distributions'))),
     _tool('bimatrix_nash', 'Numerical equal-support Nash candidates for a two-player game, up to 6 actions each. count counts returned candidates only; completeness is not certified, and degenerate games may have continuous or missed equilibria.',
           {'A': MATRIX, 'B': MATRIX}, ['A', 'B'], lambda a: decision_models.bimatrix_nash(a['A'], a['B'])),
     _tool('markov_stationary', 'Stationary distribution of a finite Markov chain (row-stochastic matrix); reports irreducibility.', {'matrix': MATRIX}, ['matrix'], lambda a: decision_models.markov_stationary(a['matrix'])),
@@ -518,13 +545,13 @@ TOOLS = dict([
     _tool('bootstrap_ci', 'Bootstrap confidence interval (BCa by default) for mean, median, std or a quantile such as q0.9; assumes independent observations. An undefined BCa interval is null with its reason; a retained estimate or bootstrap SE does not repair that interval.',
           {'data': SERIES, 'statistic': {'type': 'string'}, 'n_resamples': {'type': 'integer'}, 'confidence': _num(), 'seed': {'type': 'integer'}, 'method': {'type': 'string'}}, ['data'],
           lambda a: inference.bootstrap_ci(a['data'], a.get('statistic', 'mean'), n_resamples=a.get('n_resamples', 5000), confidence=a.get('confidence', .95), seed=a.get('seed', 2027), method=a.get('method', 'BCa'))),
-    _tool('monte_carlo', 'Propagate input distributions through an expression: mean with Monte Carlo standard error, quantiles, optional exceedance probability with a Wilson interval, and a settled check. distributions: {name: {dist: scipy.stats name, params: {...}}}.',
-          {'expression': {'type': 'string'}, 'distributions': {'type': 'object'}, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'threshold': _num()}, ['expression', 'distributions'], _monte_carlo),
+    _tool('monte_carlo', 'Propagate input distributions through an expression: iid MC or Latin hypercube with optional normal covariance or latent Gaussian-copula correlation. Quantile bootstrap/Wilson/MC error require iid random sampling; unavailable for a single LHS design. Reports moments, quantiles and optional exceedance. distributions: {name: {dist: scipy.stats name, params: {...}}}.',
+          {'expression': {'type': 'string'}, 'distributions': {'type': 'object'}, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'threshold': _num(), 'covariance': MATRIX, 'correlation': MATRIX, 'sampling': {'type': 'string', 'enum': ['random', 'lhs']}, 'bootstrap_resamples': {'type': 'integer'}, 'confidence': _num()}, ['expression', 'distributions'], _monte_carlo),
     _tool('solve_ode', 'Integrate dy/dt = rhs(t, y) for expressions in t and the named states; compares dense interpolants with 100 times tighter tolerance at common times before either run terminates. The difference includes interpolation error and is not a certified error bound.',
           {'rhs': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'y0': SERIES, 't_span': SERIES, 't_eval': SERIES, 'method': {'type': 'string'}, 'rtol': _num()}, ['rhs', 'names', 'y0', 't_span'], _ode),
-    _tool('arima_forecast', 'ARIMA forecast: differencing by ADF, p and q by AICc, 95% intervals, Ljung-Box residual test. Compare with backtest_baselines first.',
-          {'series': SERIES, 'horizon': {'type': 'integer'}, 'max_p': {'type': 'integer'}, 'max_d': {'type': 'integer'}, 'max_q': {'type': 'integer'}, 'seasonal_period': {'type': 'integer'}}, ['series', 'horizon'],
-          lambda a: inference.arima_forecast(a['series'], a['horizon'], max_p=a.get('max_p', 3), max_d=a.get('max_d', 2), max_q=a.get('max_q', 3), seasonal_period=a.get('seasonal_period'))),
+    _tool('arima_forecast', 'ARIMA with optional future-known exog, residuals, intervals and optimizer status; optional rolling backtest reselects at every origin against the same baselines. Exog backtest requires exog_known_at_origin=true; caller declaration is not an availability audit.',
+          {'series': SERIES, 'horizon': {'type': 'integer'}, 'max_p': {'type': 'integer'}, 'max_d': {'type': 'integer'}, 'max_q': {'type': 'integer'}, 'seasonal_period': {'type': 'integer'}, 'exog': MATRIX, 'future_exog': MATRIX, 'backtest': {'type': ['boolean', 'object'], 'properties': {'min_train': {'type': 'integer'}, 'exog_known_at_origin': {'type': 'boolean'}}, 'additionalProperties': False}}, ['series', 'horizon'],
+          lambda a: inference.arima_forecast(a['series'], a['horizon'], max_p=a.get('max_p', 3), max_d=a.get('max_d', 2), max_q=a.get('max_q', 3), seasonal_period=a.get('seasonal_period'), exog=a.get('exog'), future_exog=a.get('future_exog'), backtest=a.get('backtest', False))),
     _tool('pca_report', 'Principal components: explained variance, loadings, scores (standardised by default).',
           {'X': MATRIX, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'standardise': {'type': 'boolean'}}, ['X'], lambda a: inference.pca_report(a['X'], a.get('names'), standardise=a.get('standardise', True))),
     _tool('cluster_report', 'K-means for several k with silhouette, inertia and resampling stability (adjusted Rand index) of the best k.',
@@ -564,6 +591,11 @@ EXAMPLES = {
     'cross_validate_predictor': dict(X=[[-1], [1], [-1], [1]], y=[-1, 1, -1, 1],
                                      task='regression', split='group', groups=['a', 'a', 'b', 'b'], n_splits=2),
     'solve_lp': dict(c=[2, 3], A_ge=[[1, 1]], b_ge=[4]),
+    'pagerank': dict(edges=[['a', 'b', 1], ['b', 'a', 1]], nodes=['a', 'b', 'isolated']),
+    'betweenness': dict(edges=[['a', 'b', 1], ['b', 'c', 1]]),
+    'greedy_modularity_communities': dict(edges=[[0, 1, 1], [1, 2, 1], [2, 0, 1], [3, 4, 1], [4, 5, 1], [5, 3, 1]], baseline_trials=5),
+    'epsilon_constraint_lp': dict(objectives=[[1, 0], [0, 1]], senses=[-1, -1], epsilon_grid=[[0], [.5], [1]], A_ge=[[1, 1]], b_ge=[1], bounds=[[0, 1], [0, 1]]),
+    'epsilon_constraint_nlp': dict(objectives=['x', '(x-1)**2'], names=['x'], senses=[-1, -1], epsilon_grid=[[0], [.25], [1]], bounds=[[0, 1]], starts=8),
     'solve_milp': dict(c=[-1, -1], A_ub=[[2, 2]], b_ub=[5], integrality=[1, 1], bounds=[[0, 10], [0, 10]]),
     'probe_structure': dict(property='convexity', expression='x**2 + y**2', names=['x', 'y'], bounds=[[-1, 1], [-1, 1]]),
     'dimensional_analysis': dict(matrix=[[0, 0, 0, 1], [0, 1, 1, 0], [1, 0, -2, 0]], names=['T', 'L', 'g', 'm']),
