@@ -2,7 +2,7 @@
 % Reuse this layout for MCM reports; metadata/content may change, style overrides must be reviewed.
 % Run: uv run --locked python -m scripts.paper_template main.tex
 % Canonical build: uv run --locked python -m scripts.paper_template main.tex --contest mcm --compile --output-directory outputs/build-001
-% MCM v4: A4 project default; body, captions, bibliography and ordinary plot text are 12pt.
+% MCM v5: A4 project default; body, captions, bibliography and ordinary plot text are 12pt.
 % Titles and mathematical subscripts retain distinct roles; measure final imported figure text.
 % Layout profile is a project convention, not the official rules for any year.
 % Example edition 2027: replace with the actual problem edition, not the current date.
@@ -13,13 +13,14 @@
 \newcommand{\PraxisTeam}{7391856}
 \newcommand{\PraxisIdentityMode}{simulation}
 \newcommand{\PraxisTitle}{Title: state the answer, not the topic}
-% BEGIN PRAXIS MCM STYLE v4
-% Praxis MCM house style v4. Layout source; assemble with scripts.paper_template.
+% BEGIN PRAXIS MCM STYLE v5
+% Praxis MCM house style v5. Layout source; assemble with scripts.paper_template.
 \documentclass[12pt,a4paper]{article}
 \usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{newtxtext,newtxmath}
 \usepackage{booktabs,array,graphicx,xcolor,caption,float,etoolbox,fvextra,fancyhdr,lastpage,titlesec,titletoc,needspace,indentfirst}
+\usepackage{algorithm,algpseudocode,subcaption}
 \usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
 \urlstyle{same}\Urlmuskip=0mu plus 1mu
 \usepackage{pgfplots}
@@ -66,6 +67,20 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
 \AtBeginEnvironment{thebibliography}{\normalsize}
+% Optional argument-led components; their presence follows the task, not style.
+\newenvironment{memo}[3]{\clearpage\section*{Memorandum}%
+\noindent\textbf{To:} #1\par\noindent\textbf{From:} Team \PraxisTeam\par
+\noindent\textbf{Date:} #2\par\noindent\textbf{Subject:} #3\par\medskip}{\par\clearpage}
+\newenvironment{strengths}{\subsection*{Strengths}\itemize}{\enditemize}
+\newenvironment{weaknesses}{\subsection*{Weaknesses}\itemize}{\enditemize}
+\algrenewcommand{\alglinenumber}[1]{\normalsize #1:}
+\captionsetup[subfigure]{font=normalsize,labelfont=bf}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
 % Two TOC levels by default; a shared component can select three when useful.
 \titlecontents{section}[1.8em]{\addvspace{5pt}\bfseries}{\contentslabel{1.8em}}{}{\titlerule*[.6pc]{.}\contentspage}
 \titlecontents{subsection}[4.1em]{}{\contentslabel{2.3em}}{}{\titlerule*[.6pc]{.}\contentspage}
@@ -100,12 +115,59 @@ Every assumption has a reason; every parameter has a source and a range.
 \addplot[color=main,line width=1.1pt,no marks] coordinates {(0,40) (15,39.6) (30,39.1)};
 \end{axis}
 \end{tikzpicture}
-\caption{One sentence on what the reader should see.}\end{figure}
+\caption{Cooling trajectory}\end{figure}
+
+% Optional theorem and algorithm components; replace this illustrative content.
+\begin{theorem}[Nonnegative cumulative flow]
+If $q(t)\geq 0$ for $0\leq t\leq t_f$, then $J\geq 0$.
+\end{theorem}
+\begin{proof}
+The integral of a nonnegative function on the stated interval is nonnegative.
+\end{proof}
+\begin{algorithm}[htbp]
+\caption{Compare feasible candidate policies}
+\begin{algorithmic}[1]
+\Require Candidate policies $P$, feasibility test $F$, objective $J$
+\State $P_F\gets\{p\in P:F(p)\}$
+\If{$P_F=\varnothing$}
+  \State \Return No feasible policy
+\EndIf
+\State \Return A policy minimizing $J(p)$ over $P_F$
+\end{algorithmic}
+\end{algorithm}
+
+% Subfigures share a reading task; these values only illustrate the component.
+Figure~\ref{fig:panels} compares two illustrative trajectories.
+\begin{figure}[htbp]\centering
+\begin{subfigure}{.47\linewidth}\centering
+\begin{tikzpicture}\begin{axis}[width=.60\linewidth,height=3.6cm,scale only axis,xlabel={Time (s)},ylabel={Flow (L/s)}]
+\addplot[color=main,no marks] coordinates {(0,1) (1,2) (2,2)};
+\end{axis}\end{tikzpicture}
+\caption{Baseline}\end{subfigure}\hfill
+\begin{subfigure}{.47\linewidth}\centering
+\begin{tikzpicture}\begin{axis}[width=.60\linewidth,height=3.6cm,scale only axis,xlabel={Time (s)},ylabel={Flow (L/s)}]
+\addplot[color=accent,dashed,no marks] coordinates {(0,1) (1,1) (2,1.5)};
+\end{axis}\end{tikzpicture}
+\caption{Alternative}\end{subfigure}
+\caption{Illustrative policy trajectories}\label{fig:panels}\end{figure}
 
 \section{Validation, sensitivity and limits}
 Compare with a simple baseline, perturb parameters and execution, and state what the model cannot support.
 
+\section{Strengths and weaknesses}
+\begin{strengths}
+\item State the main advantage and the evidence that supports it.
+\end{strengths}
+\begin{weaknesses}
+\item State the consequential limitation and when it changes the recommendation.
+\end{weaknesses}
+
 \section{Conclusions and recommendation}
+
+\begin{memo}{Decision committee}{16 October 2026}{Illustrative decision memo}
+State the recommended action, the supporting result in ordinary language, and the condition that would change the decision.
+This paragraph is an example component, not a finding.
+\end{memo}
 
 \section*{References}\addcontentsline{toc}{section}{References}
 \begingroup\normalsize\setlength{\parindent}{0pt}\hangindent=1.5em

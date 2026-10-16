@@ -110,13 +110,18 @@ def needs_collection_mapping(reader):
     return False
 
 
-def extract_pages(path):
+def extract_pages(path, *, text_backend='auto'):
     """Return text and dominant effective font size in PDF points.
 
     Sizes use the same transformed vertical em measurement as the complete
     glyph gate, including rotated/nested text, CJK mappings and UserUnit.
     The dominant statistic still does not certify every text role or layout.
+    ``auto`` preserves the existing pypdf / standard-CJK mapping selection.
+    ``pdfium`` explicitly uses PDFium text extraction for every page while
+    retaining the same effective-font measurement. Neither backend performs OCR.
     """
+    if not isinstance(text_backend, str) or text_backend not in ('auto', 'pdfium'):
+        raise ValueError('text_backend must be auto or pdfium')
     reader = PdfReader(str(path))
     if reader.is_encrypted:
         raise ValueError('Encrypted PDF must be opened by its owner first')
@@ -127,7 +132,7 @@ def extract_pages(path):
         for run in record['runs']:
             sizes[round(run['size_pdf_bp'], 1)] += sum(not char.isspace() for char in run['text'])
         dominant_sizes.append(sizes.most_common(1)[0][0] if sizes else None)
-    if needs_collection_mapping(reader):
+    if text_backend == 'pdfium' or needs_collection_mapping(reader):
         import pypdfium2 as pdfium
         records = []
         with pdfium.PdfDocument(str(path)) as document:
@@ -136,7 +141,7 @@ def extract_pages(path):
                 try:
                     text = textpage.get_text_range()
                     records.append({'text': text, 'body_size': dominant_sizes[number],
-                                    'text_backend': 'pdfium-standard-cjk-mapping'})
+                                    'text_backend': 'pdfium' if text_backend == 'pdfium' else 'pdfium-standard-cjk-mapping'})
                 finally:
                     textpage.close()
                     page.close()

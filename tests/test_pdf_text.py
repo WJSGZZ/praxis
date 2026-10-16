@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from scripts.check_pdf import inspect_pdf
 from scripts.contest_rules import extract
 from scripts.pdf_text import extract_pages
@@ -58,6 +60,10 @@ def test_rotated_body_size_uses_effective_vertical_em(tmp_path):
     records = extract(path)
     assert records[0]['body_size'] == 6.0
     assert not evaluate(records, 'mcm')['passed']
+    explicit = extract_pages(path, text_backend='pdfium')[0]
+    assert explicit['body_size'] == records[0]['body_size']
+    assert explicit['text_backend'] == 'pdfium'
+    assert 'six-point effective letters' in explicit['text']
 
 
 def test_scaled_standard_cjk_size_does_not_keep_nominal_twelve(tmp_path):
@@ -70,3 +76,49 @@ def test_scaled_standard_cjk_size_does_not_keep_nominal_twelve(tmp_path):
     record = extract_pages(path)[0]
     assert '数学建模与独立验证' in record['text']
     assert record['body_size'] == 6.0
+    explicit = extract_pages(path, text_backend='pdfium')[0]
+    assert explicit['body_size'] == record['body_size']
+    assert explicit['text'] == record['text']
+
+
+def test_explicit_pdfium_preserves_cjk_text_and_auto_result_contract():
+    default = extract_pages(FIXTURE)
+    assert extract_pages(FIXTURE, text_backend='auto') == default
+    explicit = extract_pages(FIXTURE, text_backend='pdfium')
+    assert len(explicit) == len(default)
+    assert all(page['text_backend'] == 'pdfium' for page in explicit)
+    assert [(p['text'], p['body_size']) for p in explicit] == [(p['text'], p['body_size']) for p in default]
+
+
+def test_explicit_pdfium_bypasses_pypdf_text_and_preserves_numbers(tmp_path, monkeypatch):
+    from pypdf import PageObject, PdfWriter
+    from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=500, height=700)
+    font = writer._add_object(DictionaryObject({NameObject('/Type'): NameObject('/Font'),
+        NameObject('/Subtype'): NameObject('/Type1'), NameObject('/BaseFont'): NameObject('/Helvetica')}))
+    page[NameObject('/Resources')] = DictionaryObject({NameObject('/Font'): DictionaryObject({NameObject('/F1'): font})})
+    stream = DecodedStreamObject()
+    text = 'Revenue = 1,234.50; ratio = 25%; n = 101.'
+    stream.set_data(f'BT /F1 12 Tf 20 650 Td ({text}) Tj ET'.encode('ascii'))
+    page[NameObject('/Contents')] = writer._add_object(stream)
+    path = tmp_path / 'numbers.pdf'
+    writer.write(path)
+    before = extract_pages(path)
+    assert before[0]['text_backend'] == 'pypdf'
+    assert before == extract_pages(path, text_backend='auto')
+    # A controlled backend fault proves that the explicit route does not use
+    # pypdf text. This is synthetic, not a claim to reproduce a real font defect.
+    monkeypatch.setattr(PageObject, 'extract_text', lambda *args, **kwargs: 'NQ synthetic corrupted numbers')
+    assert extract_pages(path)[0]['text'] == 'NQ synthetic corrupted numbers'
+    explicit = extract_pages(path, text_backend='pdfium')[0]
+    assert text in explicit['text']
+    assert explicit['body_size'] == before[0]['body_size'] == 12
+    assert explicit['text_backend'] == 'pdfium'
+
+
+@pytest.mark.parametrize('backend', ['pypdf', '', None, {}])
+def test_bad_text_backend_is_rejected_before_opening_pdf(tmp_path, monkeypatch, backend):
+    monkeypatch.setattr('scripts.pdf_text.PdfReader', lambda *a, **kw: pytest.fail('must reject backend before opening PDF'))
+    with pytest.raises(ValueError, match='text_backend must be auto or pdfium'):
+        extract_pages(tmp_path / 'must-not-open.pdf', text_backend=backend)

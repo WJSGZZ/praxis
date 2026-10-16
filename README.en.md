@@ -165,7 +165,7 @@ The [edition registry](evals/competitions.json) separates contest rules by event
 
 Tell Praxis the target up front: a contest with a deadline, a contest worked through in depth first, research, or teaching. It does the work to research standard, with a stopping rule, then condenses the evidence into a paper a judge can read quickly; see [deep work and contest convergence](references/convergence.md). Before a paper goes out, independent reviewer roles try to break it ([review protocol](references/review-protocol.md)).
 
-Reviews follow the kind of work being assessed. A contest report receives an edition-specific award estimate with reasons and priorities for revision. A mathematical study is assessed for correctness, originality, significance, method, exposition and verifiability. Each opinion identifies the manuscript version and what was checked; see the [review criteria](evals/judging.md). These are scoped judgments, not promises of an award or journal acceptance.
+Contest review checks whether a reader can find the answers, then examines the full argument and its key mechanisms. Comparative judgments use real papers from the same problem and edition under the [pairwise protocol](evals/PAIRWISE.md). Without those references, the review abstains from an award level and reports the main issues and reasons for revision; numerical scores serve only as diagnostics. Mathematical studies are assessed for correctness, originality, significance, method, exposition and verifiability. Every opinion identifies its manuscript version and actual scope ([review criteria](evals/judging.md)). Award discrimination still requires testing against real papers.
 
 For solo work under time pressure, Praxis defaults to one current user action and develops the report as results become available. Team tasks are assigned around skills and dependencies. Competition requirements are not applied to unrelated projects.
 
@@ -221,7 +221,7 @@ uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/pipeline.py" \
   --data "$WORKSPACE/data.csv"
 ```
 
-The agent writes and reviews the case's `model.py` and `validate.py`, then executes `run`. Data, cases, and outputs are excluded from Git by default; project rules come from your workspace.
+New cases use schema 2. Before executing a reviewed model and validator, the agent records a [model contract](references/modeling-gate.md). The evidence index links answers to quoted question items and requires a naive comparison for forecasts. These gates check declarations and evidence links; independent scientific review remains necessary. Existing schema 1 cases retain their behavior, and `init --schema 1` explicitly creates a compatible case. Data, cases, and outputs stay in your workspace.
 
 See the [Execution contract](references/automation.md) for the complete interface. For work that spans several rounds, the [task coordinator](references/workflow.md) retrieves relevant local lessons at initialization and tracks one next action against the budget, current evidence, reviews and report. Failed or stale runs block delivery. A valid draft can remain open for a worthwhile improvement; the agent still chooses the mathematics and reviews the science.
 

@@ -30,6 +30,46 @@ def _text(value, label: str) -> None:
         raise ValueError(f'{label} needs nonempty text')
 
 
+def _review_blocks(item: dict) -> dict:
+    """Retain optional reading/comparison declarations, without grading them.
+
+    Only recorded shapes and enum/range values are checked. Missing answers,
+    references or reasons are not filled in or certified as a completed review;
+    reader coverage belongs to reader_packet and pairwise judgments to its own
+    protocol. Unknown metadata remains attached to the declaring reviewer.
+    """
+    out = {}
+    if 'reader' in item:
+        reader = item['reader']
+        if not isinstance(reader, dict):
+            raise ValueError('reader must be an object')
+        if 'problem_items' in reader:
+            rows = reader['problem_items']
+            if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+                raise ValueError('reader.problem_items must be a list of objects')
+            for row in rows:
+                if 'answer_found' in row and row['answer_found'] not in ('yes', 'no'):
+                    raise ValueError('reader answer_found must be yes or no')
+        out['reader'] = reader
+    if 'comparison' in item:
+        comparison = item['comparison']
+        rows = [comparison] if isinstance(comparison, dict) else comparison
+        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+            raise ValueError('comparison must be an object or list of objects')
+        for row in rows:
+            if 'preferred' in row and row['preferred'] not in ('self', 'reference', 'tie'):
+                raise ValueError('comparison preferred must be self, reference or tie')
+            if 'confidence' in row:
+                _number(row['confidence'], 'comparison confidence', 0.5, 1)
+            if 'reasons' in row:
+                if not isinstance(row['reasons'], list):
+                    raise ValueError('comparison reasons must be a list')
+                for reason in row['reasons']:
+                    _text(reason, 'comparison reason')
+        out['comparison'] = comparison
+    return out
+
+
 def percent(scores: dict, weights: dict | None = None) -> float:
     weights = WEIGHTS if weights is None else weights
     missing = set(weights) - set(scores)
@@ -123,6 +163,7 @@ def review_coverage(item: dict) -> dict:
 
 def review_record(item: dict) -> dict:
     """Validate declarations and retain their scope; never infer mathematical truth."""
+    blocks = _review_blocks(item)
     issues = item.get('issues', [])
     if not isinstance(issues, list) or any(not isinstance(issue, dict) for issue in issues):
         raise ValueError('issues must be a list of objects')
@@ -130,6 +171,11 @@ def review_record(item: dict) -> dict:
     for issue in issues:
         for field in ('id', 'description', 'evidence'):
             _text(issue.get(field), f'issue {field}')
+        # The three grades belong to competition review. Archived research
+        # judgments have their own labels (e.g. nonblocking); retain those.
+        if ('research_assessment' not in item and 'severity' in issue
+                and issue['severity'] not in ('decisive', 'substantive', 'local')):
+            raise ValueError('issue severity must be decisive, substantive or local')
         if issue['id'] in issue_ids:
             raise ValueError(f'Duplicate issue id: {issue["id"]}')
         issue_ids.add(issue['id'])
@@ -169,7 +215,8 @@ def review_record(item: dict) -> dict:
                 unreviewed_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
                                   for key, entry in items.items() if entry.get('reviewed', True) is False],
                 not_applicable_items=[f'{dim}/{key}' for dim, items in item.get('checklist', {}).items()
-                                      for key, entry in items.items() if entry['met'] is None])
+                                      for key, entry in items.items() if entry['met'] is None],
+                **blocks)
 
 
 def research_assessment(item: dict) -> dict:
@@ -256,7 +303,7 @@ def aggregate(files: list[Path], contest: str | None = None) -> dict:
                           percent_range=round(max(values) - min(values), 1), unstable_dimensions=sorted(k for k, d in spread.items() if d > 1),
                           basis={b: sorted(v) for b, v in basis.get(paper, {}).items()},
                           award_estimates=awards.get(paper, []), reviews=reviews[paper],
-                          score_kind='uncalibrated_diagnostic', weights=weights)
+                          score_kind='uncalibrated_diagnostic', diagnostic_only=True, weights=weights)
     for paper, records in reviews.items():
         if kinds[paper] == 'research':
             out[paper] = dict(judges=len(records), score_kind='qualitative_research',
@@ -358,6 +405,7 @@ def user_view(report: dict, contest: str | None = None) -> dict:
                     'not_applicable_items': [{'item': key, 'reason': 'Reason unavailable in legacy report'}
                                              for key in record.get('not_applicable_items', [])],
                     'unknown_items': [], 'note': 'Full item-level coverage unavailable in legacy report.'},
+                **{field: record[field] for field in ('reader', 'comparison') if field in record},
             })
         if not has_attached_awards:
             # Old aggregate reports lack the association: do not guess by array position.

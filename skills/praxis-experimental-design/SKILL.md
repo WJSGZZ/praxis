@@ -6,22 +6,17 @@ license: MIT
 
 # Praxis · 实验设计与证据收集
 
-专业判断归 [experimental-design.md](../../references/experimental-design.md)。本入口设计现实或可控数值实验的证据采集，不等同EDA、搜索反例或把观察关联升级为干预效果。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
-## 调用契约
+## 做什么
 
-输入：研究问题、目标效应和最小有意义差异、可操纵因素、可随机化单位、依赖/干扰、测量误差、预算与实际执行限制。产出：实验协议和分配方案、对照与测量计划、精度/功效的条件依据、样本/区组/重复结构、事前分析和停止规则、失败/偏离处理与可验证范围。缺关键方差或ICC时给范围/曲线与补先导数据的动作，不能编一个确定样本量。
+- 按 [experimental-design.md](../../references/experimental-design.md) 定处理、比较、目标效应、最小有意义差异与结局；随机化、观察及分析单位分别明确。
+- 写分配的执行与留存，纳入配对、重复、交叉、批次、时间顺序、干扰和现实限制；按预处理异质性选区组，交互问题比较析因／部分因子及混叠。
+- 精度／事前功效说明差异、方差／事件率、alpha、allocation 与独立单位；缺方差或 ICC 给范围及先导动作，Statsmodels 或模拟须匹配设计。
+- 开始前固定主要结局、比较族、纳排、缺失／遵从、样本和停止规则；序贯查看用相应方法，保留偏离、失访与中止。
+- 核分配单位、处理覆盖、区组、重复身份、seed 与分配前信息，用独立已知精度／功效例验证调用。
+- 交真实协议、分配与测量计划、条件依据及可验证范围，协议完成与实验执行分别记。
 
-## 专业判断与执行
+## 交接
 
-- 先定处理、比较、目标群体和结局尺度；分清随机化单位、观察单位、分析单位。对同一器件测十次不会产生十个独立器件，按班级分配也不能按学生独立检验。
-- 明确谁能获得何种处理，随机化怎样执行与保留。重复测量、配对、交叉、时间顺序、场地/批次和干扰效应须进入设计与分析；随机化提供的识别保证有遵从、缺失与溢出范围，不从分配表宣称任意推广。
-- 明显预处理异质性可用区组内随机化；多个可控因素有交互疑问时比较析因/部分因子等设计，而非只逐因素改一个。说明可估计效应与混叠，保留随机运行顺序、中心点/重复的实际用途，不机械凑一个标准实验表。
-- 先选精度目标或事前功效，再声明目标差异、方差/事件率、alpha、allocation、独立单位与依赖假设。相称时直接用现有Statsmodels功效接口或设计匹配的模拟；两独立均值接口不能直接认证簇/重复/序贯设计。观察到的效应算“事后功效”不能解释非显著结果。
-- 实验开始前固定主要结局、比较族、纳排/缺失/遵从分析、样本与停止条件；探索偏离另记。逐批看p<.05就停会改变错误率，需要预先说明的相应序贯方法，不能把未调整反复检验称固定样本检验。
-
-## 验证、交付与回退
-
-核分配人数/单位、处理覆盖、区组约束、重复身份、seed及分配前信息；用一个可独立核查的精度/功效例验证软件调用，再针对当前设计核方差与分析单位。协议完成不代表试验已实际执行；保留真实偏离、失访、未遵从和中止，结果不佳也不能改变原停止线。
-
-识别与干扰交 [praxis-causal-analysis](../praxis-causal-analysis/SKILL.md)，估计/依赖与比较族交 [praxis-statistics](../praxis-statistics/SKILL.md)，数据接收/测量交 [praxis-data-analysis](../praxis-data-analysis/SKILL.md)。可重复模拟与证据共用 [praxis-compute](../praxis-compute/SKILL.md)，数学独立核验交 [praxis-verify](../praxis-verify/SKILL.md)。预测模型的验证交 [praxis-machine-learning](../praxis-machine-learning/SKILL.md)，全文写作交 [praxis-report](../praxis-report/SKILL.md)。
+识别交 [causal-analysis](../praxis-causal-analysis/SKILL.md)，推断交 [statistics](../praxis-statistics/SKILL.md)，测量交 [data-analysis](../praxis-data-analysis/SKILL.md)，运行／核验交 [compute](../praxis-compute/SKILL.md)／[verify](../praxis-verify/SKILL.md)，预测验证交 [machine-learning](../praxis-machine-learning/SKILL.md)，成稿交 [report](../praxis-report/SKILL.md)。

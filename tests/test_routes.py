@@ -85,6 +85,8 @@ def test_draft_lesson_reads_the_record_and_requires_a_principle():
     assert '凸费用小例子对照' in draft['verified_by'] and len(draft['routes_tried']) == 3
     import tempfile, pathlib
     with tempfile.TemporaryDirectory() as d:
+        # A route-derived draft still needs an author-reviewed action before it is stored.
+        draft['checklist'] = ['核对约束矩阵是否为网络矩阵，再使用线性规划的整数性结论。']
         assert lessons.add_lesson(pathlib.Path(d) / 'l.jsonl', draft)['id'] == 'L0001'
     with pytest.raises(ValueError, match='exactly one chosen'):
         routes.draft_lesson(build()['graph'], problem='x', principle='y')

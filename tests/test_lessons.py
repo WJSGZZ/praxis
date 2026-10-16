@@ -7,7 +7,7 @@ def sample(**kw):
     base = dict(problem='cooling bath, minimise added water', structure='energy balance + monotone loss', recognized='loss grows with temperature',
                 routes_tried=['simulation only', 'ODE with lower bound'], what_failed='simulation gave no optimality evidence',
                 what_worked='coast then hold, proved by monotonicity', verified_by='independent ODE integration', principle='if loss is monotone in state, delay the control',
-                tags=['ode', 'control'])
+                tags=['ode', 'control'], checklist=['Check the control bound against an independent ODE solution.'])
     base.update(kw)
     return base
 
@@ -36,6 +36,19 @@ def test_incomplete_or_unknown_evidence_is_rejected(tmp_path):
     assert not f.exists()
 
 
+def test_legacy_active_reuse_does_not_apply_new_append_limits(tmp_path):
+    import json
+    path = tmp_path / 'legacy.jsonl'
+    legacy = sample(id='L0001', date='2020-01-01', evidence='observed once',
+                    principle='Historical principle. ' * 30,
+                    tags=[f'old-tag-{i}' for i in range(9)])
+    legacy.pop('checklist')
+    path.write_text(json.dumps(legacy) + '\n', encoding='utf-8')
+    before = path.read_bytes()
+    assert lessons.add_lesson(path, legacy) == legacy
+    assert path.read_bytes() == before
+
+
 def test_multilabel_historical_structures_are_searchable_without_rewriting(tmp_path):
     from scripts import mcp_server
     f = tmp_path / 'lessons.jsonl'
@@ -62,7 +75,9 @@ def test_seed_lessons_are_valid_and_found_by_a_new_problem(tmp_path):
         assert all(str(rec.get(k, '')).strip() for k in lessons.REQUIRED + lessons.OPTIONAL), rec['id']
     found = lessons.search_lessons(target, 'heat conduction mesh refinement point source inlet constraint')
     assert found and found[0]['id'] == 'S0001'
-    lessons.add_lesson(target, dict(records[0], id=None, problem='another'))     # the seed file remains appendable
+    # Legacy seeds remain readable; newly appended observations obey the compact contract.
+    assert all('checklist' not in rec for rec in records)
+    lessons.add_lesson(target, sample(problem='another'))
 
 
 @pytest.mark.parametrize('query', ['', '   ', 'the of and', 'THE, OF; AND!', 'an the of and'])
@@ -216,3 +231,100 @@ def test_external_candidate_does_not_become_observed_evidence(tmp_path):
     assert lessons.search_lessons(f,'control')[0]['id']==checked['id']
     assert lessons.load(f)[0]['evidence']=='candidate'
     assert checked['evidence']!='checked on a held-out problem'
+
+
+@pytest.mark.parametrize('change,message', [
+    ({'checklist': None}, 'checklist'),
+    ({'checklist': []}, 'checklist'),
+    ({'checklist': ['Check units.'] * 4}, 'checklist'),
+    ({'checklist': ['Check ' + 'x' * 116]}, '120'),
+    ({'principle': 'x' * 301}, 'principle'),
+    ({'tags': [f'tag{i}' for i in range(9)]}, 'tags'),
+    ({'tags': 'not a list'}, 'tags'),
+    ({'hidden_extra': 'x' * 2000}, '1500'),
+    ({'derived_from': 'missing'}, 'derived_from'),
+])
+def test_new_lesson_limits_are_atomic_including_extra_fields(tmp_path, change, message):
+    path = tmp_path / 'lessons.jsonl'
+    lessons.add_lesson(path, sample())
+    before = path.read_bytes()
+    with pytest.raises(ValueError, match=message):
+        lessons.add_lesson(path, sample(problem='new observation', **change))
+    assert path.read_bytes() == before
+
+
+@pytest.mark.parametrize('instruction', ['在相同误差条件下核对候选结构。', 'Using the same observation history, compare feasible actions.'])
+def test_checklist_accepts_conditional_actions_without_a_verb_whitelist(tmp_path, instruction):
+    # Meaning and imperative style are author-reviewed; the machine checks shape.
+    record = lessons.add_lesson(tmp_path / 'lessons.jsonl', sample(checklist=[instruction]))
+    assert record['checklist'] == [instruction]
+
+
+def test_total_record_length_counts_json_keys_values_and_metadata(tmp_path):
+    import json
+    path = tmp_path / 'lessons.jsonl'
+    first = lessons.add_lesson(path, sample())
+    count = lambda r: len(json.dumps(r, ensure_ascii=False, separators=(',', ':'), allow_nan=False))
+    payload = sample(problem='a different observation', derived_from=first['id'], date='2026-10-16')
+    expected = dict(payload, evidence='observed once', source_kind='legacy_unspecified',
+                    tags=sorted(payload['tags']), id='L0002')
+    payload['extra'] = '中' * (1500 - count(expected) - len(',"extra":""'))
+    new = lessons.add_lesson(path, payload)
+    assert count(new) == 1500
+    with pytest.raises(ValueError, match='1500'):
+        lessons.add_lesson(path, dict(payload, problem='a different observation!', extra=payload['extra'] + '中'))
+
+
+def test_legacy_long_records_stay_readable_but_cannot_be_newly_appended(tmp_path):
+    import json
+    path = tmp_path / 'lessons.jsonl'
+    legacy = sample(problem='legacy observation', what_worked='historical ' * 2000)
+    legacy.pop('checklist')
+    legacy.update(id='L0001', evidence='observed once')
+    path.write_text(json.dumps(legacy) + '\n')
+    before = path.read_bytes()
+    assert lessons.load(path) == [legacy]
+    assert lessons.search_lessons(path, 'legacy')[0]['id'] == 'L0001'
+    with pytest.raises(ValueError, match='checklist'):
+        lessons.add_lesson(path, dict(legacy, problem='new'))
+    assert path.read_bytes() == before
+
+
+def test_search_uses_only_five_fields_and_normalizes_long_records(tmp_path):
+    import json
+    path = tmp_path / 'lessons.jsonl'
+    long = sample(id='L0001', problem='generic historical traffic forecast water',
+                  structure='archive ' * 2500, principle='Scope old rules carefully.',
+                  what_worked='highway network opioid county optimization ' * 2500,
+                  verified_by='only_evidence_field',
+                  tags=[])
+    long.pop('checklist')
+    path.write_text(json.dumps(long) + '\n')
+    for subject in ('traffic flow optimization highway network', 'forecast opioid counts county', 'water supply storage balance'):
+        for index in range(3):
+            lessons.add_lesson(path, sample(problem=f'{subject} example {index}', structure=subject,
+                                           principle='Check this specific system.', tags=[]))
+    for query in ('traffic flow optimization on a highway network', 'forecast opioid counts by county', 'water supply storage balance'):
+        hits = lessons.search_lessons(path, query)
+        assert hits and hits[0]['id'] != 'L0001'
+        assert 'L0001' not in [r['id'] for r in hits[:3]]
+    assert lessons.search_lessons(path, 'Scope old rules carefully')[0]['id'] == 'L0001'
+    assert lessons.search_lessons(path, 'historical')
+    assert lessons.search_lessons(path, 'only_evidence_field') == []
+
+
+def test_compact_search_preserves_ids_order_and_legacy_checklist_gap(tmp_path):
+    import json
+    from scripts import mcp_server
+    path = tmp_path / 'lessons.jsonl'
+    legacy = sample(id='L0001', problem='legacy thermal control')
+    legacy.pop('checklist')
+    path.write_text(json.dumps(legacy) + '\n')
+    lessons.add_lesson(path, sample(problem='new thermal control'))
+    full = lessons.search_lessons(path, 'thermal control')
+    compact = lessons.search_lessons(path, 'thermal control', compact=True)
+    assert [r['id'] for r in compact] == [r['id'] for r in full]
+    assert all(set(r) == {'id', 'checklist', 'principle'} for r in compact)
+    assert next(r for r in compact if r['id'] == 'L0001')['checklist'] == []
+    via_mcp = mcp_server.call('lesson_search', {'path': str(path), 'query': 'thermal control', 'compact': True})
+    assert via_mcp['lessons'] == compact

@@ -6,20 +6,16 @@ license: MIT
 
 # Praxis · 科研论证与表达
 
-专业方法归 [scientific-writing.md](../../references/scientific-writing.md)。语言修订的事实冻结与跨语言核对共用 [writing.md](../../references/writing.md)，不重算未改变的模型。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
-## 调用契约
+## 做什么
 
-输入：原稿、读者和文章用途、有效结果及其条件、公式／术语／来源与允许修改范围。产出：原位修订、论证缺口、必要的前后对照及事实保真和实际审读范围。没有原稿时，依据已核结果写指定部分，不编造研究经历、实验或贡献。
-
-## 专业处理
-
-- 先区分组织缺口、含混表达和缺失证据。围绕实际研究问题与得到的答案安排章节／段落；每段承担明确职责，但不固定句数、段长或IMRAD。
-- 检查读者已知什么、下一句引入什么：主题链、主语与实际动作、公式前后与图表到结论的依赖。正式符号与直观解释互补，不把公式串联当论证，也不为每式机械加三段说明。
-- 写出真实取舍：为何选这个模型、比较揭示什么、为什么保留或放弃某种解释。缺证据就返回相应上游，不能用自然的故事补造依据。
-- 先明确支持的结果，再在依赖处交代必要边界；保留不确定性、反面证据和真实披露，删除不改变含义的反复辩解。术语稳定，不靠随机同义替换、堆专业词或“人类化”噪声。
-- 实际逐项核数字、单位、公式、比较对象、量词、引用和结论强度。重要改写做未标修改方向的清楚度审读；实际读者、AI评阅和作者自查分别记录，流畅不能认证正确性或人类作者身份。
+- 按 [scientific-writing.md](../../references/scientific-writing.md) 区分组织、含混与证据缺口，围绕实际问题和答案安排论证，段落按职责组织。
+- 按 [writing.md](../../references/writing.md) 冻结数字、单位、变量、比较、条件、引用与强度；原位修订，未改变模型沿用有效证据。
+- 核主题链、主体与动作、公式前后及图表到结论的依赖，写出模型取舍与真实证据，不用故事补缺。
+- 支持结果与边界就近交代，术语稳定，保留反面证据、研究不确定性与真实披露，删除无意义重复辩解。
+- 中英文分别组织再对照事实；逐项核含义和强度，重要改写做未标方向的清楚度审读，真实读者、AI评阅和自查分别记录。
 
 ## 交接
 
-前提／模型问题交 [praxis-model](../praxis-model/SKILL.md)，论断支持不足交 [praxis-verify](../praxis-verify/SKILL.md)，文献综合交 [praxis-literature-review](../praxis-literature-review/SKILL.md)。图形交 [praxis-visualization](../praxis-visualization/SKILL.md)；整稿版式、编译、真实PDF与披露交 [praxis-report](../praxis-report/SKILL.md)。已有文档沿原文件和生成源同步，整稿质量／奖项评价仍由 [praxis-review](../praxis-review/SKILL.md) 给出。
+模型交 [model](../praxis-model/SKILL.md)，主张核验交 [verify](../praxis-verify/SKILL.md)，文献交 [literature-review](../praxis-literature-review/SKILL.md)，图形交 [visualization](../praxis-visualization/SKILL.md)，整稿／PDF交 [report](../praxis-report/SKILL.md)，整体评价交 [review](../praxis-review/SKILL.md)。

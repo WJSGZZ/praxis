@@ -1,35 +1,22 @@
 ---
 name: praxis-report
-description: 把有效结果写成读者能核查的论文或报告：摘要、章节顺序、命题与证明、模型验证写法、图表选择与图注、数字与引用一致、AI 使用披露、PDF 逐页检查与冻结。用于“写论文、改摘要、中文润色、英文科研表达、审文字表达、检查 PDF”。不替代建模与验证，缺证据时返回上游；整稿质量、奖项或研究贡献评价交 praxis-review。 Write or revise a modeling paper, abstract, figures, citations, AI disclosure and final PDF.
+description: 把有效结果组织成可核查的整篇论文或报告：摘要与章节、结果与图表、数字与引用一致、AI披露、PDF逐页检查与冻结。用于“组织论文、组稿、改摘要、检查PDF、交付报告”。科学论证与纯语言修订交 praxis-scientific-writing，整稿水平与奖档意见交 praxis-review。 Assemble validated results into a complete modeling paper or report; manage structure, figures, citations, AI disclosure and final PDF delivery.
 license: MIT
 ---
 
 # Praxis · 论文与交付
 
-BUNDLE 指 `praxis` 技能目录。纯论证与语言交 [praxis-scientific-writing](../praxis-scientific-writing/SKILL.md)，组稿交付沿本技能接续；文献综合交 [praxis-literature-review](../praxis-literature-review/SKILL.md)。按当前请求读 [writing.md](../../references/writing.md) 的对应小节；纯语言修改只读“语言专项”，涉及图表才读 [visualization.md](../../references/visualization.md)。
-
-## 调用契约
-
-输入：指定原稿或有效结果、事实表与交付要求；已有作品还须接续其生成源、身份信息与已确认的字体／版式。产出：自然清楚且事实一致的修订或完整报告，以及与当前版本绑定的检查结果。依赖与边界：语言仅用写作参考，生成或修改科研图必须读 visualization.md 的“数学与数据核验”和“工具与检查”，交付 PDF 必须实际检查页面及导入图形的字体；不新增科学主张。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
 ## 做什么
 
-- 完整报告按 [convergence.md](../../references/convergence.md) 从有效证据决定正文、附录与证据池的取舍；局部改稿直接处理当前缺口，不重做研究流程。
-- 结构：按 writing.md 的章节层级与标题规则，重要共同前提通常单列“假设及其理由”，局部模型补特有条件；不以简洁隐藏前提或按条数判断质量。合并无实际定位作用的孤立编号子节，技术标题准确命名对象与论证任务，分点只用于有并列或顺序关系的内容；摘要先写问题、方法、关键数字与条件；按读者核查需要展开模型，不重复固定小节顺序；证明简短但完整；以真实结果支撑的结论收尾。
-- 图表：按 visualization.md 先比较不画、用表与其他图形的表达价值；不设最低图数，不把图框当模板必填项。每张保留的图回答一个读者的问题，图题、读图必要说明与正文分析的分工统一按writing.md；证据记录保留数据版本，图内／图注／相邻正文按需要交代单位、比较条件与来源，不强迫把版本和完整分析都写进图名；不画不支持结论的图。由实际有效数据通过成熟科学绘图库生成，核对坐标变换、插值、采样／网格与统计区间含义；数值核验和最终尺寸视觉验收都通过后才进入正文。
-- 新绘图或图形诊断可交 [praxis-visualization](../praxis-visualization/SKILL.md) 专项处理；本技能仍负责图表在全文中的论证用途、引用和整稿版面。两个入口共用 visualization.md，不维护第二套字体、图题或颜色规则。
-- 排版：按交付用途读取 [contest-delivery.md](../../references/contest-delivery.md) 或 [research-mode.md](../../references/research-mode.md) 的研究稿与模板要求；确认目标期刊后再核投稿规范。模板组件按论证需要选用，必需结构以当届规则为准；队号、年份、标题等身份信息从当前作品的统一配置生成，核对封面、页眉、披露与副本，美赛／ICM模拟稿显式使用 `identity_mode='simulation'` 和共享固定模拟身份；真实比赛显式使用 `identity_mode='contest'` 并提供实际分配队号。模拟身份不声称注册，不用于真实队伍；当前交付拒绝全0占位符。身份策略和调用方式只维护在 [contest-delivery.md](../../references/contest-delivery.md)，冻结历史另走 archive。图题及说明按 [writing.md](../../references/writing.md) 分工：当前美赛短图题，必要解释进入邻近正文，连同图内居中／小框尾注一起审，不能只删 caption 的后半句。沿用原生成源与宿主编译器，修改后实际查看 PDF；正文模板字体正确不代表外部图中的字体或最终字号正确，按 visualization.md 检查成品；美赛新稿必须消费 [automation.md 当前交付门禁](../../references/automation.md#写作连接)，执行 current 编译 → 同 PDF 字体与全页实际 QA → current 冻结 → workflow.report；字段与规则只维护在该权威入口，不能用静态模板通过或通用快照代替成品验收。未知届次不继承已确认要求。
-- 来源与披露：参考文献不可省略——外部的参数、公式、方法、数据都在使用处标号并在文末列全；有 DOI 的条目运行 `scripts/check_references.py` 核对（它只证明记录存在、题名年份相符，不证明该文献支持这个论断）。需付费的文献请使用者通过学校图书馆或知网取得全文再引用，没读过的不引。真实使用的来源在使用处引用；AI 使用按实际写，不用程序日志冒充完整对话。同题资料按 [learning-loop.md](../../references/learning-loop.md) 的学习／封存／正式赛事用途处理，保持真实暴露记录，不将对照后的开发案例称盲测。
-- 一致性：报告数字与有效运行逐项对应；缺证据返回 praxis-verify 或 praxis-compute，不在写作中补造依据或把条件结论写成事实。
-- 执笔与贡献：助手负责整合成稿，按 [contributions.md](../../references/contributions.md) 从真实事件说明人的判断和AI承担的实际工作。发现关键人工判断／核验缺口时交 dialogue 组织共同研究，缺科学证据交上游检查；不以签字、复述或补聊天次数替代。后来新增贡献注明阶段，不改写旧稿来源。
-- 比赛或团队交付：按 [context-and-team.md](../../references/context-and-team.md) 接续实际赛事／届次，详细规则、组件边界、编译与冻结按 [contest-delivery.md](../../references/contest-delivery.md) 和 [automation.md](../../references/automation.md)。用共享组件生成需要独立的完整部分；字体块一致不能证明摘要、目录、正文与交付尾部的分页正确。AI 记录来源与缺日志按 [feedback.md](../../references/feedback.md)，披露位置与附件要求按对应赛事档案，不用摘要或程序日志补造完整对话，也不把美赛AI尾页套给国赛声明或研究稿。真实页面检查与科学审阅分别验收，预检不等于合规认证。
+- 按 [writing.md](../../references/writing.md) 接续原稿、有效证据、任务和生成源；纯语言修改只读“语言专项”，交 [scientific-writing](../praxis-scientific-writing/SKILL.md)；不新增科学主张。
+- 完整稿按 [convergence.md](../../references/convergence.md) 取舍正文／附录；竞赛假设章及必备产出只按 [contest-paper-checklist.md](../../references/contest-paper-checklist.md)，研究结构按 [research-mode.md](../../references/research-mode.md)。
+- 图表用途、系列数据与图例、字体及最终尺寸按 [visualization.md](../../references/visualization.md)；专项绘图交 [visualization](../praxis-visualization/SKILL.md)，全文核引用与条件。
+- 来源支撑按 writing.md 核读；文献综合交 [literature-review](../praxis-literature-review/SKILL.md)，交付时加载 [integrity.md](../../references/integrity.md) 的 AI 披露与贡献，沿真实记录注明缺口。
+- 赛事身份和格式按 [contest-delivery.md](../../references/contest-delivery.md)，当前编译、同 PDF 字体与全页 QA、冻结及 workflow.report 只按 [automation.md 当前交付门禁](../../references/automation.md#写作连接)。
+- 修订后按 [methods.md](../../references/methods.md#根因修复与全文变更影响) 同步受影响数字、条件、摘要、结论与关联产物，实际看最终页面；公开／上传／提交须明确授权。
 
 ## 交接
 
-完整修稿先对照原题核对整篇论证链，具体按 writing.md 的“论证先于润色”；题名、摘要、章节、段落、图表及条件答案相互对应。交付前执行 automation.md 的章节结构预检并看实际目录，处理孤立编号子节或保存当前源码绑定的具体保留理由。规则已经写入技能不代表执行完成；同一错误再现时检查生成器与最终冻结入口是否真正使用规则，并用原失败稿验证门禁。
-
-写作中发现的论证缺口，写回对应任务 ID；前提身份、理由与影响尚不明确时交 [praxis-assumptions](../praxis-assumptions/SKILL.md)，已明确前提仅需组织章节时在本技能完成。用户纠正暴露的重复性缺口回修对应生成源与现有专业规则，再用当前成品复验；局部图题或字体修订须检查同稿其他图、摘要及相邻解释是否仍一致，记录已验与未验范围，不以“已读技能”代替执行。最终交付沿用用户已有文件与规范；公开、上传或提交需要明确授权。
-
-每份完整竞赛或研究作品交付及重要修订后，交 [praxis-review](../praxis-review/SKILL.md) 按 [judging.md](../../evals/judging.md) 给绑定当前版本的作品评价与理由：竞赛使用对应奖项视图，研究使用定性研究视图。实际检查范围不足时明确保留待评；局部改字或编译检查不冒充重新评阅整稿。
-
-目标阶段需要答辩时，从当前有效论文整理讲述提纲、关键主张的页码／图号／运行证据、局限、备选与真实贡献说明，交 [praxis-dialogue](../praxis-dialogue/SKILL.md) 按 [defense-coaching.md](../../references/defense-coaching.md) 训练选手。讲稿与问答不添加论文之外的未验证优势；论文改后同步核对受影响材料，材料完成不等于选手已会答辩。
+前提交 [assumptions](../praxis-assumptions/SKILL.md)，科学缺口交 [verify](../praxis-verify/SKILL.md)／[compute](../praxis-compute/SKILL.md)，完整作品交 [review](../praxis-review/SKILL.md)，真实共同研究与必要答辩材料交 [dialogue](../praxis-dialogue/SKILL.md) 并按 [defense-coaching.md](../../references/defense-coaching.md) 接续。

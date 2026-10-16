@@ -116,7 +116,8 @@ def test_pipeline_logs_preserve_actual_raw_child_bytes(cp1252_default, tmp_path,
     monkeypatch.setattr(pipeline, 'PROJECT', tmp_path)
     problem = tmp_path / 'problem.md'
     problem.write_bytes('合成测试：整数二加二等于四。'.encode('utf-8'))
-    case = Path(pipeline.init_case(tmp_path / 'cases', 'raw-logs', problem)['case'])
+    # Exercise legacy raw-byte logging independently of the new model gates.
+    case = Path(pipeline.init_case(tmp_path / 'cases', 'raw-logs', problem, schema=1)['case'])
     model = '''import argparse,json,sys
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--output',type=Path);a=p.parse_args()

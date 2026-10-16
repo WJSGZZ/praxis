@@ -1,32 +1,22 @@
 ---
 name: praxis-verify
-description: 判断模型结果能支持多强的结论：独立验证（手算、解析解、穷举、界、不变量）、敏感性与稳健性、已有模型或论文中具体主张的证据审查、失败回退。用于“这个结果可信吗、结论说得过头了吗、帮我审查模型”。不重新设计模型；定义有误时回 praxis-model，整稿水平与奖项／研究价值评价交 praxis-review。 Validate mathematical claims independently; check constraints, sensitivity, robustness and evidence strength.
+description: 数值结果与具体主张的独立核验：用手算、另一推导、解析解、穷举、界或不变量核对答案、前提和结论范围。用于“独立检查这个数值、核验这条数学主张、找反例”。整稿水平与奖档意见交 praxis-review，模型设计交 praxis-model。 Independently verify numerical results and specific mathematical claims with appropriate evidence, counterexamples and scope checks.
 license: MIT
 ---
 
 # Praxis · 独立验证与审查
 
-BUNDLE 指 `praxis` 技能目录。先读 [methods.md](../../references/methods.md) 的“证据的层次”“失败回到原因所在的环节”。
-
-## 调用契约
-
-输入：题目、模型、当前结果与拟写主张。产出：独立检查、反例、适用范围与待核项。依赖与边界：需原始依据与相称独立方法；不替作者补造缺失证据。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
 ## 做什么
 
-- 计算是否符合模型：另一种推导、手算、解析解、穷举、守恒量、约束；重复同一程序只说明运行一致。
-- 模型是否回答现实问题：核对目标、机制、定义、可用信息、替代解释；按 methods.md 的“假设、理由与结论范围”检查实际前提及其影响，区分模型内正确与现实假设获证，不按假设条数判断。
-- 建议是否稳健：只扰动有依据且可能改变建议的因素。全局敏感性与方案评价工具的条件见 methods.md 末尾；Sobol 只适合独立均匀输入与确定性标量输出。
-- 最优性：可行解与证明界分开报告，最大化用上界、最小化用下界；受限决策族只能称族内最优，须用更宽的族检验差距。见 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的“结构、松弛与界”。
-- 不确定性、数值收敛与统计检验的规范见 [scientific-foundations.md](../../references/scientific-foundations.md)。
-- 抽样、配对、聚类或比较族设计交 [praxis-statistics](../praxis-statistics/SKILL.md)；“改变某因素会怎样”的主张先交 [praxis-causal-analysis](../praxis-causal-analysis/SKILL.md) 核对识别，预测外推交 [praxis-time-series](../praxis-time-series/SKILL.md)。已有局部数值核验仍在本入口完成，不为调用专长重跑无关环节。
-- 从 methods.md 的证据层次选取能检验当前主要结论的检查，说明什么结果会推翻或限制它；不将七层都设为每题必经检查。
-- 审查现成材料时按同一标准逐条给出：结论、它依赖的证据、证据是否独立、应降低到什么强度，而不是给泛泛评语。
+- 按 [methods.md](../../references/methods.md)“证据的层次”选择当前主张需要的独立检查，说明不共享的推导、实现或信息来源及证伪条件。
+- 核手算、解析解、穷举、守恒与约束；目标、机制、定义、可用信息和替代解释的检查分别支持对应层面的结论。
+- 最优性与上下界读 [mathematical-reasoning.md](../../references/mathematical-reasoning.md)；数值误差、收敛与统计规范读 [scientific-foundations.md](../../references/scientific-foundations.md)。
+- 敏感性只查有依据且影响建议的因素，记录阈值、适用范围和失败；工具条件与回退以 methods.md 为准。
+- 重要主张按 [review-protocol.md](../../references/review-protocol.md) 核实际影响；同一助手换角色仅算自查，局部证明或一个数值结果不启动整稿评奖。
+- 每项交付允许表达的结论、依据、独立性、反例或限制；证据不足返回原因所在环节。
 
-- 从本入口提出整稿水平、奖项或研究价值请求时，保留已有输入并交 [praxis-review](../praxis-review/SKILL.md) 按 [judging.md](../../evals/judging.md) 分类评价；本技能负责其中需要的数学／数值核验。局部证明或一个数值结果不启动整稿评奖。
-- 重要结论或完整稿的审查按风险选择评审视角，见 [review-protocol.md](../../references/review-protocol.md)。同一助手切换角色可找缺口，不能自称独立验证。
-- 用户在场时，把审查结果讲成白话，请用户指出不合直觉之处，一起复盘并判断是否换方法，做法见 [praxis-dialogue](../praxis-dialogue/SKILL.md)。
+## 交接
 
-## 产出
-
-对每项任务写明允许表达的结论、适用范围、失败或限制。证据不足就降低结论强度或返回对应环节，不以预设轮次结束判定通过。
+设计回 [model](../praxis-model/SKILL.md)，抽样交 [statistics](../praxis-statistics/SKILL.md)，因果识别交 [causal-analysis](../praxis-causal-analysis/SKILL.md)，预测外推交 [time-series](../praxis-time-series/SKILL.md)，整稿按 [judging.md](../../evals/judging.md) 交 [praxis-review](../praxis-review/SKILL.md)，解释交 [dialogue](../praxis-dialogue/SKILL.md)。

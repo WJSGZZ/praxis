@@ -1,52 +1,22 @@
 ---
 name: praxis-review
-description: 评阅完整竞赛论文或数学研究作品的质量、主要缺口与修改优先级。用于“整篇论文到什么水平、奖项竞争力怎样、研究贡献够不够、整稿该改哪里”。竞赛按对应赛事—赛项—届次，研究按正确性与研究价值分类；局部结论核验交 praxis-verify，仅写作润色或查版面交 praxis-report。 Review a complete competition paper or research work, its quality, major gaps and revision priorities.
+description: 整稿水平与奖档意见：评阅完整竞赛论文或数学研究作品，比较整体质量、主要差距与修改价值。用于“整篇论文到什么水平、能拿什么奖、研究贡献够不够”。局部数值与具体主张交 praxis-verify，组稿及PDF交付交 praxis-report。 Assess the overall level and award tier of complete competition papers, or the quality and contribution of complete mathematical research works.
 license: MIT
 ---
 
 # Praxis · 作品评审
 
-BUNDLE 指 `praxis` 技能目录。共用证据约定见 [judging.md](../../evals/judging.md)，只加载当前作品的竞赛或研究标准。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
-## 调用契约
+## 做什么
 
-输入：原题或研究问题、当前完整稿及实际页面、有效证据、目标与作品版本；有条件时加同届同题、官方奖项已核的真实论文作参照。产出：分诊记录、按严重度分级的问题清单、有参照时的比较或无参照时的弃判断、最值得做的修改。缺少完整稿时完成可核的部分并标明范围，不声称整稿验收。竞赛先确认赛事—赛项—届次，未知届次不套其它已核要求；研究生赛等没有数值 profile 的赛事给具名定性评议。
-
-## 竞赛作品：三遍阅读
-
-按 [contest-judging.md](../../evals/contest-judging.md) 的“评审流程”执行，三遍结论分开写，后一遍不改写前一遍。
-
-1. **分诊阅读。** 只读 Summary 页，记下每问的答案、方法和关键数字能否在这一页找到；再看全部图表、结论和 Memo／Letter。对每问写 `answer_found`、一句话答案、为什么可信、最想追问什么。不复算。Summary 讲不清的地方记为差距，后面读到正文也不抵消。
-2. **全文阅读。** 核组成：带理由的假设、建模过程、结果、优缺点、敏感性、结论是否齐全且相互对应。对决定主要答案的方程做机制审计：每个变量代表什么对象、同一符号是否只有一种含义、量纲与守恒、关键量级是否合理。每条关键主张至少攻击一次（单位、极限情形、符号翻转、小例、独立复算或量级）。复算投入不超过本次评审的三分之一；需要大量独立数学核验时交 [praxis-verify](../praxis-verify/SKILL.md)。
-3. **比较定档。** 有同题参照时两两比较：哪篇更接近该届 O 水平、置信度、三条带位置的依据；比较前先写定本题的评价重点。没有参照时不给档次，只报告分诊结果、问题清单和与 O 稿结构分布的对比；无参照的 AI 绝对定档在真实论文上连方向都不可靠（见规则中的对照记录）。
-
-## 问题分级
-
-每个问题写位置、证据和 `severity`：
-
-- `decisive`：改变某问的主要答案或主要推荐，且无法在原框架内局部修复。只有这一级可以单独压档。
-- `substantive`：影响一个子结论、数字或检验，主线仍成立。与作品长处一起权衡。影响未核明时先归这一级并标待核。
-- `local`：笔误、排版、措辞，或不影响结论的计算差错。只进修改建议。
-
-分级前按 [review-protocol.md](../../references/review-protocol.md) 核实际影响。同一根因只记一个问题。官方 Outstanding 论文也常有可复算的错误，所以“找到错误”本身不是定档理由。
-
-## 评自家作品
-
-用全新上下文，只读原题、数据、成品 PDF 和评审规则，不读作者的任务记录、运行收据、内部评阅和方法类指导文件。结论写相对同题真实论文的位置与差距；没有参照时不给档次，不写“强 O”“O 竞争力”这类断言。
-
-## 研究作品
-
-按 [research-judging.md](../../evals/research-judging.md) 评价六项研究维度，不填竞赛七维、奖项或百分制；研究生竞赛和没有唯一答案的开放竞赛仍属竞赛。
-
-## 产出顺序
-
-1. 目标奖项与当前位置（有同题参照时的比较结果；没有参照时写“弃判断”），附依据。
-2. `decisive` 问题，每条给最小修改。
-3. 按“对评委看到的信息量影响最大”排序的前三项修改：通常先看 Summary 能否答清每问，再看决定主要答案的问题，再看图表与表达。
-4. `substantive` 与 `local` 清单。
-
-绑定当前稿件版本和实际检查范围；旧评语保留原版本，不继承旧档次。局部证明、仅语言修改或标准小计算不启动整稿评审。
+- 接收原题／研究问题、当前完整稿、实际页面和证据，绑定版本与范围；按 [judging.md](../../evals/judging.md) 确认竞赛或研究，赛事—赛项—届次未知保留待核。
+- 竞赛按 [contest-judging.md](../../evals/contest-judging.md) 三遍阅读：分诊阅读只看 Summary，再看图表、结论与 Memo／Letter，不复算；全文阅读核组成、机制并攻击关键主张；比较定档先定重点再比较同题真实论文，三遍结论分别保留。
+- 分诊 `reader` 保留逐问答案、可信依据与追问；有参照的 `comparison` 保留参照身份、偏好、置信度和三条定位依据；无参照时的弃判断按竞赛权威执行。两块仍可选，连同 `issues.severity` 沿用旧 schema／聚合算术。
+- 问题按 [review-protocol.md](../../references/review-protocol.md) 分级：`decisive` 改变主答案且原框架内无法局部修复，只有这一级可以单独压档；`substantive` 与长处权衡，影响未明标待核；`local` 只列修改。同根因共用 issue，复算预算不超过评审三分之一。
+- 评自家作品用全新上下文，只读原题、数据、成品 PDF 和评审规则，不读作者的任务记录、收据、内部评阅或方法指导；无同题参照不给档次。旧评语保留原版本。
+- 研究按 [research-judging.md](../../evals/research-judging.md) 六维定性评价；研究生／开放竞赛仍归竞赛。依次交付比较或弃判断、决定性问题、前三项修改及其余问题；缺完整稿标明范围。
 
 ## 交接
 
-主答案定义有误交 model，数值或证据缺口交 compute／verify，文字、图表与页面修订交 [praxis-report](../praxis-report/SKILL.md)；同一任务记录与 issue ID 接续。评委的实际辨别力按 [PROTOCOL.md](../../evals/PROTOCOL.md) 单独检验，新增规则或切换角色不构成校准。
+大量数学核验交 [praxis-verify](../praxis-verify/SKILL.md)，定义回 [model](../praxis-model/SKILL.md)，页面与表达交 [praxis-report](../praxis-report/SKILL.md)；评委辨别力按 [PROTOCOL.md](../../evals/PROTOCOL.md) 另验，规则接入不视作校准。

@@ -6,26 +6,17 @@ license: MIT
 
 # Praxis · 问题与模型
 
-BUNDLE 指 `praxis` 技能目录（仓库根目录，或插件里的同级 `praxis/`），脚本与全部参考都在那里；本文件的相对链接在两种布局下都有效。
-
-## 调用契约
-
-输入：原题、数据条件、目标与约束。产出：明确题意、假设、基线与替代路线。依赖与边界：按缺口读模型参考；不认证数值结果或替写报告。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
 ## 做什么
 
-把请求转成任务 Q1、Q2……每项都有目标量、单位、约束、成功条件，再给出能回答它的最小模型、假设及其依据、验证设计。读 [methods.md](../../references/methods.md) 的“明确问题”“形成路线”“模型与验证一起选择”和“假设、理由与结论范围”；最小模型不指少列前提，实际依赖的隐含条件也须说明。
+- 产出 `planning/model-contract.json`，按 [modeling-gate.md](../../references/modeling-gate.md) 完成算前门禁，通过后才交 compute。
+- 按 [methods.md](../../references/methods.md) 将原题写成目标量、单位、约束与验收任务；改变答案的歧义读 [definition-review.md](../../references/definition-review.md)，合理替代解释保留条件答案。
+- 参数、可辨识性与保证读 [mathematical-reasoning.md](../../references/mathematical-reasoning.md)；参数依据表接 [writing.md](../../references/writing.md)，未知值标情景。
+- 路线数量与比较条件以 methods.md 为准；适用工具读 [model-library.md](../../references/model-library.md)，结构未知交 [explore](../praxis-explore/SKILL.md)。
+- 机制与量级读 [domain-models.md](../../references/domain-models.md)，验证设计读 [scientific-foundations.md](../../references/scientific-foundations.md)；先试最便宜的推翻检查。
+- 沿已有任务按 [tasks-template.md](../../references/tasks-template.md) 记录定义、前提、基线、备选与失效转向；关键偏好与用户确认。
 
-- 只有会改变答案的歧义才读 [definition-review.md](../../references/definition-review.md)；其余写成假设并说明影响。
-- 自选的更强定义下无解只排除该解释。若原题仍有会改变主答案的合理解释，给覆盖它的条件方案／排除依据，或明确核心任务尚未完成；不能靠增加约束把原题难点消掉。
-- 参数可辨识性、量纲、优化保证、概率区间、干预结论需要判断时，读 [mathematical-reasoning.md](../../references/mathematical-reasoning.md) 的对应分支。
-- 没有数据可拟合时，按 mathematical-reasoning.md 的参数范围规则列依据表，不把无依据取值藏在代码常数里；来源核验见 [writing.md](../../references/writing.md) 的“来源服务于具体论断”。
-- 常见方法的适用条件、可用工具与必做检查见 [model-library.md](../../references/model-library.md)。
-- 候选模型逐个记录：回答哪项任务、需要什么数据、额外假设、失效条件、独立验证办法。先做最容易推翻路线的手算或小例子。问题陌生或结论影响大时，先发现结构并比较至少三条结构不同的路线，见 [praxis-explore](../praxis-explore/SKILL.md)。
+## 交接
 
-- 有物理、化学、生物或工程机制的题，先核对所需机制与量级，见 [domain-models.md](../../references/domain-models.md)。解析式、平衡关系足以回答时先用它们；需要时空过程才做数值模拟，按 [scientific-foundations.md](../../references/scientific-foundations.md) 设计守恒、解析极限与收敛检查。参数依据与标定见 mathematical-reasoning.md，不凭结果好看调值。
-- 用户在场时，定路线前只确认会改变答案的一两件事；基线结果出来后的复盘与方法改进见 [praxis-dialogue](../praxis-dialogue/SKILL.md)。
-
-## 产出与交接
-
-持续任务按 [tasks-template.md](../../references/tasks-template.md) 更新已有任务记录，写入任务、基线、假设与路线取舍。专门梳理或审查前提、理由与失效影响时，带已有题目和候选模型交 [praxis-assumptions](../praxis-assumptions/SKILL.md)，不要求每题另做一轮。模型、参数输入和验证设计明确后交给 praxis-compute 实现与运行；需要判断结论强度时交给 praxis-verify。题意或机制被推翻时，从这里重开，不在下游悄悄改假设。
+前提专审交 [assumptions](../praxis-assumptions/SKILL.md)，契约与验证设计交 [compute](../praxis-compute/SKILL.md)，结果核验交 [verify](../praxis-verify/SKILL.md)，共同取舍交 [dialogue](../praxis-dialogue/SKILL.md)。

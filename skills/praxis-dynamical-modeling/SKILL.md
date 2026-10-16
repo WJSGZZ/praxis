@@ -6,22 +6,17 @@ license: MIT
 
 # Praxis · 机制与动力学建模
 
-专业深度归 [dynamical-modeling.md](../../references/dynamical-modeling.md)。实际领域机制见 [domain-models.md](../../references/domain-models.md)，独立数值规范共用 [scientific-foundations.md](../../references/scientific-foundations.md)。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
-## 调用契约
+## 做什么
 
-输入：研究对象、时空尺度与目标量、状态／单位、守恒和机制依据、初始及边界条件、参数／观测、允许控制与预算。产出：状态与观测方程、前提和量纲、解析基线或数值轨迹、守恒／边界／收敛检查、可辨识范围与实际预测／控制条件。
-
-## 专业处理
-
-- 区分守恒机制、经验状态模型和纯统计时序；先用足够回答任务的平衡或解析关系，只有时空异质性会改变答案才增加ODE/PDE。
-- 方程含所有参与动力学的状态；逐项核流入流出、源项、参数与量纲。说明初态如何获得、边界作用及观测对应，不以隐藏真值作为可免费测量的状态。
-- 活动压力与服务对象存量分别入账；改用替代资源不自动消除对象仍需的其他服务。先做相同存量／充足供给的控制，再核受限服务；修复耦合后重算所有受影响的结论，不能只补一项账差。
-- 有限状态转移按专业参考核索引方向、非负质量、零分母／吸收边界及真实多步传播；连续速率、一步概率与平稳分布分别解释，不用净变化率代替存量密度。
-- 现有 `solve_ode`、`sir_simulate`、`sir_fit`、`equilibria`、一维 `solve_diffusion`／`solve_layered_diffusion` 按实际范围选择；需要时用原模型代码调用成熟SciPy，不能向MCP传未注册的events等字段。
-- 校准误差、机制适用与求解误差分别判断。核守恒、非负性、解析特例、有效初值与相同物理量的网格／时间比较；有限多起点平衡搜索或数值稳定性不作完整证明。
-- 受约束动态决策须查控制切换、极值及采样之间；只有方案自己的证据才能支持它。数值失败、模型失配和真实不可行分别记录。
+- 按 [dynamical-modeling.md](../../references/dynamical-modeling.md) 区分守恒机制、经验状态与统计时序；先平衡／解析，异质性影响答案再加 ODE/PDE。
+- 状态／观测方程逐项核对象、量纲、流与源、初态来源及边界；机制与量级接 [domain-models.md](../../references/domain-models.md)。
+- 活动压力与服务对象存量分别入账；用相同存量／充足供给对照后再核受限服务，修耦合重算实际下游。
+- 有限状态转移核方向、非负质量、归一、零分母、吸收边界与多步传播；连续速率、一步概率与平稳分布分开。
+- 按范围选 `solve_ode`、SIR、`equilibria` 或一维扩散；核真实接口，需扩展时在项目用成熟 SciPy。
+- 按 [scientific-foundations.md](../../references/scientific-foundations.md) 分别核校准、机制、求解误差、守恒、非负、解析极限及收敛；控制检查切换、极值和采样间，失败身份分别保留。
 
 ## 交接
 
-任务／前提有误回 [praxis-model](../praxis-model/SKILL.md)，未来信息和统计外推交 [praxis-time-series](../praxis-time-series/SKILL.md)，控制优化交 [praxis-optimization](../praxis-optimization/SKILL.md)，输入与结构情景交 [praxis-uncertainty-analysis](../praxis-uncertainty-analysis/SKILL.md)，独立结论核验交 [praxis-verify](../praxis-verify/SKILL.md)。实现、运行与报告沿 praxis-compute／praxis-report；不另建模拟平台或物理“真值”标签。
+定义回 [model](../praxis-model/SKILL.md)，预测交 [time-series](../praxis-time-series/SKILL.md)，控制交 [optimization](../praxis-optimization/SKILL.md)，情景交 [uncertainty-analysis](../praxis-uncertainty-analysis/SKILL.md)，运行／核验／报告交 [compute](../praxis-compute/SKILL.md)／[verify](../praxis-verify/SKILL.md)／[report](../praxis-report/SKILL.md)。

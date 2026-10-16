@@ -1,6 +1,6 @@
 # 学习回路：每做完一题都变得更强一点
 
-当任务暴露了可迁移的成功或失败时，把结构、识别信号、路线取舍与验证方法提炼成带条件的经验。任务记录保留本题的决定与证据；课程是可复用的提炼，不再建一套本题过程台账。
+当任务暴露可迁移的成功或失败时，提炼结构、识别信号、路线取舍与检查动作。任务记录保留本题证据，课程保存带条件的可复用规则。外部材料读取前按 [integrity.md 的材料暴露](integrity.md#材料暴露) 核许可、真实范围与来源；本文件仍是封存与同题资料权限的唯一来源。
 
 ## 什么时候做
 
@@ -29,21 +29,23 @@
 
 ## 记录：`lesson_add` 与 `lesson_search`
 
-课程存成 JSON 行，放在**用户的项目里**（如 `planning/lessons.jsonl`），不上传、不共享。
+课程存为用户项目本地 JSONL，如 `planning/lessons.jsonl`。**旧记录照常读取**；新写入课程遵守以下紧凑契约：
 
-- 必填：`problem`、`structure`、`recognized`、`routes_tried`、`what_failed`、`what_worked`、`verified_by`、`principle`；
-- 可选：`tags`、`evidence`（candidate / observed once / seen repeatedly / derived / checked on a held-out problem）、`source_kind`（external_proposal / task_observation / mathematical_derivation；旧记录为legacy_unspecified）；
-- `principle` 要写成能迁移的规则，不是对本题的描述。
+- 必填原字段：`problem`、`structure`、`recognized`、`routes_tried`、`what_failed`、`what_worked`、`verified_by`、`principle`；新条目另必填 `checklist`。
+- `principle` 写可迁移、带适用条件的规则，≤300字符；`checklist` 为1–3条可执行祈使动作，每条≤120字符。作者审核动作含义与用途，机器只核字段、形状和长度。
+- 整条≤1500字符，按 `ensure_ascii=False`、紧凑分隔符序列化的完整JSON字符数计算，包含键名、自动 `id/date/evidence` 以及所有扩展字段。`tags` 为≤8个非空文本标签。
+- 可选 `evidence`：candidate / observed once / seen repeatedly / derived / checked on a held-out problem；`source_kind`：external_proposal / task_observation / mathematical_derivation，旧记录兼容 legacy_unspecified。`derived_from` 可引用已存在的历史课程，表示来源联系。
+- `failure_pattern`（失败做法）、`detected_by`（发现方法）、`signal`（识别信号）等保留作证据说明；检索只使用下面指定的五字段，扩展字段也受总长度约束。
 
-路线记录完成后，`route_to_lesson` 可起草课程。逐项审核草稿是否忠实于真实尝试，再补写适用条件与可迁移原则，交给 `lesson_add`；自动起草不代表已经学会或验证。
+`route_to_lesson` 从路线记录起草后，逐项核真实尝试与条件，压缩草稿并补作者审核的 checklist，再交 `lesson_add`。命中课程先核信号、条件和本题行动，再决定采用或写出不采用理由。
 
-已有课程且当前结构可能相关时，用 `lesson_search` 按关键词和标签检索；`route_graph` 新建图时传 `lessons_path` 也会返回相关经验。候选形成前审读，检索命中只是提示，不替代本题检验。
+`lesson_search(path, query, tags=..., limit=5, compact=False)` 仅在 `problem`、`structure`、`tags`、`checklist`、`principle` 五字段计算重合，再除以这些字段内容词总数的平方根；相同分数优先较强的已声明证据等级。英文用完整词、中文用双字重叠，大小写与常见标点归一；少量英文虚词 `an/and/of/the` 过滤。显式 tags 保留原标签检索，空查询／仅虚词且无标签返回空。默认返回原记录结构；`compact=True` 仅返回 `id/checklist/principle`，旧记录缺 checklist 时返回空列表，历史文件保持原字节。
 
-关键词使用完整英文词和中文双字重叠匹配，大小写与常见标点不影响英文词匹配。少量英文虚词 `an`、`and`、`of`、`the` 不计入关键词分数，也不自动触发标签；显式 `tags` 仍可查找原标签。空关键词或仅这些虚词且无显式标签时不返回经验，既有课程原文不重写。
+当前 `workflow.init` 遇空查询、含 `generic` 或 `prior lessons` 时，从 `planning/problem-extracted.txt` 取最高频15个内容 token 自动生成查询并记入状态。英文内容词、中文字符双字是启发式分词，实际含义由执行者审读。schema 2 在首次运行前于 tasks.md 对每个命中ID写同一行的 `applied:` 或 `not_applied:` 及实际行动／理由；accept 核首次实际运行快照中的决定，schema 1 沿原行为。执行接口见 [workflow.md](workflow.md)。
 
-同一活动记录重复写入返回原ID，不产生一次新观察；不同任务或新证据仍可分别记录。修订课程时在完整新记录中给 `supersedes: ["L0001"]`，新替换只引用当前活动ID。成功替换后按相同内容和相同父ID集合重试，复用仍活动的替换记录；不会因父条目已经失活而失败，也不追加第二次观察。更换活动父集仍是新的显式修订；重复／未知父ID、不匹配的失活父集及已退役记录不能借重试恢复。证据推翻但没有替代规则时，调用同一 `lesson_add`，传 `lesson: {"event":"retire","target":"L0001","reason":"具体证据与原因"}`。检索与结构计数使用去重后的活动视图；替代链、退役和原文都留在JSONL。不存在的引用、自引用和循环拒绝，不静默删除坏记录。`modeling.lessons.load`仍读取历史课程原文；既有workflow保存的检索ID、记录哈希和当时索引哈希不随当前库更新而改写。
+同一活动记录的同内容写入复用原ID；不同任务或新证据按实际观察记录。修订用新完整记录的 `supersedes: ["L0001"]`，只引用当前活动ID；成功后按同内容、同父ID集合重试仍复用活动替换记录。重复／未知父ID、不匹配失活父集和已退役记录拒绝。没有替代规则时用 `lesson_add` 追加 `{"event":"retire","target":"L0001","reason":"实际证据与原因"}`。原文、替换链和退役事件保留在JSONL；检索及结构计数使用去重后的活动视图。不存在引用、自引用、循环拒绝，`modeling.lessons.load` 继续读取历史课程。已有 workflow 的检索ID与哈希保持当时身份。
 
-外部材料的新建议先以 `source_kind: external_proposal, evidence: candidate` 入库；本题实践核验后另存带实际证据的 `task_observation` 或 `mathematical_derivation`，明确替代关系。元数据是来源声明，不是自动认证；检索排序、重复存入和同题重放不能将经验升级为异题验证。成熟且通用的规则合并到所属参考或工具，私有来源与案例细节留本地；本题专用结论不进入默认核心。没有适用的下一题时保留候选，不为晋升经验启动昂贵研究。
+外部建议用 `source_kind: external_proposal, evidence: candidate`；实践后另存有据的 task_observation／mathematical_derivation 并标替代关系。真实暴露、私人内容与证据升级边界归 [integrity.md](integrity.md)。成熟通则合并到所属指导或工具，私有来源与案例细节留本地；尚无异题应用时明确“迁移收益待验证”。
 
 ## 公共开发题与工具回归：`evals.planted`
 
@@ -75,9 +77,4 @@ uv run --locked python -m evals.planted check queue 7 '{"mean_wait": 0.42}'
 
 ## 成长的边界
 
-- 记录要真实：失败写失败，不改写成“当时就认出来了”。
-- 不因为一次成功就把原则写成“规律”；证据等级随复现次数提升。
-- 课程也会过期：工具、规范、数据源变化后，旧课程要重新检验。
-- 不把用户的私人信息、赛题原文或未公开材料写进课程。
-
-教训可带 `failure_pattern`（失败做法）、`detected_by`（发现方法）、`signal`（下次留意的信号）；它们和其余字段一起被检索。一个经验只有迁移到未见问题并经相称检查后，才提高证据等级；重复存储或被检索到不算新的验证。
+真实来源与历史范围按 [integrity.md](integrity.md) 保留。经验随工具、规范或数据变化重新检验；一次局部成功按其实际范围记录，异题迁移及独立核验另存观察，再按证据决定等级。检索命中用于触发本题检查，效果回到实际检查与作品判断。

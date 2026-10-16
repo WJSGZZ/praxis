@@ -6,6 +6,7 @@ project unless the user moves it."""
 from __future__ import annotations
 
 import json
+import math
 import re
 from datetime import date
 from pathlib import Path
@@ -16,6 +17,34 @@ LEVEL = ('candidate', 'observed once', 'seen repeatedly', 'derived', 'checked on
 SOURCES = ('legacy_unspecified', 'external_proposal', 'task_observation', 'mathematical_derivation')
 # Keep this list small: logical qualifiers and domain abbreviations may carry meaning.
 ENGLISH_FUNCTION_WORDS = frozenset({'an', 'and', 'of', 'the'})
+SEARCH_FIELDS = ('problem', 'structure', 'tags', 'checklist', 'principle')
+
+
+def _validate_new_record(record: dict, existing: list[dict]) -> None:
+    """Bound every new record; historical rows are never validated against this contract.
+
+    Length is Unicode characters in compact JSON, including keys, metadata and any
+    extra fields. The author reviews imperative/action meaning; this gate checks
+    shape and length only and does not certify semantic usefulness.
+    """
+    principle = record.get('principle')
+    if not isinstance(principle, str) or not principle.strip() or len(principle) > 300:
+        raise ValueError('principle must be nonempty text of at most 300 characters')
+    tags = record.get('tags', [])
+    if not isinstance(tags, list) or len(tags) > 8 or any(not isinstance(t, str) or not t.strip() for t in tags):
+        raise ValueError('tags must contain at most 8 nonempty strings')
+    checklist = record.get('checklist')
+    if not isinstance(checklist, list) or not 1 <= len(checklist) <= 3:
+        raise ValueError('checklist requires 1 to 3 imperative instructions')
+    for item in checklist:
+        if not isinstance(item, str) or not item.strip() or len(item) > 120:
+            raise ValueError('Each checklist item must be nonempty text of at most 120 characters')
+    if 'derived_from' in record:
+        source = record['derived_from']
+        if not isinstance(source, str) or source not in {r['id'] for r in existing}:
+            raise ValueError('derived_from must identify an existing lesson')
+    if len(json.dumps(record, ensure_ascii=False, separators=(',', ':'), allow_nan=False)) > 1500:
+        raise ValueError('New lesson records must not exceed 1500 JSON characters including metadata and extra fields')
 
 
 def _entries(path: Path) -> list[dict]:
@@ -108,12 +137,21 @@ def add_lesson(path: Path, lesson: dict) -> dict:
     if source == 'external_proposal' and level != 'candidate':
         raise ValueError('An external proposal must remain candidate evidence')
     if lesson.get('status', 'active') != 'active': raise ValueError('Use a retire event for retirement')
-    record = {**lesson, 'evidence': level, 'source_kind': source, 'date': lesson.get('date') or date.today().isoformat(), 'tags': sorted(set(lesson.get('tags', [])))}
+    raw_tags = lesson.get('tags', [])
+    if not isinstance(raw_tags, list) or any(not isinstance(t, str) or not t.strip() for t in raw_tags):
+        raise ValueError('tags must contain nonempty strings')
+    record = {**lesson, 'evidence': level, 'source_kind': source, 'date': lesson.get('date') or date.today().isoformat(), 'tags': sorted(set(raw_tags))}
     targets = record.get('supersedes', [])
     if isinstance(targets, str): targets = [targets]
     if not isinstance(targets, list) or any(not isinstance(t, str) for t in targets) or len(set(targets)) != len(targets):
         raise ValueError('supersedes requires distinct currently active lesson IDs')
     if targets: record['supersedes'] = targets
+    existing = load(path)
+    # Compute final metadata for a new append. Exact legacy reuse below writes
+    # nothing and remains valid without retroactively imposing the new limits.
+    used = {r['id'] for r in existing}; number = len(existing) + 1
+    while f'L{number:04d}' in used: number += 1
+    record['id'] = f'L{number:04d}'
     for rec in current:
         if _signature(rec) != _signature(record): continue
         previous_targets = rec.get('supersedes', [])
@@ -123,12 +161,9 @@ def add_lesson(path: Path, lesson: dict) -> dict:
         if not targets or set(targets) == set(previous_targets): return rec
     if not set(targets) <= {r['id'] for r in current}:
         raise ValueError('supersedes requires distinct currently active lesson IDs')
-    existing = load(path)
     if not targets and any(_signature(rec) == _signature(record) for rec in existing):
         raise ValueError('An identical inactive lesson cannot be revived; provide revised evidence or content')
-    used = {r['id'] for r in existing}; number = len(existing) + 1
-    while f'L{number:04d}' in used: number += 1
-    record['id'] = f'L{number:04d}'
+    _validate_new_record(record, existing)
     encoded = json.dumps(record, ensure_ascii=False, allow_nan=False)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('a', encoding='utf-8') as handle:
@@ -141,34 +176,46 @@ def load(path: Path) -> list[dict]:
     return [r for r in _entries(path) if 'event' not in r]
 
 
-def _tokens(text: str) -> set[str]:
+def _token_sequence(text: str) -> list[str]:
     """Content words (two letters or more) plus Chinese character bigrams, including unspaced queries."""
     text = text.lower()
-    words = {w for w in re.findall(r'[a-z0-9_]+', text) if len(w) > 1 and w not in ENGLISH_FUNCTION_WORDS}
+    words = [w for w in re.findall(r'[a-z0-9_]+', text) if len(w) > 1 and w not in ENGLISH_FUNCTION_WORDS]
     for run in re.findall(r'[\u4e00-\u9fff]+', text):
-        words |= {run[i:i + 2] for i in range(len(run) - 1)} if len(run) > 1 else {run}
+        words.extend([run[i:i + 2] for i in range(len(run) - 1)] if len(run) > 1 else [run])
     return words
 
 
-def search_lessons(path: Path, query: str = '', *, tags: list[str] | None = None, limit: int = 5) -> list[dict]:
-    """Lessons ranked by token overlap with the query (any field, English words or Chinese bigrams) and by tags found in the query or given.
-    Returns the best few, strongest evidence first on ties."""
+def _tokens(text: str) -> set[str]:
+    return set(_token_sequence(text))
+
+
+def search_lessons(path: Path, query: str = '', *, tags: list[str] | None = None, limit: int = 5, compact: bool = False) -> list[dict]:
+    """Rank five-field overlap by sqrt(content token count); strongest evidence breaks ties.
+
+    compact=True returns only id, checklist and principle. Legacy records without
+    a checklist use [], without inventing one or changing the stored record.
+    """
     words = _tokens(query.replace(',', ' '))
     want = {t.lower() for t in (tags or [])}
     # Use the same whole-word filter for inferred tags; explicit tags remain literal.
     lowered = re.sub(r'[a-z0-9_]+', lambda m: ' ' if m[0] in ENGLISH_FUNCTION_WORDS else m[0], query.lower())
     ranked = []
     if type(limit) is not int or limit < 0: raise ValueError('limit must be a nonnegative integer')
+    if type(compact) is not bool: raise ValueError('compact must be a boolean')
     for rec in active(path):
-        text = ' '.join(str(v) for k, v in rec.items() if k not in ('id', 'date')).lower()
-        have = _tokens(text)
+        text = ' '.join(str(rec.get(k, '')) for k in SEARCH_FIELDS).lower()
+        token_sequence = _token_sequence(text)
+        have = set(token_sequence)
         rec_tags = {t.lower() for t in rec.get('tags', [])}
         tag_hits = len(want & rec_tags) + sum(1 for t in rec_tags if t in lowered)
-        score = len(words & have) + 3 * tag_hits
+        score = (len(words & have) + 3 * tag_hits) / math.sqrt(max(1, len(token_sequence)))
         if score:
             ranked.append((score, LEVEL.index(rec.get('evidence', 'observed once')), rec))
     ranked.sort(key=lambda r: (-r[0], -r[1]))
-    return [r[2] for r in ranked[:limit]]
+    found = [r[2] for r in ranked[:limit]]
+    if compact:
+        return [dict(id=r['id'], checklist=r.get('checklist', []), principle=r['principle']) for r in found]
+    return found
 
 
 def patterns(path: Path) -> dict:

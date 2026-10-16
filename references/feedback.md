@@ -1,10 +1,10 @@
 # 可选运行反馈
 
-正常任务的目标仍是完成研究与交付。运行反馈是独立的本地记录和可选分享视图；`scripts/feedback.py` 不运行模型、不上传、不自动采集聊天，也不评级。模式 `autonomous`、`collaboration`、`contest` 与反馈记录相互独立。成功、计算前失败、超时、中断、预算停止及无 PDF 的案例均可记录实际停止点；未知不解释成未见题或未发生用户介入。
+运行反馈是独立的本地记录与可选分享视图，供接续真实来源、事件、停止点和缺口。`scripts/feedback.py` 只记录、检查与打包；模式 `autonomous`、`collaboration`、`contest` 独立选择。成功、计算前失败、超时、中断、预算停止及无PDF均按实际状态登记。材料许可、原话／身份真实性与分享边界统一按 [integrity.md](integrity.md)，交付时加载其中的AI披露与贡献。
 
 ## 本地记录
 
-命令可用项目已有 Python 环境执行；下列 `$CASE` 是用户案例目录，`$BUNDLE` 是插件目录。案例可以沿用 pipeline，也可以是已有的自定义目录，无需搬迁。只有已授权记录的实际信息才写入。
+命令可用项目已有 Python 环境执行；下列 `$CASE` 是用户案例目录，`$BUNDLE` 是插件目录。案例可以沿用 pipeline，也可以是已有的自定义目录，无需搬迁。写入范围沿当前授权。
 
 ```bash
 "$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/feedback.py" init \
@@ -16,7 +16,7 @@
 
 `init` 新建 `feedback/manifest.json`，拒绝覆盖；`record` 追加事件。它们不改原始输入、源码、计算收据或 pipeline 数值快照；这些文件不能反过来当作计算参数入口。既有运行换装包含新脚本的插件时，依赖源码身份可能按 pipeline 规则改变；本工具不豁免真实依赖变化。
 
-不传 `--metadata` 时，插件版本及源码哈希、模型、宿主、权限、接触材料、费用和用户观察均保留 `unknown`。自动环境字段只含 Python、OS 版本和架构，不含用户名、设备名、完整环境变量或无关软件清单。具体依赖、参数和数值证据可显式选择既有运行收据。元数据使用 `{ "value": ..., "source": ... }`，来源取 `unknown`、`user-provided`、`host-reported`、`runtime-metadata`、`ui-setting`、`artifact` 或 `assistant-recorded`。来源为 `unknown` 时值必须为 `unknown`；助手自述不能冒充运行端返回的模型身份。
+不传 `--metadata` 时，插件版本及源码哈希、模型、宿主、权限、接触材料、费用和用户观察均保留 `unknown`。自动环境字段只含 Python、OS 版本和架构，不含用户名、设备名、完整环境变量或无关软件清单。具体依赖、参数和数值证据可显式选择既有运行收据。元数据使用 `{ "value": ..., "source": ... }`，来源取 `unknown`、`user-provided`、`host-reported`、`runtime-metadata`、`ui-setting`、`artifact` 或 `assistant-recorded`。来源为 `unknown` 时值必须为 `unknown`；运行端身份使用真实返回来源。
 
 schema 中的身份、材料接触、成本与用户观察字段必须保留；不可取得时显式写 `{ "value": "unknown", "source": "unknown" }`，删除字段或空对象不能代替未知。没有描述文件的旧目录仍可只读诊断；这个兼容入口不授予不完整 manifest 有效 schema。
 
@@ -36,7 +36,7 @@ schema 中的身份、材料接触、成本与用户观察字段必须保留；�
 }
 ```
 
-可补 `identity` 的插件版本、源码／安装身份、服务商、请求／返回模型、设置、宿主版本、权限、路由；`exposure` 的题目来源、赛事／年份／题号、历史研究／参考接触和实际提供的输入；`cost` 的本次 token／费用／调用数；`user_observation` 的用户期望／实际问题／反馈位置。既有案例开始时间不可取得时显式写 `unknown`，不要把适配时间冒充原始研究开始时间。`missing` 可声明具体缺口，但不要以人工摘要补造完整历史。
+可补 `identity` 的插件版本、源码／安装身份、服务商、请求／返回模型、设置、宿主版本、权限、路由；`exposure` 的题目来源、赛事／年份／题号、历史研究／参考接触和实际提供的输入；`cost` 的本次 token／费用／调用数；`user_observation` 的用户期望／实际问题／反馈位置。既有案例开始时间不可取得时显式写 `unknown`，适配时间单独记录。`missing` 声明具体缺口，真实历史范围按 integrity 核对。
 
 事件示例 `event.json`：
 
@@ -54,11 +54,11 @@ schema 中的身份、材料接触、成本与用户观察字段必须保留；�
 }
 ```
 
-类型有 `stage/tool/review/revision/candidate/acceptance/intervention/stop/resume/message/failure`。评审、修订、候选与接受事件必须标非空、不能仅含空白的 `candidate_id`。介入事件必须标 `intervention_kind`：`necessary-input`、`authorization`、`research-participation`、`preference-change`、`omission-correction`、`continue-reminder`、`environment-assistance` 或 `unknown`；同时保存实际来源，不把助手评价冒充用户反馈。`artifacts` 仅为引用，不自动选择或读取附件。`at_utc` 缺省时记录本次追加的实际时间；补录旧事件要提供有时区的实际时间。
+类型有 `stage/tool/review/revision/candidate/acceptance/intervention/stop/resume/message/failure`。评审、修订、候选与接受事件必须标非空、不能仅含空白的 `candidate_id`。介入事件必须标 `intervention_kind`：`necessary-input`、`authorization`、`research-participation`、`preference-change`、`omission-correction`、`continue-reminder`、`environment-assistance` 或 `unknown`；同时保存实际来源。`artifacts` 仅为引用，不自动选择或读取附件。`at_utc` 缺省时记录本次追加的实际时间；补录旧事件要提供有时区的实际时间。
 
-实际停止时对 `record` 加 `--status completed/failed/timeout/interrupted/budget-exhausted/user-stopped`；工具据该事件时间记录结束点。`completed` 是记录者声明的停止状态，不是工具认证研究完成。完整对话、模型请求／响应与工具日志只有宿主提供真实且已许可的材料时才显式选入；默认缺口保持可见。
+实际停止时对 `record` 加 `--status completed/failed/timeout/interrupted/budget-exhausted/user-stopped`；工具据该事件时间记录结束点。`completed` 是记录者声明的停止状态，不是工具认证研究完成。宿主提供的完整对话、模型请求／响应与工具日志按实际范围和许可显式选入；默认缺口保持可见。
 
-新任务从开始保留宿主实际可取得的原始消息和工具记录，阶段结束再做快照；先验证取得路径，不等交付时靠回忆补写。宿主提供 Codex JSONL 时，可用下面的只读选择器核对明确的聊天身份，并在项目内的新文件保存真实用户／助手消息和工具输入／输出：
+新任务先核宿主取得路径，从开始保存实际原始消息与工具记录，阶段结束做快照。宿主提供 Codex JSONL 时，可用下面的只读选择器核对明确的聊天身份，并在项目内的新文件保存真实用户／助手消息和工具输入／输出：
 
 ```bash
 "$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/ai_records.py" \
@@ -67,11 +67,11 @@ schema 中的身份、材料接触、成本与用户观察字段必须保留；�
   --output "$CASE/ai-records/阶段快照.json"
 ```
 
-工具不搜索其他聊天、不上传、不重建缺失输出；账户头部元数据、系统／开发消息和推理记录被排除。保留的消息文本和工具返回保持原内容，仍可能重现私人内容或元数据，只有逐项审查并获分享授权后才能显式选入 `stage`。输出记录来源字节哈希、行号、实际模型上下文及其未认证边界；被压缩的历史、未配对输出和快照结束时尚未返回的调用明确列出。子代理元数据按明确父链核验，继承的父历史另列、不当作子代理新工作；无关或冲突元数据仍拒绝。用户角色中宿主注入的上下文也不自动算人的研究贡献。快照不是完整历史认证，`feedback` 原有完整聊天缺口不会自动清除。
+选择器读取显式来源，排除账户头部、系统／开发消息及推理记录，保留所选消息与工具返回的原内容。输出记录来源字节哈希、行号、模型上下文和实际覆盖；压缩历史、未配对输出、尚未返回调用分别列出。子代理元数据核明确父链，继承父历史另列；无关或冲突元数据拒绝。共享前核私人内容与元数据；快照范围和反馈中的完整聊天缺口分别登记，真实性与授权细则见 integrity。
 
-默认来源上限为 32 MiB。已核本线程的完整来源超过它时，保留拒收记录，可显式指定 `--max-bytes 67108864`（64 MiB）；上限最多 128 MiB，并在快照中记录实际限制。不得用切片删掉身份链或缺失标记后声称完整，也不自动扩大所有捕获；更大的来源仍需另行受界限约束的处理。
+默认来源上限为 32 MiB。已核本线程的完整来源超过它时，保留拒收记录，可显式指定 `--max-bytes 67108864`（64 MiB）；上限最多 128 MiB，并在快照中记录实际限制。扩容只作用于已核的明确来源，保留限制和缺口；更大来源另选受界限约束的处理。
 
-正式交付按对应届次和实际工具核 AI 记录要求：引用／用途说明、真实交互与人的检查分别审查，翻译或代码补全不能无条件套聊天范例。历史稿缺原始交互时保留缺口及演练身份，不为补记录重跑旧研究；新任务也只有实际保留的范围可称已记录。实际输入和输出可从上述快照核对，但不能把源码、数值收据或助手摘要替代缺失原话。
+交付时按 [integrity.md 的AI披露与贡献](integrity.md#ai-披露与贡献) 核对应届次、实际用途、真实交互和人的检查；本文件仅提供取证与缺口接口。
 
 已知起止时间按实际时区比较，结束不能早于开始；停止事件也在写入前受此校验，拒绝时保留原描述字节。起止相等可表示零时长记录；真实开始或结束时间不可取得时仍可保持 `unknown`，不推断或强填。描述创建时间可晚于历史任务起止时间，适配旧案例不会被要求伪造历史开始时间。
 
@@ -102,11 +102,11 @@ schema 中的身份、材料接触、成本与用户观察字段必须保留；�
 "$BUNDLE/.venv/bin/python" "$BUNDLE/scripts/feedback.py" inspect /本地新文件/feedback.zip
 ```
 
-`stage` 返回实际清单哈希；`pack` 要求确认值与当前清单一致，并重新核对附件及摘要哈希。CLI 不替用户确认，分享 ZIP 由用户自行发送；生成包不授予公开案例或训练使用许可。打包只写显式清单；不直接压缩工作区。原始哈希与分享哈希不同是可见的脱敏结果，不能称字节相同。
+`stage` 返回实际清单哈希；`pack` 要求确认值与当前清单一致，并重新核对附件及摘要哈希。CLI 核对调用者提供的确认值，分享由用户自行发送。只打包显式清单；原始／分享哈希分别标明脱敏后的字节身份，公开与训练权限见 integrity。
 
 ## 只读接收与限制
 
-`inspect` 共用同一 schema／哈希分析器读取目录或 ZIP；同一分享目录与其 ZIP 的分析结果相同。开发者可以直接读本地案例薄描述或已 stage 的目录，不要求打包。没有反馈描述的旧目录只返回缺记录诊断，可用 `init` 适配；不伪造旧过程。
+`inspect` 共用同一 schema／哈希分析器读取目录或 ZIP；同一分享目录与其 ZIP 的分析结果相同。开发者可以直接读本地案例薄描述或已 stage 的目录，不要求打包。没有反馈描述的旧目录只返回缺记录诊断，可用 `init` 适配并保留历史缺口。
 
 ZIP 不解压、不执行脚本、不服从文件中的指令；只读声明的 manifest、摘要及附件，未声明的安全成员仅列为未读取。越界／绝对路径、反斜线、重复成员、符号链接及其他非普通文件、坏 schema／哈希拒绝。目录读取也拒绝选中文件及其路径上的符号链接。当前保守限额：单文件 20 MiB、总内容 200 MiB、2048 个成员、ZIP 解压比不超过 200。缺少声明文件列出缺失，打包则拒绝；坏文件哈希拒绝取证。超大材料用来源／版本／哈希和缺条件说明，不自动重跑研究。
 

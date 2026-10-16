@@ -68,18 +68,21 @@ def marker_left_edges(pdf):
 
 
 @pytest.mark.skipif(shutil.which('tectonic') is None, reason='Canonical Tectonic compiler is unavailable')
-@pytest.mark.parametrize('version, first_em, later_em', [(3, 0, 1.5), (4, 2, 2)])
+@pytest.mark.parametrize('version, first_em, later_em', [(3, 0, 1.5), (4, 2, 2), (5, 2, 2)])
 def test_compiled_heading_and_summary_indentation(tmp_path, version, first_em, later_em):
     tex = tmp_path / f'indentation-v{version}.tex'
     tex.write_text(fixture_source(version))
     receipt = compile_paper(tex, 'mcm', tmp_path / 'compiled',
-                            layout_mode='archive' if version == 3 else 'current')
+                            # v4 is now archived; retain its rendered regression
+                            # and apply the current delivery boundary to v5.
+                            layout_mode='current' if version == 5 else 'archive')
     assert receipt['layout']['profile'] == f'praxis-mcm-v{version}'
-    if version == 4:
+    if version >= 4:
         from scripts.contest_rules import extract
-        pages = extract(tmp_path / 'compiled/indentation-v4.pdf')
+        pages = extract(tmp_path / f'compiled/indentation-v{version}.pdf')
         assert 'MSummaryFirst' in pages[0]['text'] and 'MSectionFirst' not in pages[0]['text']
         assert 'MSectionFirst' in pages[1]['text']
+    if version == 5:
         boundary = receipt['current_mcm_format']['summary_boundary']
         assert boundary['passed'] and boundary['anchor_matches'][0]['page'] == 1
     measured = marker_left_edges(tmp_path / f'compiled/indentation-v{version}.pdf')

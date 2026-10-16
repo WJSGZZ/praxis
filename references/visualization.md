@@ -14,7 +14,68 @@
 | 空间位置、局部热点或结构关系 | 地图、热图、带尺度的几何／网络图 | 用总量曲线替代局部差异；无依据的平滑与插值 |
 | 多变量机制或算法步骤 | 必要的机制／流程图 | 仅把目录或段落再画一遍，没有帮助理解依赖与机制 |
 
-这些是判断起点，不是固定配图清单。多面板和图表并用只有在承担不同阅读任务时才保留；同一数据重复展示须说明新增的信息。选图理由在现有图表清单或评审记录中简记“读者问题—证据—为什么这种形式—相对文字／表格的增益”，不要求论文正文增加制作说明，不另建每题必填的大型日志。理由不足的图删除、合并或换形式；不设最低图数，不为了填满模板作图。最终同时审查论证价值、数据忠实度与实际尺寸可读性。
+这些是判断起点，不是固定图型清单。多面板和图表并用只有在承担不同阅读任务时才保留；同一数据重复展示须说明新增的信息。每篇论文的选图与例外理由在下节计划表集中维护，不要求正文增加制作日志。理由不足的图删除、合并或换形式；数量不足先检查是否漏掉主要阅读任务，不能为凑数重复作图。最终同时审查论证价值、数据忠实度与实际尺寸可读性。
+
+## 图表计划
+
+每篇论文附图表计划表，沿用现有账本：图／表｜回答哪个读者问题｜数据来源｜放在哪节｜相对文字／表格的增益。每项对应题问与论断，来源绑定实际输入或有效结果。出图后核单位、版本、区间含义与实际支持的论断，计划与成品逐项对照；多面板合为一个编号图时注明各面板职责。
+
+2026-10-16 的结构量样本包含18篇可抽取英文文本的 O 奖论文：图数最少5、中位13，四分位区间按 inclusive 线性分位数计算为11.25到16，原样排序为 `5, 6, 9, 11, 11, 12, 12, 13, 13, 13, 13, 14, 16, 16, 17, 17, 18, 20`。
+
+样本局限：从60篇候选经材料守卫放行21篇，再排除3篇图像PDF，仅剩18篇；年份为2018、2021、2022，ICM偏多，MCM A/B/C只有4篇。图数以可抽取的最大 Figure 编号（不超过60）近似，部分“数学家版”可能经过编辑；结构统计未核读内容或图的论证价值。这不是获奖因果、通用最低图数或评分线。
+
+- 默认安排一张模型结构图，说明输入、主要变量、机制与输出的依赖；每个主要结果默认一张图，让读者直接比较或检验结论。
+- 涉及区域、县、网格等空间单元时默认包含地图，标明边界／坐标来源、单位、图例、缺失单元及真实位置或示意身份。空间问题通常不能只用总量曲线回答。
+- 少于8张图是本轮采纳的**实验参数**，仅触发计划复查。少于8张、缺模型结构图、涉及空间单元却缺地图时，计划表分别写明为什么文字或表格更好；无空间单元时写“不适用”及理由。短解析题可合理省图，不能用重复图、无效示意图或编造地图满足数量。
+- 不设固定图型清单。选型按读者问题决定，数量与例外先作告警；有无图不能代替题意覆盖与科学核验。
+
+## 地图与网络图的最小入口
+
+地图和网络图可用 Matplotlib 直接绘制，不新增 shapefile 或 geopandas 依赖。先核 GeoJSON 的坐标基准和区域标识与数值表一一对应；真实几何与抽象网络示意分别标记。网络图保留实际边、方向和权重，节点位置若仅用于排版须明确说明。
+
+下面读取 RFC 7946 经纬度 GeoJSON 的 Polygon／MultiPolygon，以区域值填色；内环按相反方向保留孔洞，缺值和其他几何明确拒绝。示例适合小区域展示，纵横比例按中央纬度近似调整，不用于测量距离或面积；跨经线、极区或大区域须先选择合适投影。数值应取同一有效结果，颜色与数值使用同一个 `Normalize`。
+
+```python
+import json, math
+import matplotlib.pyplot as plt
+from matplotlib.path import Path
+from matplotlib.patches import PathPatch
+from matplotlib.colors import Normalize
+from matplotlib.cm import ScalarMappable
+
+with open("regions.geojson", encoding="utf-8") as stream:
+    features = json.load(stream)["features"]
+with open("region-values.json", encoding="utf-8") as stream:
+    values = json.load(stream)  # {"region-id": finite numeric value}
+data = [float(values[str(f["id"])]) for f in features]
+if not data or not all(math.isfinite(v) for v in data):
+    raise ValueError("Every mapped region needs a finite value")
+norm, cmap = Normalize(min(data), max(data)), plt.get_cmap("viridis")
+fig, ax = plt.subplots(figsize=(7, 5), layout="constrained")
+for feature, value in zip(features, data):
+    geometry = feature["geometry"]
+    if geometry["type"] not in ("Polygon", "MultiPolygon"):
+        raise ValueError("Only polygon regions are supported")
+    polygons = [geometry["coordinates"]] if geometry["type"] == "Polygon" else geometry["coordinates"]
+    for polygon in polygons:
+        paths = []
+        for index, ring in enumerate(polygon):
+            ring = [tuple(point[:2]) for point in ring]
+            if len(ring) < 4 or ring[0] != ring[-1]:
+                raise ValueError("Polygon rings must be closed")
+            area2 = sum(a[0]*b[1]-b[0]*a[1] for a, b in zip(ring, ring[1:]))
+            if (area2 > 0) != (index == 0):
+                ring.reverse()  # Outer counterclockwise, holes clockwise.
+            paths.append(Path(ring, [Path.MOVETO] + [Path.LINETO]*(len(ring)-2) + [Path.CLOSEPOLY]))
+        ax.add_patch(PathPatch(Path.make_compound_path(*paths), facecolor=cmap(norm(value)),
+                               edgecolor="white", linewidth=.5))
+ax.autoscale_view()
+latitude = sum(ax.get_ylim()) / 2
+ax.set_aspect(1 / math.cos(math.radians(latitude)))
+ax.set(xlabel="Longitude (degrees)", ylabel="Latitude (degrees)")
+fig.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=ax, label="Value (state unit)")
+fig.savefig("region-map.pdf")
+```
 
 ## 一张图一个结论
 
@@ -52,8 +113,8 @@
 
 ## 工具与检查
 
-- 论文常规曲线、表意图优先用 pgfplots／TikZ 由数据直接绘制（`scripts/texplot.py` 提供线图、置信带、阶梯线、散点、柱状图（含负值的龙卷风图）、热图与流程图；图中的标签自动转义 `%`、`_`、`&`、`#`，已写 LaTeX 或数学的标签原样保留），图中字体与正文一致；Matplotlib 适用于探索、统计图和复杂数值场；最终输出可用 PDF／SVG 或 pgf 后端，合理保留高密度场的栅格层与矢量文字／坐标，不强行把所有场图重画成 TikZ。线条、文字和几何图优先矢量，必须位图时按最终尺寸验证分辨率与清晰度。保存生成脚本、数据与版本。
-- 先从当前作品的共享样式确认正文、数学、图内标签与数据的字体职责，再配置最终绘图；换环境须接续这份配置，不能退回绘图库默认。同一职责的字体全文一致，目标格式明确允许的分工可以不同；不能把某篇论文的具体字体或字号推广为所有科研图规范。导入独立 PDF 图后检查整稿及图文件的实际字体名称与嵌入状态，正文 TeX 的字体包不足以证明图内一致。MCM v3/v4生成器显式传入 `font_profile="mcm-v3"`（Axis、条形图、热图及流程图共用），将普通轴标题、刻度、图例和标注设为normal；旧profile默认输出保留。最终字号还取决于整稿嵌入比例：用含全部标签的图形bbox控制宽度，在最终PDF按文字角色测量，不只检查独立图的源字号。使用 `uv run --locked python -m scripts.check_pdf 论文.pdf --require-embedded-fonts`；若当前作品明确排除某一默认字体，按 [automation.md](automation.md) 加 `--forbidden-font '实际名称或通配模式'` 并保留退出状态与检查结果。字体转曲或栅格化会超出文本字体检查的范围，必须在最终尺寸下目视复核；不能用转曲规避风格检查。
+- 论文常规曲线、表意图优先用 pgfplots／TikZ 由数据直接绘制（`scripts/texplot.py` 提供线图、置信带、阶梯线、散点、柱状图（含负值的龙卷风图）、热图与流程图；新增 `Axis.errorbar(..., interval="95% confidence interval")`、`grouped_bar_chart`、`Axis.histogram`、`Axis.boxplot`、`shared_legend_panels`、`diverging_heatmap`。误差条输入绝对上下界并必填区间含义，含义随系列名显示在图例；直方图用显式边界、末端闭区间，越界样本拒绝；箱线图用线性分位数和1.5 IQR范围内的观测须线，插值一侧无观测时止于四分位数，保留离群点；共享图例拒绝同标签不同样式；发散色图围绕明确中心对称，拒绝静默截断色值。图中的标签自动转义 `%`、`_`、`&`、`#`，已写 LaTeX 或数学的标签原样保留），图中字体与正文一致；Matplotlib 适用于探索、统计图和复杂数值场；最终输出可用 PDF／SVG 或 pgf 后端，合理保留高密度场的栅格层与矢量文字／坐标，不强行把所有场图重画成 TikZ。线条、文字和几何图优先矢量，必须位图时按最终尺寸验证分辨率与清晰度。保存生成脚本、数据与版本。
+- 先从当前作品的共享样式确认正文、数学、图内标签与数据的字体职责，再配置最终绘图；换环境须接续这份配置，不能退回绘图库默认。同一职责的字体全文一致，目标格式明确允许的分工可以不同；不能把某篇论文的具体字体或字号推广为所有科研图规范。导入独立 PDF 图后检查整稿及图文件的实际字体名称与嵌入状态，正文 TeX 的字体包不足以证明图内一致。MCM v3/v4/v5生成器显式传入 `font_profile="mcm-v3"`（Axis、条形图、热图及流程图共用），将普通轴标题、刻度、图例和标注设为normal；旧profile默认输出保留。最终字号还取决于整稿嵌入比例：用含全部标签的图形bbox控制宽度，在最终PDF按文字角色测量，不只检查独立图的源字号。使用 `uv run --locked python -m scripts.check_pdf 论文.pdf --require-embedded-fonts`；若当前作品明确排除某一默认字体，按 [automation.md](automation.md) 加 `--forbidden-font '实际名称或通配模式'` 并保留退出状态与检查结果。字体转曲或栅格化会超出文本字体检查的范围，必须在最终尺寸下目视复核；不能用转曲规避风格检查。
 - 版心边界是硬约束：图、表、代码框的外沿（含坐标轴标签、直接标注、图例）不得超出正文区，整体相对版心居中。pgfplots 的 `width` 默认只量绘图框，轴标签在框外，所以用 `scale only axis` 并把绘图框设为版心宽度的 0.6–0.85 倍；表格列宽要扣除列间距（`@{}` 加 `\tabcolsep`），带框代码用 `xleftmargin/xrightmargin` 留出边框。交付前渲染每页，量每页墨迹的左右空白，两侧相差明显即回头修，TeX 日志里的 Overfull 也要清零；`uv run --locked python -m scripts.check_pdf 论文.pdf --margins` 会渲染并列出左右空白不一致或贴近页边的页面（带行号的代码页、悬挂缩进的参考文献页本来就不对称，会一并列出，由人判断）。
 - 实际尺寸下逐张检查：普通文字符合本稿角色字号（MCM v3至少12pt），数学脚标按数学角色保留，图例不遮数据，刻度不互相覆盖，绘图区居中对齐，转灰度仍可读；再看缩略效果。生成源、完整绘图数组、字体配置与最终图同步保留，修图前后核对点数、坐标变换、色标范围及关键值；纯排版修订复用有效数据，不重算无关模型。发现异常返回相应数据／模型任务，不能只调整坐标掩盖。
 - 实际期刊或比赛格式优先于任何统一绘图样式；图与图注交给写作时附上数据版本和能支持的结论。

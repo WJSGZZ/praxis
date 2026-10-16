@@ -74,7 +74,7 @@ def test_structure_and_exploration_tools_through_the_server():
 def test_lesson_tools_round_trip(tmp_path):
     from scripts import mcp_server as server
     path = str(tmp_path / 'lessons.jsonl')
-    lesson = dict(problem='p', structure='s', recognized='r', routes_tried=['a'], what_failed='f', what_worked='w', verified_by='v', principle='rule', tags=['t'])
+    lesson = dict(problem='p', structure='s', recognized='r', routes_tried=['a'], what_failed='f', what_worked='w', verified_by='v', principle='rule', tags=['t'], checklist=['Check the rule on an independent example.'])
     assert server.call('lesson_add', dict(path=path, lesson=lesson))['id'] == 'L0001'
     found = server.call('lesson_search', dict(path=path, query='rule'))
     assert found['lessons'][0]['id'] == 'L0001' and found['patterns']['lessons'] == 1

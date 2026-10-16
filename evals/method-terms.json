@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "description": "Explicit method names for warning-only Summary review. Matching is lexical and does not establish method suitability.",
+  "terms": [
+    "ODE", "PDE", "ordinary differential equation", "partial differential equation",
+    "Markov", "Markov chain", "regression", "linear regression", "logistic regression",
+    "optimization", "linear programming", "integer programming", "dynamic programming",
+    "Monte Carlo", "simulation", "finite difference", "finite element", "Runge-Kutta",
+    "ARIMA", "SARIMA", "exponential smoothing", "Holt-Winters", "time series",
+    "Bayesian inference", "maximum likelihood", "bootstrap", "random forest",
+    "decision tree", "support vector machine", "neural network", "gradient boosting",
+    "k-means", "principal component analysis", "clustering", "spectral clustering",
+    "graph theory", "shortest path", "network flow", "agent-based model",
+    "cellular automaton", "differential game", "game theory", "SIR", "SEIR",
+    "Poisson process", "queueing theory", "queuing theory", "Kalman filter",
+    "particle filter", "minimax regret", "robust optimization", "Pareto",
+    "multi-criteria decision analysis", "analytic hierarchy process", "TOPSIS",
+    "nonlinear least squares", "survival analysis", "Cox model", "spatial lag",
+    "spatial autoregression", "difference-in-differences", "sensitivity analysis",
+    "Sobol", "Latin hypercube", "Fourier transform", "wavelet transform",
+    "微分方程", "回归", "优化", "蒙特卡洛", "马尔可夫", "动态规划"
+  ]
+}

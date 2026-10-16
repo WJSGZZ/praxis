@@ -6,21 +6,17 @@ license: MIT
 
 # Praxis · 优化与决策
 
-专业方法归 [optimization.md](../../references/optimization.md)。任务／前提与路线共用 [methods.md](../../references/methods.md)，实际运行和证据共用原计算管线。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
-## 调用契约
+## 做什么
 
-输入：决策变量与可用动作、目标及单位、硬／软约束、数据和不确定性、决策时可知信息、预算与接受精度。产出：明确模型、基线与所选方法、可执行方案、原始约束残差、目标与证明界／间隙、失败及条件建议。
-
-## 专业处理
-
-- 先核目标、约束和变量域，再识别线性、整数、网络、动态或非线性结构。能精确求解时优先已有HiGHS／SciPy、流与动态规划；手工可行方案或小例先检验符号、单位与信息条件。
-- 按实际契约调用 `solve_lp`、`solve_milp`、`solve_assignment`、`min_cost_flow`、`knapsack`、`solve_mdp` 或 `minimize_nlp`，不猜字段或把另一个库的不等式符号套进来。
-- 多目标先核支配与硬底线，再表达偏好；`pareto_front` 只筛给定点表。稳健系数模型可用 `robust_lp`，情景尾损失可用 `cvar_portfolio`，分布、动作与风险条件须单列。
-- 原模型复评选定方案，区分可行解、收敛候选、松弛界和全局证明；限时整数解保留incumbent与gap，搜索未找到不等于无解。策略族／信息结构改变后不能继承旧最优性。
-- 反向求资源时区分一个可行向量、某坐标必要下界和联合可行域；允许重新分配后，固定分配所需向量不是普遍必要条件。按optimization.md的“必要资源与可行见证”用割界／原问题求解和替代配置核验。
-- 黑箱多目标或更复杂组合结构确有收益时，才核固定版本的pymoo／OR-Tools等外部工具与许可，在允许预算内适配；它们不是本插件默认安装依赖。
+- 按 [optimization.md](../../references/optimization.md) 定变量域、目标／单位、约束、可用信息及接受精度；用可行基线或小例核符号与机制。
+- 识别线性、整数、网络、动态或非线性结构，按实际契约选 `solve_lp`／`solve_milp`、分配、流、背包、MDP 或 NLP。
+- 多目标先核支配与硬底线再表达偏好；`pareto_front` 只筛给定点，`robust_lp`／`cvar_portfolio` 显式列分布、动作与风险条件。
+- 在原约束复评方案，分别报可行向量、残差、候选、界与 gap；换策略族或信息结构重核保证。
+- 反求资源区分可行见证、单坐标必要界和联合可行域，用割界／原问题与替代配置核验；条件和失败沿 [methods.md](../../references/methods.md) 留存。
+- pymoo／OR-Tools 仅在确需时核固定版本、许可与预算；它们是可选依赖。
 
 ## 交接
 
-目标或机制未定回 [praxis-model](../praxis-model/SKILL.md)，联合输入与决策稳健性交 [praxis-uncertainty-analysis](../praxis-uncertainty-analysis/SKILL.md)，实现运行交 [praxis-compute](../praxis-compute/SKILL.md)，独立最优性与约束证据交 [praxis-verify](../praxis-verify/SKILL.md)。需要论文交付时将实际方案、界和限制交 [praxis-report](../praxis-report/SKILL.md)，不只交一个最优值。
+定义回 [model](../praxis-model/SKILL.md)，联合不确定性交 [uncertainty-analysis](../praxis-uncertainty-analysis/SKILL.md)，实现交 [compute](../praxis-compute/SKILL.md)，独立最优性／约束交 [verify](../praxis-verify/SKILL.md)，方案、界与限制交 [report](../praxis-report/SKILL.md)。

@@ -17,7 +17,7 @@ WORKSPACE="/absolute/path/to/your/project"
   --workspace "$WORKSPACE" next --case cases/example
 ```
 
-`init` 在第一次工作流运行前检索工作区 `planning/lessons.jsonl`，最多记录三条相关经验的 ID、哈希和索引身份；可用 `--lessons-path` 选择同一工作区内的其他索引。执行者按这些 ID 阅读原条目、判断适用条件，再选择路线。无命中保持可见，不默认为全部经验都有效。关键词检索不保证语义召回，也不等于已经应用经验。
+`init` 在第一次运行前检索工作区 `planning/lessons.jsonl`，最多记录三条命中的 ID、哈希和索引身份；可用 `--lessons-path` 选择同工作区索引。按实际条件审读命中并决定采用或不用。schema 2 的题面自动查询与首次运行前采用行格式按 [automation.md](automation.md#可选任务协调)；schema 1 保留原查询行为。无命中及启发式召回的限制如实保留。
 
 状态只保存在已有 `planning/progress.md` 的 `PRAXIS WORKFLOW STATE BEGIN/END` JSON 块，保留其余正文。不要另建影子状态或手改计数、预算和有效指针；重复、损坏的块拒绝覆盖。任务定义、参数和假设仍在 `tasks.md`／代码／配置，实际变化仍使相关数值证据失效。该文件由一个协调者顺序维护，不支持多个写入者并发操作。
 
@@ -27,22 +27,7 @@ WORKSPACE="/absolute/path/to/your/project"
 
 `next` 可给出 `expected_source_sha256`。只有实际审核过对应源码，才将该值传给 `run --reviewed-source-sha256 HASH`；复制哈希本身不是代码审查。运行调用现有 pipeline，每次消耗一次尝试，保留实际耗时、失败与收据。启动前至少留足模型和验证各一次超时的壁钟；预算是本地壁钟和尝试数，无法计量的模型、token 与费用保持未知。整个委托的共享额度仍由上游协调者管理。
 
-`accept --review-path reviews/current.json` 需要对应最新有效且要求已链接的运行，审阅文件至少包含：
-
-```json
-{
-  "verdict": "pass",
-  "actor": "实际审阅者标识",
-  "scope": "实际核验范围、方法与限制",
-  "run_id": "实际运行目录名",
-  "receipt_sha256": "对应receipt.json哈希",
-  "quality_decision": {
-    "decision": "continue",
-    "reason": "当前稿有效，但存在值得投入的具体缺口",
-    "next_action": "取得可区分候选方案的新证据"
-  }
-}
-```
+`accept --review-path reviews/current.json` 绑定最新有效且已链接要求的运行。评审者、范围、运行身份与质量决定的基础字段及 schema 2 的逐问位置、攻击和机制审计统一见 [automation.md 的可选任务协调](automation.md#可选任务协调)。schema 1 保留原验收；新案例按 schema 2 准备完整字段。
 
 能够交付与值得继续分开：`continue` 返回具体改进行动；决定收尾时另存真实审阅，用 `decision: stop` 和明确理由再次接受。没有实际核验，不写 pass；工具只能核对声明及身份，不能替审阅者证明数学正确、独立性或真人参与。
 

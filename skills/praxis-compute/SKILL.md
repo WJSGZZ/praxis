@@ -1,26 +1,21 @@
 ---
 name: praxis-compute
-description: 把已确定的模型变成可复现的计算：数据文件接收与审计、原件保全、模型与独立验证器的执行、运行快照、结果过期检测和任务证据索引。用于“跑一下这个模型、检查这份数据、保存可复现的结果”。不决定模型是否适用，也不写论文。 Execute models and validators, audit input files and retain reproducible runs and evidence.
+description: 把已确定的模型变成可复现的计算：原始输入保全、模型与独立验证器执行、运行快照、结果过期检测与任务证据索引。用于“运行这个模型、保存可复现结果、检查运行是否过期”。模型适用性交 praxis-model，测量与数据审查交 praxis-data-analysis。 Execute established models and validators, preserve inputs, track reproducible runs and stale evidence.
 license: MIT
 ---
 
 # Praxis · 数据与计算
 
-BUNDLE 指 `praxis` 技能目录；脚本在 `BUNDLE/scripts/`。需要 Python 3.12 和 uv；环境准备、跨工作区调用与命令统一见 [automation.md](../../references/automation.md)。没有终端时只做设计，不声称已运行。
-
-## 调用契约
-
-输入：已明确模型、原始输入、参数与运行环境。产出：可复现代码、实际运行和失败证据。依赖与边界：需要本地运行能力；不凭程序成功断言模型正确。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
 ## 做什么
 
-- 数据：先读 [data-computing.md](../../references/data-computing.md)。接收文件后保留原件，用 `scripts/audit_data.py` 做只读的 CSV／Excel 审计（不推断单位、不静默修复），再决定怎样处理；变换只使用允许的信息，时间序列的开发目标与最终留出目标分开。
-- 不确定观测单位、缺失和关联口径时，把现有输入交 [praxis-data-analysis](../praxis-data-analysis/SKILL.md)；重复测量的统计设计交 [praxis-statistics](../praxis-statistics/SKILL.md)，预测时点与跨度交 [praxis-time-series](../praxis-time-series/SKILL.md)。接续其计算定义再执行，不以审计成功代替设计判断。
-- 运行：模型与独立验证器写完并审核后，才用 `scripts/pipeline.py` 执行。命令、产物布局和过期规则见 [automation.md](../../references/automation.md)。参数、种子、失败运行保留，不覆盖。
-- 证据：任务清单与 planning/tasks.md 使用同一组 ID。evidence 只证明已记录的连接，不证明题目被完整覆盖；程序检查、科学判断和人工核验分别表述。
-
-- 工具：`praxis-tools` MCP 提供规划、网络、权重、排队、传染病、预测基线、敏感性与参考文献核对；宿主没有 MCP 时用 `python -m scripts.mcp_server --call` 或直接调用 `modeling/` 模块。清单与检查见 [model-library.md](../../references/model-library.md)。
+- schema 2 案例没有通过门禁的 `planning/model-contract.json` 不运行 pipeline；门禁见 [modeling-gate.md](../../references/modeling-gate.md)。
+- 按 [data-computing.md](../../references/data-computing.md) 保全原始输入，接续已确认的处理、单位、参数和信息时点。
+- 审核模型与独立验证器后用 `scripts/pipeline.py` 执行；命令、快照、失败保留与过期判据只按 [automation.md](../../references/automation.md)。
+- MCP 工具、CLI 与 `modeling/` 的适用范围查 [model-library.md](../../references/model-library.md)，按实际接口调用。
+- 任务与 evidence 沿同一 ID 连接结果、单位、不确定性和未决项；运行记录、科学判断与人工核验分别报告。
 
 ## 交接
 
-结果、单位、不确定性、可用结论和未解决问题写回对应任务 ID。运行失败先定位原因：实现错误修代码，模型不适用回 praxis-model，不用改假设掩盖错误。
+测量／连接交 [data-analysis](../praxis-data-analysis/SKILL.md)，统计设计交 [statistics](../praxis-statistics/SKILL.md)，预测信息交 [time-series](../praxis-time-series/SKILL.md)，实现失败修代码，模型失配回 [model](../praxis-model/SKILL.md)，独立证据交 [verify](../praxis-verify/SKILL.md)。

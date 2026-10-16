@@ -64,3 +64,47 @@
 数值计算、统计、优化、网络、符号推导、微分方程与出图，NumPy、SciPy、pandas、statsmodels、scikit-learn、networkx、SymPy 与 Matplotlib 覆盖了绝大多数建模任务，可以替代 MATLAB 与 R 的常规用法。只有出现具体缺口时才考虑别的工具：框图式动态仿真、专门的偏微分方程求解器、某些 R 独有的统计包，或商业求解器（Gurobi、Lingo）才能处理的超大规模整数规划。此时先写明缺口与用途，核验来源与许可，再在任务记录里保留输入、命令和输出；未经需要不安装大型工具。HiGHS 已能处理常见规模的 LP／MILP，路径与排班类问题规模更大时再核验 OR-Tools。
 
 监督预测用 `cross_validate_predictor`：Ridge或0/1 Logistic，独立／整组留出，逐训练折预处理、Dummy比较及完整OOF；不处理时间外推、调参或概率校准。条件见 [machine-learning.md](machine-learning.md)。
+
+
+## 评价与敏感性调用细节
+
+
+### 全局敏感性
+
+```python
+from modeling.sensitivity import sobol_sensitivity
+
+result = sobol_sensitivity(
+    model=lambda x: 2*x[:, 0] + x[:, 1],
+    names=['a', 'b', 'unused'],
+    bounds=[[0, 1], [0, 1], [0, 1]],
+    n=2048, seed=2027,
+)
+```
+
+当前封装限定独立、连续、均匀输入与确定性标量输出。`n` 必须为至少 64 的 2 的幂；默认计算预算 100,000 次，实际调用数为 `n*(参数数+2)`。保留主效应 S1、总效应 ST 与 95% bootstrap 区间半宽，不输出成对二阶估计。模型返回值必须与采样行逐一对应；不能把任意现成 Monte Carlo 样本塞进去。发现常量、非有限输出或预算超限时拒绝分析。不随意截断负的数值估计；加大样本量检查收敛。采样分布和独立性没有现实依据时，只能将其解释为假设情景。
+
+### 方案评价与权重稳定性
+
+```python
+from modeling.decision import evaluate_alternatives
+
+result = evaluate_alternatives(
+    matrix=[[3, 1, 7], [2, 2, 7], [1, 3, 7]],
+    weights=[0.4, 0.4, 0.2],
+    directions=[-1, 1, 1],  # 成本越小越好，收益越大越好
+    alternatives=['A', 'B', 'C'],
+    criteria=['cost', 'benefit', 'constant'],
+    trials=1000, weight_sigma=0.35, seed=2027,
+)
+```
+
+采用明确的 min-max 标准化。常量和零权重指标会被剔除并报告，剩余权重重新归一化；全无区分度时不编造排名。权重通过乘法对数正态扰动产生情景；并列第一平分情景份额。份额是该扰动设定下的结果，不能叫客观获胜概率。默认扰动幅度只是可修改的演练设定；真实应用需说明偏好范围，并额外检查指标重复、方案集合变化与标准化造成的排名反转。
+
+方向匹配、排序和实际能力分别核查：余弦相似度为 1 也可能供给只有需求的一半；对正倍率不变的标准化分数不能证明绝对数量、利润或成本改善。硬容量、预算和达标条件先回到原单位验证，再比较可行方案。缺少真实偏好时保留方案族，几何拐点只作折中示例；给定最低收益或服务目标后，可把它写成约束，反求最低风险或成本，并以原问题可行解与独立界证明。[投资案例](../demos/cumcm-1998-a/README.md)同时展示目标逆解、资金门槛和小资金下松弛界不紧的反例。
+
+运行已核验的合成示例：
+
+```bash
+uv run --locked python -m examples.decision_sensitivity_demo
+```

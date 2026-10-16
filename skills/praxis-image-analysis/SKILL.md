@@ -6,10 +6,17 @@ license: MIT
 
 # Praxis · 图像分析与测量
 
-判断任务处在什么层次：已有掩码的区域几何、从真实图像建立测量流水线，还是监督式识别／增强。对明确给出的掩码，可先定义连通规则与过滤条件，再用独立已知小例核对；不需要虚构相机元数据或强制监督标签。真实图像任务按需要核对来源、ROI、空间标定和分割验证。专业参考见 [image-analysis.md](../../references/image-analysis.md)。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
-`binary_components` 仅在调用方提供二值二维掩码后测量连通域。它不做图像分割、语义分类，也不认证颗粒、物种或真实对象计数。可选择4／8连通、触边排除、最小像素数及返回列表上限；原始、过滤后和返回统计分别报告。列表上限不改变总计数。
+## 做什么
 
-可选 `pixel_size=[xsize, ysize]` 与 `unit` 输出调用方声明的实际面积和质心。返回会明确标定尚未核验；若比例计算溢出或下溢为零则拒绝。未提供比例时只报像素，不猜物理尺寸。
+- 按 [image-analysis.md](../../references/image-analysis.md) 区分给定掩码几何、真实图像测量与监督识别，裁剪到实际任务。
+- `binary_components` 仅测二维二值掩码：声明4／8连通、触边、最小像素数与返回上限，分别报原始、过滤和返回统计。
+- `pixel_size=[xsize, ysize]` 与 unit 是调用方声明标定，标未核状态；比例溢出／下溢为零保留拒绝，缺标定只报像素。
+- 真实图像保原图、采集条件、预处理及 ROI／阈值，同设置用可追溯标尺和独立参考核分割与测量误差。
+- 涉训练／监督识别时先按标本、个体、会话或批次 source family 划分再调参／增强，来源切片留同一侧。
+- 用已知小掩码核计数、面积和过滤；按模态选实际可用成熟库，分割、语义对象计数与几何结果分别表述。
 
-真实图像测量应保留原图、采集条件及预处理，明确 ROI 和阈值，在同一成像设置下用可追溯标尺校准，并以适合测量目标的独立参考评估分割质量。只有任务涉及训练或监督图像识别时，才要求先按标本、个体、会话或批次等 source family 划分，再调参或增强；同来源裁切不能跨训练和测试划分。依据成像模态选择有维护的图像处理库，说明参数与错误范围；不由连通域数量推断生物丰度或现实对象分类。
+## 交接
+
+监督预测交 [machine-learning](../praxis-machine-learning/SKILL.md)，独立主张交 [verify](../praxis-verify/SKILL.md)，实际运行交 [compute](../praxis-compute/SKILL.md)，图形与论文交 [visualization](../praxis-visualization/SKILL.md)／[report](../praxis-report/SKILL.md)。

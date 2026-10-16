@@ -11,7 +11,9 @@ from pypdf import PdfReader
 
 def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
            minimum_font_tex_pt=None, font_review=None, structure_review=None,
-           layout_mode='current', page_review=None):
+           layout_mode='current', page_review=None, results=None, requirements=None,
+           model_contract=None, figure_plan=None, reader_review=None,
+           problem_year=None, allow_anachronism=False):
     layout = None
     structure = None
     diagnostics = None
@@ -108,6 +110,16 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
             raise ValueError('Current MCM PDF format failed: ' + '; '.join(delivery_format['errors']))
         pages = inspect_mcm_page_review(source, page_review)
     digest = hashlib.sha256(raw).hexdigest()
+    manuscript = None
+    diagnostic_inputs = dict(results=results, requirements=requirements, model_contract=model_contract,
+                             figure_plan=figure_plan, reader_review=reader_review)
+    if layout is not None and layout_mode == 'current' and contest in ('mcm', 'cumcm'):
+        from scripts.manuscript_delivery import inspect as inspect_manuscript
+        manuscript = inspect_manuscript(text, [page.extract_text() or '' for page in doc.pages],
+                                        pdf_sha256=digest, **diagnostic_inputs,
+                                        problem_year=problem_year, allow_anachronism=allow_anachronism)
+    elif any(path is not None for path in diagnostic_inputs.values()) or problem_year is not None or allow_anachronism:
+        raise ValueError('Manuscript diagnostics require a current-mode MCM/CUMCM layout-gated delivery')
     if dependency_review is not None:
         verify_compiler_dependencies(build['compiler_dependencies'], tex)
     if (source.read_bytes() != raw or (tex is not None and tex.read_bytes() != tex_bytes)
@@ -134,6 +146,7 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
                {'compiler_dependency_review': {'passed': None, 'status': 'historical receipt lacks compiler-opened file bindings'}} if layout is not None else {}),
             **({"heading_structure_review": structure} if structure is not None else {}),
             **({"font_size_review": sizes} if sizes is not None else {}),
+            **({'manuscript_diagnostics': manuscript} if manuscript is not None else {}),
             "source": str(source.resolve()), "snapshot": str(destination.resolve()),
             "sha256": sha, "bytes": len(raw), "created_utc": datetime.now(timezone.utc).isoformat(),
             "note": "Local snapshot only; not proof of contest deadline compliance or submission."}
@@ -153,6 +166,13 @@ def main():
                         help='Current delivery by default; archive preserves an explicitly retained historical profile')
     parser.add_argument('--page-review', type=Path,
                         help='Current MCM requires PDF hash/actor/all-pages/format-check rendering review; defaults to <source>.page-review.json')
+    parser.add_argument('--results', type=Path)
+    parser.add_argument('--requirements', type=Path)
+    parser.add_argument('--model-contract', type=Path)
+    parser.add_argument('--figure-plan', type=Path)
+    parser.add_argument('--reader-review', type=Path)
+    parser.add_argument('--problem-year', type=int, help='Actual problem edition for anachronism warnings')
+    parser.add_argument('--allow-anachronism', action='store_true', help='Explicit historical-study manuscript')
     args = parser.parse_args()
     receipt_path = args.destination.with_suffix(".pdf.receipt.json")
     if receipt_path.exists():
@@ -160,7 +180,10 @@ def main():
     receipt = freeze(args.source, args.destination, tex=args.tex, contest=args.contest, build_receipt=args.build_receipt,
                      minimum_font_tex_pt=args.minimum_font_tex_pt, font_review=args.font_review,
                      structure_review=args.structure_review, layout_mode=args.layout_mode,
-                     page_review=args.page_review)
+                     page_review=args.page_review, results=args.results, requirements=args.requirements,
+                     model_contract=args.model_contract, figure_plan=args.figure_plan,
+                     reader_review=args.reader_review, problem_year=args.problem_year,
+                     allow_anachronism=args.allow_anachronism)
     # Receipt has its own name, never replaces the PDF or an earlier receipt.
     with receipt_path.open("x", encoding="utf-8") as stream:
         json.dump(receipt, stream, indent=2)

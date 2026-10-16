@@ -180,3 +180,128 @@ def validate(value, schema, path="$"):
     check_schema(schema)
     _json_value(value, path)
     _validate(value, schema, path)
+
+
+def _record(properties, required=None):
+    return {"type": "object", "properties": properties,
+            "required": list(properties) if required is None else required}
+
+
+_TEXT = {"type": "string"}
+_NUMBER = {"type": "number"}
+_REFERENCE_MAGNITUDE = _record({
+    "value": _NUMBER, "unit": _TEXT, "source": _TEXT,
+    "ratio_ok": {"type": "array", "items": _NUMBER, "minItems": 2, "maxItems": 2},
+}, ["value", "unit", "source"])
+
+# The structural schema is exportable; cross-field scientific declarations are
+# checked below. It deliberately cannot decide whether a declaration is truthful.
+MODEL_CONTRACT_V2 = _record({
+    "symbols": {"type": "array", "items": _record({
+        "symbol": _TEXT, "unit": _TEXT, "object": _TEXT,
+        "uses": {"type": "array", "minItems": 1,
+                 "items": _record({"equation": _TEXT, "object": _TEXT})},
+        "same_object_justification": _TEXT,
+    }, ["symbol", "unit", "object", "uses"])},
+    "parameters": {"type": "array", "items": _record({
+        "symbol": _TEXT, "value": _NUMBER, "unit": _TEXT,
+        "source_level": {"enum": ["measured", "literature", "fitted", "declared"]},
+        "source": _TEXT, "real_world_quantity": {"type": "boolean"},
+        "reference_magnitude": _REFERENCE_MAGNITUDE, "magnitude_justification": _TEXT,
+    }, ["symbol", "value", "unit", "source_level", "source", "real_world_quantity"])},
+    "mechanisms": {"type": "array", "items": _record({
+        "id": _TEXT, "cause": _TEXT, "effect_variable": _TEXT,
+        "sign": {"enum": ["+", "-", "±"]}, "equation": _TEXT,
+    })},
+    "conserved_quantities": {"type": "array", "items": _record({
+        "name": _TEXT, "check_name": _TEXT,
+    })},
+    "probability_combinations": {"type": "array", "items": _record({
+        "expression": _TEXT,
+        "independence": {"enum": ["assumed", "derived", "not_assumed"]},
+        "justification": _TEXT,
+    })},
+    "logical_claims": {"type": "array", "items": _record({
+        "claim": _TEXT, "type": {"enum": ["sufficient", "necessary", "both"]},
+        "proof_ref": _TEXT,
+    })},
+    "limiting_cases": {"type": "array", "items": _record({"case": _TEXT, "expected": _TEXT})},
+    "cheapest_refutation": _record({
+        "method": {"enum": ["hand_calc", "small_example", "unit_check"]}, "result": _TEXT,
+    }),
+    "information_time": _TEXT, "spatial": {"type": "boolean"},
+})
+
+
+def check_model_contract(contract) -> list[str]:
+    """Check a schema-2 model's declarations, returning problems rather than a verdict.
+
+    Balance checks are execution evidence and are checked by ``run_case`` after
+    validation. This function only audits the authored contract itself.
+    """
+    try:
+        validate(contract, MODEL_CONTRACT_V2, "model-contract")
+    except (ContractError, ValueError) as exc:
+        return [str(exc)]
+    problems = []
+
+    def text(value, path):
+        if not value.strip():
+            problems.append(f"{path}: expected nonempty text")
+
+    for group, key in (("symbols", "symbol"), ("parameters", "symbol"),
+                       ("mechanisms", "id"), ("conserved_quantities", "name")):
+        seen = set()
+        for row in contract[group]:
+            identity = row[key].strip()
+            if identity in seen:
+                problems.append(f"{group}: duplicate {key} {identity!r}; merge all uses in one declaration")
+            seen.add(identity)
+
+    for group, fields in (
+            ("symbols", ("symbol", "unit", "object")),
+            ("parameters", ("symbol", "unit", "source")),
+            ("mechanisms", ("id", "cause", "effect_variable", "equation")),
+            ("conserved_quantities", ("name", "check_name")),
+            ("logical_claims", ("claim", "proof_ref")),
+            ("limiting_cases", ("case", "expected"))):
+        for index, row in enumerate(contract[group]):
+            for field in fields:
+                text(row[field], f"{group}[{index}].{field}")
+    for row in contract["symbols"]:
+        for use in row["uses"]:
+            text(use["equation"], f"symbol {row['symbol']} use equation")
+            text(use["object"], f"symbol {row['symbol']} use object")
+        objects = {use["object"].strip() for use in row["uses"]}
+        if len(objects) > 1 and not row.get("same_object_justification", "").strip():
+            problems.append(f"symbol {row['symbol']}: different objects across uses {row['uses']}; "
+                            "supply same_object_justification")
+    for row in contract["parameters"]:
+        reference = row.get("reference_magnitude")
+        if row["real_world_quantity"] and reference is None:
+            problems.append(f"parameter {row['symbol']}: real-world quantity needs reference_magnitude")
+        if reference is None:
+            continue
+        for field in ("unit", "source"):
+            text(reference[field], f"parameter {row['symbol']} reference_magnitude.{field}")
+        if reference["unit"].strip() != row["unit"].strip():
+            problems.append(f"parameter {row['symbol']}: reference_magnitude unit must match parameter unit")
+        low, high = reference.get("ratio_ok", [0.1, 10])
+        if not 0 <= low <= high:
+            problems.append(f"parameter {row['symbol']}: ratio_ok must be ordered nonnegative bounds")
+        elif reference["value"] == 0:
+            problems.append(f"parameter {row['symbol']}: reference_magnitude.value must be nonzero")
+        elif not low <= row["value"] / reference["value"] <= high \
+                and not row.get("magnitude_justification", "").strip():
+            problems.append(f"parameter {row['symbol']}: magnitude ratio outside ratio_ok [{low}, {high}]; "
+                            "supply magnitude_justification")
+    for row in contract["conserved_quantities"]:
+        if row["check_name"] != "balance:" + row["name"]:
+            problems.append(f"conserved quantity {row['name']}: check_name must be balance:{row['name']}")
+    for row in contract["probability_combinations"]:
+        text(row["expression"], "probability combination expression")
+        if row["independence"] == "assumed" and not row["justification"].strip():
+            problems.append(f"probability combination {row['expression']}: assumed independence needs justification")
+    text(contract["cheapest_refutation"]["result"], "cheapest_refutation.result")
+    text(contract["information_time"], "information_time")
+    return problems

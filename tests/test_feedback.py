@@ -290,7 +290,8 @@ def test_local_legacy_case_adapts_without_pipeline_and_missing_fields_are_explic
 @pytest.mark.parametrize('model,expected', [('raise SystemExit(3)', 'failed'), ('import time; time.sleep(3)', 'timeout')])
 def test_actual_pipeline_failure_and_timeout_can_export_without_pdf(tmp_path, model, expected):
     problem = tmp_path / 'problem.md'; problem.write_text('Synthetic failure boundary')
-    case = Path(pipeline.init_case(tmp_path / 'cases', 'failure', problem, [])['case'])
+    # This legacy fixture verifies failure export, not schema-2 model contracts.
+    case = Path(pipeline.init_case(tmp_path / 'cases', 'failure', problem, [], schema=1)['case'])
     (case / 'code/model.py').write_text(model)
     (case / 'code/validate.py').write_text('raise RuntimeError("must not reach validation")')
     receipt = pipeline.run_case(case, timeout=1)
@@ -320,7 +321,8 @@ def test_computation_before_start_failure_is_exportable_and_resume_clears_end(tm
 
 def test_pipeline_real_run_feedback_does_not_stale_but_inputs_still_do(tmp_path):
     problem = tmp_path / 'problem.md'; problem.write_text('Synthetic: compute 1+2*4')
-    case = Path(pipeline.init_case(tmp_path / 'cases', 'feedback', problem, [])['case'])
+    # Preserve the original numeric/feedback boundary under its legacy schema.
+    case = Path(pipeline.init_case(tmp_path / 'cases', 'feedback', problem, [], schema=1)['case'])
     (case / 'code/model.py').write_text('''import argparse,json
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--output',type=Path);a=p.parse_args()

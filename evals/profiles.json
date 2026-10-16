@@ -14,7 +14,9 @@
   "rules": null,
   "source": "ours",
   "checked": "2026-10-08",
-  "note": "仅在任务显式选择通用竞赛数值诊断时使用；不是任何赛事的默认适配，研究生赛缺少profile不默套；不用于数学研究六项定性评价。分数未按任何赛事校准。"
+  "note": "仅在任务显式选择通用竞赛数值诊断时使用；不是任何赛事的默认适配，研究生赛缺少profile不默套；不用于数学研究六项定性评价。分数未按任何赛事校准。",
+  "diagnostic_only": true,
+  "weights_usage": "诊断权重，不参与奖档。Diagnostic weights; excluded from award judgments."
  },
  "cumcm": {
   "title": "全国大学生数学建模竞赛（CUMCM）",
@@ -46,7 +48,9 @@
    "format2024.doc": "ec699bbe89e25cad16ca907b305c6cc76112ec04083cfe56ca65fd7a26fbaafe"
   },
   "rules_source_note": "The SHA-256 entries below preserve historical user-supplied format copies (2019–2024); they do not bind the active 2026 rules. Current edition sources and AI responsibilities are owned by competitions.json; numerical weights are ours, not calibrated.",
-  "rules_source_url": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html"
+  "rules_source_url": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html",
+  "diagnostic_only": true,
+  "weights_usage": "诊断权重，不参与奖档。Diagnostic weights; excluded from award judgments."
  },
  "mcm": {
   "title": "美国大学生数学建模竞赛（MCM/ICM）",
@@ -73,6 +77,8 @@
   "checked": "2026-10-08",
   "note": "COMAP 强调摘要、清晰论证、假设理由和模型检验，未给百分制或奖项分数线；本项目的条目与权重是工作判断，未按真实获奖样本校准。 数值诊断只用于对应竞赛，实际赛事—赛项—届次要求由competitions.json核验；未知届次不继承已确认硬规则，不用于数学研究。",
   "rules_source_url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php",
-  "criteria_source_url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php"
+  "criteria_source_url": "https://www.contest.comap.org/undergraduate/contests/mcm/instructions.php",
+  "diagnostic_only": true,
+  "weights_usage": "诊断权重，不参与奖档。Diagnostic weights; excluded from award judgments."
  }
 }

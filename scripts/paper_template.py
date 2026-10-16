@@ -11,10 +11,10 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 4, 'cumcm': 2, 'research': 1}
+VERSIONS = {'mcm': 5, 'cumcm': 2, 'research': 1}
 # A house identity for simulations only; it is not an assigned contest team.
 MCM_SIMULATION_TEAM = '7391856'
-BEGIN = '% BEGIN PRAXIS MCM STYLE v4\n'
+BEGIN = '% BEGIN PRAXIS MCM STYLE v5\n'
 END = '% END PRAXIS MCM STYLE\n'
 
 
@@ -23,7 +23,7 @@ def style_block(contest='mcm', *, layout_version=None):
         raise ValueError('Unknown layout profile')
     name = contest.upper()
     version = VERSIONS[contest] if layout_version is None else layout_version
-    supported = (1, 2, 3, 4) if contest == 'mcm' else (VERSIONS[contest],)
+    supported = (1, 2, 3, 4, 5) if contest == 'mcm' else (VERSIONS[contest],)
     if type(version) is not int or version not in supported:
         raise ValueError('Unsupported archived layout version')
     suffix = f'-v{version}' if contest == 'mcm' and version != VERSIONS[contest] else ''
@@ -77,8 +77,8 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
     """Year-specific three-column summary metadata; running headers start later.
 
     Edition is explicit for new papers. Sizes are house style, not COMAP rules.
-    Versions 1, 2 and 3 are available for deliberate frozen-archive reproduction.
-    Versions 2 through 4 share the same year-specific summary metadata.
+    Versions 1 through 4 are available for deliberate frozen-archive reproduction.
+    Versions 2 through 5 share the same year-specific summary metadata.
     """
     if problem not in 'ABCDEF' or len(problem) != 1:
         raise ValueError('Choose an MCM/ICM problem letter A–F')
@@ -90,7 +90,7 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
         return (r'\thispagestyle{' + style + r'}\begin{center}\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}' + '\n' +
                 r'\textbf{Problem Chosen}&\textbf{MCM/ICM}&\textbf{Team Control Number}\\' + '\n' +
                 r'{\Large\textbf{' + problem + r'}}&' + middle + r'&{\Large\textbf{\PraxisTeam}}\end{tabular*}\end{center}\vspace{-4pt}\hrule\vspace{10pt}' + '\n')
-    if version not in (2, 3, 4) or legacy:
+    if version not in (2, 3, 4, 5) or legacy:
         raise ValueError('Legacy summary metadata requires explicit layout_version=1')
     if not re.fullmatch(r'(?:19|20)[0-9]{2}', str(edition)):
         raise ValueError('Supply the original contest edition (YYYY), not the current date')
@@ -104,12 +104,12 @@ def summary_header(problem, *, edition=None, layout_version=None, legacy=False):
 def summary_heading(title='Summary', *, layout_version=None):
     """Centered summary title followed by ordinary, indented body paragraphs.
 
-    MCM v4 uses the shared heading macro and LaTeX's heading transition.
+    MCM v4 and v5 use the shared heading macro and LaTeX's heading transition.
     Historical versions keep their exact former center-environment behavior.
     Metadata, titles, lists, captions and letter salutations are separate roles.
     """
     version = VERSIONS['mcm'] if layout_version is None else layout_version
-    if type(version) is not int or version not in (1, 2, 3, 4):
+    if type(version) is not int or version not in (1, 2, 3, 4, 5):
         raise ValueError('Unsupported archived layout version')
     if version < 4:
         return r'\begin{center}{\Large\bfseries ' + escape(title) + r'}\end{center}' + '\n'
@@ -147,6 +147,19 @@ def section_component(title, body, *, separate_page=False, in_contents=False):
 def ai_report(body, *, title='Report on Use of AI', in_contents=True):
     """Full, isolated disclosure report; not an inline CUMCM declaration."""
     return section_component(title, body, separate_page=True, in_contents=in_contents)
+
+
+def memo(recipient, date, subject, body):
+    """V5 memorandum, isolated before and after, with literal metadata fields.
+
+    The body is truthful TeX supplied by the caller; the task selects whether a
+    memorandum is needed. The recipient/date/subject must all be provided.
+    """
+    fields = (recipient, date, subject)
+    if any(not isinstance(value, str) or not value.strip() for value in fields):
+        raise ValueError('Memo requires a recipient, date and subject')
+    return (r'\begin{memo}{' + '}{'.join(escape(value) for value in fields) + '}\n' +
+            body.rstrip() + '\n' + r'\end{memo}' + '\n')
 
 
 def _check_section_boundaries(text):
@@ -313,7 +326,7 @@ def check(text, contest='mcm', *, layout_mode='archive'):
 def _check_current_indentation(text):
     """Inspect literal heading transitions with the existing LatexWalker context.
 
-    Shared v4 supplies the indentation. This check catches direct suppression at
+    Shared v4/v5 supplies the indentation. This check catches direct suppression at
     ordinary first paragraphs; it does not expand user macros or inspect images.
     Letter and memorandum salutations retain their separate paragraph role.
     """
@@ -454,7 +467,7 @@ def review_figure_titles(text):
     """
     from pylatexenc.latexwalker import (LatexCharsNode, LatexEnvironmentNode, LatexGroupNode,
                                        LatexMacroNode, LatexWalker, LatexWalkerError)
-    from pylatexenc.macrospec import MacroSpec
+    from pylatexenc.macrospec import EnvironmentSpec, MacroSpec
     from pylatexenc.latex2text import LatexNodes2Text
     from scripts.paper_structure import _context, DEFINITIONS, PRIMITIVE_DEFINITIONS, RAW_ENVIRONMENTS
     context = _context()
@@ -462,7 +475,7 @@ def review_figure_titles(text):
         MacroSpec('caption', '*[{'), MacroSpec('captionof', '*{[{'),
         MacroSpec('refstepcounter', '{'), MacroSpec('stepcounter', '{'),
         MacroSpec('addtocounter', '{{'), MacroSpec('setcounter', '{{'),
-        MacroSpec('rule', '[{{')])
+        MacroSpec('rule', '[{{')], environments=[EnvironmentSpec('subfigure', '[{')])
     try:
         nodes, _, _ = LatexWalker(text, latex_context=context,
                                  tolerant_parsing=False).get_latex_nodes()
@@ -498,13 +511,14 @@ def review_figure_titles(text):
             if isinstance(node, LatexEnvironmentNode):
                 if node.environmentname not in RAW_ENVIRONMENTS:
                     kind = node.environmentname.rstrip('*')
-                    if kind == 'figure':
+                    if kind in ('figure', 'subfigure'):
                         if figure_prose(node.nodelist):
                             line = text.count('\n', 0, node.pos) + 1
                             errors.append(f'line {line}: ordinary prose inside figure belongs in adjacent prose')
                         figure_ends.append(node.pos + node.len - len(r'\end{' + node.environmentname + '}'))
-                    walk(node.nodelist, kind if kind in ('figure', 'table') else environment)
-                    if kind == 'figure':
+                    walk(node.nodelist, 'figure' if kind == 'subfigure' else
+                         kind if kind in ('figure', 'table') else environment)
+                    if kind in ('figure', 'subfigure'):
                         figure_ends.pop()
             elif isinstance(node, LatexGroupNode):
                 walk(node.nodelist, environment)

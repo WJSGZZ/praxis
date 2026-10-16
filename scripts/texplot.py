@@ -11,6 +11,8 @@ import warnings
 
 import math
 import re
+import hashlib
+from bisect import bisect_right
 from typing import Iterable, Sequence
 
 PREAMBLE = r"""\usepackage{pgfplots}
@@ -111,6 +113,11 @@ class Axis:
             self.opts.append(extra)
         self.body: list[str] = []
         self._band = 0
+        self._legend_entries: list[tuple[str, tuple[str, ...]]] = []
+
+    def _remember_legend(self, label, options):
+        if label:
+            self._legend_entries.append((str(label), tuple(options)))
 
     def line(self, x, y, color="main", style="solid", width=1.1, label=None, marks=None):
         opt = [f"color={color}", f"line width={width}pt"]
@@ -122,6 +129,7 @@ class Axis:
             opt.append("no marks")
         if not label:
             opt.append("forget plot")
+        self._remember_legend(label, opt)
         self.body.append(r"\addplot[%s] coordinates {%s};" % (",".join(opt), _coords(x, y))
                          + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
@@ -134,6 +142,7 @@ class Axis:
         opt = [f"fill={color}", f"fill opacity={opacity}"]
         if not label:
             opt.append("forget plot")
+        self._remember_legend(label, [*opt, "area legend"])
         self.body.append(r"\addplot[%s] fill between[of=%s and %s];" % (",".join(opt), a, b)
                          + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
@@ -148,6 +157,7 @@ class Axis:
         opt = [f"color={color}", f"line width={width}pt", "no marks"] + ([DASH[style]] if DASH[style] else [])
         if not label:
             opt.append("forget plot")
+        self._remember_legend(label, opt)
         self.body.append(r"\addplot[%s] coordinates {%s};" % (",".join(opt), " ".join("(%s,%s)" % (_fmt(a), _fmt(b)) for a, b in pts))
                          + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
         return self
@@ -156,8 +166,105 @@ class Axis:
         opt = ["only marks", f"mark={mark}", f"mark size={size}pt", f"color={color}"]
         if not label:
             opt.append("forget plot")
+        self._remember_legend(label, opt)
         self.body.append(r"\addplot[%s] coordinates {%s};" % (",".join(opt), _coords(x, y, limit=5000))
                          + (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
+        return self
+
+    def errorbar(self, x, y, lo, hi, *, interval: str, color="main", label=None, mark="*"):
+        """Plot absolute lower/upper bounds; ``interval`` names their meaning.
+
+        Bounds may describe confidence, spread or scenarios; this method does
+        not estimate them or infer a statistical interpretation. The meaning
+        appears in the legend, alongside the optional series name.
+        """
+        if not isinstance(interval, str) or not interval.strip() or '\n' in interval or '\r' in interval:
+            raise ValueError("Declare the interval meaning as a nonempty single line")
+        xs, ys, lows, highs = map(list, (x, y, lo, hi))
+        _coords(xs, ys)
+        _coords(xs, lows)
+        _coords(xs, highs)
+        rows = []
+        for a, b, lower, upper in zip(xs, ys, lows, highs):
+            if not lower <= b <= upper:
+                raise ValueError("Each errorbar bound must contain its plotted value")
+            rows.append("%s %s %s %s" % (_fmt(a), _fmt(b), _fmt(b-lower), _fmt(upper-b)))
+        options = [f"color={color}", f"mark={mark}", "only marks"]
+        legend_label = f"{label} ({interval.strip()})" if label else interval.strip()
+        self._remember_legend(legend_label, options)
+        self.body.append("% Interval meaning: " + interval.strip() + '\n' +
+                         r"\addplot[%s,error bars/y dir=both,error bars/y explicit] " % ','.join(options) +
+                         "table[x=x,y=y,y error minus=lower,y error plus=upper] {x y lower upper\n" +
+                         '\n'.join(rows) + '\n};' +
+                         (r"\addlegendentry{%s}" % tex_text(legend_label)))
+        return self
+
+    def histogram(self, samples, edges, *, density=False, color="main", label=None):
+        """Count [left,right) bins, including the final right edge in the last.
+
+        Explicit edges and rejection of outside samples prevent silent clipping.
+        Density integrates to one even for bins of unequal widths.
+        """
+        samples, edges = list(samples), list(edges)
+        if not samples or len(edges) < 2:
+            raise ValueError("Histogram needs samples and at least two edges")
+        if not all(math.isfinite(float(v)) for v in [*samples, *edges]):
+            raise ValueError("non-finite value in histogram data")
+        if any(a >= b for a, b in zip(edges, edges[1:])):
+            raise ValueError("Histogram edges must strictly increase")
+        counts = [0] * (len(edges)-1)
+        for value in samples:
+            if value < edges[0] or value > edges[-1]:
+                raise ValueError("Histogram sample outside explicit edges")
+            counts[min(bisect_right(edges, value)-1, len(counts)-1)] += 1
+        heights = [count / (len(samples)*(edges[i+1]-edges[i])) if density else count
+                   for i, count in enumerate(counts)]
+        options = ["ybar interval", f"fill={color}!35", f"draw={color}"]
+        self._remember_legend(label, options)
+        if not label:
+            options.append("forget plot")
+        self.body.append(r"\addplot[%s] coordinates {%s};" %
+                         (','.join(options), _coords(edges, heights+[0])) +
+                         (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
+        return self
+
+    def boxplot(self, samples, *, position=1, width=.5, whisker=1.5, color="main", label=None):
+        """Tukey box, linear-interpolated quartiles and explicit outlier points.
+
+        Whiskers end at actual samples within ``whisker * IQR`` of the box,
+        or at the quartile when interpolation leaves no sample on that side.
+        Coordinates are drawn directly, without altering the archived preamble.
+        """
+        values = sorted(float(v) for v in samples)
+        if not values or not all(math.isfinite(v) for v in values):
+            raise ValueError("Boxplot needs nonempty finite samples")
+        if not all(math.isfinite(float(v)) for v in (position, width, whisker)) or width <= 0 or whisker < 0:
+            raise ValueError("Boxplot position, width and whisker must be finite; width positive, whisker nonnegative")
+        def quantile(p):
+            index = (len(values)-1)*p
+            lower = math.floor(index)
+            return values[lower] + (values[math.ceil(index)]-values[lower])*(index-lower)
+        q1, median, q3 = (quantile(p) for p in (.25, .5, .75))
+        iqr = q3-q1
+        low = min((v for v in values if q1-whisker*iqr <= v <= q1), default=q1)
+        high = max((v for v in values if q3 <= v <= q3+whisker*iqr), default=q3)
+        left, right = position-width/2, position+width/2
+        # Each primitive remains a normal pgfplots series, so bounds include
+        # whiskers/outliers and the numerical coordinates remain inspectable.
+        box = _coords([left, left, right, right, left], [q1, q3, q3, q1, q1])
+        options = [f"draw={color}", f"fill={color}!20", "no marks"]
+        self._remember_legend(label, [*options, "area legend"])
+        self.body.append(r"\addplot[%s] coordinates {%s};" %
+                         (','.join(options + ([] if label else ['forget plot'])), box) +
+                         (r"\addlegendentry{%s}" % tex_text(str(label)) if label else ""))
+        for xs, ys in (([left, right], [median, median]), ([position, position], [low, q1]),
+                       ([position, position], [q3, high]), ([left, right], [low, low]),
+                       ([left, right], [high, high])):
+            self.body.append(r"\addplot[draw=%s,no marks,forget plot] coordinates {%s};" % (color, _coords(xs, ys)))
+        outliers = [v for v in values if v < low or v > high]
+        if outliers:
+            self.body.append(r"\addplot[only marks,mark=o,color=%s,forget plot] coordinates {%s};" %
+                             (color, _coords([position]*len(outliers), outliers)))
         return self
 
     def hline(self, y, style="dotted", color="black", width=0.8):
@@ -187,6 +294,126 @@ def figure_env(axes_tex: str, caption: str, *, placement: str = "htbp", label: s
     """Wrap pgfplots axes in a figure with a caption below (and an optional label for cross-references)."""
     lab = "\\label{%s}" % label if label else ""
     return "\\begin{figure}[%s]\\centering\n\\begin{tikzpicture}\n%s\n\\end{tikzpicture}\n\\caption{%s}%s\n\\end{figure}\n" % (placement, axes_tex, caption, lab)
+
+
+def grouped_bar_chart(categories, series, xlabel, ylabel, *, colors=None,
+                      width=r"0.72\linewidth", height="5cm", font_profile=None):
+    """A dict of named series, in insertion order, at integer category positions."""
+    categories = list(categories)
+    if not categories or not series:
+        raise ValueError("Grouped bars need categories and named series")
+    values = {str(label): list(data) for label, data in series.items()}
+    if any(not label.strip() for label in values) or len(values) != len(series):
+        raise ValueError("Grouped bar series labels must be nonempty and distinct")
+    for data in values.values():
+        if len(data) != len(categories):
+            raise ValueError("Grouped bar data must match the categories")
+        _coords(range(len(categories)), data)
+    palette = list(colors) if colors is not None else ["main", "accent", "oigreen", "oiorange", "muted"]
+    if len(palette) < len(values) or any(not isinstance(c, str) or not c.strip() for c in palette):
+        raise ValueError("Supply one nonempty color per grouped bar series")
+    ymin = min(0, min(min(data) for data in values.values()))
+    ymax = max(0, max(max(data) for data in values.values()))
+    padding = (ymax-ymin)*.12 or 1
+    ax = Axis(xlabel, ylabel, width=width, height=height, ymin=ymin-padding if ymin < 0 else 0,
+              ymax=ymax+padding, font_profile=font_profile,
+              extra=("ybar,bar width=8pt,enlarge x limits=0.25,xtick={%s},xticklabels={%s}" %
+                     (','.join(str(i) for i in range(len(categories))),
+                      ','.join('{%s}' % tex_text(str(c)) for c in categories))))
+    for (label, data), color in zip(values.items(), palette):
+        ax.body.append(r"\addplot[fill=%s!65,draw=%s] coordinates {%s};\addlegendentry{%s}" %
+                       (color, color, _coords(range(len(categories)), data), tex_text(label)))
+    return ax.tex()
+
+
+def shared_legend_panels(axes: Sequence[Axis], titles: Sequence[str], *, columns=2,
+                         name=None, horizontal_sep="1.6cm", vertical_sep="1.5cm"):
+    """Arrange Axis objects without changing their data, sharing one named legend.
+
+    Same series labels must have identical styles across panels. Unnamed
+    reference lines and bands are excluded from the legend as in Axis.tex().
+    Explicit axis ranges remain the caller's responsibility when comparisons
+    require a common scale. Each axis should use a width suitable for the grid.
+    """
+    axes, titles = list(axes), list(titles)
+    if not axes or len(axes) != len(titles) or any(not isinstance(ax, Axis) for ax in axes):
+        raise ValueError("Panels need Axis objects and one title per panel")
+    if type(columns) is not int or columns < 1 or columns > len(axes):
+        raise ValueError("Panel columns must be between one and the panel count")
+    if name is None:
+        # Named legends live at document scope. A fixed default would make a
+        # later figure silently replace the earlier figure's legend.
+        identity = repr((titles, [ax.tex() for ax in axes])).encode('utf-8')
+        name = 'PraxisPanels' + hashlib.sha256(identity).hexdigest()[:16]
+    if not re.fullmatch(r'[A-Za-z][A-Za-z0-9]*', name):
+        raise ValueError("Panel name must be an ASCII identifier")
+    profiles = {ax.font_profile for ax in axes}
+    if len(profiles) != 1:
+        raise ValueError("Panels must use the same font profile")
+    entries = {}
+    for ax in axes:
+        for label, options in ax._legend_entries:
+            if label in entries and entries[label] != options:
+                raise ValueError("Conflicting shared legend style for " + label)
+            entries[label] = options
+    if not entries:
+        raise ValueError("Shared legend needs at least one labelled series")
+    legend_name = name + 'Legend'
+    out = [r"\begin{groupplot}[group style={group name=%s,group size=%d by %d,horizontal sep=%s,vertical sep=%s}]" %
+           (name, columns, math.ceil(len(axes)/columns), horizontal_sep, vertical_sep)]
+    for index, (ax, title) in enumerate(zip(axes, titles)):
+        opts = [option for option in ax.opts if not option.startswith('legend style=')]
+        opts += ["title={%s}" % tex_text(str(title))]
+        if index == 0:
+            opts += [f"legend to name={legend_name}", "legend columns=-1",
+                     r"legend style={draw=none,font=\footnotesize,/tikz/every even column/.append style={column sep=8pt}}"]
+        out.append(_font_profile(r"\nextgroupplot[%s]" % ','.join(opts), ax.font_profile))
+        for item in ax.body:
+            for label, _ in ax._legend_entries:
+                item = item.replace(r"\addlegendentry{%s}" % tex_text(label), '')
+            item = item.replace(r'\addplot[', r'\addplot[forget plot,')
+            out.append(_font_profile(item, ax.font_profile))
+        if index == 0:
+            for label, options in entries.items():
+                out.append(r"\addlegendimage{%s}\addlegendentry{%s}" % (','.join(options), tex_text(label)))
+    out.append(r"\end{groupplot}")
+    out.append(r"\node[anchor=north,yshift=-1.1cm] at (current bounding box.south) {\pgfplotslegendfromname{%s}};" % legend_name)
+    return '\n'.join(out)
+
+
+def diverging_heatmap(values, x, y, xlabel, ylabel, *, center=0, limit=None, cbar_label="",
+                      width=r"0.65\linewidth", height="5cm", font_profile=None):
+    """Rows follow y, columns follow x; x/y are equally spaced cell centres.
+
+    The color scale is symmetric about the stated reference ``center``.
+    ``limit`` is a positive half-range and may not silently clip values.
+    """
+    matrix, xs, ys = [list(row) for row in values], list(x), list(y)
+    if len(xs) < 2 or len(ys) < 2 or len(matrix) != len(ys) or any(len(row) != len(xs) for row in matrix):
+        raise ValueError("Heatmap needs at least a 2 by 2 rectangular grid matching x and y")
+    if not all(math.isfinite(float(v)) for v in [*xs, *ys, center, *(v for row in matrix for v in row)]):
+        raise ValueError("non-finite value in diverging heatmap")
+    for coordinates in (xs, ys):
+        step = coordinates[1]-coordinates[0]
+        if step <= 0 or any(not math.isclose(b-a, step, rel_tol=1e-9, abs_tol=1e-12)
+                            for a, b in zip(coordinates, coordinates[1:])):
+            raise ValueError("Heatmap cell centres must strictly increase with equal spacing")
+    radius = max(abs(value-center) for row in matrix for value in row)
+    if limit is None:
+        limit = radius or 1
+    if not math.isfinite(float(limit)) or limit <= 0 or limit < radius:
+        raise ValueError("Heatmap limit must be positive, finite and contain every value")
+    rows = ['\n'.join('%s %s %s' % (_fmt(a), _fmt(b), _fmt(value))
+                      for a, value in zip(xs, row)) for b, row in zip(ys, matrix)]
+    ax = Axis(xlabel, ylabel, width=width, height=height, legend=None, font_profile=font_profile,
+              extra=("axis on top,enlargelimits=false,grid=none,xtick={%s},ytick={%s}," %
+                     (','.join(_fmt(v) for v in xs), ','.join(_fmt(v) for v in ys)) +
+                     r"colormap={praxisdiverging}{rgb255(0cm)=(0,114,178);rgb255(1cm)=(247,247,247);rgb255(2cm)=(213,94,0)},"
+                     "point meta min=%s,point meta max=%s,colorbar,colorbar style={ylabel={%s}}" %
+                     (_fmt(center-limit), _fmt(center+limit), tex_text(cbar_label))))
+    ax.body.append(r"\addplot[matrix plot*,mesh/cols=%d,point meta=explicit,shader=flat corner,forget plot] table[meta=c] {x y c" % len(xs)
+                   + '\n' + '\n\n'.join(rows) + '\n};')
+    return ax.tex()
 
 
 def hbar_chart(labels: Sequence[str], values: Sequence[float], colors: Sequence[str], xlabel: str, *, width=r"0.66\linewidth",

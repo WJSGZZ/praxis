@@ -14,7 +14,9 @@ def make_case(tmp_path):
     data = tmp_path / 'measurements.csv'
     problem.write_text('Synthetic check: extrapolate y=1+2*x at x=4.')
     data.write_text('x,y\n0,1\n1,3\n2,5\n3,7\n')
-    result = pipeline.init_case(tmp_path / 'cases','training',problem,[data])
+    # This fixture tests the original intake/run contract; schema-2 gates have
+    # explicit contracts and independent-method fixtures in test_gates.py.
+    result = pipeline.init_case(tmp_path / 'cases','training',problem,[data],schema=1)
     case = Path(result['case'])
     (case / 'code/model.py').write_text('''import argparse,json
 from pathlib import Path

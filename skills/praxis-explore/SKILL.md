@@ -6,45 +6,17 @@ license: MIT
 
 # Praxis · 结构、路径与探索
 
-BUNDLE 指 `praxis` 技能目录。标准题不必展开：写一行“为什么选它、放弃了什么”即可。本技能寻找与比较路线；已有模型的证据是否充分，交给 [praxis-verify](../praxis-verify/SKILL.md)。结构未知、当前路线受反例挑战或确需寻找替代方法时，才展开下面的探索。
-
-## 调用契约
-
-输入：结构性缺口、已有路线与探索预算。产出：可检验猜想、候选路线、淘汰理由与证据。依赖与边界：按问题调用数学工具；不把搜索未找到当作证明。
+BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv run --locked`）；无终端仅设计。执行见 [automation.md](../../references/automation.md)。
 
 ## 做什么
 
-1. **发现结构**：按 [structure-discovery.md](../../references/structure-discovery.md) 的问题清单提问，用 `probe_structure`、`dimensional_analysis`、`check_total_unimodularity` 低成本探测；把发现的结构、依据等级和推论写下来。现实机制到数学结构的对应表也在那里。
-2. **比较路线**：按 [path-search.md](../../references/path-search.md)，从结构各取一条再加最简基线，至少三条结构不同的路线；廉价探索、正面攻击（逆向、事前验尸、证伪、反例搜索、独立方法）、淘汰并留存中间结果、重组、收敛。用 `route_graph` 保存记录；工具会拒绝没有原因的淘汰、没有存活攻击的选定、少于三条的比较和没有后备的假设。
-3. **没有答案时**：按 [research-mode.md](../../references/research-mode.md) 做实验数学：算小例子 → `guess_sequence`、`find_relation` 猜规律 → `test_conjecture`、`find_counterexample` 检验与证伪 → 尝试证明；每条结论标把握等级，声称新之前先检索文献。
-4. **留下经验**：有可迁移的成功或失败时，按 [learning-loop.md](../../references/learning-loop.md) 审核并存储课程；相关新题形成候选前再检索。工具或指南改动的验收选对应的已知答案与未见题，不用课程数量证明进步。
+- 按 [structure-discovery.md](../../references/structure-discovery.md) 找机制与数学结构，用 `probe_structure`、`dimensional_analysis` 等低成本探测并记依据等级。
+- 按 [methods.md](../../references/methods.md) 决定路线数量与范围，再用 [path-search.md](../../references/path-search.md) 比较、攻击、淘汰与重组；`route_graph` 记录原因、后备和存活攻击。
+- 无标准答案时按 [research-mode.md](../../references/research-mode.md) 从小例、序列／关系猜测、反例搜索到证明，声称新前检索文献。
+- 工具范围与严格证据按 [automation.md](../../references/automation.md#数学工具的结果契约)：搜索未见反例、数值候选与证明分别记录。
+- 有迁移价值时按 [learning-loop.md](../../references/learning-loop.md) 存真实课程，新候选前检索；实际预算、失败与停止条件沿原任务保留。
+- MCP／CLI 先用 `--list`、`--describe` 核字段；Python 入口为 `modeling.structure`、`modeling.routes`、`modeling.experiment` 与 `modeling.lessons`。
 
-## 怎么调用
+## 交接
 
-在仓库（或插件）根目录运行；命令行与 Python 两种入口等价：
-
-```bash
-uv run --locked python -m scripts.mcp_server --list                  # 工具及字段（带 * 的必填）
-uv run --locked python -m scripts.mcp_server --describe probe_structure   # 一个工具的完整输入格式
-uv run --locked python -m scripts.mcp_server --call probe_structure '{"property":"convexity","expression":"x**2+y**2","names":["x","y"],"bounds":[[-1,1],[-1,1]]}'
-```
-
-| 工具 | Python 入口 |
-|---|---|
-| `probe_structure`、`dimensional_analysis`、`check_total_unimodularity` | `modeling.structure` |
-| `route_graph`、`route_to_lesson` | `modeling.routes.apply`、`modeling.routes.draft_lesson` |
-| `lesson_add`、`lesson_search` | `modeling.lessons.add_lesson`、`search_lessons` |
-| `test_conjecture`、`find_counterexample`、`guess_sequence`、`check_recurrence`、`find_relation` | `modeling.experiment`（`test_conjecture` 另有 mpmath 高精度版） |
-
-不在仓库根目录用 Python 导入时设置 `PYTHONPATH` 指向它。字段缺失或写错时，报错会列出必填字段与全部字段。
-
-## 边界
-
-- 结构探测找不到反例只是当前范围的证据；找到并复核反例可推翻该性质，不能证明它成立。升级为“已推导”需解析推导或有适用前提的完整证明。
-- 探索有预算。证据足够就停，不为显得全面而增加路线。
-- 工具只记录和探测，不替人判断路线是否合适；选择及理由由人和 Agent 共同负责，必要时与用户按 [praxis-dialogue](../praxis-dialogue/SKILL.md) 讨论。
-- 先读 [数学工具结果契约](../../references/automation.md#数学工具的结果契约)：数值候选不等于严格反例，`holds` 不代表普遍命题；只有输出明确给出相称精确证据才允许按 `proved` 升级。路线记录与课程保存在用户项目中；共享边界见 learning-loop.md。
-
-## 产出与交接
-
-在 planning/tasks.md 记录路线结论（选了什么、放弃了什么、为什么、哪个假设失效时转向哪里），附 `route_graph` 的记录。选定路线后交给 praxis-compute 实现，结果交给 praxis-verify 检验；检验推翻路线时回到这里重开，不在下游改假设。
+共同取舍交 [dialogue](../praxis-dialogue/SKILL.md)，选定路线经 [model](../praxis-model/SKILL.md) 门禁后交 [compute](../praxis-compute/SKILL.md)，证据交 [verify](../praxis-verify/SKILL.md)，路线被推翻回本入口。

@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import sys
 import time
 import uuid
@@ -20,6 +22,17 @@ from pypdf import PdfReader
 BEGIN = '<!-- PRAXIS WORKFLOW STATE BEGIN -->'
 END = '<!-- PRAXIS WORKFLOW STATE END -->'
 NOTE = 'Declared evidence and delivery connections; not mathematical, human or award certification.'
+
+QUERY_FUNCTION_WORDS = frozenset(('a an the and or but of to in on at by for from with as is are was were be been '
+                                'being it its this that these those you your we our they their he she his her '
+                                'them us which what who where when how why can could shall should will would '
+                                'may might must do does did have has had not no into about than then there '
+                                'such also each any all more most some using use used given provide develop '
+                                'consider determine discuss explain problem question task').split())
+QUERY_CHINESE_FUNCTION_WORDS = frozenset(('我们', '你们', '他们', '以及', '一个', '这个', '这些', '进行',
+                                        '需要', '根据', '请你', '对于', '是否', '如何', '问题', '要求'))
+ATTACK_TYPES = frozenset({'units', 'limit_case', 'sign_flip', 'small_example', 'independent_recompute', 'magnitude'})
+ATTACK_RESULTS = frozenset({'survived', 'refuted', 'inconclusive'})
 
 
 def now():
@@ -136,6 +149,69 @@ def write_state(case, state, *, initial=False):
             temporary.unlink()
 
 
+def problem_query(case):
+    """Frequency query: English content-word heuristic plus Chinese bigrams.
+
+    Chinese bigrams intentionally match lessons retrieval's tokenizer. They are
+    a dependency-free approximation, not Chinese segmentation or POS tagging.
+    """
+    text = safe_path('planning/problem-extracted.txt', case).read_text(encoding='utf-8').lower()
+    tokens = [word for word in re.findall(r'[a-z][a-z0-9_]+', text)
+              if word not in QUERY_FUNCTION_WORDS]
+    for run in re.findall(r'[\u4e00-\u9fff]+', text):
+        tokens.extend(run[i:i + 2] for i in range(len(run) - 1)
+                      if run[i:i + 2] not in QUERY_CHINESE_FUNCTION_WORDS)
+    query = ' '.join(word for word, _ in Counter(tokens).most_common(15))
+    if not query:
+        raise ValueError('Cannot derive a lesson query from extracted problem text; provide a specific query')
+    return query
+
+
+def lesson_application_problems(text, hits):
+    """Require an explicit per-ID adoption decision and nonempty action text."""
+    missing = []
+    for hit in hits:
+        identity = hit.get('id') if isinstance(hit, dict) else None
+        if not isinstance(identity, str) or not identity.strip():
+            raise ValueError('Lesson retrieval hit needs a nonempty id')
+        token = re.escape(identity)
+        prefix = r'^[ \t]*(?:[-*+][ \t]+|\d+[.)][ \t]+)?'
+        id_first = re.compile(prefix + rf'`?{token}`?[ \t]*:?[ \t]+(?:applied|not_applied)[ \t]*:[ \t]*(.+?)[ \t]*$', re.MULTILINE)
+        action_first = re.compile(prefix + rf'(?:applied|not_applied)[ \t]*:[ \t]*`?{token}`?(?:[ \t]*[-:][ \t]*|[ \t]+)(.+?)[ \t]*$', re.MULTILINE)
+        descriptions = [match.group(1) for pattern in (id_first, action_first) for match in pattern.finditer(text)]
+        if not any(re.search(r'[a-zA-Z\u4e00-\u9fff]', description) for description in descriptions):
+            missing.append(identity)
+    return missing
+
+
+def check_lesson_applications(case, state, *, frozen=False):
+    hits = state['lesson_retrieval'].get('hits')
+    if not isinstance(hits, list):
+        raise ValueError('Lesson retrieval hits must be a list')
+    if not hits:
+        return
+    if not frozen:
+        text = safe_path('planning/tasks.md', case).read_text(encoding='utf-8')
+    else:
+        receipts = [(path, pipeline.read_json(path)) for path in (case / 'runs').glob('*/receipt.json')]
+        if not receipts:
+            raise ValueError('Lesson application check needs a first run snapshot')
+        first_path, first = min(receipts, key=lambda row: pipeline.run_order(*row))
+        snapshot = safe_path('source-snapshot/planning/tasks.md', first_path.parent)
+        relative = 'source-snapshot/planning/tasks.md'
+        # Failed attempts retain source hashes even when no output inventory was
+        # reached. Their first source snapshot still binds the adoption record.
+        output_hash = first.get('outputs', {}).get(relative)
+        if (not snapshot.is_file() or pipeline.digest(snapshot) != first.get('code', {}).get('planning/tasks.md')
+                or (output_hash is not None and pipeline.digest(snapshot) != output_hash)):
+            raise ValueError('First run tasks snapshot is missing or does not match its receipt hashes')
+        text = snapshot.read_text(encoding='utf-8')
+    missing = lesson_application_problems(text, hits)
+    if missing:
+        place = 'first run source-snapshot/planning/tasks.md' if frozen else 'planning/tasks.md before running'
+        raise ValueError(f'Record applied: or not_applied: with each lesson id and action in {place}: {missing}')
+
+
 def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attempts=3, per_run_timeout=120):
     case = case_path(case)
     for key, value in [('budget_seconds', budget_seconds), ('max_attempts', max_attempts), ('per_run_timeout', per_run_timeout)]:
@@ -148,6 +224,10 @@ def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attem
     if progress.exists() and (BEGIN in progress.read_text(encoding='utf-8') or END in progress.read_text(encoding='utf-8')):
         raise ValueError('Refuse to overwrite an existing or damaged workflow block')
     start = now()
+    derived_query = pipeline.read_case_config(case).get('schema', 1) == 2 and (
+        not query.strip() or re.search(r'\bgeneric\b|\bprior\s+lessons\b', query, re.IGNORECASE))
+    if derived_query:
+        query = problem_query(case)
     source = pipeline.source_snapshot(case)
     knowledge = safe_path(lessons_path or 'planning/lessons.jsonl', pipeline.PROJECT)
     # Strict finite JSON validation before the existing lesson search consumes the file.
@@ -167,6 +247,9 @@ def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attem
                                   'index_sha256': pipeline.digest(knowledge) if knowledge.is_file() else None,
                                   'hits': [{'id': hit['id'], 'sha256': canonical_hash(hit)} for hit in retrieved]},
              'accepted': None, 'report': None, 'metering': {'model': 'unknown', 'tokens': 'not measured'}, 'note': NOTE}
+    if derived_query:
+        state['lesson_retrieval']['query_source'] = 'problem-extracted-top15-content-terms'
+        state['lesson_retrieval']['query_tokenization'] = 'English function-word filter; Chinese character-bigram heuristic'
     write_state(case, state, initial=True)
     return {'case': str(case), 'state': state, 'note': NOTE}
 
@@ -210,8 +293,44 @@ def review_identity(case, path, latest):
             or not isinstance(quality.get('reason'), str) or not quality['reason'].strip()
             or (quality['decision'] == 'continue' and (not isinstance(quality.get('next_action'), str) or not quality['next_action'].strip()))):
         raise ValueError('Review needs quality_decision continue/stop, reason and next_action for continue')
+    if pipeline.read_case_config(case).get('schema', 1) == 2:
+        check_review_gates(case, review)
+        check_lesson_applications(case, read_state(case)[0], frozen=True)
     return {'run_id': receipt.parent.name, 'receipt_sha256': pipeline.digest(receipt),
             'quality_decision': quality, 'review_path': str(path.relative_to(case)), 'review_sha256': pipeline.digest(path)}
+
+
+def check_review_gates(case, review):
+    definition = pipeline.read_json(safe_path('planning/requirements.json', case))
+    problems = pipeline.problem_item_problems(case, definition)
+    if problems:
+        raise ValueError('Review problem_items invalid: ' + '; '.join(problems))
+    expected = {row['id'] for row in definition['problem_items']}
+    ticked = review.get('problem_items_ticked')
+    if (not isinstance(ticked, list) or any(not isinstance(row, dict)
+            or not isinstance(row.get('id'), str) or not row['id'].strip()
+            or not isinstance(row.get('location'), str) or not row['location'].strip() for row in ticked)):
+        raise ValueError('problem_items_ticked requires id and nonempty answer location for every original item')
+    ids = [row['id'] for row in ticked]
+    if len(set(ids)) != len(ids) or set(ids) != expected:
+        raise ValueError('problem_items_ticked must cover exactly all original problem item ids once')
+    attacks = review.get('attacks')
+    if not isinstance(attacks, list) or len(attacks) < 3:
+        raise ValueError('Review needs at least three attacks')
+    for attack in attacks:
+        if (not isinstance(attack, dict) or not isinstance(attack.get('type'), str)
+                or attack['type'] not in ATTACK_TYPES or not isinstance(attack.get('result'), str)
+                or attack['result'] not in ATTACK_RESULTS or not isinstance(attack.get('target'), str)
+                or not attack['target'].strip()):
+            raise ValueError('Each attack needs an allowed type/result and nonempty target')
+    if review.get('verdict') == 'pass' and any(row['result'] == 'refuted' for row in attacks):
+        raise ValueError('A refuted attack prevents a pass verdict')
+    mechanism = review.get('mechanism_audit')
+    if (not isinstance(mechanism, dict) or type(mechanism.get('symbols_checked')) is not int
+            or mechanism['symbols_checked'] < 0 or not isinstance(mechanism.get('double_meaning_found'), list)):
+        raise ValueError('mechanism_audit needs nonnegative integer symbols_checked and double_meaning_found array')
+    if review.get('verdict') == 'pass' and mechanism['double_meaning_found']:
+        raise ValueError('Unresolved double meanings prevent a pass verdict')
 
 
 def accepted_valid(case, state, latest):
@@ -302,6 +421,8 @@ def run(case, reviewed_source_sha256):
     config = pipeline.read_json(case / 'case.json')
     if not config.get('intake_complete') or pipeline.input_changes(case, config):
         raise ValueError('Intake incomplete or raw inputs changed')
+    if config.get('schema', 1) == 2:
+        check_lesson_applications(case, state)
     attempt = {'started_utc': now().isoformat(), 'reviewed_source_sha256': expected, 'status': 'started'}
     state['attempts'] += 1
     state['attempt_history'].append(attempt)

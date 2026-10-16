@@ -5,6 +5,8 @@ import pytest
 from scripts.paper_template import ai_report, check, preamble, section_component, summary_header, summary_heading, table_of_contents
 
 
+# Current-profile expectations below follow the shared default (v5); archived
+# version assertions remain fixed to their historical bytes and behavior.
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -15,7 +17,7 @@ def paper():
 
 def test_shared_layout_accepts_content_and_local_reference_format():
     text = paper().replace('Body.', r'\begingroup\small\setlength{\parindent}{0pt}Reference.\endgroup')
-    assert check(text)['profile'] == 'praxis-mcm-v4'
+    assert check(text)['profile'] == 'praxis-mcm-v5'
     assert r'Team \# \PraxisTeam' in text
     assert r'Page \thepage{} of \pageref{LastPage}' in text
     assert r'A title \& a result' in text
@@ -37,9 +39,10 @@ def test_rejects_drift_inside_shared_block():
         check(paper().replace('top=0.95in', 'top=1in'))
 
 
-def test_skeleton_and_active_mcm_reports_use_current_profile():
-    for path in ['templates/mcm-paper.tex', 'research/merge-after-toll/paper/paper.tex']:
-        check((ROOT / path).read_text())
+def test_skeleton_uses_current_profile_and_frozen_reports_use_archive():
+    # V5 is current; preserved research remains deliberately historical.
+    check((ROOT / 'templates/mcm-paper.tex').read_text(), layout_mode='current')
+    check((ROOT / 'research/merge-after-toll/paper/paper.tex').read_text(), layout_mode='archive')
     for path in ['demos/mcm-2016-a/reproduce/build_report.py',
                  'research/merge-after-toll/paper/build_report.py']:
         text = (ROOT / path).read_text()
@@ -52,7 +55,7 @@ def test_export_contains_style_and_checker():
     from scripts.build_plugin import public_files
     paths = {str(p.relative_to(ROOT)) for p in public_files(ROOT)}
     assert {'templates/mcm-style.tex', 'templates/mcm-style-v1.tex', 'templates/mcm-style-v2.tex',
-            'templates/mcm-style-v3.tex', 'templates/cumcm-style.tex', 'scripts/paper_template.py'} <= paths
+            'templates/mcm-style-v3.tex', 'templates/mcm-style-v4.tex', 'templates/cumcm-style.tex', 'scripts/paper_template.py'} <= paths
 
 
 def test_chinese_profile_keeps_its_own_layout_and_rejects_contents():
@@ -111,7 +114,7 @@ def test_layout_gate_records_source_and_style(tmp_path):
                layout_mode='archive')
     assert not (tmp_path/'stale.pdf').exists()
     assert receipt['layout']['tex_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
-    assert receipt['layout']['profile'] == 'praxis-mcm-v4'
+    assert receipt['layout']['profile'] == 'praxis-mcm-v5'
 
 
 def test_optional_components_and_archived_chinese_source():
@@ -324,7 +327,7 @@ def test_page_numbering_cannot_be_overridden_outside_shared_block(contest, overr
 
 def test_existing_mcm_generated_sources_and_chinese_skeleton_pass_new_frontmatter_gate():
     check((ROOT/'templates/mcm-paper.tex').read_text())
-    check((ROOT/'research/merge-after-toll/paper/paper.tex').read_text())
+    check((ROOT/'research/merge-after-toll/paper/paper.tex').read_text(), layout_mode='archive')
     check((ROOT/'templates/cumcm-paper.tex').read_text(), 'cumcm')
     # Bath has a source generator rather than a checked-in generated paper.
     generator = (ROOT/'demos/mcm-2016-a/reproduce/build_report.py').read_text()
@@ -459,7 +462,7 @@ def test_third_level_numbering_and_optional_contents_depth():
     for depth in (1, 2, 3):
         body = (table_of_contents(depth=depth) + r'\section{Model}\subsection{Identification}'
                 r'\subsubsection{Rank condition}A result.\subsubsection{Scale ambiguity}A limit.')
-        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v4'
+        assert check(paper().replace('Body.', body))['profile'] == 'praxis-mcm-v5'
     with pytest.raises(ValueError, match='depth'):
         table_of_contents(depth=4)
     with pytest.raises(ValueError, match='override'):
@@ -490,7 +493,7 @@ def test_frozen_toll_generator_preserves_the_complete_archived_source(tmp_path):
 
 def test_historical_editions_are_explicit_and_not_replaced_by_current_year():
     text = preamble('7391857', 'A historical paper') + summary_header('C', edition=1999) + r'Body.\end{document}'
-    assert check(text)['profile'] == 'praxis-mcm-v4'
+    assert check(text)['profile'] == 'praxis-mcm-v5'
     assert r'\textbf{1999\\MCM/ICM' in text
 
 
@@ -519,11 +522,59 @@ def test_v3_archive_keeps_its_exact_style_and_summary_behavior():
     assert summary_heading(layout_version=3) == '\\begin{center}{\\Large\\bfseries Summary}\\end{center}\n'
 
 
+def test_v4_archive_is_byte_identical_to_6010f8e_and_rejected_as_current():
+    import hashlib
+    # SHA256 of git 6010f8e:templates/mcm-style.tex; checked before v5 editing.
+    assert hashlib.sha256((ROOT / 'templates/mcm-style-v4.tex').read_bytes()).hexdigest() == 'da42e98099a634de6eb401124f559ee711ff595f88192a9b737fa294b8e64633'
+    old = (preamble('7391857', 'Archived v4 title', layout_version=4)
+           + summary_header('B', edition=2025, layout_version=4)
+           + summary_heading(layout_version=4) + r'Body.\end{document}')
+    assert check(old, layout_mode='archive')['profile'] == 'praxis-mcm-v4'
+    with pytest.raises(ValueError, match='current shared style v5'):
+        check(old, layout_mode='current')
+    with pytest.raises(ValueError, match='differs'):
+        check(old.replace('top=0.95in', 'top=1in'), layout_mode='archive')
+
+
+def test_v5_optional_components_and_memo_metadata_are_available():
+    from scripts.paper_template import memo, style_block
+    style = style_block()
+    for token in (r'\newenvironment{memo}[3]', r'\newenvironment{strengths}',
+                  r'\newenvironment{weaknesses}', r'\usepackage{algorithm,algpseudocode,subcaption}',
+                  r'\newtheorem{theorem}', r'\newtheorem{proposition}'):
+        assert token in style
+    component = memo('Committee & partners', '16 October 2026', 'Cost_1', 'Choose the supported policy.')
+    assert component.startswith('\\begin{memo}{Committee \\& partners}{16 October 2026}{Cost\\_1}\n')
+    assert component.endswith('\\end{memo}\n')
+    assert r'\newenvironment{memo}[3]{\clearpage' in style
+    assert r'{\par\clearpage}' in style
+    check(paper().replace('Body.', component), layout_mode='current')
+    for fields in (('', 'date', 'subject'), ('committee', '', 'subject'), ('committee', 'date', None)):
+        with pytest.raises(ValueError, match='Memo requires'):
+            memo(*fields, 'Body')
+    # Component availability does not make any of them mandatory.
+    assert check(paper(), layout_mode='current')['profile'] == 'praxis-mcm-v5'
+
+
+def test_subfigure_caption_scope_preserves_short_title_and_prose_checks():
+    from scripts.paper_template import review_figure_titles
+    panel = (r'\begin{subfigure}{.45\linewidth}\centering'
+             r'\begin{tikzpicture}\draw (0,0)--(1,1);\end{tikzpicture}'
+             r'\caption{Baseline}\end{subfigure}')
+    body = r'\begin{figure}' + panel + r'\hfill' + panel.replace('Baseline', 'Alternative') + r'\caption{Two policies}\end{figure}'
+    review = review_figure_titles(body)
+    assert not review['errors']
+    assert [title['title'] for title in review['titles']] == ['Baseline', 'Alternative', 'Two policies']
+    for bad in (body.replace(r'\caption{Baseline}', r'\caption{Baseline}Extra scientific explanation.'),
+                body.replace(r'\caption{Baseline}', r'\caption{First sentence. Hidden explanation.}')):
+        assert review_figure_titles(bad)['errors']
+
+
 def test_current_summary_heading_uses_shared_component_and_escapes_title():
     assert summary_heading() == '\\PraxisSummaryHeading{Summary}\n'
     assert summary_heading('A & B') == '\\PraxisSummaryHeading{A \\& B}\n'
     with pytest.raises(ValueError, match='version'):
-        summary_heading(layout_version=5)
+        summary_heading(layout_version=6)
 
 
 def test_visible_skeleton_title_uses_one_metadata_value():

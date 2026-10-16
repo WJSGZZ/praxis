@@ -22,7 +22,8 @@ from scripts.paper_template import (ROOT, check, compile_paper, inspect_typesett
                                    preamble, summary_header, summary_heading)
 
 
-def source(version=4, body='Ordinary summary evidence.'):
+# Current fixtures follow v5; explicit v1-v4 remain archive refusal controls.
+def source(version=5, body='Ordinary summary evidence.'):
     return (preamble('1234567', 'A conditional answer', layout_version=version)
             + summary_header('C', edition=2020, layout_version=version)
             + summary_heading(layout_version=version) + body + r'\end{document}')
@@ -98,7 +99,7 @@ def test_actual_pdf_ai_narrative_identity_has_the_same_guard(tmp_path, statement
         assert any('identity statement' in error for error in result['errors'])
 
 
-def candidate(tmp_path, *, version=4, mode='current', **pdf_options):
+def candidate(tmp_path, *, version=5, mode='current', **pdf_options):
     tex = tmp_path / 'main.tex'; tex.write_text(source(version))
     pdf = tmp_path / 'main.pdf'; actual_pdf(pdf, **pdf_options)
     # Explicit synthetic log: only the log/receipt/freshness gate is exercised.
@@ -124,7 +125,19 @@ def candidate(tmp_path, *, version=4, mode='current', **pdf_options):
     return tex, pdf, build, review
 
 
-@pytest.mark.parametrize('version', [1, 2, 3])
+def test_current_freeze_records_manuscript_warnings_without_rejecting(tmp_path):
+    tex, pdf, build, _ = candidate(tmp_path)
+    result = freeze(pdf, tmp_path / 'diagnostic.pdf', tex=tex, contest='mcm', build_receipt=build,
+                    problem_year=2020)
+    diagnostic = result['manuscript_diagnostics']
+    assert diagnostic['diagnostic_only'] is True
+    assert {'summary', 'prose', 'claims'} <= set(diagnostic['reports'])
+    assert any(row['code'] == 'delivery.coverage_inputs' for row in diagnostic['warnings'])
+    assert any(row['code'] == 'delivery.reader_pending' for row in diagnostic['warnings'])
+    assert (tmp_path / 'diagnostic.pdf').read_bytes() == pdf.read_bytes()
+
+
+@pytest.mark.parametrize('version', [1, 2, 3, 4])
 def test_current_requires_current_version_while_archive_retains_identity(tmp_path, version):
     text = source(version)
     assert check(text, layout_mode='archive')['profile'] == f'praxis-mcm-v{version}'
@@ -168,7 +181,7 @@ def test_letter_roles_and_list_caption_roles_are_still_legal():
                         r'\noindent Dear Director,\par A recommendation.\par\noindent Sincerely,'
                         r'\begin{itemize}\item A list role.\end{itemize}'
                         r'\begin{figure}\centering\rule{1cm}{1pt}\caption{A caption.}\end{figure}'))
-    assert check(text, layout_mode='current')['profile'] == 'praxis-mcm-v4'
+    assert check(text, layout_mode='current')['profile'] == 'praxis-mcm-v5'
 
 
 def test_shared_summary_macro_accepts_a_nested_real_title():
@@ -176,7 +189,7 @@ def test_shared_summary_macro_accepts_a_nested_real_title():
     # Its balanced macro argument is one real heading, not a macro replacement.
     text = source().replace(summary_heading(),
                             r'\PraxisSummaryHeading{What follows from the model\\[5pt]{\large Subtitle}}' + '\n')
-    assert check(text, layout_mode='current')['profile'] == 'praxis-mcm-v4'
+    assert check(text, layout_mode='current')['profile'] == 'praxis-mcm-v5'
     override = text.replace(r'\begin{document}',
                             r'\renewcommand{\PraxisSummaryHeading}[1]{#1}\begin{document}')
     with pytest.raises(ValueError, match='overrides the shared summary heading'):
@@ -363,7 +376,7 @@ def test_expanded_geometry_override_is_caught_in_actual_pdf(tmp_path):
     # build must reject the resulting real Letter page before a success receipt.
     tex.write_text(source().replace(r'\begin{document}',
                                    r'\csname geometry\endcsname{paperwidth=8.5in,paperheight=11in}\begin{document}'))
-    assert check(tex.read_text(), layout_mode='current')['profile'] == 'praxis-mcm-v4'
+    assert check(tex.read_text(), layout_mode='current')['profile'] == 'praxis-mcm-v5'
     with pytest.raises(ValueError, match='A4 page box'):
         compile_paper(tex, 'mcm', tmp_path / 'compiled')
     assert (tmp_path / 'compiled/main.pdf').is_file()
@@ -384,7 +397,7 @@ def test_crlf_style_inspection_preserves_actual_source_binding(tmp_path):
     tex = tmp_path / 'windows-lines.tex'
     raw = source().replace('\n', '\r\n').encode('utf-8')
     tex.write_bytes(raw)
-    assert check(raw.decode('utf-8'), 'mcm', layout_mode='current')['profile'] == 'praxis-mcm-v4'
+    assert check(raw.decode('utf-8'), 'mcm', layout_mode='current')['profile'] == 'praxis-mcm-v5'
     altered = raw.decode('utf-8').replace('a4paper', 'letterpaper', 1)
     with pytest.raises(ValueError, match='differs from the shared source'):
         check(altered, 'mcm', layout_mode='current')

@@ -6,6 +6,8 @@
 
 ## 任务总览
 
+schema 2 的原题逐问引用与页码写入 requirements.json 的 problem_items，算前声明写入 model-contract.json，字段统一见 [modeling-gate.md](modeling-gate.md) 与 [automation.md](automation.md)。采用 workflow 时，在首次运行前为每个检索命中写同一行的 `applied: <ID> <具体行动>` 或 `not_applied: <ID> <理由>`；填真实 ID 与动作后才运行，示意占位符不算决定。
+
 | ID | 原始要求／交付物 | 优先级 | 依赖任务 | 最低验收与预定路线 |
 |---|---|---|---|---|
 

@@ -15,7 +15,9 @@ def case(tmp_path, monkeypatch):
     monkeypatch.setattr(w.pipeline, 'PROJECT', tmp_path)
     problem = tmp_path / 'problem.md'
     problem.write_text('Synthetic knapsack: capacity5; weights3,4,2; values5,6,4. Exact optimum9.')
-    c = Path(w.pipeline.init_case(tmp_path / 'cases', 'integer-check', problem)['case'])
+    # Preserve the original schema-1 workflow fixture; schema-2 evidence and
+    # review requirements are exercised explicitly in test_workflow_gates.py.
+    c = Path(w.pipeline.init_case(tmp_path / 'cases', 'integer-check', problem, schema=1)['case'])
     (c / 'planning/progress.md').write_text('Existing progress, preserved.\n')
     (c / 'code/model.py').write_text('''import argparse,json
 from pathlib import Path

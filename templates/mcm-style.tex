@@ -1,9 +1,10 @@
-% Praxis MCM house style v4. Layout source; assemble with scripts.paper_template.
+% Praxis MCM house style v5. Layout source; assemble with scripts.paper_template.
 \documentclass[12pt,a4paper]{article}
 \usepackage[left=1in,right=1in,top=0.95in,bottom=0.8in,headheight=15pt]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{newtxtext,newtxmath}
 \usepackage{booktabs,array,graphicx,xcolor,caption,float,etoolbox,fvextra,fancyhdr,lastpage,titlesec,titletoc,needspace,indentfirst}
+\usepackage{algorithm,algpseudocode,subcaption}
 \usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
 \urlstyle{same}\Urlmuskip=0mu plus 1mu
 @@PLOTS@@
@@ -35,6 +36,20 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
 \AtBeginEnvironment{thebibliography}{\normalsize}
+% Optional argument-led components; their presence follows the task, not style.
+\newenvironment{memo}[3]{\clearpage\section*{Memorandum}%
+\noindent\textbf{To:} #1\par\noindent\textbf{From:} Team \PraxisTeam\par
+\noindent\textbf{Date:} #2\par\noindent\textbf{Subject:} #3\par\medskip}{\par\clearpage}
+\newenvironment{strengths}{\subsection*{Strengths}\itemize}{\enditemize}
+\newenvironment{weaknesses}{\subsection*{Weaknesses}\itemize}{\enditemize}
+\algrenewcommand{\alglinenumber}[1]{\normalsize #1:}
+\captionsetup[subfigure]{font=normalsize,labelfont=bf}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
 % Two TOC levels by default; a shared component can select three when useful.
 \titlecontents{section}[1.8em]{\addvspace{5pt}\bfseries}{\contentslabel{1.8em}}{}{\titlerule*[.6pc]{.}\contentspage}
 \titlecontents{subsection}[4.1em]{}{\contentslabel{2.3em}}{}{\titlerule*[.6pc]{.}\contentspage}

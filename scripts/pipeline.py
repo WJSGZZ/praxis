@@ -21,7 +21,7 @@ BUNDLE = Path(__file__).resolve().parents[1]
 PROJECT = Path.cwd().resolve()
 sys.path.insert(0, str(BUNDLE))
 from scripts.audit_data import audit
-from modeling.schema_contracts import unique_object_pairs
+from modeling.schema_contracts import check_model_contract, unique_object_pairs
 import pandas as pd
 from pypdf import PdfReader
 
@@ -64,8 +64,8 @@ def read_case_config(case):
     """
     config = read_json(case / 'case.json')
     schema = config.get('schema', 1) if isinstance(config, dict) else None
-    if type(schema) is not int or schema != 1:
-        raise ValueError('Unsupported case schema; expected integer 1 or a missing legacy marker')
+    if type(schema) is not int or schema not in (1, 2):
+        raise ValueError('Unsupported case schema; expected integer 1 or 2 or a missing legacy marker')
     return config
 
 
@@ -83,7 +83,9 @@ def under_project(path):
     return path
 
 
-def init_case(case_root, name, problem, data=(), phase='preparation', encoding='utf-8'):
+def init_case(case_root, name, problem, data=(), phase='preparation', encoding='utf-8', schema=2):
+    if type(schema) is not int or schema not in (1, 2):
+        raise ValueError('schema must be integer 1 or 2')
     if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', name) or len(name) > 50:
         raise ValueError('Use a short lowercase hyphenated case name')
     if phase not in ['preparation', 'contest']:
@@ -120,7 +122,7 @@ def init_case(case_root, name, problem, data=(), phase='preparation', encoding='
         inputs.append({'role': role, 'original_path': str(source), 'path': str(target.relative_to(case)),
                        'sha256': digest(target), 'bytes': target.stat().st_size})
     (case / 'planning/problem-extracted.txt').write_text(text, encoding='utf-8')
-    config = {'schema': 1, 'name': name, 'phase': phase, 'created_utc': stamp(), 'inputs': inputs,
+    config = {'schema': schema, 'name': name, 'phase': phase, 'created_utc': stamp(), 'inputs': inputs,
               'problem_visual_review_required': visual_review,
               'problem_text_extracted': bool(text.strip()), 'intake_complete': False,
               'human_verification': 'not recorded; automatic checks do not imply human approval'}
@@ -176,6 +178,10 @@ def source_snapshot(case):
     paths += [case / 'planning/tasks.md']
     if (case / 'planning/requirements.json').is_file():
         paths.append(case / 'planning/requirements.json')
+    if read_case_config(case).get('schema', 1) == 2:
+        for relative in ('planning/model-contract.json', 'planning/problem-extracted.txt'):
+            if (case / relative).is_file():
+                paths.append(case / relative)
     return {str(p.relative_to(case)): digest(p) for p in paths}
 
 
@@ -200,6 +206,24 @@ def environment_snapshot():
             'executable': sys.executable, 'packages': versions}
 
 
+def clean_bundle_commit():
+    """Return the owning clean checkout's commit; installed copies keep snapshots."""
+    try:
+        root = subprocess.run(['git', 'rev-parse', '--show-toplevel'], cwd=BUNDLE,
+                              capture_output=True, text=True, timeout=10, check=True)
+        if Path(root.stdout.strip()).resolve() != BUNDLE.resolve():
+            return None
+        status = subprocess.run(['git', 'status', '--porcelain', '--untracked-files=all'], cwd=BUNDLE,
+                                capture_output=True, text=True, timeout=10, check=True)
+        if status.stdout.strip():
+            return None
+        head = subprocess.run(['git', 'rev-parse', '--verify', 'HEAD'], cwd=BUNDLE,
+                              capture_output=True, text=True, timeout=10, check=True)
+        return head.stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
 def run_case(case, model='code/model.py', validator='code/validate.py', timeout=120):
     case = under_project(case)
     config = read_case_config(case)
@@ -208,19 +232,40 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
     if type(timeout) is not int or not 1 <= timeout <= 3600:
         raise ValueError('timeout must be integer seconds from 1 to 3600')
     model_path, validator_path = code_path(case, model), code_path(case, validator)
+    schema = config.get('schema', 1)
+    contract = None
+    if schema == 2:
+        contract_path = case / 'planning/model-contract.json'
+        if not contract_path.is_file():
+            raise ValueError('schema 2 requires planning/model-contract.json before running')
+        contract = read_json(contract_path)
+        problems = check_model_contract(contract)
+        if problems:
+            raise ValueError('Model contract rejected before execution: ' + '; '.join(problems))
     code_hashes = source_snapshot(case)
     dependency_hashes = dependency_snapshot()
     attempt = case / 'runs' / (datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S') + '-' + uuid.uuid4().hex[:8])
     attempt.mkdir(parents=True, exist_ok=False)
     out = attempt / 'output'
     out.mkdir()
-    receipt = {'schema': 1, 'started_utc': stamp(), 'phase': config['phase'],
+    receipt = {'schema': schema, 'started_utc': stamp(), 'phase': config['phase'],
                'inputs': config['inputs'], 'code': code_hashes, 'dependencies': dependency_hashes,
                'environment': environment_snapshot(), 'steps': [],
                'status': 'running', 'automatic_checks_passed': False,
                'human_verification': config['human_verification']}
-    for prefix, root, snapshot in [('source-snapshot', case, code_hashes),
-                                  ('dependency-snapshot', BUNDLE, dependency_hashes)]:
+    snapshots = [('source-snapshot', case, code_hashes)]
+    commit = clean_bundle_commit() if schema == 2 else None
+    if commit:
+        receipt['bundle_git_commit'] = commit
+    else:
+        snapshots.append(('dependency-snapshot', BUNDLE, dependency_hashes))
+    if contract is not None:
+        parameters = contract['parameters']
+        declared = sum(p['source_level'] == 'declared' for p in parameters)
+        receipt['model_contract_warnings'] = (
+            [f'{declared}/{len(parameters)} parameters are declared scenarios (>70%); verify empirical relevance']
+            if parameters and declared / len(parameters) > 0.7 else [])
+    for prefix, root, snapshot in snapshots:
         for relative in snapshot:
             target = attempt / prefix / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -256,6 +301,13 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
                or not c['name'].strip() or not isinstance(c.get('evidence'), str) or not c['evidence'].strip()
                for c in checks):
             raise ValueError('Checks must individually pass with names and concrete evidence')
+        if contract is not None:
+            methods = check_method_problems(checks)
+            balances = [row['check_name'] for row in contract['conserved_quantities']]
+            names = {check['name'] for check in checks if check['passed'] is True}
+            methods += [f'Missing passed conservation check: {name}' for name in balances if name not in names]
+            if methods:
+                raise ValueError('; '.join(methods))
         if read_case_config(case)['inputs'] != receipt['inputs'] or input_changes(case, config) or source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes:
             raise ValueError('Inputs or reviewed code changed during execution')
         receipt['outputs'] = {}
@@ -367,7 +419,17 @@ def result_pointer(value, pointer):
 CLAIM_STRENGTH = {'computed': 1, 'checked': 2, 'independent': 3}
 
 
-def claim_problems(requirements, claims, lookup, results):
+CHECK_METHODS = {'analytic', 'enumeration', 'bound', 'conservation', 'hand_calc',
+                 'naive_baseline', 'replay', 'external_value'}
+
+
+def check_method_problems(checks):
+    return [f'check {check.get("name")!r}: method must be one of {sorted(CHECK_METHODS)}'
+            for check in checks if not isinstance(check.get('method'), str)
+            or check['method'] not in CHECK_METHODS]
+
+
+def claim_problems(requirements, claims, lookup, results, schema=1):
     """Compare each claim's declared strength with the evidence it links; list uncovered requirements and overclaims.
 
     computed: its result pointer resolves in results.json. checked: at least one linked check exists and passed.
@@ -412,6 +474,64 @@ def claim_problems(requirements, claims, lookup, results):
     for r in requirements:
         if claims and r['id'] not in covered:
             problems.append(f'requirement {r["id"]} has no claim whose evidence supports it')
+        if schema == 2 and r.get('kind', 'answer') == 'forecast':
+            baselines = [lookup[name] for name in r['checks'] if name in lookup
+                         and lookup[name].get('method') == 'naive_baseline']
+            if not baselines:
+                problems.append(f'requirement {r["id"]}: forecast requires a naive_baseline check')
+            for check in baselines:
+                scores = (check.get('baseline_score'), check.get('model_score'))
+                if any(type(score) not in (int, float) for score in scores) \
+                        or type(check.get('lower_is_better')) is not bool \
+                        or not isinstance(check.get('metric'), str) or not check['metric'].strip():
+                    problems.append(f'check {check["name"]}: naive_baseline needs numeric scores, metric and lower_is_better')
+                    continue
+                baseline, model = scores
+                worse = model > baseline if check['lower_is_better'] else model < baseline
+                if worse and check.get('disclosed') is not True:
+                    problems.append(f'requirement {r["id"]}: model is worse than naive baseline without disclosed: true')
+    return problems
+
+
+def problem_item_problems(case, definition):
+    """Validate schema-2 original-question quotations and requirement mappings."""
+    problems = []
+    items = definition.get('problem_items')
+    if not isinstance(items, list) or not items:
+        return ['Record nonempty problem_items with original problem quotations']
+    problem_path = case / 'planning/problem-extracted.txt'
+    original = ' '.join(problem_path.read_text(encoding='utf-8').split()) if problem_path.is_file() else ''
+    seen, covered = set(), set()
+    for item in items:
+        if not isinstance(item, dict):
+            problems.append('Each problem_item must be an object')
+            continue
+        item_id = item.get('id')
+        if not isinstance(item_id, str) or not item_id.strip() or item_id in seen:
+            problems.append('Each problem_item needs a unique nonempty id')
+            continue
+        seen.add(item_id)
+        quote, page = item.get('quote'), item.get('page')
+        if not isinstance(quote, str) or not quote.strip() or ' '.join(quote.split()) not in original:
+            problems.append(f'problem_item {item_id}: quote not found verbatim in problem-extracted.txt')
+        if type(page) is not int or page < 1:
+            problems.append(f'problem_item {item_id}: page must be a positive integer')
+        if any(isinstance(item.get(key), str) and item[key].strip()
+               for key in ('not_addressed_reason', 'conditional_answer')):
+            covered.add(item_id)
+    for requirement in definition.get('requirements', []):
+        refs = requirement.get('problem_item_ids')
+        if not isinstance(refs, list) or not refs or any(not isinstance(ref, str) for ref in refs):
+            problems.append(f'requirement {requirement.get("id")}: needs nonempty problem_item_ids')
+        else:
+            unknown = set(refs) - seen
+            if unknown:
+                problems.append(f'requirement {requirement.get("id")}: unknown problem_item_ids {sorted(unknown)}')
+            covered.update(refs)
+        if requirement.get('kind', 'answer') not in ('answer', 'forecast', 'decision', 'proof'):
+            problems.append(f'requirement {requirement.get("id")}: unsupported kind')
+    for item_id in sorted(seen - covered):
+        problems.append(f'problem_item {item_id}: no requirement mapping or explicit conditional/unaddressed reason')
     return problems
 
 
@@ -420,6 +540,7 @@ def evidence_index(case):
     case = under_project(case)
     manifest = case / 'planning/requirements.json'
     definition = read_json(manifest)
+    schema = read_case_config(case).get('schema', 1)
     tasks = definition.get('requirements') if isinstance(definition, dict) else None
     if not isinstance(tasks, list) or not tasks:
         raise ValueError('Record a nonempty requirements list before building evidence')
@@ -459,17 +580,25 @@ def evidence_index(case):
         if missing:
             errors.append('Missing independent checks: ' + ', '.join(missing))
         entry['check_evidence'] = [lookup[name] for name in task['checks'] if name in lookup]
+        if schema == 2 and not any(c.get('independent') is True and isinstance(c.get('method'), str)
+                                   and c['method'] in CHECK_METHODS - {'replay'}
+                                   for c in entry['check_evidence']):
+            errors.append('Requirement needs an independent check with a non-replay method')
         entry['linked'] = not errors
         entry['errors'] = errors
         entries.append(entry)
     claims = definition.get('claims', [])
-    claim_issues = claim_problems(tasks, claims, lookup, results) if claims else []
-    complete = all(entry['linked'] for entry in entries) and not claim_issues
+    claim_issues = claim_problems(tasks, claims, lookup, results, schema) if claims or schema == 2 else []
+    problem_issues = problem_item_problems(case, definition) if schema == 2 else []
+    if schema == 2:
+        problem_issues += check_method_problems(checks)
+    complete = all(entry['linked'] for entry in entries) and not claim_issues and not problem_issues
     return {'status': 'evidence-linked' if complete else 'evidence-incomplete', 'claim_problems': claim_issues, 'claims_recorded': len(claims),
             'run': str(run), 'requirements_sha256': digest(manifest),
             'run_receipt_sha256': digest(run / 'receipt.json'),
             'covered': sum(entry['linked'] for entry in entries), 'recorded_requirements': len(entries),
             'entries': entries, 'paper_ready': False,
+            **({'problem_item_problems': problem_issues} if schema == 2 else {}),
             'note': 'Links cover recorded requirements only. Review task completeness, units, check independence and claim strength; links do not certify scientific validity.'}
 
 
@@ -486,6 +615,8 @@ def main():
     init.add_argument('--phase', choices=['preparation','contest'], default='preparation')
     init.add_argument('--encoding', default='utf-8')
     init.add_argument('--case-root', type=Path, default=None)
+    init.add_argument('--schema', type=int, choices=[1, 2], default=2,
+                      help='New cases use schema 2 gates; select 1 for legacy behavior')
     run = commands.add_parser('run')
     run.add_argument('--case', type=Path, required=True)
     run.add_argument('--model', default='code/model.py')
@@ -505,7 +636,7 @@ def main():
     PROJECT = args.workspace.resolve()
     try:
         if args.action == 'init':
-            result = init_case(args.case_root or PROJECT / 'cases',args.name,args.problem,args.data,args.phase,args.encoding)
+            result = init_case(args.case_root or PROJECT / 'cases',args.name,args.problem,args.data,args.phase,args.encoding,args.schema)
         elif args.action == 'run':
             result = run_case(args.case,args.model,args.validator,args.timeout)
         elif args.action == 'evidence':

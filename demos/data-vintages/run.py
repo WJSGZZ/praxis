@@ -27,7 +27,7 @@ def _reproduce(output):
     intake = pipeline.init_case(output.parent, output.name, demo / 'data/problem.md',
                                 [demo / 'data' / n for n in
                                  ['queries.json', 'versions.json', 'outcomes.json', 'plan.json']],
-                                phase='preparation', encoding='utf-8')
+                                phase='preparation', encoding='utf-8', schema=1)
     case = Path(intake['case'])
     for name in ['model.py', 'validate.py']:
         shutil.copyfile(demo / name, case / 'code' / name)
