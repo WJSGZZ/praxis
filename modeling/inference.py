@@ -336,16 +336,18 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
         z, d = y, 0
         while d < max_d and adfuller(z)[1] > .05:
             z, d = np.diff(z), d + 1
-        for d in (d,):
-            for p in range(max_p + 1):
-                for q in range(max_q + 1):
+        for p in range(max_p + 1):
+            for q in range(max_q + 1):
+                # Stationary series can have a nonzero level, with or without
+                # a linear trend. Differenced series retain no added trend.
+                for trend in ('c', 'ct') if d == 0 else ('n',):
                     try:
                         seasonal = (1, 0, 0, seasonal_period) if seasonal_period else (0, 0, 0, 0)
-                        fit = ARIMA(y, order=(p, d, q), seasonal_order=seasonal, trend='t' if d == 0 else 'n').fit()
+                        fit = ARIMA(y, order=(p, d, q), seasonal_order=seasonal, trend=trend).fit()
                     except Exception:
                         continue
                     k = len(fit.params)
-                    aicc = fit.aic + 2 * k * (k + 1) / max(len(y) - k - 1, 1)
+                    aicc = fit.aic + 2 * k * (k + 1) / max(len(y) - d - k - 1, 1)
                     if best is None or aicc < best[0]:
                         best = (aicc, (p, d, q), fit)
         if best is None:

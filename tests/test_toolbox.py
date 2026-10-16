@@ -134,6 +134,19 @@ def test_arima_recovers_ar1_and_forecast_shape():
         y[t] = .7 * y[t - 1] + rng.normal()
     r = inference.arima_forecast(y + 50, 5, max_p=2, max_d=1, max_q=1)
     assert len(r['forecast']) == 5 and r['order'][1] == 0 and r['residuals_white']
+    # A nonzero mean must not be absorbed by a spurious near-unit AR root.
+    if r['order'] == [1, 0, 0]:
+        assert .3 < r['parameters']['ar.L1'] < .9
+    else:
+        assert all(abs(value - (y + 50).mean()) < 2 for value in r['forecast'])
+
+
+def test_arima_nonzero_white_noise_has_an_intercept_without_spurious_persistence():
+    y = np.random.default_rng(0).normal(50, 1, 120)
+    r = inference.arima_forecast(y, 3)
+    assert all(49 < value < 51 for value in r['forecast'])
+    assert 49 < r['parameters']['const'] < 51
+    assert r['parameters'].get('ar.L1', 0) <= .95
 
 
 def test_pca_and_cluster():
