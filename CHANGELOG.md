@@ -5,6 +5,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 ## 未发布 · Unreleased
 
+- 机制指导区分活动压力与服务对象存量，加入固定存量／充足供给的控制和耦合修复后的结论重算。不确定性指导核总体比例到组别风险及事件率的识别条件，使用相容域上的界与可达见证，并区别零设备的付费服务和不服务。工具、依赖与版本号保持。
+  Mechanistic guidance separates activity pressure from the stock receiving a service, with fixed-stock controls and recomputation of affected coupled results. Uncertainty guidance checks what pooled incidence identifies about group risks and event rates, uses bounds and attainable witnesses on the compatible domain, and distinguishes paid services with no new equipment from no service. Tools, dependencies and version number are unchanged.
+
 - 时序指导把数量中心、固定事件概率与预警代价分别评价，明确成本所决定的概率动作阈值、前缀事件转移基线和失败／回退分母；选型须按实际投影后的值评分，年度边际风险不冒称首次发生时间。工具接口与版本号保持。
   Forecasting guidance separates count centres, fixed-event probabilities and warning costs, with cost-based probability decisions, prefix transition baselines and explicit failure coverage. Selection scores executable transformed predictions; annual marginal risk does not identify a first-event date. Tool interfaces and version number are unchanged.
 
