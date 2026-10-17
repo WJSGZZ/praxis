@@ -63,9 +63,14 @@ def _analysis_graph(edges, nodes, directed, *, distances=False):
         raise ValueError('directed must be a boolean')
     g = nx.DiGraph() if directed else nx.Graph()
 
+    spellings = {}
+
     def node(value):
         if isinstance(value, bool) or not isinstance(value, (str, int)) or isinstance(value, str) and not value.strip():
             raise ValueError('Node identifiers must be nonempty strings or integers')
+        # Same rule as min_cost_flow: 1 and "1" would silently become two nodes.
+        if spellings.setdefault(str(value), type(value)) is not type(value):
+            raise ValueError('Ambiguous node labels: an integer and its string spelling cannot both be used')
         return value
 
     if nodes is not None:

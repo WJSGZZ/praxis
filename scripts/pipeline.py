@@ -21,7 +21,7 @@ BUNDLE = Path(__file__).resolve().parents[1]
 PROJECT = Path.cwd().resolve()
 sys.path.insert(0, str(BUNDLE))
 from scripts.audit_data import audit
-from modeling.schema_contracts import check_model_contract, unique_object_pairs
+from modeling.schema_contracts import check_model_contract, reasoned, unique_object_pairs
 import pandas as pd
 from pypdf import PdfReader
 
@@ -126,6 +126,9 @@ def init_case(case_root, name, problem, data=(), phase='preparation', encoding='
               'problem_visual_review_required': visual_review,
               'problem_text_extracted': bool(text.strip()), 'intake_complete': False,
               'human_verification': 'not recorded; automatic checks do not imply human approval'}
+    if schema == 2:
+        # Later edits to the extracted question must be declared (problem_text_corrections).
+        config['problem_extracted_sha256'] = digest(case / 'planning/problem-extracted.txt')
     save(case / 'case.json', config)
     # Unsupported or large files remain intact with an explicit audit deferral.
     for entry in inputs:
@@ -224,6 +227,18 @@ def clean_bundle_commit():
         return None
 
 
+def model_contract_problems(case, warnings=None):
+    """Return every schema-2 contract problem without executing anything; [] means it may run."""
+    contract_path = case / 'planning/model-contract.json'
+    if not contract_path.is_file():
+        return ['schema 2 requires planning/model-contract.json before running']
+    try:
+        contract = read_json(contract_path)
+    except (ValueError, UnicodeDecodeError) as exc:
+        return [f'planning/model-contract.json is not valid finite JSON: {exc}']
+    return check_model_contract(contract, warnings)
+
+
 def run_case(case, model='code/model.py', validator='code/validate.py', timeout=120):
     case = under_project(case)
     config = read_case_config(case)
@@ -234,12 +249,13 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
     model_path, validator_path = code_path(case, model), code_path(case, validator)
     schema = config.get('schema', 1)
     contract = None
+    contract_warnings = []
     if schema == 2:
         contract_path = case / 'planning/model-contract.json'
         if not contract_path.is_file():
             raise ValueError('schema 2 requires planning/model-contract.json before running')
         contract = read_json(contract_path)
-        problems = check_model_contract(contract)
+        problems = check_model_contract(contract, contract_warnings)
         if problems:
             raise ValueError('Model contract rejected before execution: ' + '; '.join(problems))
     code_hashes = source_snapshot(case)
@@ -264,7 +280,7 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
         declared = sum(p['source_level'] == 'declared' for p in parameters)
         receipt['model_contract_warnings'] = (
             [f'{declared}/{len(parameters)} parameters are declared scenarios (>70%); verify empirical relevance']
-            if parameters and declared / len(parameters) > 0.7 else [])
+            if parameters and declared / len(parameters) > 0.7 else []) + contract_warnings
     for prefix, root, snapshot in snapshots:
         for relative in snapshot:
             target = attempt / prefix / relative
@@ -363,6 +379,8 @@ def status(case):
               'paper_ready': False, 'human_verification': config['human_verification']}
     for path, receipt in runs:
         stale = list(changes)
+        if receipt.get('schema') == 2 and config.get('schema') != 2:
+            stale.append('case schema changed from the run receipt schema 2; schema-2 gates no longer apply')
         # Compare the run's immutable intake with the currently registered version.
         if not receipt.get('inputs'):
             stale.append('run input binding missing; validity unknown')
@@ -423,10 +441,20 @@ CHECK_METHODS = {'analytic', 'enumeration', 'bound', 'conservation', 'hand_calc'
                  'naive_baseline', 'replay', 'external_value'}
 
 
+BALANCE_METHODS = ('conservation', 'analytic', 'bound')
+
+
 def check_method_problems(checks):
     return [f'check {check.get("name")!r}: method must be one of {sorted(CHECK_METHODS)}'
             for check in checks if not isinstance(check.get('method'), str)
             or check['method'] not in CHECK_METHODS]
+
+
+def balance_method_problems(checks):
+    """A `balance:` check must close a balance, not merely replay or spot-check it."""
+    return [f'check {check["name"]!r}: balance checks must use method {", ".join(BALANCE_METHODS)}'
+            for check in checks if isinstance(check, dict) and isinstance(check.get('name'), str)
+            and check['name'].startswith('balance:') and check.get('method') not in BALANCE_METHODS]
 
 
 def claim_problems(requirements, claims, lookup, results, schema=1):
@@ -493,6 +521,51 @@ def claim_problems(requirements, claims, lookup, results, schema=1):
     return problems
 
 
+FORECAST_WORDS = re.compile(r'forecast|predict|projection|future|预测|未来|趋势', re.IGNORECASE)
+REQUIREMENT_KINDS = ('answer', 'forecast', 'decision', 'proof')
+
+
+def _collapse(text):
+    return ' '.join(text.split())
+
+
+def quote_variants(text):
+    """Whitespace-collapsed text with a line-break hyphen ("reser- voir") kept, joined, or kept as "-"."""
+    collapsed = _collapse(text)
+    return [collapsed] + [re.sub(r'(?<=\w)- (?=\w)', joiner, collapsed) for joiner in ('', '-')]
+
+
+def quote_found(quote, original):
+    return any(q in o for q, o in zip(quote_variants(quote), quote_variants(original)))
+
+
+def quote_long_enough(quote):
+    """At least four non-CJK words, or at least fifteen letters/digits (each CJK character counts as one)."""
+    words = re.findall(r'[^\W\u3400-\u9fff]+', quote)
+    return len(words) >= 4 or len(re.findall(r'\w', quote)) >= 15
+
+
+def problem_text_problems(case, definition, original):
+    """Schema-2 cases record the extracted question hash at intake; later edits must be declared."""
+    recorded = read_case_config(case).get('problem_extracted_sha256')
+    path = case / 'planning/problem-extracted.txt'
+    if recorded is None or (path.is_file() and digest(path) == recorded):
+        return []
+    corrections = definition.get('problem_text_corrections')
+    if not isinstance(corrections, list) or not corrections:
+        return ['planning/problem-extracted.txt differs from its intake hash; list each change in '
+                'requirements.json problem_text_corrections [{before, after, reason}]']
+    problems = []
+    for index, row in enumerate(corrections):
+        if (not isinstance(row, dict) or not isinstance(row.get('before'), str)
+                or not isinstance(row.get('after'), str) or not row['after'].strip()
+                or not reasoned(row.get('reason'))):
+            problems.append(f'problem_text_corrections[{index}]: needs before text, nonempty after text and a reason')
+        elif not quote_found(row['after'], original):
+            problems.append(f'problem_text_corrections[{index}]: after text is not in problem-extracted.txt')
+    return problems
+
+
 def problem_item_problems(case, definition):
     """Validate schema-2 original-question quotations and requirement mappings."""
     problems = []
@@ -500,8 +573,9 @@ def problem_item_problems(case, definition):
     if not isinstance(items, list) or not items:
         return ['Record nonempty problem_items with original problem quotations']
     problem_path = case / 'planning/problem-extracted.txt'
-    original = ' '.join(problem_path.read_text(encoding='utf-8').split()) if problem_path.is_file() else ''
-    seen, covered = set(), set()
+    original = problem_path.read_text(encoding='utf-8') if problem_path.is_file() else ''
+    problems += problem_text_problems(case, definition, original)
+    seen, covered, quotes, quote_owner = set(), set(), {}, {}
     for item in items:
         if not isinstance(item, dict):
             problems.append('Each problem_item must be an object')
@@ -512,24 +586,45 @@ def problem_item_problems(case, definition):
             continue
         seen.add(item_id)
         quote, page = item.get('quote'), item.get('page')
-        if not isinstance(quote, str) or not quote.strip() or ' '.join(quote.split()) not in original:
+        if not isinstance(quote, str) or not quote.strip() or not quote_found(quote, original):
             problems.append(f'problem_item {item_id}: quote not found verbatim in problem-extracted.txt')
+        if isinstance(quote, str) and quote.strip():
+            quotes[item_id] = quote
+            if not quote_long_enough(quote):
+                problems.append(f'problem_item {item_id}: quote too short; quote at least four words or '
+                                'fifteen characters of the original sentence')
+            identity = quote_variants(quote)[1].casefold()
+            if identity in quote_owner:
+                problems.append(f'problem_item {item_id}: same quote as {quote_owner[identity]}; '
+                                'each item must quote its own original sentence')
+            quote_owner.setdefault(identity, item_id)
         if type(page) is not int or page < 1:
             problems.append(f'problem_item {item_id}: page must be a positive integer')
         if any(isinstance(item.get(key), str) and item[key].strip()
                for key in ('not_addressed_reason', 'conditional_answer')):
             covered.add(item_id)
     for requirement in definition.get('requirements', []):
+        requirement_id = requirement.get('id')
         refs = requirement.get('problem_item_ids')
         if not isinstance(refs, list) or not refs or any(not isinstance(ref, str) for ref in refs):
-            problems.append(f'requirement {requirement.get("id")}: needs nonempty problem_item_ids')
+            problems.append(f'requirement {requirement_id}: needs nonempty problem_item_ids')
+            refs = []
         else:
             unknown = set(refs) - seen
             if unknown:
-                problems.append(f'requirement {requirement.get("id")}: unknown problem_item_ids {sorted(unknown)}')
+                problems.append(f'requirement {requirement_id}: unknown problem_item_ids {sorted(unknown)}')
             covered.update(refs)
-        if requirement.get('kind', 'answer') not in ('answer', 'forecast', 'decision', 'proof'):
-            problems.append(f'requirement {requirement.get("id")}: unsupported kind')
+        kind = requirement.get('kind')
+        if 'kind' not in requirement:
+            problems.append(f'requirement {requirement_id}: schema 2 requires kind '
+                            f'({"|".join(REQUIREMENT_KINDS)})')
+        elif kind not in REQUIREMENT_KINDS:
+            problems.append(f'requirement {requirement_id}: unsupported kind')
+        elif kind != 'forecast':
+            worded = [ref for ref in refs if ref in quotes and FORECAST_WORDS.search(quotes[ref])]
+            if worded and not reasoned(requirement.get('kind_justification')):
+                problems.append(f'requirement {requirement_id}: linked problem items {worded} use forecast wording '
+                                f'but kind is {kind}; use kind forecast or give kind_justification')
     for item_id in sorted(seen - covered):
         problems.append(f'problem_item {item_id}: no requirement mapping or explicit conditional/unaddressed reason')
     return problems
@@ -591,7 +686,7 @@ def evidence_index(case):
     claim_issues = claim_problems(tasks, claims, lookup, results, schema) if claims or schema == 2 else []
     problem_issues = problem_item_problems(case, definition) if schema == 2 else []
     if schema == 2:
-        problem_issues += check_method_problems(checks)
+        problem_issues += check_method_problems(checks) + balance_method_problems(checks)
     complete = all(entry['linked'] for entry in entries) and not claim_issues and not problem_issues
     return {'status': 'evidence-linked' if complete else 'evidence-incomplete', 'claim_problems': claim_issues, 'claims_recorded': len(claims),
             'run': str(run), 'requirements_sha256': digest(manifest),

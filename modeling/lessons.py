@@ -18,6 +18,7 @@ SOURCES = ('legacy_unspecified', 'external_proposal', 'task_observation', 'mathe
 # Keep this list small: logical qualifiers and domain abbreviations may carry meaning.
 ENGLISH_FUNCTION_WORDS = frozenset({'an', 'and', 'of', 'the'})
 SEARCH_FIELDS = ('problem', 'structure', 'tags', 'checklist', 'principle')
+MAX_TAGS = 8
 
 
 def _validate_new_record(record: dict, existing: list[dict]) -> None:
@@ -31,7 +32,7 @@ def _validate_new_record(record: dict, existing: list[dict]) -> None:
     if not isinstance(principle, str) or not principle.strip() or len(principle) > 300:
         raise ValueError('principle must be nonempty text of at most 300 characters')
     tags = record.get('tags', [])
-    if not isinstance(tags, list) or len(tags) > 8 or any(not isinstance(t, str) or not t.strip() for t in tags):
+    if not isinstance(tags, list) or len(tags) > MAX_TAGS or any(not isinstance(t, str) or not t.strip() for t in tags):
         raise ValueError('tags must contain at most 8 nonempty strings')
     checklist = record.get('checklist')
     if not isinstance(checklist, list) or not 1 <= len(checklist) <= 3:
@@ -203,11 +204,15 @@ def search_lessons(path: Path, query: str = '', *, tags: list[str] | None = None
     if type(limit) is not int or limit < 0: raise ValueError('limit must be a nonnegative integer')
     if type(compact) is not bool: raise ValueError('compact must be a boolean')
     for rec in active(path):
-        text = ' '.join(str(rec.get(k, '')) for k in SEARCH_FIELDS).lower()
+        # New records hold at most MAX_TAGS tags; longer legacy lists count only their first MAX_TAGS.
+        capped = list(rec.get('tags', []))[:MAX_TAGS]
+        text = ' '.join(str(capped if k == 'tags' else rec.get(k, '')) for k in SEARCH_FIELDS).lower()
         token_sequence = _token_sequence(text)
         have = set(token_sequence)
-        rec_tags = {t.lower() for t in rec.get('tags', [])}
-        tag_hits = len(want & rec_tags) + sum(1 for t in rec_tags if t in lowered)
+        rec_tags = {t.lower() for t in capped}
+        # Inferred tag hits need the whole tag as a word: tag 'ode' does not match 'model'.
+        tag_hits = len(want & rec_tags) + sum(1 for t in rec_tags
+                                              if re.search(rf'(?<![a-z0-9_]){re.escape(t)}(?![a-z0-9_])', lowered))
         score = (len(words & have) + 3 * tag_hits) / math.sqrt(max(1, len(token_sequence)))
         if score:
             ranked.append((score, LEVEL.index(rec.get('evidence', 'observed once')), rec))

@@ -17,6 +17,7 @@ BUNDLE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BUNDLE))
 from scripts import pipeline
 from modeling import lessons
+from modeling.schema_contracts import symbol_key
 from pypdf import PdfReader
 
 BEGIN = '<!-- PRAXIS WORKFLOW STATE BEGIN -->'
@@ -29,6 +30,8 @@ QUERY_FUNCTION_WORDS = frozenset(('a an the and or but of to in on at by for fro
                                 'may might must do does did have has had not no into about than then there '
                                 'such also each any all more most some using use used given provide develop '
                                 'consider determine discuss explain problem question task').split())
+# Contest page furniture (URLs, headers, footers) is not part of the modeling question.
+QUERY_BOILERPLATE_WORDS = frozenset('comap www com page summary sheet team report mcm icm problem contest'.split())
 QUERY_CHINESE_FUNCTION_WORDS = frozenset(('我们', '你们', '他们', '以及', '一个', '这个', '这些', '进行',
                                         '需要', '根据', '请你', '对于', '是否', '如何', '问题', '要求'))
 ATTACK_TYPES = frozenset({'units', 'limit_case', 'sign_flip', 'small_example', 'independent_recompute', 'magnitude'})
@@ -108,6 +111,8 @@ def validate_state(state):
         raise ValueError('Invalid workflow history/retrieval')
     if len(state['attempt_history']) != state['attempts']:
         raise ValueError('Workflow attempt history does not match counter')
+    if 'case_schema' in state and (type(state['case_schema']) is not int or state['case_schema'] not in (1, 2)):
+        raise ValueError('Invalid recorded case schema')
     for key in ['initial_source', 'initial_dependencies']:
         if not isinstance(state.get(key), dict):
             raise ValueError('Missing initial source/dependency identity')
@@ -127,6 +132,16 @@ def read_state(case):
     state = json.loads(body[8:-4], parse_constant=pipeline.reject_nonfinite,
                        parse_float=pipeline.finite_json_float, object_pairs_hook=pipeline.unique_object_pairs)
     return validate_state(state), before, after
+
+
+def read_checked_state(case):
+    """Read state and refuse a case whose schema changed since workflow init (states before C6 lack the field)."""
+    state, before, after = read_state(case)
+    current = pipeline.read_case_config(case).get('schema', 1)
+    if 'case_schema' in state and state['case_schema'] != current:
+        raise ValueError(f'case schema changed from {state["case_schema"]} at workflow init to {current}; '
+                         'restore case.json or start a new case')
+    return state, before, after
 
 
 def write_state(case, state, *, initial=False):
@@ -156,8 +171,10 @@ def problem_query(case):
     a dependency-free approximation, not Chinese segmentation or POS tagging.
     """
     text = safe_path('planning/problem-extracted.txt', case).read_text(encoding='utf-8').lower()
+    text = re.sub(r'(?:https?://|www\.)\S+|\b[a-z0-9.-]+\.(?:com|org|net|edu)\b\S*', ' ', text)
+    text = re.sub(r'(?<=[a-z])-\s+(?=[a-z])', '', text)  # rejoin line-break hyphenation: reser-\nvoir
     tokens = [word for word in re.findall(r'[a-z][a-z0-9_]+', text)
-              if word not in QUERY_FUNCTION_WORDS]
+              if word not in QUERY_FUNCTION_WORDS and word not in QUERY_BOILERPLATE_WORDS]
     for run in re.findall(r'[\u4e00-\u9fff]+', text):
         tokens.extend(run[i:i + 2] for i in range(len(run) - 1)
                       if run[i:i + 2] not in QUERY_CHINESE_FUNCTION_WORDS)
@@ -224,7 +241,8 @@ def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attem
     if progress.exists() and (BEGIN in progress.read_text(encoding='utf-8') or END in progress.read_text(encoding='utf-8')):
         raise ValueError('Refuse to overwrite an existing or damaged workflow block')
     start = now()
-    derived_query = pipeline.read_case_config(case).get('schema', 1) == 2 and (
+    case_schema = pipeline.read_case_config(case).get('schema', 1)
+    derived_query = case_schema == 2 and (
         not query.strip() or re.search(r'\bgeneric\b|\bprior\s+lessons\b', query, re.IGNORECASE))
     if derived_query:
         query = problem_query(case)
@@ -246,7 +264,8 @@ def init(case, goal, query='', lessons_path=None, budget_seconds=3600, max_attem
              'lesson_retrieval': {'path': str(knowledge), 'query': query, 'retrieved_utc': start.isoformat(),
                                   'index_sha256': pipeline.digest(knowledge) if knowledge.is_file() else None,
                                   'hits': [{'id': hit['id'], 'sha256': canonical_hash(hit)} for hit in retrieved]},
-             'accepted': None, 'report': None, 'metering': {'model': 'unknown', 'tokens': 'not measured'}, 'note': NOTE}
+             'accepted': None, 'report': None, 'metering': {'model': 'unknown', 'tokens': 'not measured'}, 'note': NOTE,
+             'case_schema': case_schema}
     if derived_query:
         state['lesson_retrieval']['query_source'] = 'problem-extracted-top15-content-terms'
         state['lesson_retrieval']['query_tokenization'] = 'English function-word filter; Chinese character-bigram heuristic'
@@ -329,6 +348,11 @@ def check_review_gates(case, review):
     if (not isinstance(mechanism, dict) or type(mechanism.get('symbols_checked')) is not int
             or mechanism['symbols_checked'] < 0 or not isinstance(mechanism.get('double_meaning_found'), list)):
         raise ValueError('mechanism_audit needs nonnegative integer symbols_checked and double_meaning_found array')
+    contract = pipeline.read_json(safe_path('planning/model-contract.json', case))
+    declared = {symbol_key(row.get('symbol')) for row in contract.get('symbols', [])
+                if isinstance(row, dict) and isinstance(row.get('symbol'), str)}
+    if mechanism['symbols_checked'] < max(1, len(declared)):
+        raise ValueError(f'mechanism_audit symbols_checked must cover all {len(declared)} declared contract symbols')
     if review.get('verdict') == 'pass' and mechanism['double_meaning_found']:
         raise ValueError('Unresolved double meanings prevent a pass verdict')
 
@@ -367,7 +391,7 @@ def report_identity(case, path, accepted):
 
 def next(case):
     case = case_path(case)
-    state, _, _ = read_state(case)
+    state, _, _ = read_checked_state(case)
     remaining = (instant(state['deadline_utc']) - now()).total_seconds()
     result = {'case': str(case), 'remaining_seconds': max(0, remaining), 'attempts': state['attempts'], 'note': NOTE}
     if remaining <= 0:
@@ -377,6 +401,11 @@ def next(case):
         pipeline.code_path(case, 'code/validate.py')
     except ValueError:
         return {**result, 'action': 'prepare'}
+    if pipeline.read_case_config(case).get('schema', 1) == 2 and state['attempts'] < state['max_attempts']:
+        problems = pipeline.model_contract_problems(case)
+        if problems:
+            return {**result, 'action': 'prepare', 'reason': 'model contract rejected; fix it before running',
+                    'contract_problems': problems}
     status, latest = latest_evidence(case)
     result['expected_source_sha256'] = canonical_hash(pipeline.source_snapshot(case))
     if unreceipted_attempt(state, latest):
@@ -407,7 +436,7 @@ def next(case):
 
 def run(case, reviewed_source_sha256):
     case = case_path(case)
-    state, _, _ = read_state(case)
+    state, _, _ = read_checked_state(case)
     expected = canonical_hash(pipeline.source_snapshot(case))
     if reviewed_source_sha256 != expected:
         raise ValueError('reviewed_source_sha256 must match the current canonical source snapshot')
@@ -423,6 +452,12 @@ def run(case, reviewed_source_sha256):
         raise ValueError('Intake incomplete or raw inputs changed')
     if config.get('schema', 1) == 2:
         check_lesson_applications(case, state)
+        # A rejected contract never starts the model, so it must not consume an attempt.
+        problems = pipeline.model_contract_problems(case)
+        if problems:
+            if problems == ['schema 2 requires planning/model-contract.json before running']:
+                raise ValueError(problems[0])
+            raise ValueError('Model contract rejected before execution: ' + '; '.join(problems))
     attempt = {'started_utc': now().isoformat(), 'reviewed_source_sha256': expected, 'status': 'started'}
     state['attempts'] += 1
     state['attempt_history'].append(attempt)
@@ -443,7 +478,7 @@ def run(case, reviewed_source_sha256):
 
 def accept(case, review_path):
     case = case_path(case)
-    state, _, _ = read_state(case)
+    state, _, _ = read_checked_state(case)
     _, latest = latest_evidence(case)
     if unreceipted_attempt(state, latest) or not latest or not latest['usable_automatic_evidence'] or not linked(case):
         raise ValueError('Accept requires current latest valid evidence-linked run')
@@ -456,7 +491,7 @@ def accept(case, review_path):
 
 def report(case, report_path):
     case = case_path(case)
-    state, _, _ = read_state(case)
+    state, _, _ = read_checked_state(case)
     _, latest = latest_evidence(case)
     if unreceipted_attempt(state, latest) or not accepted_valid(case, state, latest) or not linked(case):
         raise ValueError('Report requires a current accepted review and evidence-linked run')

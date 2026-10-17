@@ -10,7 +10,7 @@ from modeling.contracts import diagnostic
 
 def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence[float], y: Sequence[float], theta0: Sequence[float], *,
               bounds: Sequence[Sequence[float]] | None = None, names: Sequence[str] | None = None, holdout: int = 0, alpha: float = 0.05,
-              multistart: int = 0, holdout_scheme: str = 'tail', seed: int = 2027) -> dict:
+              multistart: int = 0, holdout_scheme: str = 'tail', seed: int = 2027, start_sampling: str = 'uniform') -> dict:
     """Least-squares calibration of model(theta, x) to (x, y), with an identifiability and hold-out report.
 
     Reported: estimates with approximate confidence intervals (local, from the Jacobian, valid if the model is right and the noise
@@ -18,7 +18,10 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
     parameters), the residual lag-1 autocorrelation (structure left in the residuals), the rms error, and, if `holdout` > 0, the rms
     error on the last `holdout` points that were kept out of the fit. Undefined diagnostics are null with explicit reasons;
     rank-deficient or failed fits do not report individual parameter intervals. Flags list each warning.
-    multistart=0 retains one theta0 fit; a value >=8 adds that many uniform random starts in a finite box.
+    multistart=0 retains one theta0 fit; a value >=8 adds that many random starts in a finite box, uniform by default or
+    start_sampling='log_uniform' (every lower bound > 0) for parameters spanning orders of magnitude. A random start whose model
+    call raises an Exception is recorded as failed and stays in the denominator; a theta0 failure still raises. Fits share the
+    best basin when cost agrees and every coordinate agrees within 1e-4 of its own box width (log width for log-uniform starts).
     The best converged training fit is selected before any holdout response is evaluated. Random holdout uses the
     seeded split; it is appropriate for exchangeable observations, not automatically for ordered/time data.
     A best-basin fraction describes these sampled starts, never a global-optimality probability."""
@@ -47,8 +50,13 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
     lo, hi = box.T
     if (theta0 < lo).any() or (theta0 > hi).any():
         raise ValueError('theta0 must lie within the parameter bounds')
+    if start_sampling not in ('uniform', 'log_uniform'):
+        raise ValueError("start_sampling must be 'uniform' or 'log_uniform'")
     if multistart and not np.isfinite(box).all():
         raise ValueError('multistart requires finite parameter bounds for uniform random starts')
+    log_starts = bool(multistart) and start_sampling == 'log_uniform'
+    if log_starts and not (box[:, 0] > 0).all():
+        raise ValueError('log_uniform start sampling requires every lower bound to be positive')
     rng_split, rng_starts = [np.random.default_rng(s) for s in np.random.SeedSequence(int(seed)).spawn(2)]
     hold_indices = np.arange(n_fit, len(x)) if holdout_scheme == 'tail' else np.sort(rng_split.choice(len(x), holdout, replace=False))
     fit_indices = np.setdiff1d(np.arange(len(x)), hold_indices)
@@ -63,7 +71,10 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
             raise ValueError('model residuals exceed finite numerical range')
         return result
 
-    starts = [theta0] + [rng_starts.uniform(lo, hi) for _ in range(multistart)]
+    if log_starts:
+        starts = [theta0] + [np.clip(np.exp(rng_starts.uniform(np.log(lo), np.log(hi))), lo, hi) for _ in range(multistart)]
+    else:
+        starts = [theta0] + [rng_starts.uniform(lo, hi) for _ in range(multistart)]
     attempts, fits = [], []
     for index, start in enumerate(starts):
         record = dict(start=index, kind='theta0' if index == 0 else 'random', theta_initial=start.tolist())
@@ -75,10 +86,10 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
             record.update(converged=bool(candidate.success), status=int(candidate.status),
                           cost=float(candidate.cost), theta=candidate.x.tolist(), message=str(candidate.message))
             fits.append((index, candidate))
-        except ValueError as exc:
+        except Exception as exc:  # a user model may fail anywhere in a random box; never BaseException
             if index == 0:
                 raise
-            record.update(converged=False, error=str(exc))
+            record.update(converged=False, error=str(exc), error_type=type(exc).__name__)
     accepted = [(index, candidate) for index, candidate in fits if candidate.success]
     best_index, fit = min(accepted or fits, key=lambda pair: pair[1].cost)
     J = fit.jac
@@ -140,16 +151,35 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
     if multistart:
         # A basin needs agreement in parameter location as well as objective.
         # Equivalent but distinct symmetric minimizers remain distinct basins.
-        same_basin = [i for i, candidate in accepted
-                      if abs(candidate.cost-fit.cost) <= 1e-6*(1+abs(fit.cost))
-                      and np.linalg.norm(candidate.x-fit.x) <= 1e-4*(1+np.linalg.norm(fit.x))]
-        random_hits = sum(index != 0 for index in same_basin)
-        out['multistart'] = dict(random_starts=int(multistart), total_starts=len(starts), seed=int(seed),
+        # Compare each coordinate on its own scale (box width, in log units
+        # for log-uniform starts) so a large parameter cannot mask a small one.
+        if log_starts:
+            coordinates, width = np.log, np.log(hi) - np.log(lo)
+        else:
+            coordinates, width = (lambda value: value), hi - lo
+        with np.errstate(over='ignore'):
+            tolerance = 1e-4 * width
+        fallback = ~np.isfinite(tolerance)
+        tolerance[fallback] = 1e-4 * (1 + np.abs(coordinates(fit.x)[fallback]))
+
+        def same_basin(candidate):
+            return bool(abs(candidate.cost-fit.cost) <= 1e-6*(1+abs(fit.cost))
+                        and np.all(np.abs(coordinates(candidate.x) - coordinates(fit.x)) <= tolerance))
+        basin = {index: same_basin(candidate) for index, candidate in accepted}
+        for index, record in enumerate(attempts):
+            if record.get('converged'):
+                record['best_basin'] = basin[index]
+        random_hits = sum(index != 0 and hit for index, hit in basin.items())
+        out['multistart'] = dict(random_starts=int(multistart), total_starts=len(starts), seed=int(seed), start_sampling=start_sampling,
                                  best_start=best_index, best_cost=float(fit.cost), attempts=attempts,
                                  best_basin_random_hits=random_hits, best_basin_fraction=random_hits/int(multistart),
-                                 converged_starts=len(accepted),
-                                 basin_definition='Converged fits within 1e-6*(1+abs(best_cost)) in cost and 1e-4*(1+norm(best_theta)) in Euclidean parameter distance.',
-                                 note='Best-basin fraction uses all random starts as denominator, including failed starts; theta0 is reported separately. Uniform finite-box starts and local least squares do not certify a global optimum.')
+                                 converged_starts=len(accepted), failed_starts=sum('error' in record for record in attempts),
+                                 basin_tolerance=tolerance.tolist(),
+                                 basin_definition=('Converged fits within 1e-6*(1+abs(best_cost)) in cost and, per coordinate, within 1e-4 of that parameter\'s '
+                                                   + ('log box width, |log theta_i - log best_i| <= 1e-4*(log hi_i - log lo_i).' if log_starts else
+                                                      'box width, |theta_i - best_i| <= 1e-4*(hi_i - lo_i).')
+                                                   + ' A coordinate whose width overflows uses 1e-4*(1+abs(best_i)) instead. Distinct minimizers closer than this resolution are merged.'),
+                                 note='Best-basin fraction uses all random starts as denominator, including failed starts; theta0 is reported separately. Finite-box random starts and local least squares do not certify a global optimum.')
     if holdout:
         pred = np.asarray(model(fit.x, x[hold_indices].copy()), float)
         if pred.shape != y[hold_indices].shape or not np.isfinite(pred).all():

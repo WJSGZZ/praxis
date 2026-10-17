@@ -7,6 +7,7 @@ and ``items``. Inputs must be finite JSON values, including unconstrained fields
 Shape, units and mathematical admissibility still belong to the tool itself.
 """
 import math
+import re
 
 
 class ContractError(ValueError):
@@ -204,8 +205,9 @@ MODEL_CONTRACT_V2 = _record({
         "same_object_justification": _TEXT,
     }, ["symbol", "unit", "object", "uses"])},
     "parameters": {"type": "array", "items": _record({
-        "symbol": _TEXT, "value": _NUMBER, "unit": _TEXT,
-        "source_level": {"enum": ["measured", "literature", "fitted", "declared"]},
+        # null is allowed only together with source_level "unknown" (checked below).
+        "symbol": _TEXT, "value": {"type": ["number", "null"]}, "unit": _TEXT,
+        "source_level": {"enum": ["measured", "literature", "fitted", "declared", "unknown"]},
         "source": _TEXT, "real_world_quantity": {"type": "boolean"},
         "reference_magnitude": _REFERENCE_MAGNITUDE, "magnitude_justification": _TEXT,
     }, ["symbol", "value", "unit", "source_level", "source", "real_world_quantity"])},
@@ -232,30 +234,98 @@ MODEL_CONTRACT_V2 = _record({
     "information_time": _TEXT, "spatial": {"type": "boolean"},
 })
 
+DEFAULT_RATIO_OK = (0.1, 10)  # experimental parameter, see references/modeling-gate.md
 
-def check_model_contract(contract) -> list[str]:
-    """Check a schema-2 model's declarations, returning problems rather than a verdict.
 
-    Balance checks are execution evidence and are checked by ``run_case`` after
-    validation. This function only audits the authored contract itself.
+def _collect(value, schema, path, problems):
+    """Like ``_validate`` but records every structural problem instead of stopping at the first."""
+    if schema is True:
+        return
+    if schema is False:
+        problems.append(f"{path}: additional value is prohibited")
+        return
+    kinds = schema.get("type")
+    if kinds is not None:
+        kinds = kinds if isinstance(kinds, list) else [kinds]
+        if not any(_is_type(value, kind) for kind in kinds):
+            problems.append(f"{path}: expected {kinds}, got {type(value).__name__}")
+            return
+    if "enum" in schema and not any(_equal(value, choice) for choice in schema["enum"]):
+        problems.append(f"{path}: value outside enum")
+    if _number(value):
+        if "minimum" in schema and value < schema["minimum"]:
+            problems.append(f"{path}: value below minimum")
+        if "maximum" in schema and value > schema["maximum"]:
+            problems.append(f"{path}: value above maximum")
+    if isinstance(value, dict):
+        missing = set(schema.get("required", [])) - set(value)
+        if missing:
+            problems.append(f"{path}: missing required fields {sorted(missing)}")
+        properties = schema.get("properties", {})
+        additional = schema.get("additionalProperties", True)
+        for name, child in value.items():
+            _collect(child, properties.get(name, additional), f"{path}.{name}", problems)
+    if isinstance(value, list):
+        if len(value) < schema.get("minItems", 0) or len(value) > schema.get("maxItems", math.inf):
+            problems.append(f"{path}: array length outside bounds")
+        prefix = schema.get("prefixItems", [])
+        for index, child in enumerate(value):
+            item_schema = prefix[index] if index < len(prefix) else schema.get("items", True)
+            _collect(child, item_schema, f"{path}[{index}]", problems)
+
+
+def symbol_key(symbol):
+    """Compare symbol spellings without spaces, braces or backslashes: H_z == H_{z} == \\H_{ z }."""
+    return re.sub(r"[\s{}\\]", "", symbol) if isinstance(symbol, str) else None
+
+
+def reasoned(text):
+    """A justification must contain at least three letters (any script, including CJK)."""
+    return isinstance(text, str) and len(re.findall(r"[^\W\d_]", text)) >= 3
+
+
+def check_model_contract(contract, warnings=None) -> list[str]:
+    """Check a schema-2 model's declarations, returning every problem found rather than a verdict.
+
+    Structural problems do not stop the cross-field checks: rows or fields with a
+    wrong type are skipped there, other rows are still audited. Non-blocking
+    findings (explicitly unknown parameter values) are appended to ``warnings``
+    when a list is supplied. Balance checks are execution evidence and are checked
+    by ``run_case`` after validation.
     """
+    warnings = [] if warnings is None else warnings
     try:
-        validate(contract, MODEL_CONTRACT_V2, "model-contract")
+        check_schema(MODEL_CONTRACT_V2)
+        _json_value(contract, "model-contract")
     except (ContractError, ValueError) as exc:
         return [str(exc)]
     problems = []
+    _collect(contract, MODEL_CONTRACT_V2, "model-contract", problems)
+    if not isinstance(contract, dict):
+        return problems
+
+    def rows(group):
+        value = contract.get(group)
+        return [row for row in value if isinstance(row, dict)] if isinstance(value, list) else []
 
     def text(value, path):
-        if not value.strip():
+        if isinstance(value, str) and not value.strip():
             problems.append(f"{path}: expected nonempty text")
 
-    for group, key in (("symbols", "symbol"), ("parameters", "symbol"),
-                       ("mechanisms", "id"), ("conserved_quantities", "name")):
+    symbols = rows("symbols")
+    if isinstance(contract.get("symbols"), list) and not contract["symbols"]:
+        problems.append("model-contract.symbols: declare at least one symbol with its physical object and uses")
+    declared = {symbol_key(row.get("symbol")) for row in symbols if isinstance(row.get("symbol"), str)}
+
+    for group, key, normalise in (("symbols", "symbol", symbol_key), ("parameters", "symbol", symbol_key),
+                                  ("mechanisms", "id", str.strip), ("conserved_quantities", "name", str.strip)):
         seen = set()
-        for row in contract[group]:
-            identity = row[key].strip()
+        for row in rows(group):
+            if not isinstance(row.get(key), str):
+                continue
+            identity = normalise(row[key])
             if identity in seen:
-                problems.append(f"{group}: duplicate {key} {identity!r}; merge all uses in one declaration")
+                problems.append(f"{group}: duplicate {key} {row[key]!r}; merge all uses in one declaration")
             seen.add(identity)
 
     for group, fields in (
@@ -265,43 +335,86 @@ def check_model_contract(contract) -> list[str]:
             ("conserved_quantities", ("name", "check_name")),
             ("logical_claims", ("claim", "proof_ref")),
             ("limiting_cases", ("case", "expected"))):
-        for index, row in enumerate(contract[group]):
+        for index, row in enumerate(rows(group)):
             for field in fields:
-                text(row[field], f"{group}[{index}].{field}")
-    for row in contract["symbols"]:
-        for use in row["uses"]:
-            text(use["equation"], f"symbol {row['symbol']} use equation")
-            text(use["object"], f"symbol {row['symbol']} use object")
-        objects = {use["object"].strip() for use in row["uses"]}
-        if len(objects) > 1 and not row.get("same_object_justification", "").strip():
-            problems.append(f"symbol {row['symbol']}: different objects across uses {row['uses']}; "
-                            "supply same_object_justification")
-    for row in contract["parameters"]:
+                text(row.get(field), f"{group}[{index}].{field}")
+    for row in symbols:
+        name = row.get("symbol")
+        uses = [use for use in row.get("uses", []) if isinstance(use, dict)] if isinstance(row.get("uses"), list) else []
+        for use in uses:
+            text(use.get("equation"), f"symbol {name} use equation")
+            text(use.get("object"), f"symbol {name} use object")
+        objects = {value.strip() for value in [row.get("object")] + [use.get("object") for use in uses]
+                   if isinstance(value, str) and value.strip()}
+        if len(objects) > 1 and not reasoned(row.get("same_object_justification")):
+            problems.append(f"symbol {name}: different objects across declaration and uses "
+                            f"(object {row.get('object')!r}; uses {uses}); supply same_object_justification "
+                            "(at least three letters)")
+    for index, row in enumerate(rows("mechanisms")):
+        effect = row.get("effect_variable")
+        if isinstance(effect, str) and effect.strip() and symbol_key(effect) not in declared:
+            problems.append(f"mechanisms[{index}].effect_variable {effect!r} is not a declared symbol")
+    for row in rows("parameters"):
+        name = row.get("symbol")
+        if isinstance(name, str) and name.strip() and symbol_key(name) not in declared:
+            problems.append(f"parameter {name}: symbol is not declared in symbols")
+        value, level = row.get("value"), row.get("source_level")
         reference = row.get("reference_magnitude")
-        if row["real_world_quantity"] and reference is None:
-            problems.append(f"parameter {row['symbol']}: real-world quantity needs reference_magnitude")
-        if reference is None:
+        if value is None and "value" in row:
+            if level != "unknown":
+                problems.append(f"parameter {name}: value null requires source_level unknown")
+                continue
+            warnings.append(f"parameter {name}: value explicitly unknown; downstream results depend on an unmeasured input")
+            if isinstance(reference, dict):
+                warnings.append(f"parameter {name}: value unknown, magnitude check skipped")
+            continue
+        if level == "unknown":
+            problems.append(f"parameter {name}: source_level unknown requires value null")
+        if row.get("real_world_quantity") is True and reference is None:
+            problems.append(f"parameter {name}: real-world quantity needs reference_magnitude")
+        if not isinstance(reference, dict) or not _number(value):
             continue
         for field in ("unit", "source"):
-            text(reference[field], f"parameter {row['symbol']} reference_magnitude.{field}")
-        if reference["unit"].strip() != row["unit"].strip():
-            problems.append(f"parameter {row['symbol']}: reference_magnitude unit must match parameter unit")
-        low, high = reference.get("ratio_ok", [0.1, 10])
-        if not 0 <= low <= high:
-            problems.append(f"parameter {row['symbol']}: ratio_ok must be ordered nonnegative bounds")
-        elif reference["value"] == 0:
-            problems.append(f"parameter {row['symbol']}: reference_magnitude.value must be nonzero")
-        elif not low <= row["value"] / reference["value"] <= high \
-                and not row.get("magnitude_justification", "").strip():
-            problems.append(f"parameter {row['symbol']}: magnitude ratio outside ratio_ok [{low}, {high}]; "
+            text(reference.get(field), f"parameter {name} reference_magnitude.{field}")
+        if isinstance(reference.get("unit"), str) and isinstance(row.get("unit"), str) \
+                and reference["unit"].strip() != row["unit"].strip():
+            problems.append(f"parameter {name}: reference_magnitude unit must match parameter unit")
+        bounds = reference.get("ratio_ok", list(DEFAULT_RATIO_OK))
+        reference_value = reference.get("value")
+        if not (isinstance(bounds, list) and len(bounds) == 2 and all(_number(b) for b in bounds)
+                and _number(reference_value)):
+            continue
+        low, high = bounds
+        justified = reasoned(row.get("magnitude_justification"))
+        if not 0 < low <= high:
+            problems.append(f"parameter {name}: ratio_ok lower bound must be positive and no greater than the upper bound")
+            continue
+        if (low < DEFAULT_RATIO_OK[0] or high > DEFAULT_RATIO_OK[1]) and not justified:
+            problems.append(f"parameter {name}: ratio_ok [{low}, {high}] is wider than the default "
+                            f"{list(DEFAULT_RATIO_OK)}; supply magnitude_justification")
+        if reference_value == 0:
+            problems.append(f"parameter {name}: reference_magnitude.value must be nonzero")
+            continue
+        try:
+            ratio = value / reference_value
+        except OverflowError:
+            ratio = math.inf
+        if not math.isfinite(ratio):
+            problems.append(f"parameter {name}: value / reference_magnitude.value is too large to compute "
+                            "as a finite ratio; rescale the unit")
+        elif not low <= ratio <= high and not justified:
+            problems.append(f"parameter {name}: magnitude ratio outside ratio_ok [{low}, {high}]; "
                             "supply magnitude_justification")
-    for row in contract["conserved_quantities"]:
-        if row["check_name"] != "balance:" + row["name"]:
+    for row in rows("conserved_quantities"):
+        if isinstance(row.get("name"), str) and row.get("check_name") != "balance:" + row["name"]:
             problems.append(f"conserved quantity {row['name']}: check_name must be balance:{row['name']}")
-    for row in contract["probability_combinations"]:
-        text(row["expression"], "probability combination expression")
-        if row["independence"] == "assumed" and not row["justification"].strip():
-            problems.append(f"probability combination {row['expression']}: assumed independence needs justification")
-    text(contract["cheapest_refutation"]["result"], "cheapest_refutation.result")
-    text(contract["information_time"], "information_time")
+    for row in rows("probability_combinations"):
+        text(row.get("expression"), "probability combination expression")
+        if row.get("independence") == "assumed" and not reasoned(row.get("justification")):
+            problems.append(f"probability combination {row.get('expression')}: assumed independence needs "
+                            "justification (at least three letters)")
+    refutation = contract.get("cheapest_refutation")
+    if isinstance(refutation, dict):
+        text(refutation.get("result"), "cheapest_refutation.result")
+    text(contract.get("information_time"), "information_time")
     return problems

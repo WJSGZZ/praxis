@@ -13,7 +13,9 @@ from scripts import pipeline
 def model_contract():
     return {
         'symbols': [{'symbol': 'x', 'unit': 'L', 'object': 'stored water',
-                     'uses': [{'equation': 'volume balance', 'object': 'stored water'}]}],
+                     'uses': [{'equation': 'volume balance', 'object': 'stored water'}]},
+                    {'symbol': 'capacity', 'unit': 'L', 'object': 'vessel capacity',
+                     'uses': [{'equation': 'capacity bound', 'object': 'vessel capacity'}]}],
         'parameters': [{'symbol': 'capacity', 'value': 10, 'unit': 'L',
                         'source_level': 'measured', 'source': 'measured cylinder',
                         'real_world_quantity': True,
@@ -38,7 +40,7 @@ def make_schema2_case(tmp_path, monkeypatch, *, checks=None, requirements=None):
         'problem_items': [{'id': 'P1', 'quote': 'Calculate stored water.', 'page': 1}],
         'requirements': [{'id': 'Q1', 'question': 'Stored volume', 'unit': 'L',
                           'result_pointer': '/volume', 'checks': ['balance:water'],
-                          'problem_item_ids': ['P1']}],
+                          'problem_item_ids': ['P1'], 'kind': 'answer'}],
     }
     pipeline.save(case / 'planning/requirements.json', definition)
     (case / 'code/model.py').write_text(

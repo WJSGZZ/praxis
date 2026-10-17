@@ -54,15 +54,52 @@ MAX_MCP_REQUEST_BYTES = 8 * 1024 * 1024
 EXPRESSION_TOOLS = frozenset({'sobol_sensitivity', 'sobol_convergence', 'probe_structure', 'test_conjecture',
                              'find_counterexample', 'find_relation', 'calibrate_curve', 'solve_diffusion',
                              'solve_ode', 'equilibria', 'minimize_nlp', 'monte_carlo', 'epsilon_constraint_nlp'})
-FUNCTIONS = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
+CHECKED_DIVIDE = '__praxis_checked_divide__'
+FINITE_RULE = ('where() evaluates both branches at every point, so guard the argument itself, '
+               'e.g. where(x>0, log(where(x>0, x, 1)), 0)')
+
+
+def _finite_result(operation, function):
+    """NumPy function whose NaN/inf result is an error, in either where() branch, like bounded power."""
+    def evaluate(*args):
+        with np.errstate(all='ignore'):
+            result = function(*args)
+        if not np.all(np.isfinite(result)):
+            raise ValueError(f'{operation} must give finite real values but produced NaN or inf at an evaluated point; {FINITE_RULE}')
+        return result
+    return evaluate
+
+
+_CHECKED = {'exp': np.exp, 'log': np.log, 'sqrt': np.sqrt, 'sin': np.sin, 'cos': np.cos, 'tan': np.tan}
+FUNCTIONS = {**{name: _finite_result(name, function) for name, function in _CHECKED.items()},
              'abs': np.abs, 'minimum': np.minimum, 'maximum': np.maximum, 'where': np.where}
+ARITY = {**dict.fromkeys(_CHECKED, 1), 'abs': 1, 'minimum': 2, 'maximum': 2, 'where': 3}
+EVALUATION_HELPERS = {CHECKED_DIVIDE: _finite_result('division', np.divide), **RUNTIME_FUNCTIONS}
+COMPARISON_RULE = 'Comparisons (<, <=, >, >=, ==, !=) are allowed only as the first argument of where(cond, a, b)'
+
+
+class _CheckedDivision(ast.NodeTransformer):
+    def visit_BinOp(self, node):
+        node = self.generic_visit(node)
+        if isinstance(node.op, ast.Div):
+            return ast.copy_location(ast.Call(func=ast.Name(id=CHECKED_DIVIDE, ctx=ast.Load()), args=[node.left, node.right], keywords=[]), node)
+        return node
 
 
 def _compile(expression, names):
-    """Vectorised evaluation of an arithmetic expression; anything but arithmetic, names and a few functions is rejected."""
-    if len(names) > 32 or len(set(names)) != len(names) or any(n in FUNCTIONS or n in RUNTIME_FUNCTIONS for n in names):
+    """Vectorised evaluation of an arithmetic expression; anything but arithmetic, names and a few functions is rejected.
+
+    log, sqrt, exp, sin, cos, tan, division and power must give finite real values
+    at every evaluated point, including the branch where() does not select."""
+    if len(names) > 32 or len(set(names)) != len(names) or any(n in FUNCTIONS or n in EVALUATION_HELPERS for n in names):
         raise ValueError('At most 32 unique variable names, distinct from function names, are allowed')
     tree = parse_bounded_expression(expression)
+    callees, conditions = set(), set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            callees.add(node.func)
+            if node.func.id == 'where' and node.args:
+                conditions.add(node.args[0])
     for node in ast.walk(tree):
         ok = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Load, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.USub, ast.UAdd)
         if isinstance(node, ok):
@@ -71,22 +108,30 @@ def _compile(expression, names):
         elif isinstance(node, ast.Name):
             if node.id not in names and node.id not in FUNCTIONS:
                 raise ValueError(f'Unknown name: {node.id}')
+            if node.id in FUNCTIONS and node not in callees:
+                raise ValueError(f'{node.id} is a function and must be called')
         elif isinstance(node, ast.Call):
             if not (isinstance(node.func, ast.Name) and node.func.id in FUNCTIONS and not node.keywords):
                 raise ValueError('Only simple calls to exp, log, sqrt, sin, cos, tan, abs, minimum, maximum, where are allowed')
             if node.func.id == 'where' and len(node.args) != 3:
                 raise ValueError('where requires exactly condition, true value, false value')
+            if len(node.args) != ARITY[node.func.id]:
+                raise ValueError(f'{node.func.id} takes exactly {ARITY[node.func.id]} argument(s)')
+            if node.func.id == 'where' and not isinstance(node.args[0], ast.Compare):
+                raise ValueError('where condition must be one comparison (<, <=, >, >=, ==, !=), not a number or array')
         elif isinstance(node, ast.Compare):
+            if node not in conditions:
+                raise ValueError(COMPARISON_RULE)
             if len(node.ops) != 1:
-                raise ValueError('Use one comparison per where condition; chained array comparisons are unsupported')
+                raise ValueError('where condition must be one comparison; chained array comparisons are unsupported')
         elif isinstance(node, (ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.Eq, ast.NotEq)):
             pass
         else:
             raise ValueError(f'Disallowed syntax: {type(node).__name__}')
-    code = compile_bounded_expression(tree, filename='<expression>')
+    code = compile_bounded_expression(_CheckedDivision().visit(tree), filename='<expression>')
 
     def model(x):
-        scope = {**FUNCTIONS, **{name: x[:, i] for i, name in enumerate(names)}, **RUNTIME_FUNCTIONS}
+        scope = {**FUNCTIONS, **{name: x[:, i] for i, name in enumerate(names)}, **EVALUATION_HELPERS}
         return np.asarray(eval(code, {'__builtins__': {}}, scope), float) * np.ones(len(x))
     return model
 
@@ -171,7 +216,7 @@ def _calibrate(a):
         x = np.asarray(x, float)
         columns = np.column_stack([x] + [np.full(len(x), t) for t in theta])
         return model(columns)
-    return calibrate.calibrate(fn, a['x'], a['y'], a['theta0'], bounds=a.get('bounds'), names=params, holdout=a.get('holdout', 0), multistart=a.get('multistart', 0), holdout_scheme=a.get('holdout_scheme', 'tail'), seed=a.get('seed', 2027))
+    return calibrate.calibrate(fn, a['x'], a['y'], a['theta0'], bounds=a.get('bounds'), names=params, holdout=a.get('holdout', 0), multistart=a.get('multistart', 0), holdout_scheme=a.get('holdout_scheme', 'tail'), seed=a.get('seed', 2027), start_sampling=a.get('start_sampling', 'uniform'))
 
 
 def _min_cost_flow(a):
@@ -281,6 +326,9 @@ def _num(description='', **extra):
 
 
 MATRIX = {'type': 'array', 'items': {'type': 'array', 'items': {'type': 'number'}}}
+NLP_CONSTRAINTS = {'type': 'array', 'description': 'Each {"expression": string, "type": "ineq" (expression >= 0, default) or "eq" (= 0)}.',
+                   'items': {'type': 'object', 'properties': {'expression': {'type': 'string'}, 'type': {'type': 'string', 'enum': ['ineq', 'eq']}},
+                             'required': ['expression'], 'additionalProperties': False}}
 EDGES = {'type': 'array', 'items': {'type': 'array', 'minItems': 3, 'maxItems': 3}, 'description': '[[from, to, weight_or_capacity], ...]'}
 SERIES = {'type': 'array', 'items': {'type': 'number'}}
 
@@ -405,10 +453,10 @@ TOOLS = dict([
           {'edges': EDGES, 'nodes': {'type': 'array'}, 'directed': {'type': 'boolean'}, 'normalized': {'type': 'boolean'}}, ['edges'], lambda a: graph.betweenness(**a)),
     _tool('greedy_modularity_communities', 'Greedy weighted undirected communities, modularity and seeded fixed-n/m random graph baseline. This null does not preserve degree/strength; no significance claim.',
           {'edges': EDGES, 'nodes': {'type': 'array'}, 'resolution': _num(), 'baseline_trials': {'type': 'integer'}, 'seed': {'type': 'integer'}}, ['edges'], lambda a: graph.greedy_modularity_communities(**a)),
-    _tool('epsilon_constraint_lp', 'Scan explicit epsilon constraints using the existing LP solver. senses +1 max/-1 min; each grid row has one threshold per nonprimary objective. Returns feasible scan solutions and nondominated subset, not the entire Pareto set.',
+    _tool('epsilon_constraint_lp', 'Scan explicit epsilon constraints using the existing LP solver. senses +1 max/-1 min; each grid row has one threshold per nonprimary objective. A lexicographic second stage replaces weakly efficient scalar optima; identical points are merged with all their epsilon rows. Returns feasible scan solutions and nondominated subset, not the entire Pareto set.',
           {'objectives': MATRIX, 'senses': SERIES, 'epsilon_grid': MATRIX, 'primary': {'type': 'integer'}, 'A_ub': MATRIX, 'b_ub': SERIES, 'A_ge': MATRIX, 'b_ge': SERIES, 'A_eq': MATRIX, 'b_eq': SERIES, 'bounds': {'type': 'array'}, 'tol': _num(), 'max_points': {'type': 'integer'}}, ['objectives', 'senses', 'epsilon_grid'], lambda a: decision_models.epsilon_constraint_lp(**a)),
-    _tool('epsilon_constraint_nlp', 'Scan explicit epsilon constraints with multistart NLP. Only converged recomputed-feasible candidates enter the reported nondominated subset; no global Pareto or infeasibility proof. Constraint expression>=0 for ineq.',
-          {'objectives': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'senses': SERIES, 'epsilon_grid': MATRIX, 'bounds': MATRIX, 'constraints': {'type': 'array', 'items': {'type': 'object'}}, 'primary': {'type': 'integer'}, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'tol': _num(), 'max_points': {'type': 'integer'}}, ['objectives', 'names', 'senses', 'epsilon_grid', 'bounds'], _epsilon_nlp),
+    _tool('epsilon_constraint_nlp', 'Scan explicit epsilon constraints with multistart NLP. Only converged recomputed-feasible candidates enter the reported nondominated subset (identical points merged; no second stage, so points may be weakly efficient); no global Pareto or infeasibility proof. Constraint expression>=0 for ineq.',
+          {'objectives': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'senses': SERIES, 'epsilon_grid': MATRIX, 'bounds': MATRIX, 'constraints': NLP_CONSTRAINTS, 'primary': {'type': 'integer'}, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'tol': _num(), 'max_points': {'type': 'integer'}}, ['objectives', 'names', 'senses', 'epsilon_grid', 'bounds'], _epsilon_nlp),
     _tool('max_flow', 'Maximum flow and a minimum cut of a simple directed graph (no duplicate edges); edges [[u, v, capacity]].',
           {'edges': EDGES, 'source': {}, 'sink': {}}, ['edges', 'source', 'sink'],
           lambda a: graph.max_flow(a['edges'], a['source'], a['sink'])),
@@ -480,7 +528,7 @@ TOOLS = dict([
     _tool('grid_convergence_index', 'Observed order, Richardson-extrapolated value and grid convergence index (Roache) from three refined solutions of the same quantity.',
           {'f_fine': _num(), 'f_medium': _num(), 'f_coarse': _num(), 'refinement_ratio': _num(), 'safety_factor': _num()}, ['f_fine', 'f_medium', 'f_coarse', 'refinement_ratio'],
           lambda a: pde.grid_convergence_index(a['f_fine'], a['f_medium'], a['f_coarse'], a['refinement_ratio'], safety_factor=a.get('safety_factor', 1.25))),
-    _tool('ols_report', 'OLS fitted values, residuals, coefficient intervals and optional X_new prediction intervals; HC3 mean covariance does not identify future heteroskedastic noise; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters.',
+    _tool('ols_report', 'OLS fitted values, residuals, coefficient intervals and optional X_new prediction intervals; observation intervals only for nonrobust covariance (HC3 and cluster return observation_ci null with a reason, mean intervals kept); non-estimable X_new rows in a rank-deficient design return null predictions; optional one-way CRV1 cluster covariance with G-1 t inference requires explicit row groups and independent clusters.',
           {'X': MATRIX, 'y': SERIES, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'add_constant': {'type': 'boolean'}, 'alpha': _num(),
            'covariance': {'type': 'string', 'enum': ['nonrobust', 'HC3', 'cluster']}, 'groups': {'type': 'array', 'items': {'type': ['string', 'integer']}}, 'X_new': MATRIX}, ['X', 'y'],
           lambda a: regression.ols_report(**a)),
@@ -495,8 +543,8 @@ TOOLS = dict([
           {'layers': {'type': 'array', 'items': {'type': 'object'}}, 'times': SERIES, 't_initial': _num(), 'left': {'type': 'array'}, 'right': {'type': 'array'}, 'dps': {'type': 'integer'}},
           ['layers', 'times', 't_initial', 'left', 'right'],
           lambda a: layered.laplace_layered(a['layers'], times=a['times'], t_initial=a['t_initial'], left=a['left'], right=a['right'], dps=a.get('dps', 25))),
-    _tool('calibrate_curve', 'Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation optional tail or seeded random holdout, and optional at least8 finite-bounds random multistarts plus theta0; basin agreement does not prove global optimality.',
-          {'expression': {'type': 'string'}, 'parameters': {'type': 'array', 'items': {'type': 'string'}}, 'x': SERIES, 'y': SERIES, 'theta0': SERIES, 'bounds': MATRIX, 'holdout': {'type': 'integer'}, 'multistart': {'type': 'integer'}, 'holdout_scheme': {'type': 'string', 'enum': ['tail', 'random']}, 'seed': {'type': 'integer'}},
+    _tool('calibrate_curve', 'Least-squares fit of an expression in x and named parameters to data, with local confidence intervals, identifiability (Jacobian condition, parameter correlation), residual autocorrelation, optional tail or seeded random holdout, and optional at least 8 finite-bounds random multistarts (uniform or log-uniform) plus theta0, with per-coordinate basin agreement and failed starts kept in the denominator; basin agreement does not prove global optimality.',
+          {'expression': {'type': 'string'}, 'parameters': {'type': 'array', 'items': {'type': 'string'}}, 'x': SERIES, 'y': SERIES, 'theta0': SERIES, 'bounds': MATRIX, 'holdout': {'type': 'integer'}, 'multistart': {'type': 'integer'}, 'holdout_scheme': {'type': 'string', 'enum': ['tail', 'random']}, 'seed': {'type': 'integer'}, 'start_sampling': {'type': 'string', 'enum': ['uniform', 'log_uniform']}},
           ['expression', 'parameters', 'x', 'y', 'theta0'], _calibrate),
     _tool('sobol_convergence', 'Sobol indices at base sizes n and 2n for an arithmetic expression, with the largest shift between them; indices that move by more than their confidence half-width have not converged.',
           {'expression': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'second_order': {'type': 'boolean'}, 'distributions': {'type': 'array', 'items': {'type': 'string'}}},
@@ -508,7 +556,7 @@ TOOLS = dict([
     _tool('markov_absorption', 'Absorption probabilities and expected steps to absorption of a Markov chain with absorbing states.',
           {'matrix': MATRIX, 'absorbing': {'type': 'array', 'items': {'type': 'integer'}}}, ['matrix', 'absorbing'], lambda a: decision_models.markov_absorption(a['matrix'], a['absorbing'])),
     _tool('minimize_nlp', 'Nonlinear program by multi-start SLSQP: objective and constraint expressions in the named variables (constraint types: ineq means expression >= 0, eq means = 0). Reports converged feasible candidates, failed feasible incumbents, solver statuses and active constraints; no optimality certificate.',
-          {'objective': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'constraints': {'type': 'array', 'items': {'type': 'object'}}, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'maximize': {'type': 'boolean'}},
+          {'objective': {'type': 'string'}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'bounds': MATRIX, 'constraints': NLP_CONSTRAINTS, 'starts': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'maximize': {'type': 'boolean'}},
           ['objective', 'names', 'bounds'], _nlp),
     _tool('knapsack', 'Exact dynamic programming for the supplied binary-float values and integer weights; value_exact records the resulting rational sum, not ideal unprovided decimal values. copies bounds each item (default 0/1). Capacity and DP table budgets are enforced.',
           {'values': SERIES, 'weights': {'type': 'array', 'items': {'type': 'integer', 'minimum': 0}}, 'capacity': {'type': 'integer', 'minimum': 0, 'maximum': 1000000}, 'copies': {'type': 'array', 'items': {'type': 'integer', 'minimum': 0}}}, ['values', 'weights', 'capacity'],
@@ -549,7 +597,7 @@ TOOLS = dict([
           {'expression': {'type': 'string'}, 'distributions': {'type': 'object'}, 'n': {'type': 'integer'}, 'seed': {'type': 'integer'}, 'threshold': _num(), 'covariance': MATRIX, 'correlation': MATRIX, 'sampling': {'type': 'string', 'enum': ['random', 'lhs']}, 'bootstrap_resamples': {'type': 'integer'}, 'confidence': _num()}, ['expression', 'distributions'], _monte_carlo),
     _tool('solve_ode', 'Integrate dy/dt = rhs(t, y) for expressions in t and the named states; compares dense interpolants with 100 times tighter tolerance at common times before either run terminates. The difference includes interpolation error and is not a certified error bound.',
           {'rhs': {'type': 'array', 'items': {'type': 'string'}}, 'names': {'type': 'array', 'items': {'type': 'string'}}, 'y0': SERIES, 't_span': SERIES, 't_eval': SERIES, 'method': {'type': 'string'}, 'rtol': _num()}, ['rhs', 'names', 'y0', 't_span'], _ode),
-    _tool('arima_forecast', 'ARIMA with optional future-known exog, residuals, intervals and optimizer status; optional rolling backtest reselects at every origin against the same baselines. Exog backtest requires exog_known_at_origin=true; caller declaration is not an availability audit.',
+    _tool('arima_forecast', 'ARIMA with optional future-known exog, residuals, intervals and optimizer status; differences only when ADF rejects a unit root neither around a constant nor a linear trend, and compares constant vs constant+trend (d=0) or none vs drift (d=1) by AICc among optimizer-converged candidates, reporting trend, selection and unit_root_tests; optional rolling backtest reselects at every origin against the same baselines. Exog backtest requires exog_known_at_origin=true; caller declaration is not an availability audit.',
           {'series': SERIES, 'horizon': {'type': 'integer'}, 'max_p': {'type': 'integer'}, 'max_d': {'type': 'integer'}, 'max_q': {'type': 'integer'}, 'seasonal_period': {'type': 'integer'}, 'exog': MATRIX, 'future_exog': MATRIX, 'backtest': {'type': ['boolean', 'object'], 'properties': {'min_train': {'type': 'integer'}, 'exog_known_at_origin': {'type': 'boolean'}}, 'additionalProperties': False}}, ['series', 'horizon'],
           lambda a: inference.arima_forecast(a['series'], a['horizon'], max_p=a.get('max_p', 3), max_d=a.get('max_d', 2), max_q=a.get('max_q', 3), seasonal_period=a.get('seasonal_period'), exog=a.get('exog'), future_exog=a.get('future_exog'), backtest=a.get('backtest', False))),
     _tool('pca_report', 'Principal components: explained variance, loadings, scores (standardised by default).',

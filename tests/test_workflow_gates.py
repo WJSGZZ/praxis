@@ -26,7 +26,7 @@ def case2(tmp_path, monkeypatch):
         'problem_items': [{'id': 'P1', 'quote': 'Calculate stored water.', 'page': 1},
                           {'id': 'P2', 'quote': 'Determine water capacity.', 'page': 1}],
         'requirements': [{'id': 'Q1', 'question': 'stored water', 'unit': 'L', 'result_pointer': '/volume',
-                          'checks': ['arithmetic'], 'problem_item_ids': ['P1', 'P2']}],
+                          'checks': ['arithmetic'], 'problem_item_ids': ['P1', 'P2'], 'kind': 'answer'}],
     })
     (case / 'code/model.py').write_text(
         "import argparse,json\nfrom pathlib import Path\n"

@@ -43,7 +43,7 @@ schema 2 先由 model 产出 `planning/model-contract.json`，每次 run 前用 
 | 字段 | 结构与机器约束 |
 |---|---|
 | `symbols` | `[{symbol,unit,object,uses:[{equation,object}],same_object_justification?}]`；用法非空，不同对象须说明为何仍可共用符号。 |
-| `parameters` | `[{symbol,value,unit,source_level,source,real_world_quantity,reference_magnitude?,magnitude_justification?}]`；来源级别 measured/literature/fitted/declared。真实量必有 `{value,unit,source,ratio_ok?}` 参照，单位一致且参照非零；默认比值 `[0.1,10]`，越界须说明。 |
+| `parameters` | `[{symbol,value,unit,source_level,source,real_world_quantity,reference_magnitude?,magnitude_justification?}]`；来源级别 measured/literature/fitted/declared/unknown；`value:null` 只能配 `unknown`，记告警不拒绝，并跳过量级检查。其余真实量必有 `{value,unit,source,ratio_ok?}` 参照，单位一致且参照非零；默认比值 `[0.1,10]`，越界或把 `ratio_ok` 放宽到默认之外都须写 `magnitude_justification`，下界须大于0。参数和 effect_variable 必须是已声明符号，符号比较时忽略空格、花括号和反斜杠。检查器一次返回全部问题。 |
 | `mechanisms` | `[{id,cause,effect_variable,sign,equation}]`，sign 为 `+/-/±`。 |
 | `conserved_quantities` | `[{name,check_name:"balance:<name>"}]`；验证阶段须实际产生同名通过检查。 |
 | `probability_combinations` | `[{expression,independence,justification}]`，independence 为 assumed/derived/not_assumed；assumed 理由非空。 |
@@ -101,7 +101,7 @@ mapping = asof_join(queries, versions, "id", "cutoff", "released")
 - MCP stdio 每帧至多8 MiB UTF-8字节（包括换行）；超限帧只排空、不解析、不执行工具。无效UTF-8、重复JSON键及解析深度溢出拒绝，下一帧仍可处理。CLI JSON参数同样拒绝重复键。注册表达式子进程最多保留4 MiB stdout与64 KiB stderr；超限终止并回收直接子进程、不接受结果。上述边界不限制工作进程的内存、CPU、子孙进程、文件或网络权限；普通数值工具及案例脚本另按实际预算和宿主隔离执行。
 - MCP请求整体还核有限JSON值与Unicode标量，拒绝NaN／无穷和未配对代理字符（键和值均核）；合法中文和非BMP字符保留。外层MCP回复和JSON CLI用ASCII安全的JSON转义，解码后字符串不变，不依赖Windows stdout代码页。MCP CLI与Python表达式工作进程使用UTF-8文本协议；工作进程自己的PYTHONIOENCODING固定为UTF-8，覆盖继承的流编码而不改变其它环境。接受结果前再次核墙钟截止，父进程晚醒也不能接受超时输出。
 - stdio当前声明支持 `2025-06-18`，未知请求版本协商回实际支持版本，客户端不兼容时可断开；依 [MCP版本协商规范](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle#version-negotiation) 处理，不因版本名新就声称支持。
-- 受限表达式支持 `where(cond, a, b)` 与单个数值比较（<、<=、>、>=、==、!=），拒绝链式比较、属性调用和嵌套幂；where 两分支均按 NumPy 语义求值，不能用它隐藏无效运算。LP／NLP ε 扫描的有限网格不认证完整前沿，表达式 NLP 同受下述截止保护。
+- 受限表达式支持 `where(cond, a, b)`；比较（<、<=、>、>=、==、!=）只能作 where 的第一个参数且只含一个比较，拒绝裸比较、数值条件、链式比较、属性调用和嵌套幂。log、sqrt、exp、sin、cos、tan、除法和幂在每个求值点都必须得到有限实数，否则报错并指明运算；where 两分支都会求值，未选分支的 NaN／inf 同样报错。需要分段定义时先把参数换成安全值，如 `where(x>0, log(where(x>0, x, 1)), 0)`。LP ε 扫描在每个网格点先优化主目标，再在各目标都不变差的条件下改进其余目标；第二阶段经核验的点不是仅弱有效，未核验时保留第一阶段点并标 `weakly_efficient_possible: true`。NLP 不做第二阶段，所有点都这样标注。前沿合并目标值相同的点并列出全部产生它的 ε 行。有限网格不认证完整前沿，表达式 NLP 同受下述截止保护。
 - 受限表达式共用字符4096、AST节点512／深度64、常量整数4096位及绝对指数200的上限；等价常量写法和运行时变量指数都核查，isprime参数至多64位。猜想采样至多100000点，表达式标定至多10000观测。MCP／CLI的注册表达式工具（包括 `monte_carlo`）在30秒子进程截止内运行，超时终止并回收、不接受结果；调用后可继续服务。截止覆盖回归从当前注册函数的编译器／求值器调用路径独立识别入口，逐项验证MCP与CLI，不只测试保护名单中的工具；新增外部求值器需同时核对这一有限路径检查。内部Python `call` 和任意用户回调不因此获得硬计时或内存隔离，单次运算守卫也不能替代进程截止。
 
 兼容说明：这些更正保留工具名和正常计算结果，新增证据、诊断与完整性字段，部分原诊断数值在未定义时改为 `null`。调用方必须按状态解释，不能只读取旧 `proved` 或 `count`。历史收据保留原源码与原字段，不自动重标成新版认证；依赖此次更正的结论应另建核验记录。既有冻结案例按真实调用影响检查，不批量重算。
@@ -253,7 +253,7 @@ uv run --locked python -m scripts.reader_packet "$WORKSPACE/paper/paper.pdf" "$W
 }
 ```
 
-`problem_items` 每项有唯一id、原文quote及正整数页码；quote须在 `planning/problem-extracted.txt` 中逐字出现（仅折叠空白）。每个 requirement 给非空 `problem_item_ids`，kind为 answer（默认）/forecast/decision/proof。每个原题项须映射到requirement，或在该item写有实际内容的 `conditional_answer`／`not_addressed_reason`；遗漏、假引用或未知id使 evidence-incomplete。提取文本是接收时证据，实际要求与页码仍核原页。
+`problem_items` 每项有唯一id、原文quote及正整数页码；quote须在 `planning/problem-extracted.txt` 中逐字出现（折叠空白，跨行连字符可去掉），至少4个英文词或15个字母、数字、汉字，且各项互不相同；init 记录抽取文本哈希，事后改动须在 `problem_text_corrections` 逐条说明。每个 requirement 给非空 `problem_item_ids`，schema 2 下 kind 必填，取 answer/forecast/decision/proof；所挂原句含预测类词而 kind 不是 forecast 时须写 `kind_justification`。每个原题项须映射到requirement，或在该item写有实际内容的 `conditional_answer`／`not_addressed_reason`；遗漏、假引用或未知id使 evidence-incomplete。提取文本是接收时证据，实际要求与页码仍核原页。
 
 schema 2 每个 requirement 至少链接一项 `independent:true` 且 method 非replay的通过check。预测项另链接 `method:naive_baseline`，带 `baseline_score/model_score/metric/lower_is_better`；模型更差须 `disclosed:true`，否则 `claim_problems` 报错。披露只保留诚实状态，预测是否满足题意仍按实际指标与基线审查。
 
@@ -281,7 +281,8 @@ schema 2 的 `workflow.accept` 在原 actor/scope/run_id/receipt_sha256/quality_
 
 - `problem_items_ticked:[{id,location}]` 恰好逐一覆盖全部原题项，位置非空。
 - `attacks` 至少3项 `{type,target,result}`；type取 units/limit_case/sign_flip/small_example/independent_recompute/magnitude，result取 survived/refuted/inconclusive；有 refuted 时拒绝pass。
-- `mechanism_audit:{symbols_checked:n,double_meaning_found:[]}`，n为非负整数；有未解决多义时拒绝pass。
+- `mechanism_audit:{symbols_checked:n,double_meaning_found:[]}`，n不少于契约声明的符号数且至少为1；有未解决多义时拒绝pass。
+- 契约不通过时 `workflow.run` 不消耗尝试次数，`next` 返回 prepare 并列出契约问题；workflow 状态记录案例 schema，之后每个命令核对。
 - 初始化检索遇空／generic／prior lessons时，从题面启发式取最高频15个英文内容词或中文双字；状态保存 `lesson_retrieval.query_source/query_tokenization`。首次运行前 tasks.md 对每个hit写同一行的 `applied: ID 行动` 或 `not_applied: ID 理由`；accept核首次实际run快照与哈希，事后补写不追认。检索与新条目格式见 [learning-loop.md](learning-loop.md)。
 
 schema 1沿原行为。字段门保存作者／评审者声明，实际覆盖、攻击是否有力和机制是否正确继续由作品及独立检查判断。

@@ -15,6 +15,21 @@ from statsmodels.stats.stattools import durbin_watson, jarque_bera
 from modeling.contracts import diagnostic
 
 
+NEAR_UNIT_LEVERAGE = 1e-8
+
+
+def _estimable_rows(design: np.ndarray, new_design: np.ndarray) -> np.ndarray:
+    """True where a new design row lies in the row space of `design` (its prediction is the same for every LS solution)."""
+    scale = np.linalg.norm(design, axis=0)
+    scale[scale == 0] = 1.0
+    _, singular, vt = np.linalg.svd(design / scale, full_matrices=False)
+    tolerance = singular.max() * max(design.shape) * np.finfo(float).eps if len(singular) else 0.0
+    basis = vt[singular > tolerance]
+    scaled = new_design / scale
+    residual = scaled - (scaled @ basis.T) @ basis
+    return np.linalg.norm(residual, axis=1) <= 1e-8 * np.maximum(1.0, np.linalg.norm(scaled, axis=1))
+
+
 def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Sequence[str] | None = None, add_constant: bool = True,
                alpha: float = 0.05, covariance: str = 'nonrobust', groups: Sequence[str | int] | None = None,
                X_new: Sequence[Sequence[float]] | None = None) -> dict:
@@ -27,8 +42,10 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     Statsmodels supplies one-way CRV1 covariance, its finite-sample correction, and t intervals with G-1 degrees of freedom.
     Clusters must be independent of each other; dependence within a cluster is allowed. Few clusters can give unreliable inference.
     HC3 estimates heteroscedasticity-robust coefficient covariance. X_new uses input columns before adding a constant.
-    Mean intervals use the selected covariance; observation intervals additionally assume an independent new error with
-    pooled residual variance, so HC3/cluster observation intervals do not estimate a new row's conditional noise variance.
+    Mean intervals use the selected covariance. Observation intervals are reported only for covariance='nonrobust', as an
+    independent new error with pooled residual variance; HC3/cluster leave observation_ci null because a new row's noise variance
+    (or its cluster dependence) needs an explicit noise model. HC3 flags rows with 1-h below 1e-8, where the leverage correction
+    loses accuracy. In a rank-deficient design only X_new rows in the design's row space are predicted; others are null.
     A clean report does not make the model right, and clustering does not remove confounding or repair the conditional mean model."""
     X = np.asarray(X, float)
     y = np.asarray(y, float).reshape(-1)
@@ -77,7 +94,16 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     inference_status, inference_reason = None, None
     covariance_report = None
     cluster_roundoff = None
+    leverage_report = None
     if covariance == 'HC3':
+        if identified:
+            leverage = fit.get_influence().hat_matrix_diag
+            near = np.flatnonzero((1 - leverage < NEAR_UNIT_LEVERAGE) & (leverage < 1 - np.finfo(float).eps))
+            leverage_report = dict(status='near_unit_leverage' if len(near) else 'checked', threshold_one_minus_leverage=NEAR_UNIT_LEVERAGE,
+                                   min_one_minus_leverage=float(max(0.0, 1 - leverage.max())), rows=near.tolist()[:20])
+            if len(near):
+                leverage_report['reason'] = ('1-h below the threshold is computed with large relative cancellation; the HC3 factor 1/(1-h)^2 '
+                                             'and the affected standard errors can be materially inaccurate')
         if not identified:
             inference_status = 'not_reported_rank_deficient'
             inference_reason = 'Rank-deficient design; individual HC3 inference is not reported'
@@ -95,6 +121,8 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
                                  note='HC3 corrects coefficient covariance for heteroscedasticity; t intervals are approximate and independent rows are required.')
         if inference_reason:
             covariance_report['reason'] = inference_reason
+        if leverage_report is not None:
+            covariance_report['leverage'] = leverage_report
     if covariance == 'cluster':
         cluster_count = len(cluster_counts)
         if not identified:
@@ -181,6 +209,8 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
             flags.append('cluster standard errors are at numerical roundoff scale: coefficient t inference is not reported')
     elif covariance_report is not None and covariance_report['status'] != 'computed':
         flags.append(covariance_report['reason'])
+    if leverage_report is not None and leverage_report['status'] == 'near_unit_leverage' and covariance_report['status'] == 'computed':
+        flags.append(f"near-unit leverage (min 1-h {leverage_report['min_one_minus_leverage']:.2g}, rows {leverage_report['rows']}): HC3 standard errors can be numerically inaccurate")
     if not identified:
         flags.append(f'rank-deficient design ({rank}/{design.shape[1]}): not all individual coefficients are uniquely identified')
     if jb_p is not None and jb_p < alpha:
@@ -229,13 +259,24 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
         if new.ndim != 2 or not len(new) or new.shape[1] != k or not np.isfinite(new).all():
             raise ValueError('X_new must be a nonempty finite matrix with the original input columns')
         new_design = sm.add_constant(new, has_constant='add') if add_constant else new
+        estimable = np.ones(len(new_design), bool) if identified else _estimable_rows(design, new_design)
         predicted = fit.predict(new_design)
-        if not np.isfinite(predicted).all():
+        if not np.isfinite(predicted[estimable]).all():
             raise ValueError('New predictions exceed finite numerical range')
-        prediction = dict(predicted=predicted.tolist(), alpha=alpha, covariance=covariance,
+        robust = covariance != 'nonrobust'
+        prediction = dict(predicted=[float(v) if ok else None for v, ok in zip(predicted, estimable)], alpha=alpha, covariance=covariance,
                           status=inference_status or ('computed' if identified else 'not_reported_rank_deficient'),
+                          estimable=estimable.tolist(), non_estimable_rows=np.flatnonzero(~estimable).tolist(),
                           mean_ci=None, observation_ci=None,
-                          note='Mean intervals use the selected coefficient covariance. Observation intervals are a homoscedastic reference: an independent new error with pooled residual variance. HC3 or clustering does not estimate row-specific noise or future cluster dependence.')
+                          observation_interval=dict(status='not_reported_heteroskedastic_noise_model_required', reason=(
+                              'HC3 corrects coefficient covariance only; a new observation interval needs a model of that row\'s noise variance, and pooled residual variance is not it'
+                              if covariance == 'HC3' else
+                              'Cluster covariance corrects coefficient covariance only; a new observation interval needs a model of the row\'s noise variance and of its dependence on its cluster, and pooled residual variance is neither'))
+                          if robust else dict(status='pending', noise_model='homoscedastic pooled residual variance'),
+                          note=('Mean intervals use the selected coefficient covariance. Observation intervals are reported only for nonrobust covariance, as a homoscedastic reference: an independent new error with pooled residual variance. HC3 or clustering does not estimate row-specific noise or future cluster dependence.'))
+        if not identified:
+            prediction['estimability_reason'] = ('Rank-deficient design: a new row is predicted only if it lies in the row space of the fitted design '
+                                                 '(an estimable linear function); other rows depend on the arbitrary least-squares solution and are null')
         if identified and not inference_status:
             # Build intervals explicitly: robust/cluster results can use a
             # different t reference df from the residual-variance estimate.
@@ -247,13 +288,15 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
             if np.isfinite(mean_variance).all() and np.all(mean_variance >= 0) and np.isfinite(noise_variance):
                 mean_half = crit * np.sqrt(mean_variance)
                 observation_half = crit * np.sqrt(mean_variance + noise_variance)
-                if np.isfinite(mean_half).all() and np.isfinite(observation_half).all():
+                if np.isfinite(mean_half).all() and (robust or np.isfinite(observation_half).all()):
                     with np.errstate(over='ignore'):
                         mean_interval = np.column_stack([predicted-mean_half, predicted+mean_half])
                         observation_interval = np.column_stack([predicted-observation_half, predicted+observation_half])
-                    if np.isfinite(mean_interval).all() and np.isfinite(observation_interval).all():
-                        prediction.update(mean_ci=mean_interval.tolist(), observation_ci=observation_interval.tolist(),
-                                          df_inference=float(df), pooled_noise_variance=noise_variance)
+                    if np.isfinite(mean_interval).all() and (robust or np.isfinite(observation_interval).all()):
+                        prediction.update(mean_ci=mean_interval.tolist(), df_inference=float(df))
+                        if not robust:
+                            prediction.update(observation_ci=observation_interval.tolist(), pooled_noise_variance=noise_variance)
+                            prediction['observation_interval']['status'] = 'computed'
                     else:
                         prediction.update(status='undefined', reason='Prediction interval endpoints exceed finite numerical range')
                 else:
@@ -261,7 +304,10 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
             else:
                 prediction.update(status='undefined', reason='Prediction variance is nonfinite or negative')
         else:
-            prediction['reason'] = inference_reason or 'Rank-deficient design; prediction estimability has not been checked'
+            prediction['reason'] = inference_reason or 'Rank-deficient design; individual prediction intervals are not reported'
+        if not robust and prediction['observation_interval']['status'] == 'pending':
+            prediction['observation_interval'] = dict(status=prediction['status'] if prediction['status'] != 'computed' else 'undefined',
+                                                      reason=prediction.get('reason', 'Observation interval was not computed'))
         out['prediction'] = prediction
     return out
 

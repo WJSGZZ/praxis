@@ -456,20 +456,28 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
     do_backtest = isinstance(backtest, dict) or backtest
     if do_backtest and X is not None and options.get('exog_known_at_origin') is not True:
         raise ValueError('Exogenous backtest requires explicit exog_known_at_origin=True')
-    best = None
+    fits = []
+    unit_root_tests = []
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         z = y if X is None else y - np.column_stack([np.ones(len(y)), X]) @ np.linalg.lstsq(np.column_stack([np.ones(len(y)), X]), y, rcond=None)[0]
         d = 0
+        # Difference only when ADF rejects a unit root neither around a constant nor around a
+        # linear trend; otherwise a trend-stationary series would be differenced and forecast flat.
         while d < max_d and len(z) >= 8 and np.ptp(z) > np.finfo(float).eps * max(1, np.abs(z).max()):
-            try: unit_root = adfuller(z)[1] > .05
+            try: p_c, p_ct = float(adfuller(z, regression='c')[1]), float(adfuller(z, regression='ct')[1])
             except ValueError: break
+            unit_root = p_c > .05 and p_ct > .05
+            unit_root_tests.append(dict(d=d, adf_p_constant=p_c, adf_p_trend=p_ct, differenced=bool(unit_root)))
             if not unit_root: break
             z, d = np.diff(z), d+1
+        # d=0: constant or constant+trend; d=1: none or drift (statsmodels trend='t' in levels).
+        trends = ('c', 'ct') if d == 0 else ('n', 't') if d == 1 else ('n',)
+        timed_rank_ok = X is None or np.linalg.matrix_rank(np.column_stack([np.ones(len(y)), np.arange(len(y)), X])) == X.shape[1]+2
         for p in range(max_p+1):
             for q in range(max_q+1):
-                for trend in ('c', 'ct') if d == 0 else ('n',):
-                    if X is not None and trend == 'ct' and np.linalg.matrix_rank(np.column_stack([np.ones(len(y)), np.arange(len(y)), X])) < X.shape[1]+2:
+                for trend in trends:
+                    if 't' in trend and not timed_rank_ok:
                         continue
                     try:
                         seasonal = (1, 0, 0, seasonal_period) if seasonal_period else (0, 0, 0, 0)
@@ -477,21 +485,36 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
                         k = len(fit.params); denom = len(y)-d-k-1
                         if denom <= 0 or not np.isfinite(fit.aic) or not np.isfinite(fit.params).all(): continue
                         aicc = fit.aic + 2*k*(k+1)/denom
-                        if best is None or aicc < best[0]: best = (aicc, (p, d, q), fit)
+                        fits.append((aicc, (p, d, q), trend, fit, bool(fit.mle_retvals.get('converged', False))))
                     except (ValueError, np.linalg.LinAlgError, RuntimeError):
                         continue
-        if best is None: raise RuntimeError('No finite ARIMA model could be fitted')
-        aicc, order, fit = best; fc = fit.get_forecast(horizon, exog=F); ci = np.asarray(fc.conf_int(alpha=.05)); prediction = np.asarray(fc.predicted_mean)
+        if not fits: raise RuntimeError('No finite ARIMA model could be fitted')
+        fits.sort(key=lambda item: item[0])
+        converged_fits = [item for item in fits if item[4]]
+        aicc, order, trend, fit, _ = (converged_fits or fits)[0]
+        selection = dict(rule='lowest AICc among optimizer-converged candidates', candidates_fitted=len(fits),
+                         converged_candidates=len(converged_fits), fallback_from_nonconverged=None)
+        if converged_fits and fits[0] is not converged_fits[0]:
+            selection['fallback_from_nonconverged'] = dict(order=list(fits[0][1]), trend=fits[0][2], aicc=float(fits[0][0]))
+        if not converged_fits:
+            selection['reason'] = f'None of {len(fits)} finite candidates reported optimizer convergence; lowest-AICc nonconverged fit returned'
+        fc = fit.get_forecast(horizon, exog=F); ci = np.asarray(fc.conf_int(alpha=.05)); prediction = np.asarray(fc.predicted_mean)
         if prediction.shape != (horizon,) or ci.shape != (horizon, 2) or not np.isfinite(prediction).all() or not np.isfinite(ci).all():
             raise ValueError('ARIMA forecast or interval is nonfinite or incorrectly shaped')
         resid = np.asarray(fit.resid, float)
         lb = acorr_ljungbox(resid[max(order[1], 1):], lags=[min(10, len(y)//5)], return_df=True)
     lb_value = float(lb['lb_pvalue'].iloc[0]); lb_valid = np.isfinite(lb_value)
-    out = dict(order=list(order), aicc=float(aicc), forecast=prediction.tolist(), lower=ci[:,0].tolist(), upper=ci[:,1].tolist(),
+    # statsmodels names a time trend and exog both 'x<i>'; name trend terms explicitly instead.
+    trend_names = {'c': ['const'], 'ct': ['const', 'trend'], 't': ['drift'], 'n': []}[trend]
+    names = trend_names + [str(k) for k in fit.param_names[len(trend_names):]]
+    if X is not None:
+        names[len(trend_names):len(trend_names)+X.shape[1]] = [f'x{i+1}' for i in range(X.shape[1])]
+    out = dict(order=list(order), trend=trend, aicc=float(aicc), forecast=prediction.tolist(), lower=ci[:,0].tolist(), upper=ci[:,1].tolist(),
                residuals=resid.tolist(), ljung_box_p=lb_value if lb_valid else None,
                residuals_white=bool(lb_value>.05) if lb_valid else None,
-               parameters={str(k):float(v) for k,v in zip(fit.param_names, fit.params)},
+               parameters={k:float(v) for k,v in zip(names, fit.params)},
                converged=bool(fit.mle_retvals.get('converged', False)),
+               selection=selection, unit_root_tests=unit_root_tests,
                exog_columns=0 if X is None else X.shape[1],
                differencing_basis='training response' if X is None else 'training OLS residual after intercept and exog',
                note='Intervals condition on selected order, Gaussian errors and supplied future exog. Selection/parameter/future-regressor uncertainty is not fully included; optimizer convergence is reported separately.')
@@ -508,7 +531,7 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
                                   seasonal_period=seasonal_period, exog=None if X is None else X[:origin],
                                   future_exog=None if X is None else X[origin:origin+h])
             if not candidate_result['converged']:
-                raise RuntimeError('ARIMA optimizer did not converge at this origin')
+                raise RuntimeError('No ARIMA candidate converged at this origin: ' + candidate_result['selection']['reason'])
             return candidate_result['forecast']
         report = rolling_origin(y, horizon, min_train=minimum, season=seasonal_period, candidates={'arima': candidate})
         report['min_train'] = int(minimum); report['horizon'] = int(horizon)

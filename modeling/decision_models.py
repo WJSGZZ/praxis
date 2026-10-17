@@ -258,29 +258,53 @@ def _epsilon_inputs(count, senses, epsilon_grid, primary, tol, max_points):
     return directions, grid, secondary
 
 
-def _epsilon_summary(points, senses, grid, primary, secondary, method):
+def _merged_frontier(accepted, senses, tol):
+    """Merge numerically identical objective vectors, keeping every epsilon row, then filter dominance."""
+    groups = []
+    for point in accepted:
+        values = np.asarray(point['objectives'], float)
+        for group in groups:
+            reference = np.asarray(group[0]['objectives'], float)
+            if np.all(np.abs(values-reference) <= max(tol, 1e-12)*np.maximum(1., np.maximum(np.abs(values), np.abs(reference)))):
+                group.append(point)
+                break
+        else:
+            groups.append([point])
+    if not groups:
+        return []
+    keep = pareto_front([group[0]['objectives'] for group in groups], senses)['indices']
+    return [dict(groups[i][0], grid_indices=[p['grid_index'] for p in groups[i]], epsilon_rows=[p['epsilon'] for p in groups[i]])
+            for i in keep]
+
+
+def _epsilon_summary(points, senses, grid, primary, secondary, method, tol, scope):
     accepted = [point for point in points if point['accepted']]
-    front = pareto_front([point['objectives'] for point in accepted], senses)['indices'] if accepted else []
+    frontier = _merged_frontier(accepted, senses, tol)
     return dict(method=method, primary=int(primary), senses=list(map(int, senses)),
                 epsilon_objectives=secondary, epsilon_grid=grid.tolist(),
                 epsilon_rule='For sense +1: objective >= epsilon; for sense -1: objective <= epsilon.',
-                points=points, frontier=[accepted[i] for i in front],
+                points=points, frontier=frontier,
                 coverage=dict(requested_points=len(grid), attempted_points=len(points), accepted_points=len(accepted),
-                              unique_epsilon_rows=len(np.unique(grid, axis=0)),
+                              unique_epsilon_rows=len(np.unique(grid, axis=0)), frontier_points=len(frontier),
                               complete_frontier=False,
-                              scope='Only the supplied epsilon rows were scanned. Dominance filtering compares accepted returned objective vectors only; ties and weakly efficient scalar optima can remain. No complete/global Pareto-front proof.'))
+                              scope='Only the supplied epsilon rows were scanned. Accepted points with numerically identical objectives '
+                                    'are merged into one frontier entry listing every grid_index and epsilon row, then dominated '
+                                    'entries are removed. ' + scope + ' No complete/global Pareto-front proof.'))
 
 
 def epsilon_constraint_lp(objectives, senses, epsilon_grid, *, primary=0,
                           A_ub=None, b_ub=None, A_ge=None, b_ge=None, A_eq=None, b_eq=None,
                           bounds=None, tol=1e-7, max_points=1000):
-    """Scan explicit epsilon thresholds, solving one existing HiGHS LP per grid row.
+    """Scan explicit epsilon thresholds with two existing HiGHS LPs per grid row.
 
     objectives contains one linear coefficient vector per objective. Constraints and
     default nonnegative variables follow solve_lp. Threshold columns correspond to
-    nonprimary objectives in their original order. Returned frontier is the exact
-    existing dominance filter on accepted numerical LP answers, not a continuous
-    frontier or an exact-arithmetic proof. Scalar ties can be weakly efficient.
+    nonprimary objectives in their original order. Stage one optimizes the primary
+    objective; a lexicographic stage two keeps every objective no worse and improves
+    the weighted others, so a certified point is efficient rather than only weakly
+    efficient. If stage two is not certified the stage-one point is kept with
+    weakly_efficient_possible=true. Identical points are merged and dominated ones
+    removed; this is not a continuous frontier or an exact-arithmetic proof.
     """
     coefficients = np.asarray(objectives, float)
     if coefficients.ndim != 2 or not all(coefficients.shape) or not np.isfinite(coefficients).all() or any(isinstance(v, (bool, np.bool_)) for v in np.asarray(objectives, object).flat):
@@ -300,6 +324,8 @@ def epsilon_constraint_lp(objectives, senses, epsilon_grid, *, primary=0,
         base_rhs.extend((sense*rhs).tolist())
     # The existing solver validates equality rows and variable bounds before its
     # first solve. Preserve the original constraints in the returned definition.
+    weights = np.array([1/float(np.max(np.abs(coefficients[j])) or 1.) for j in secondary])
+    second_cost = -(weights[:, None]*directions[secondary, None]*coefficients[secondary]).sum(axis=0)
     points = []
     for index, thresholds in enumerate(grid):
         rows = base_rows + [(-directions[j]*coefficients[j]).tolist() for j in secondary]
@@ -310,17 +336,37 @@ def epsilon_constraint_lp(objectives, senses, epsilon_grid, *, primary=0,
                      feasible=bool(solved.get('incumbent_feasible', False)), accepted=bool(solved.get('success') and solved.get('certified')),
                      scalar_optimum_verified=bool(solved.get('certified')), solver_result=solved)
         if 'x' in solved:
+            reported = solved
             values = coefficients @ np.asarray(solved['x'])
             if not np.isfinite(values).all():
                 raise ValueError('Objective values exceed finite numerical range')
-            point.update(x=solved['x'], objectives=values.tolist(),
+            if point['accepted']:
+                # Lexicographic second stage: keep the primary at its optimum and no
+                # objective worse than stage one, then improve the weighted sum of the
+                # others. A certified stage-two optimum is not dominated by any feasible point.
+                stage_rows = rows + [(-directions[j]*coefficients[j]).tolist() for j in range(len(coefficients))]
+                stage_rhs = rhs + [-directions[j]*float(values[j]) for j in range(len(coefficients))]
+                stage = optimize.solve_lp(second_cost, A_ub=stage_rows, b_ub=stage_rhs, A_eq=A_eq, b_eq=b_eq, bounds=bounds, tol=tol)
+                certified = bool(stage.get('success') and stage.get('certified'))
+                point['lexicographic_stage'] = dict(status='certified' if certified else 'not_certified', primary_optimum=float(values[primary]),
+                                                    secondary_weights=weights.tolist(), solver_result=stage,
+                                                    rule='Stage two maximizes the weighted improvement of nonprimary objectives with every objective no worse than the stage-one point.')
+                point['weakly_efficient_possible'] = not certified
+                if certified:
+                    second = coefficients @ np.asarray(stage['x'])
+                    if not np.isfinite(second).all():
+                        raise ValueError('Objective values exceed finite numerical range')
+                    reported, values = stage, second
+            point.update(x=reported['x'], objectives=values.tolist(),
                          epsilon_slacks=(directions[secondary]*(values[secondary]-thresholds)).tolist(),
                          feasibility=dict(status='checked_by_existing_lp_certificate',
-                                          scaled_max_violation=solved['certificate']['scaled_primal_violation'], tolerance=tol))
+                                          scaled_max_violation=reported['certificate']['scaled_primal_violation'], tolerance=tol))
         else:
             point['feasibility'] = dict(status='no_candidate', note='Solver failure is not an exact mathematical infeasibility proof.')
         points.append(point)
-    out = _epsilon_summary(points, directions, grid, primary, secondary, 'epsilon_constraint_lp')
+    out = _epsilon_summary(points, directions, grid, primary, secondary, 'epsilon_constraint_lp', tol,
+                           'A certified lexicographic second stage removes weakly efficient scalar optima; '
+                           'points with weakly_efficient_possible=true kept the stage-one answer.')
     out['problem'] = dict(objectives=coefficients.tolist(),
                           constraints={key: None if value is None else np.asarray(value).tolist()
                                        for key, value in dict(A_ub=A_ub, b_ub=b_ub, A_ge=A_ge, b_ge=b_ge, A_eq=A_eq, b_eq=b_eq).items()},
@@ -382,10 +428,13 @@ def epsilon_constraint_nlp(objectives, senses, epsilon_grid, bounds, constraints
                          feasibility=dict(status='recomputed_original_constraints_and_thresholds', max_violation=violation, tolerance=max(tol, 1e-7)))
             point['feasible'] = bool(violation <= max(tol, 1e-7))
             point['accepted'] = bool(point['feasible'] and solved['converged'])
+            point['weakly_efficient_possible'] = True
         else:
             point['feasibility'] = dict(status='no_candidate', note='No feasible point found; infeasibility is not established.')
         points.append(point)
-    out = _epsilon_summary(points, directions, grid, primary, secondary, 'epsilon_constraint_nlp_local_candidates')
+    out = _epsilon_summary(points, directions, grid, primary, secondary, 'epsilon_constraint_nlp_local_candidates', max(tol, 1e-7),
+                           'No second stage is run for NLP: entries are mutually nondominated local candidates and may be weakly '
+                           'efficient or dominated by points the scan did not return.')
     out['problem'] = dict(objectives=[dict(index=i, callable_name=getattr(fun, '__name__', 'callable')) for i, fun in enumerate(objectives)],
                           constraints=[dict(index=i, type=c['type'], callable_name=getattr(c['fun'], '__name__', 'callable')) for i, c in enumerate(constraints)],
                           bounds=box.tolist(), starts_per_epsilon=int(starts), seed=int(seed),
