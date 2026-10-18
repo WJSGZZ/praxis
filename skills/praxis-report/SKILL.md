@@ -12,6 +12,7 @@ BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv
 
 - 按 [writing.md](../../references/writing.md) 接续原稿、有效证据、任务和生成源；纯语言修改只读“语言专项”，交 [scientific-writing](../praxis-scientific-writing/SKILL.md)；不新增科学主张。
 - 完整稿按 [convergence.md](../../references/convergence.md) 取舍正文／附录；竞赛假设章及必备产出只按 [contest-paper-checklist.md](../../references/contest-paper-checklist.md)，研究结构按 [research-mode.md](../../references/research-mode.md)。
+- 核题问—前提—输出—答案；比较默认给同口径基线及差值，缺项写理由。无有效结果回科学任务，数量指标不定档。
 - 图表用途、系列数据与图例、字体及最终尺寸按 [visualization.md](../../references/visualization.md)；专项绘图交 [visualization](../praxis-visualization/SKILL.md)，全文核引用与条件。
 - 来源支撑按 writing.md 核读；文献综合交 [literature-review](../praxis-literature-review/SKILL.md)，交付时加载 [integrity.md](../../references/integrity.md) 的 AI 披露与贡献，沿真实记录注明缺口。
 - 赛事身份和格式按 [contest-delivery.md](../../references/contest-delivery.md)，当前编译、同 PDF 字体与全页 QA、冻结及 workflow.report 只按 [automation.md 当前交付门禁](../../references/automation.md#写作连接)。
