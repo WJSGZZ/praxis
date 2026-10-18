@@ -210,6 +210,35 @@ def _file_changes(entries, workspace):
     return changes
 
 
+def _guarded_output_changes(entries, old_case, old_run, new_case, new_run):
+    """Fail closed when fixed derived evidence depends on a changed binary.
+
+    This locates unknown derived changes; it does not infer array equivalence
+    or silently assign the same supplementary JSON to two different runs.
+    """
+    if not isinstance(entries, list):
+        raise ValueError('guarded_outputs must be a list')
+    changes = []
+    for item in entries:
+        if (not isinstance(item, dict) or not isinstance(item.get('file'), str)
+                or not item['file'].startswith('output/')
+                or not isinstance(item.get('reason'), str) or not item['reason'].strip()):
+            raise ValueError('Guarded outputs need an output/ file and review reason')
+        hashes = []
+        for case, run in [(old_case, old_run), (new_case, new_run)]:
+            directory = _safe(case, 'runs/' + run)
+            receipt = pipeline.read_json(directory/'receipt.json')
+            path = _safe(directory, item['file'])
+            expected = receipt.get('outputs', {}).get(item['file'])
+            if not expected or not path.is_file() or pipeline.digest(path) != expected:
+                raise ValueError('Guarded output hash mismatch: ' + item['file'])
+            hashes.append(expected)
+        if hashes[0] != hashes[1]:
+            changes.append({**item, 'old_sha256': hashes[0], 'new_sha256': hashes[1],
+                            'derived_numeric_changes': None})
+    return changes
+
+
 def assess_case(entry, workspace):
     case = _safe(workspace, entry['case'])
     baseline_case = _safe(workspace, entry.get('baseline_case', entry['case']))
@@ -225,6 +254,14 @@ def assess_case(entry, workspace):
            'note': 'A dry run cannot know new results that have not been computed.'}
     row['layout_changes'] = _file_changes(entry.get('presentation', []), workspace)
     row['guidance_changes'] = _file_changes(entry.get('guidance', []), workspace)
+    facts = entry.get('facts')
+    driver = facts.get('driver') if facts else None
+    row['paper_source_changes'] = _file_changes(
+        [driver, *driver.get('dependencies', [])], workspace) if driver else []
+    row['unresolved_artifact_changes'] = []
+    if row['paper_source_changes']:
+        row['categories'].append('unknown')
+        row['review_required'].append('Paper adapter or declared helper changed: review source before rebinding or rebuilding')
     if row['layout_changes']:
         row['categories'].append('layout'); row['review_required'].append('Rebuild and inspect changed pages')
     if row['guidance_changes']:
@@ -236,6 +273,13 @@ def assess_case(entry, workspace):
     run_id = Path(latest['run']).name
     row['candidate_run'] = run_id
     new = _result(case, run_id)
+    if facts:
+        row['unresolved_artifact_changes'] = _guarded_output_changes(
+            facts.get('guarded_outputs', []), baseline_case, entry['baseline_run'], case, run_id)
+        if row['unresolved_artifact_changes']:
+            if 'unknown' not in row['categories']:
+                row['categories'].append('unknown')
+            row['review_required'].append('Guarded non-JSON output changed: recompute and compare derived facts before revising prose; fixed supplementary evidence is insufficient')
     row['numeric_delta'] = compare_results(old, new, entry.get('tolerances'))
     if row['numeric_delta']['changes']:
         row['categories'].append('numbers')
@@ -246,7 +290,6 @@ def assess_case(entry, workspace):
     if row['conclusion_changes']:
         row['categories'].append('conclusions')
         row['review_required'].append('Main answer changed: author must revise reasoning before generating prose')
-    facts = entry.get('facts')
     if facts:
         from scripts import paper_facts
         manifest = _safe(workspace, facts['manifest'])

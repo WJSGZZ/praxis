@@ -310,4 +310,6 @@ schema 1沿原行为。字段门保存作者／评审者声明，实际覆盖、
 
 有分段人写源和数值图生成器的案例，清单用 `facts.driver:{path,sha256,timeout_seconds?,dependencies?:[{path,sha256}]}` 绑定已审阅的本地适配脚本及其声明的绘图等辅助文件；执行前后都核对这些文件哈希。refresh只传固定的case/run-id/output参数，不走shell，重建段落与图到新目录。脚本或辅助文件字节变化须重新审阅并更新清单；声明清单不等于自动发现全部依赖。不直接在文档或数据中执行命令。静态源展开不能保证未绑定图的数值自动同步，涉及这类图应使用适配器或转人工复查。
 
+固定展示派生JSON若来自NPZ等非JSON运行制品，须在 `facts.guarded_outputs:[{file:"output/arrays.npz",reason:"需要重算展示派生"}]` 登记依赖。dry-run核对两次运行的实际制品与各自receipt；哈希变化时派生数字保持unknown并禁止自动改稿，必须重算展示派生和比较后再审阅。容器字节变化不证明数组数值变化，工具也不猜测数组等价。适配器或声明helper哈希变化在dry-run中同样显示unknown；不能因模型结果未变就报告整篇不受影响。
+
 发布前可在私有工作区用源码解释器和绝对脚本路径运行，例如 `/path/to/source/.venv/bin/python /path/to/source/scripts/release_check.py --main-cases data/cases-main.json --workspace "$PWD" --case-report outputs/release-main-cases/new-check`；也可从源码根用 `python -m scripts.release_check` 搭配显式 `--workspace`。这个可选门禁调用 `refresh(dry_run=True,rebuild=False)`，只生成新报告目录；不会运行模型、消耗工作流尝试或重建论文。未给 `--case-report` 时在工作区 `outputs/release-main-cases/` 下生成唯一目录。保留原 QUICK、长检查选择和测试套件行为，不指定 `--main-cases` 时不访问私有案例。已有可用结果的数值变化需逐项解释；过期、失败或未重算案例的新数字保持 unknown，不能把它写成“数字未变”。报告读取／校验错误导致门禁失败，数字差异本身不导致代码测试失败。发布前人工看过报告并解释变化是额外要求；命令成功不代表人工审阅或科学验收已完成。私有清单、结果及报告不进入公开测试或插件安装包。

@@ -163,3 +163,49 @@ def test_paper_driver_detects_helper_changed_during_execution(tmp_path):
             'dependencies': [{'path': 'figures.py', 'sha256': pipeline.digest(helper)}]}
     with pytest.raises(ValueError, match='[Dd]ependenc'):
         cr.run_paper_driver(spec, tmp_path, 'run1', tmp_path/'out', tmp_path)
+
+
+def test_dry_run_detects_changed_paper_helper_before_claiming_unaffected(tmp_path, monkeypatch):
+    from scripts import pipeline, paper_facts
+    case = tmp_path/'case'
+    for run in ['old', 'new']:
+        directory = case/'runs'/run; (directory/'output').mkdir(parents=True)
+        result = directory/'output/results.json'; result.write_text('{"x":1}')
+        (directory/'receipt.json').write_text(json.dumps({'outputs': {'output/results.json': pipeline.digest(result)}}))
+    monkeypatch.setattr(pipeline, 'status', lambda p: {'runs': [{'run':str(case/'runs/new'), 'usable_automatic_evidence':True}]})
+    monkeypatch.setattr(paper_facts, 'resolve', lambda *a, **k: {'facts':{}})
+    (tmp_path/'facts.json').write_text('{}')
+    driver = tmp_path/'driver.py'; driver.write_text('# reviewed\n')
+    helper = tmp_path/'figures.py'; helper.write_text('# changed\n')
+    row = cr.assess_case({'id':'a','case':'case','baseline_run':'old',
+        'conclusions':[{'id':'x','pointer':'/x','operator':'identity'}],
+        'facts':{'manifest':'facts.json','driver':{'path':'driver.py','sha256':pipeline.digest(driver),
+          'dependencies':[{'path':'figures.py','sha256':'0'*64}]}}}, tmp_path)
+    assert row['paper_source_changes'][0]['path'] == 'figures.py'
+    assert 'unknown' in row['categories'] and not row['auto_revision_allowed']
+
+
+def test_changed_guarded_non_json_output_blocks_reusing_fixed_derived_facts(tmp_path, monkeypatch):
+    from scripts import pipeline, paper_facts
+    case = tmp_path/'case'
+    for run, binary in [('old',b'old-array'), ('new',b'new-array')]:
+        directory = case/'runs'/run; (directory/'output').mkdir(parents=True)
+        result = directory/'output/results.json'; result.write_text('{"x":1}')
+        artifact = directory/'output/arrays.npz'; artifact.write_bytes(binary)
+        (directory/'receipt.json').write_text(json.dumps({'outputs':{
+            'output/results.json':pipeline.digest(result),'output/arrays.npz':pipeline.digest(artifact)}}))
+    monkeypatch.setattr(pipeline, 'status', lambda p: {'runs': [{'run':str(case/'runs/new'), 'usable_automatic_evidence':True}]})
+    monkeypatch.setattr(paper_facts, 'resolve', lambda *a, **k: {'facts':{}})
+    (tmp_path/'facts.json').write_text('{}')
+    entry={'id':'a','case':'case','baseline_run':'old',
+        'conclusions':[{'id':'x','pointer':'/x','operator':'identity'}],
+        'facts':{'manifest':'facts.json','guarded_outputs':[{'file':'output/arrays.npz',
+            'reason':'Fixed presentation-derived JSON must be recomputed from changed arrays'}]}}
+    row=cr.assess_case(entry,tmp_path)
+    assert row['unresolved_artifact_changes'][0]['file']=='output/arrays.npz'
+    assert 'unknown' in row['categories'] and not row['auto_revision_allowed']
+    assert row['numeric_delta']['changes']==[]
+    # A receipt hash alone cannot bless altered evidence.
+    (case/'runs/new/output/arrays.npz').write_bytes(b'tampered')
+    with pytest.raises(ValueError,match='[Hh]ash'):
+        cr.assess_case(entry,tmp_path)
