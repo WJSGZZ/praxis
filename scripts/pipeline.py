@@ -20,6 +20,7 @@ from importlib.metadata import PackageNotFoundError, version
 BUNDLE = Path(__file__).resolve().parents[1]
 PROJECT = Path.cwd().resolve()
 sys.path.insert(0, str(BUNDLE))
+from scripts import run_trace
 from scripts.audit_data import audit
 from modeling.schema_contracts import check_model_contract, reasoned, unique_object_pairs
 import pandas as pd
@@ -239,9 +240,12 @@ def model_contract_problems(case, warnings=None):
     return check_model_contract(contract, warnings)
 
 
-def run_case(case, model='code/model.py', validator='code/validate.py', timeout=120):
+def run_case(case, model='code/model.py', validator='code/validate.py', timeout=120, dependency_mode=None):
     case = under_project(case)
     config = read_case_config(case)
+    dependency_mode = config.get('dependency_mode', 'conservative') if dependency_mode is None else dependency_mode
+    if dependency_mode not in ('conservative', 'python-reviewed'):
+        raise ValueError('dependency_mode must be conservative or python-reviewed')
     if not config.get('intake_complete') or input_changes(case, config):
         raise ValueError('Intake incomplete or raw inputs changed; do not use stale materials')
     if type(timeout) is not int or not 1 <= timeout <= 3600:
@@ -287,21 +291,52 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(root / relative, target)
     env = os.environ.copy()
+    parent_pythonpath = env.get('PYTHONPATH')
+    parent_pythonpath_sha256 = hashlib.sha256(parent_pythonpath.encode()).hexdigest() if parent_pythonpath is not None else None
     env['PYTHONPATH'] = str(BUNDLE) + os.pathsep + env.get('PYTHONPATH', '')
+    env['PYTHONDONTWRITEBYTECODE'] = '1'
     commands = [('model', [sys.executable, str(model_path), '--output', str(out)]),
                 ('validation', [sys.executable, str(validator_path), '--results', str(out / 'results.json'),
                                 '--output', str(attempt / 'checks.json')])]
+    invariants = [run_trace.file_state(p) for p in [Path(__file__), BUNDLE/'scripts/run_trace.py',
+                  BUNDLE/'modeling/schema_contracts.py', BUNDLE/'pyproject.toml', BUNDLE/'uv.lock',
+                  case/'case.json', model_path, validator_path] +
+                  [case/relative for relative in code_hashes if relative.startswith('planning/')]]
+    def observed_dependencies():
+        stages=[];uncovered=[]
+        for step in receipt['steps']:
+            trace_path=attempt/(step['stage']+'.trace.json')
+            try:
+                trace=read_json(trace_path)
+                stages.append({'stage':step['stage'],'trace_path':trace_path.name,
+                               'trace_path_absolute':str(trace_path),'sha256':digest(trace_path)})
+                uncovered.extend(trace.get('uncovered',[]))
+                if not trace.get('finalized'):uncovered.append('incomplete stage trace: '+step['stage'])
+            except (OSError,ValueError):uncovered.append('missing or invalid stage trace: '+step['stage'])
+        precise=dependency_mode=='python-reviewed' and not uncovered and len(stages)==len(commands)
+        return {'schema':1,'parent_pythonpath_sha256':parent_pythonpath_sha256,'requested_mode':dependency_mode,'mode':'python-reviewed' if precise else 'conservative',
+                'coverage':{'uncovered':uncovered,'limitations':run_trace.LIMITATIONS,
+                            'caller_review_required':True,'os_io_complete':False},
+                'stages':stages,'invariants':invariants}
     save(attempt / 'receipt.json', receipt)
     try:
         for stage, command in commands:
-            step = {'stage': stage, 'argv': command, 'started_utc': stamp()}
+            generated={}
+            for previous in receipt['steps']:
+                try:
+                    trace=read_json(attempt/(previous['stage']+'.trace.json'))
+                    generated.update({row['logical_path']:row.get('producer_stage',previous['stage']) for row in trace['files'] if row.get('role')=='generated'})
+                except (OSError,ValueError):pass
+            executed=[sys.executable,str(BUNDLE/'scripts/run_trace.py'),'--trace',str(attempt/(stage+'.trace.json')),
+                      '--stage',stage,'--generated',json.dumps(generated),'--']+command[1:]
+            step = {'stage': stage, 'argv': command, 'executed_argv':executed, 'started_utc': stamp()}
             receipt['steps'].append(step)
             save(attempt / 'receipt.json', receipt)
             # Child processes write directly to these descriptors. Preserve
             # their actual bytes; a parent text wrapper cannot choose the
             # child's encoding or promise that arbitrary model output is UTF-8.
             with (attempt / (stage + '.stdout.log')).open('wb') as stdout, (attempt / (stage + '.stderr.log')).open('wb') as stderr:
-                result = subprocess.run(command, cwd=case, env=env, stdout=stdout, stderr=stderr, timeout=timeout)
+                result = subprocess.run(executed, cwd=case, env=env, stdout=stdout, stderr=stderr, timeout=timeout)
             step.update({'ended_utc': stamp(), 'exit_code': result.returncode})
             if result.returncode != 0:
                 raise ValueError(f'{stage} exited {result.returncode}; inspect retained logs')
@@ -324,8 +359,11 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
             methods += [f'Missing passed conservation check: {name}' for name in balances if name not in names]
             if methods:
                 raise ValueError('; '.join(methods))
-        if read_case_config(case)['inputs'] != receipt['inputs'] or input_changes(case, config) or source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes:
-            raise ValueError('Inputs or reviewed code changed during execution')
+        receipt['actual_dependencies']=observed_dependencies()
+        precise=receipt['actual_dependencies']['mode']=='python-reviewed'
+        actual_changes=run_trace.changes(receipt['actual_dependencies']) if precise else []
+        if read_case_config(case)['inputs'] != receipt['inputs'] or input_changes(case, config) or actual_changes or (not precise and (source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes)):
+            raise ValueError('Inputs or reviewed code changed during execution: '+ '; '.join(actual_changes))
         receipt['outputs'] = {}
         for path in (list(out.rglob('*')) + [attempt / 'checks.json']
                      + list((attempt / 'source-snapshot').rglob('*'))
@@ -337,6 +375,7 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
         receipt.update({'status': 'automatic-checks-passed', 'automatic_checks_passed': True})
     except Exception as exc:
         receipt.update({'status': 'failed', 'error': f'{type(exc).__name__}: {exc}'})
+    receipt['actual_dependencies']=observed_dependencies()
     receipt['ended_utc'] = stamp()
     save(attempt / 'receipt.json', receipt)
     return {'run': str(attempt), **receipt}
@@ -386,19 +425,23 @@ def status(case):
             stale.append('run input binding missing; validity unknown')
         elif receipt['inputs'] != config['inputs']:
             stale.append('registered input version changed')
-        if receipt.get('dependencies') != dependency_snapshot():
-            stale.append('project dependency file set changed or binding missing')
-        for relative, checksum in receipt.get('code', {}).items():
-            source = (case / relative).resolve()
-            if not source.is_relative_to(case) or not source.is_file() or digest(source) != checksum:
-                stale.append(relative)
-        current_sources = source_snapshot(case)
-        if current_sources != receipt.get('code', {}):
-            stale.append('case source/configuration file set changed')
-        for relative, checksum in receipt.get('dependencies', {}).items():
-            dependency = (BUNDLE / relative).resolve()
-            if not dependency.is_relative_to(BUNDLE) or not dependency.is_file() or digest(dependency) != checksum:
-                stale.append('project dependency: ' + relative)
+        actual=receipt.get('actual_dependencies')
+        if isinstance(actual,dict) and actual.get('schema')==1 and actual.get('mode')=='python-reviewed':
+            stale.extend(run_trace.changes(actual))
+        else:
+            if receipt.get('dependencies') != dependency_snapshot():
+                stale.append('project dependency file set changed or binding missing')
+            for relative, checksum in receipt.get('code', {}).items():
+                source = (case / relative).resolve()
+                if not source.is_relative_to(case) or not source.is_file() or digest(source) != checksum:
+                    stale.append(relative)
+            current_sources = source_snapshot(case)
+            if current_sources != receipt.get('code', {}):
+                stale.append('case source/configuration file set changed')
+            for relative, checksum in receipt.get('dependencies', {}).items():
+                dependency = (BUNDLE / relative).resolve()
+                if not dependency.is_relative_to(BUNDLE) or not dependency.is_file() or digest(dependency) != checksum:
+                    stale.append('project dependency: ' + relative)
         if receipt.get('environment') != environment_snapshot():
             stale.append('runtime environment changed')
         for relative, checksum in receipt.get('outputs', {}).items():
@@ -718,6 +761,13 @@ def main():
     run.add_argument('--validator', default='code/validate.py')
     run.add_argument('--timeout', type=int, default=120)
     run.add_argument('--full-output', action='store_true', help='print the whole receipt instead of a summary')
+    refresh = commands.add_parser('refresh')
+    refresh.add_argument('--cases', type=Path, required=True)
+    refresh_mode=refresh.add_mutually_exclusive_group()
+    refresh_mode.add_argument('--dry-run', action='store_true', help='Read-only comparison; default')
+    refresh_mode.add_argument('--execute', action='store_true', help='Use an already authorized workflow attempt')
+    refresh.add_argument('--rebuild', action='store_true')
+    refresh.add_argument('--output', type=Path)
     show = commands.add_parser('status')
     show.add_argument('--case', type=Path, required=True)
     evidence = commands.add_parser('evidence')
@@ -734,6 +784,13 @@ def main():
             result = init_case(args.case_root or PROJECT / 'cases',args.name,args.problem,args.data,args.phase,args.encoding,args.schema)
         elif args.action == 'run':
             result = run_case(args.case,args.model,args.validator,args.timeout)
+        elif args.action == 'refresh':
+            from scripts.case_refresh import refresh as refresh_cases
+            destination=under_project(args.output) if args.output is not None else PROJECT/'outputs/refresh'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')+'-'+uuid.uuid4().hex[:8])
+            refreshed=refresh_cases(args.cases, workspace=PROJECT, dry_run=not args.execute,
+                                    output=destination, rebuild=args.rebuild)
+            result={'status':refreshed['status'],'report_path':str(destination/'report.json'),
+                    'cases':[{key:row.get(key) for key in ('id','categories','recompute_required')} for row in refreshed['cases']]}
         elif args.action == 'evidence':
             result = evidence_index(args.case)
         elif args.action == 'contribution-add':
