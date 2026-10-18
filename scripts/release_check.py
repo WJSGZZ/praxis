@@ -5,13 +5,16 @@
 
 A demo run must exit cleanly and leave the tracked records unchanged: the check fails if git shows a change under demos/."""
 import argparse
+from datetime import datetime, timezone
 import shutil
 import subprocess
 import sys
 import tempfile
+import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 QUICK = ['demos/domino-research/reproduce/explore.py', 'demos/cumcm-1998-a/reproduce/run_demo.py', 'demos/cumcm-1998-a/reproduce/check_capital_threshold.py',
          'demos/cumcm-1998-a/reproduce/check_recommendation.py', 'demos/cumcm-1998-a/reproduce/check_robustness.py', 'demos/cumcm-1998-a/reproduce/check_alternatives.py',
          'demos/cumcm-1998-a/reproduce/check_return_target.py', 'demos/cumcm-1998-a/reproduce/check_target_certificates.py',
@@ -57,10 +60,41 @@ def changed_demo_files():
     return [line for line in out.splitlines() if line.strip()]
 
 
+def check_main_cases(manifest, *, workspace, output):
+    """Write an impact report only; never execute/rebuild a scientific case.
+
+    Differences and stale/unknown results require explanation, rather than
+    failing a code test. Reading/assessment errors fail this optional gate.
+    """
+    from scripts import case_refresh
+    try:
+        report = case_refresh.refresh(manifest, workspace=workspace, dry_run=True,
+                                      output=output, rebuild=False)
+    except Exception as exc:
+        print(f'FAIL main cases report: {type(exc).__name__}: {exc}', flush=True)
+        return False
+    for row in report['cases']:
+        delta = row.get('numeric_delta')
+        changes = len(delta['changes']) if delta is not None else None
+        count = str(changes) if changes is not None else 'unknown (not computed)'
+        detail = 'explanation required' if changes or row.get('conclusion_changes') else 'review report'
+        print(f"CASE {row['id']}: {', '.join(row['categories'])}; "
+              f'numeric changes={count}; {detail}', flush=True)
+    ok = report['status'] != 'failed'
+    print(('PASS ' if ok else 'FAIL ') + 'main cases dry-run report: '
+          + str(Path(workspace).resolve() / output / 'report.json'), flush=True)
+    return ok
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--long', action='store_true')
+    parser.add_argument('--main-cases', type=Path, help='Optional manifest in the private modeling workspace')
+    parser.add_argument('--workspace', type=Path, help='Workspace containing the main cases; default: current directory')
+    parser.add_argument('--case-report', type=Path, help='New report directory inside that workspace')
     args = parser.parse_args()
+    if args.main_cases is None and (args.workspace is not None or args.case_report is not None):
+        parser.error('--workspace and --case-report require --main-cases')
     failures = []
     for script in QUICK + (LONG if args.long else []):
         ok = run_demo(script)
@@ -69,6 +103,12 @@ def main():
             failures.append(script)
     drift = changed_demo_files()
     print(('PASS ' if not drift else 'FAIL ') + 'demo records unchanged' + ('' if not drift else f': {drift}'), flush=True)
+    if args.main_cases is not None:
+        workspace = args.workspace or Path.cwd()
+        destination = args.case_report or (Path('outputs/release-main-cases') /
+            (datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S') + '-' + uuid.uuid4().hex[:8]))
+        if not check_main_cases(args.main_cases, workspace=workspace, output=destination):
+            failures.append('main cases dry-run report')
     ok = run(['uv', 'run', '--locked', 'python', '-m', 'pytest', '-q'])
     print(('PASS ' if ok else 'FAIL ') + 'test suite', flush=True)
     return 0 if not failures and not drift and ok else 1
