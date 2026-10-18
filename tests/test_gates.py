@@ -56,13 +56,14 @@ def make_schema2_case(tmp_path, monkeypatch, *, checks=None, requirements=None):
     return case
 
 
-def test_model_contract_valid_and_same_symbol_different_objects_rejected():
+def test_model_contract_valid_and_different_object_wording_warns():
     contract = model_contract()
     validate(contract, MODEL_CONTRACT_V2)
     assert check_model_contract(contract) == []
     contract['symbols'][0]['uses'].append({'equation': 'demand', 'object': 'grazing pressure'})
-    problems = check_model_contract(contract)
-    assert any('symbol x' in p and 'grazing pressure' in p for p in problems)
+    warnings = []
+    assert check_model_contract(contract, warnings) == []
+    assert any('symbol x' in p and 'grazing pressure' in p for p in warnings)
     contract['symbols'][0]['same_object_justification'] = 'These are transformed measures of the same stored volume.'
     assert check_model_contract(contract) == []
 

@@ -4,7 +4,7 @@
 
 | 检查 | 契约产出与人工核查 |
 |---|---|
-| 符号一义 | `symbols[{symbol,unit,object,uses:[{equation,object}]}]`，至少一个符号：逐方程列每个符号的物理对象。顶层 `object` 与各处用法文字不同，给 `same_object_justification` 说明为何仍是同一对象；列出全部实际用法。比较符号时去掉空格、花括号和反斜杠（`H_z` 与 `H_{z}` 是同一符号）；`mechanisms[*].effect_variable` 与 `parameters[*].symbol` 必须已在 symbols 中声明。 |
+| 符号一义 | `symbols[{symbol,unit,object,uses:[{equation,object}]}]`，至少一个符号：逐方程列每个符号的物理对象。顶层 `object` 与各处用法文字不同且未给 `same_object_justification` 时只告警，帮助独立审查定位，不拒绝，也不代表对象语义已核；描述字段仍必填，列出全部实际用法。真正比较对象身份需另设短标识。比较符号时去掉空格、花括号和反斜杠（`H_z` 与 `H_{z}` 是同一符号）；`mechanisms[*].effect_variable` 与 `parameters[*].symbol` 必须已在 symbols 中声明。 |
 | 量纲 | 在符号单位、参数单位、`mechanisms[*].equation` 所指方程中逐项核左右量纲与时间／空间／币值尺度；将单位复算写入 `cheapest_refutation`。脚本校验字段，量纲结论由实际复算支持。 |
 | 守恒／平衡 | `conserved_quantities[{name,check_name}]`，检查名用 `balance:<name>`；独立验证器给同名通过的 check。逐项核适用的质量、数量、能量或现金，明确源汇与边界。 |
 | 概率独立性 | `probability_combinations[{expression,independence,justification}]`，independence 为 assumed/derived/not_assumed；假定独立须给理由，乘法组合核共同失败与依赖。 |

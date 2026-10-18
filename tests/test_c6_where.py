@@ -101,3 +101,9 @@ def test_nlp_constraint_objects_are_validated_before_use(tool, base, constraint)
     with pytest.raises(ValueError) as error:
         server.call(tool, dict(base, constraints=[constraint]))
     assert not isinstance(error.value, KeyError)
+
+
+def test_sobol_rejects_nonfinite_final_arithmetic_output():
+    with pytest.raises(ValueError, match='finite'):
+        server.call('sobol_sensitivity', dict(expression='x*x+y', names=['x', 'y'],
+                    bounds=[[1e200, 1e201], [0, 1]], n=64))

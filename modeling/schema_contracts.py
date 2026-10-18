@@ -289,7 +289,7 @@ def check_model_contract(contract, warnings=None) -> list[str]:
 
     Structural problems do not stop the cross-field checks: rows or fields with a
     wrong type are skipped there, other rows are still audited. Non-blocking
-    findings (explicitly unknown parameter values) are appended to ``warnings``
+    findings (unknown parameter values and differing object descriptions) are appended to ``warnings``
     when a list is supplied. Balance checks are execution evidence and are checked
     by ``run_case`` after validation.
     """
@@ -347,7 +347,7 @@ def check_model_contract(contract, warnings=None) -> list[str]:
         objects = {value.strip() for value in [row.get("object")] + [use.get("object") for use in uses]
                    if isinstance(value, str) and value.strip()}
         if len(objects) > 1 and not reasoned(row.get("same_object_justification")):
-            problems.append(f"symbol {name}: different objects across declaration and uses "
+            warnings.append(f"symbol {name}: different object descriptions across declaration and uses "
                             f"(object {row.get('object')!r}; uses {uses}); supply same_object_justification "
                             "(at least three letters)")
     for index, row in enumerate(rows("mechanisms")):

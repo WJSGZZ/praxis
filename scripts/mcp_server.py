@@ -90,7 +90,9 @@ def _compile(expression, names):
     """Vectorised evaluation of an arithmetic expression; anything but arithmetic, names and a few functions is rejected.
 
     log, sqrt, exp, sin, cos, tan, division and power must give finite real values
-    at every evaluated point, including the branch where() does not select."""
+    at every evaluated point, including the branch where() does not select.
+    Addition, subtraction and multiplication overflow is not checked inside the
+    expression; tools reject non-finite final outputs."""
     if len(names) > 32 or len(set(names)) != len(names) or any(n in FUNCTIONS or n in EVALUATION_HELPERS for n in names):
         raise ValueError('At most 32 unique variable names, distinct from function names, are allowed')
     tree = parse_bounded_expression(expression)

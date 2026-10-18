@@ -123,7 +123,7 @@ def test_g2_declared_symbols_and_normalized_identity_pass():
     assert check_model_contract(c) == []
 
 
-def test_g2_empty_or_undeclared_symbols_and_top_object_are_rejected():
+def test_g2_empty_or_undeclared_symbols_rejected_and_top_object_warns():
     c = contract()
     c['symbols'] = []; c['parameters'] = []; c['mechanisms'] = []; c['conserved_quantities'] = []
     assert any('at least one symbol' in p for p in check_model_contract(c))
@@ -135,7 +135,9 @@ def test_g2_empty_or_undeclared_symbols_and_top_object_are_rejected():
     c['symbols'][1]['symbol'] = 'H_{z}'; c['parameters'][0]['symbol'] = 'H_z'; c['mechanisms'][0]['effect_variable'] = 'H_z'
     assert any('duplicate symbol' in p for p in check_model_contract(c))
     c = contract(); c['symbols'][0]['object'] = 'grazing pressure'
-    assert any('symbol x' in p and 'grazing pressure' in p for p in check_model_contract(c))
+    warnings = []
+    assert check_model_contract(c, warnings) == []
+    assert any('symbol x' in p and 'grazing pressure' in p for p in warnings)
 
 
 # G-3 ---------------------------------------------------------------------------------------------
@@ -264,10 +266,12 @@ def test_checker_reports_all_type_and_semantic_problems():
     c['parameters'][0]['real_world_quantity'] = 'yes'
     c['symbols'][0]['uses'].append({'equation': 'eq9', 'object': 'grazing pressure'})
     c['information_time'] = ''
-    problems = check_model_contract(c)
+    warnings = []
+    problems = check_model_contract(c, warnings)
     assert any('parameters[0].value' in p for p in problems)
     assert any('real_world_quantity' in p for p in problems)
-    assert any('symbol x' in p and 'grazing pressure' in p for p in problems)
+    assert any('symbol x' in p and 'grazing pressure' in p for p in warnings)
+    assert not any('symbol x' in p for p in problems)
     assert any('information_time' in p for p in problems)
 
 
@@ -298,7 +302,9 @@ def test_null_value_requires_unknown_source_level(value, level):
 def test_punctuation_justifications_are_rejected():
     c = contract(); c['symbols'][0]['uses'].append({'equation': 'eq9', 'object': 'stored water volume'})
     c['symbols'][0]['same_object_justification'] = '.'
-    assert any('same_object_justification' in p for p in check_model_contract(c))
+    warnings = []
+    assert check_model_contract(c, warnings) == []
+    assert any('same_object_justification' in p for p in warnings)
     c['symbols'][0]['same_object_justification'] = '同一水体'
     assert check_model_contract(c) == []
     c['probability_combinations'] = [{'expression': 'p*q', 'independence': 'assumed', 'justification': '..'}]
