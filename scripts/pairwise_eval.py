@@ -273,6 +273,7 @@ def make_pairs(index, contexts, packet, key, workspace, seed=SEED):
         bodies[pid] = text
         private_papers[pid] = {k: p[k] for k in ("problem", "team", "award", "version", "sha256", "local_path")}
         private_papers[pid].update(record)
+        private_papers[pid].update(pdf_features(p["_path"], pages))
         private_papers[pid]["anonymous_sha256"] = text_sha256(text)
         private_papers[pid]["anchor_level"] = context_key[p["problem"]]["anchor_level"]
     pairs, private_pairs = [], {}
@@ -561,8 +562,9 @@ def _observations(key_path, results):
                 raise ValueError("Duplicate judge-instance/order observation across files")
             seen_runs.add(identity)
             winner = (left if j["preferred"] == "left" else right) if j["preferred"] != "abstain" else None
-            is_test = pair["kind"] == "O_vs_MH"
-            obs.append({**j, "left": left, "right": right, "problem": pair["problem"], "kind": pair["kind"], "winner": winner,
+            is_test = (pair.get("kind") == "O_vs_MH"
+                       and {key["papers"][p].get("award") for p in (left, right)} in ({"O", "M"}, {"O", "H"}))
+            obs.append({**j, "left": left, "right": right, "problem": pair["problem"], "kind": pair.get("kind", "unlabelled"), "winner": winner,
                         "correct": int(winner is not None and key["papers"][winner]["award"] == "O") if is_test else None,
                         "judge": judge, "source": str(path)})
     return key, obs
@@ -831,6 +833,123 @@ def agreement(first, second):
                              "Agreement includes explicit abstentions; raw decision coverage must be inspected."]}
 
 
+FEATURE_NAMES = ('word_count', 'page_count', 'figure_count', 'caption_max', 'embedded_image_objects')
+
+
+def pdf_features(path, pages):
+    """Separate caption-number and raster-object proxies; neither is a figure count.
+
+    Missing caption evidence stays null (image-only captions are not recovered).
+    Per-page image resources include reused artwork; vector figures may be zero.
+    """
+    captions = [int(m.group(1)) for page in pages for m in re.finditer(
+        r'^\s*(?:Figure|Fig\.?)\s*(\d+)\s*[.:]', page['text'], re.I | re.M)]
+    result = {'page_count': len(pages), 'figure_count': None,
+              'caption_max': max(captions) if captions else None,
+              'embedded_image_objects': None,
+              'feature_provenance': {
+                  'page_count': 'all extracted physical PDF pages, not contest counted pages',
+                  'figure_count': 'manual semantic figure count unavailable; never inferred from proxies',
+                  'caption_max': 'maximum integer in line-initial Figure/Fig numbered-caption candidates; references or extraction order may contaminate it; no OCR',
+                  'embedded_image_objects': 'sum of pypdf per-page raster image resources, reused on different pages counted again; multiple draws of one resource on a page are not separate; excludes vector artwork'}}
+    try:
+        from pypdf import PdfReader
+        result['embedded_image_objects'] = sum(len(page.images) for page in PdfReader(path).pages)
+    except Exception as exc:
+        result['feature_provenance']['embedded_image_objects'] += f'; unavailable: {type(exc).__name__}'
+    return result
+
+
+def baselines(key_path, results=(), features=None):
+    """Describe fixed larger-is-preferred rules on the exact returned comparisons.
+
+    Award accuracy uses only explicitly labelled O-vs-M/H observations. Unlabelled
+    practice papers receive preferences and overlap, never an imputed award.
+    Without results the sealed pairs are previewed, with no accuracy estimate.
+    """
+    key, observations = _observations(key_path, results)
+    paper_features = {pid: {name: paper.get(name) for name in FEATURE_NAMES}
+                      for pid, paper in key['papers'].items()}
+    provenance = {pid: paper.get('feature_provenance', {}) for pid, paper in key['papers'].items()}
+    overlay_sha = None
+    if features is not None:
+        overlay = read_json(features)
+        if overlay.get('schema') != 1 or overlay.get('key_sha256') != sha256(key_path):
+            raise ValueError('Feature overlay/key SHA256 mismatch or unsupported schema')
+        if not isinstance(overlay.get('papers'), dict):
+            raise ValueError('Feature overlay requires a papers mapping')
+        for pid, item in overlay['papers'].items():
+            if pid not in key['papers'] or not isinstance(item, dict) or not re.fullmatch(r'[0-9a-f]{64}', str(item.get('pdf_sha256', ''))) or item['pdf_sha256'] != key['papers'][pid].get('sha256'):
+                raise ValueError('Feature overlay paper/PDF SHA256 mismatch')
+            for name in FEATURE_NAMES:
+                if name in item:
+                    paper_features[pid][name] = item[name]
+            provenance[pid] = {'sealed_key': provenance[pid], 'overlay': item.get('provenance', {}),
+                               'pdf_sha256': item['pdf_sha256']}
+        overlay_sha = sha256(features)
+    for pid, fields in paper_features.items():
+        for name, value in fields.items():
+            if value is not None and (type(value) is not int or value < 0):
+                raise ValueError(f'{pid}/{name}: feature must be null or a nonnegative integer')
+    comparisons = []
+    entries = observations if results else [dict(p, pair_id=pid, winner=None, source=None,
+                                              judge=None, preferred=None) for pid, p in key['pairs'].items()]
+    for observation in entries:
+        left, right = observation['left'], observation['right']
+        awards = [key['papers'][p].get('award') for p in (left, right)]
+        labelled_cross = set(awards) in ({'O', 'M'}, {'O', 'H'})
+        judged = bool(results)
+        winner = observation['winner']
+        correct = (winner is not None and key['papers'][winner].get('award') == 'O') if judged and labelled_cross else None
+        row = {'pair_id': observation['pair_id'], 'problem': observation['problem'],
+               'left': left, 'right': right, 'judge': observation['judge'], 'source': observation['source'],
+               'judge_winner': winner, 'judge_correct': correct,
+               'judge_abstained': judged and winner is None, 'labelled_cross_award': labelled_cross, 'rules': {}}
+        for name in FEATURE_NAMES:
+            a, b = paper_features[left][name], paper_features[right][name]
+            state = 'missing' if a is None or b is None else 'tie' if a == b else 'decided'
+            chosen = (left if a > b else right) if state == 'decided' else None
+            rule_correct = chosen is not None and key['papers'][chosen].get('award') == 'O' if judged and labelled_cross else None
+            row['rules'][name] = {'left_value': a, 'right_value': b, 'winner': chosen, 'state': state, 'correct': rule_correct}
+        comparisons.append(row)
+    accuracy_rows = [r for r in comparisons if r['judge_correct'] is not None]
+    n = len(accuracy_rows)
+    judge = {'correct': sum(r['judge_correct'] for r in accuracy_rows),
+             'wrong': sum(not r['judge_correct'] and not r['judge_abstained'] for r in accuracy_rows),
+             'abstained': sum(r['judge_abstained'] for r in accuracy_rows)}
+    judge['accuracy'] = judge['correct'] / n if n else None
+    rules = {}
+    for name in FEATURE_NAMES:
+        counts = dict.fromkeys(('correct', 'wrong', 'tie', 'missing'), 0)
+        cross = {j: dict(counts) for j in ('correct', 'wrong', 'abstain')}
+        for row in accuracy_rows:
+            item = row['rules'][name]
+            state = item['state'] if item['state'] != 'decided' else 'correct' if item['correct'] else 'wrong'
+            counts[state] += 1
+            jstate = 'abstain' if row['judge_abstained'] else 'correct' if row['judge_correct'] else 'wrong'
+            cross[jstate][state] += 1
+        overlap = dict.fromkeys(('agreed', 'disagreed', 'judge_abstained', 'rule_tie', 'rule_missing'), 0)
+        for row in comparisons if results else []:
+            item = row['rules'][name]
+            state = 'judge_abstained' if row['judge_abstained'] else 'rule_' + item['state'] if item['winner'] is None else 'agreed' if item['winner'] == row['judge_winner'] else 'disagreed'
+            overlap[state] += 1
+        rules[name] = {**counts, 'accuracy': counts['correct'] / n if n else None,
+                       'cross_table': cross, 'preference_overlap': overlap,
+                       'all_comparisons_states': dict(Counter(r['rules'][name]['state'] for r in comparisons))}
+    return {'schema': 1, 'key_sha256': sha256(key_path), 'features_sha256': overlay_sha,
+            'observations': len(observations), 'accuracy_denominator': n, 'judge': judge,
+            'rules': rules, 'comparisons': comparisons, 'paper_features': paper_features,
+            'feature_provenance': provenance,
+            'policy': {'rule': 'prefer the larger measured value; no composite fitting',
+                       'denominator': 'same returned explicitly labelled O-vs-M/H comparisons; ties, missing and judge abstentions remain in it with zero correct credit',
+                       'unknown_awards': 'preferences/overlap only; no award imputation or accuracy',
+                       'preview': 'without returned judgments report sealed-pair preferences only',
+                       'proxies': 'manual figure_count, caption_max and embedded_image_objects are separate rules, not interchangeable counts'},
+            'limitations': ['Descriptive paired observations; repeated instances/orderings are dependent.',
+                            'No baseline margin or evaluator acceptance is inferred; preregister the margin and validate on new problems.',
+                            'Overlay authenticates identities against sealed hashes; it does not independently certify feature measurements.']}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -851,6 +970,11 @@ def main(argv=None):
     analyse.add_argument("--output", required=True, type=Path)
     analyse.add_argument("--seed", type=int, default=SEED)
     analyse.add_argument("--ridge", type=float, default=1.0)
+    base = commands.add_parser("baselines", help="fixed simple-rule comparisons; never calls a model")
+    base.add_argument("--key", required=True, type=Path)
+    base.add_argument("--results", nargs="*", default=[], type=Path)
+    base.add_argument("--features", type=Path, help="optional key/PDF-hash-bound feature overlay")
+    base.add_argument("--output", required=True, type=Path)
     agree = commands.add_parser("agreement")
     for name in ("first", "second", "output"):
         agree.add_argument(f"--{name}", required=True, type=Path)
@@ -870,6 +994,11 @@ def main(argv=None):
             result = fit(args.key, args.results, args.seed, args.ridge)
             if args.output.exists():
                 raise ValueError("Refuse to overwrite an analysis result")
+            write_json(args.output, result)
+        elif args.command == "baselines":
+            if args.output.exists():
+                raise ValueError("Refuse to overwrite a baseline analysis")
+            result = baselines(args.key, args.results, args.features)
             write_json(args.output, result)
         elif args.command == "agreement":
             result = agreement(args.first, args.second)

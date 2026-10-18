@@ -757,3 +757,112 @@ def test_cli_five_commands_complete_synthetic_round(corpus, capsys):
     assert json.loads(capsys.readouterr().out)['accuracy']['accuracy'] == 1
     assert pe.main(['agreement', '--first', str(first), '--second', str(second), '--output', str(root / 'agreement.json')]) == 0
     assert json.loads(capsys.readouterr().out)['cohens_kappa'] == 1
+
+
+def baseline_fixture(tmp_path):
+    key = {'schema': 1, 'papers': {
+        'o': {'award': 'O', 'sha256': 'a'*64, 'word_count': 100, 'page_count': 3},
+        'm': {'award': 'M', 'sha256': 'b'*64, 'word_count': 50, 'page_count': 3},
+        'x': {'role': 'practice', 'sha256': 'c'*64, 'word_count': 80, 'page_count': 2}},
+        'pairs': {'p': {'problem': 'MCM-2023-B', 'kind': 'O_vs_MH', 'left': 'o', 'right': 'm'},
+                  'q': {'problem': 'MCM-2023-B', 'left': 'x', 'right': 'o'}}}
+    kp = tmp_path/'key.json'; pe.write_json(kp, key)
+    returns=[]
+    for n,(pid,l,r,choice) in enumerate([('p','o','m','left'),('p','m','o','abstain'),('q','x','o','left')]):
+        f=tmp_path/f'return-{n}.json'
+        pe.write_json(f, {'schema':1,'key_sha256':pe.sha256(kp),'judge':{'id':'judge','family':'GPT','instance':str(n)},
+            'judgments':[{'pair_id':pid,'left':l,'right':r,'preferred':choice,'confidence':.7,
+              'reasons':[{'left_location':'p1','right_location':'p2','reason':'synthetic evidence'}]*3,'mechanical_findings':[]}]})
+        returns.append(f)
+    return kp,returns
+
+
+def test_baselines_same_returned_denominator_ties_missing_and_no_invented_award(tmp_path):
+    key, results=baseline_fixture(tmp_path)
+    out=pe.baselines(key,results)
+    assert out['observations']==3
+    assert out['accuracy_denominator']==2
+    assert out['judge']=={'correct':1,'wrong':0,'abstained':1,'accuracy':.5}
+    assert out['rules']['word_count']['correct']==2
+    assert out['rules']['word_count']['accuracy']==1
+    assert out['rules']['word_count']['cross_table']['abstain']['correct']==1
+    assert out['rules']['page_count']['tie']==2
+    assert out['rules']['page_count']['accuracy']==0
+    assert out['rules']['figure_count']['missing']==2
+    assert out['rules']['figure_count']['accuracy']==0
+    assert out['comparisons'][2]['judge_correct'] is None
+    assert out['comparisons'][2]['rules']['word_count']['correct'] is None
+    assert out['comparisons'][2]['rules']['word_count']['winner']=='o'
+    assert out['rules']['word_count']['preference_overlap']['disagreed']==1
+
+
+def test_baselines_overlay_binds_key_and_each_pdf(tmp_path):
+    key,results=baseline_fixture(tmp_path);p=tmp_path/'features.json'
+    overlay={'schema':1,'key_sha256':pe.sha256(key),'papers':{'o':{'pdf_sha256':'a'*64,'figure_count':2,'caption_max':1,'embedded_image_objects':0},'m':{'pdf_sha256':'b'*64,'figure_count':1}}}
+    pe.write_json(p,overlay);out=pe.baselines(key,results,p)
+    assert out['rules']['figure_count']['correct']==2
+    assert out['rules']['caption_max']['missing']==2
+    assert out['paper_features']['o']['embedded_image_objects']==0
+    for field,where in [('key_sha256',overlay),('pdf_sha256',overlay['papers']['o'])]:
+        before=where[field];where[field]='f'*64;pe.write_json(p,overlay)
+        with pytest.raises(ValueError,match='SHA256'): pe.baselines(key,results,p)
+        where[field]=before
+
+
+@pytest.mark.parametrize('value',[True,-1,float('inf'),'20',1.5])
+def test_baselines_reject_invalid_feature_values(tmp_path,value):
+    key,results=baseline_fixture(tmp_path);p=tmp_path/'bad.json'
+    p.write_text(json.dumps({'schema':1,'key_sha256':pe.sha256(key),'papers':{'o':{'pdf_sha256':'a'*64,'figure_count':value}}}))
+    with pytest.raises(ValueError,match='nonnegative integer'): pe.baselines(key,results,p)
+
+
+def test_baselines_cli_without_judgments_is_preferences_only(tmp_path,capsys):
+    key,_=baseline_fixture(tmp_path);output=tmp_path/'baseline.json'
+    assert pe.main(['baselines','--key',str(key),'--output',str(output)])==0
+    out=pe.read_json(output)
+    assert out['observations']==0 and out['accuracy_denominator']==0
+    assert len(out['comparisons'])==2
+    assert out['rules']['word_count']['accuracy'] is None
+    assert pe.main(['baselines','--key',str(key),'--output',str(output)])==2
+
+
+def test_prepared_pdf_proxies_do_not_infer_manual_count(tmp_path):
+    p=tmp_path/'figures.pdf';pdf(p,'Figure 2. Synthetic two-panel figure\nWe refer to Figure 99 in body prose.\nFig. 4: Another plot')
+    features=pe.pdf_features(p,[{'text':'Figure 2. Synthetic two-panel figure\nWe refer to Figure 99 in body prose.\nFig. 4: Another plot'}])
+    assert features['page_count']==1
+    assert features['caption_max']==4
+    assert features['embedded_image_objects']==0
+    assert features['figure_count'] is None
+
+
+def test_preparation_persists_separate_proxy_metadata_only_in_private_key(packet):
+    _, source, key_path, _ = packet
+    key=pe.read_json(key_path)
+    for paper in key['papers'].values():
+        assert paper['page_count']==1
+        assert paper['figure_count'] is None
+        assert paper['caption_max'] is None
+        assert paper['embedded_image_objects']==0
+    assert all(set(p)=={'path','word_count','sha256'} for p in pe.read_json(source/'pairs.json')['papers'].values())
+
+
+def test_pdf_raster_objects_do_not_impute_semantic_figures(tmp_path):
+    writer=PdfWriter();page=writer.add_blank_page(width=100,height=100)
+    image=DecodedStreamObject();image.set_data(b'\xff\x00\x00')
+    from pypdf.generic import NumberObject
+    image.update({NameObject('/Type'):NameObject('/XObject'),NameObject('/Subtype'):NameObject('/Image'),
+                  NameObject('/Width'):NumberObject(1),NameObject('/Height'):NumberObject(1),
+                  NameObject('/BitsPerComponent'):NumberObject(8),NameObject('/ColorSpace'):NameObject('/DeviceRGB')})
+    page[NameObject('/Resources')]=DictionaryObject({NameObject('/XObject'):DictionaryObject({NameObject('/Im'):writer._add_object(image)})})
+    path=tmp_path/'raster.pdf';writer.write(path)
+    features=pe.pdf_features(path,[{'text':'No recoverable caption'}])
+    assert features['embedded_image_objects']==1
+    assert features['figure_count'] is None and features['caption_max'] is None
+
+
+def test_baselines_no_overlay_does_not_modify_sealed_inputs(tmp_path):
+    key,results=baseline_fixture(tmp_path);before={p:p.read_bytes() for p in [key,*results]}
+    pe.baselines(key,results)
+    assert all(p.read_bytes()==raw for p,raw in before.items())
+    overlay=tmp_path/'unknown.json';pe.write_json(overlay,{'schema':1,'key_sha256':pe.sha256(key),'papers':{'unknown':{'pdf_sha256':'d'*64}}})
+    with pytest.raises(ValueError,match='SHA256'): pe.baselines(key,results,overlay)
