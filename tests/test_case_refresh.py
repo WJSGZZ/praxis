@@ -134,3 +134,32 @@ def test_paper_driver_requires_reviewed_bytes_and_preserves_existing_output(tmp_
     with pytest.raises(FileExistsError):
         cr.run_paper_driver(spec,tmp_path,'run2',destination,tmp_path)
     assert (destination/'paper.tex').read_text()=='run1'
+
+
+def test_paper_driver_requires_unchanged_declared_helpers(tmp_path):
+    from scripts import pipeline
+    helper = tmp_path/'figures.py'
+    helper.write_text('value = 1\n')
+    driver = tmp_path/'build.py'
+    driver.write_text("import argparse\nfrom pathlib import Path\np=argparse.ArgumentParser();p.add_argument('--case');p.add_argument('--run-id');p.add_argument('--output',type=Path);a=p.parse_args();a.output.mkdir();(a.output/'paper.tex').write_text('built')\n")
+    spec = {'path': 'build.py', 'sha256': pipeline.digest(driver),
+            'dependencies': [{'path': 'figures.py', 'sha256': pipeline.digest(helper)}]}
+    helper.write_text('value = 2\n')
+    with pytest.raises(ValueError, match='[Dd]ependenc'):
+        cr.run_paper_driver(spec, tmp_path, 'run1', tmp_path/'bad', tmp_path)
+    assert not (tmp_path/'bad').exists()
+    helper.write_text('value = 1\n')
+    result = cr.run_paper_driver(spec, tmp_path, 'run1', tmp_path/'good', tmp_path)
+    assert result['dependencies'] == spec['dependencies']
+
+
+def test_paper_driver_detects_helper_changed_during_execution(tmp_path):
+    from scripts import pipeline
+    helper = tmp_path/'figures.py'
+    helper.write_text('value = 1\n')
+    driver = tmp_path/'build.py'
+    driver.write_text("from pathlib import Path\nPath('figures.py').write_text('value = 2\\n')\n")
+    spec = {'path': 'build.py', 'sha256': pipeline.digest(driver),
+            'dependencies': [{'path': 'figures.py', 'sha256': pipeline.digest(helper)}]}
+    with pytest.raises(ValueError, match='[Dd]ependenc'):
+        cr.run_paper_driver(spec, tmp_path, 'run1', tmp_path/'out', tmp_path)

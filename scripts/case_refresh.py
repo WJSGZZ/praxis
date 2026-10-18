@@ -305,6 +305,14 @@ def run_paper_driver(spec, case, run_id, destination, workspace):
     driver = _safe(workspace, spec['path'])
     if not driver.is_file() or pipeline.digest(driver) != spec.get('sha256'):
         raise ValueError('Paper driver hash mismatch; review the actual adapter first')
+    dependencies = spec.get('dependencies', [])
+    if (not isinstance(dependencies, list) or any(not isinstance(item, dict)
+            or not isinstance(item.get('path'), str)
+            or not isinstance(item.get('sha256'), str)
+            or not re.fullmatch(r'[0-9a-f]{64}', item['sha256']) for item in dependencies)):
+        raise ValueError('Paper driver dependencies need paths and SHA256 hashes')
+    if _file_changes(dependencies, workspace):
+        raise ValueError('Paper driver dependency hash mismatch; review declared helpers first')
     if destination.exists():
         raise FileExistsError(destination)
     timeout = spec.get('timeout_seconds', 120)
@@ -315,10 +323,13 @@ def run_paper_driver(spec, case, run_id, destination, workspace):
     run = subprocess.run(command, cwd=workspace, capture_output=True, timeout=timeout)
     if pipeline.digest(driver) != spec['sha256']:
         raise ValueError('Paper adapter changed during execution')
+    if _file_changes(dependencies, workspace):
+        raise ValueError('Paper driver dependency changed during execution')
     if run.returncode:
         raise ValueError('Paper adapter failed: ' + run.stderr.decode('utf-8', errors='replace'))
     return {'argv': command, 'exit_code': run.returncode,
-            'stdout': run.stdout.decode('utf-8', errors='replace'), 'adapter_sha256': spec['sha256']}
+            'stdout': run.stdout.decode('utf-8', errors='replace'), 'adapter_sha256': spec['sha256'],
+            'dependencies': dependencies}
 
 
 def refresh(manifest, *, workspace=None, dry_run=True, output=None, rebuild=False):
