@@ -13,7 +13,7 @@ import runpy
 import sys
 import time
 
-SCHEMA = 1
+SCHEMA = 2
 LIMITATIONS = ['Python audit/open/exec/import observation only; not an OS sandbox.',
                'Native library internal file/network I/O is not observed; python-reviewed requires caller source review.',
                'Transient edits restored between observations are not guaranteed detectable.']
@@ -34,63 +34,187 @@ def directory_state(path):
     return {'resolved_path':str(Path(path).resolve()),'names':sorted(os.listdir(path))}
 
 
-def changes(actual):
-    """Return used-input/invariant changes; broad inventory is handled by caller on fallback."""
+# Locale and terminal dimensions are presentation inputs, not scientific configuration.
+# New runners fix their values; old observations stay in the immutable trace.
+PRESENTATION_ENV = frozenset({'LANG', 'LANGUAGE', 'COLUMNS', 'LINES'})
+
+
+def presentation_environment(key):
+    return key in PRESENTATION_ENV or key.startswith('LC_')
+
+
+def fixed_presentation_environment(environment):
+    result = dict(environment)
+    for key in list(result):
+        if key.startswith('LC_'):
+            result[key] = 'C'
+    result.update(LC_ALL='C', LANG='C', LANGUAGE='C', COLUMNS='80', LINES='24')
+    return result
+
+
+def bind_state(row, case):
+    """Case-local paths are relocatable; external inputs keep absolute identity."""
+    value = dict(row)
+    root = Path(case).absolute()
+    for field in ('logical_path', 'resolved_path', 'end_resolved_path'):
+        if isinstance(value.get(field), str):
+            path = Path(value[field])
+            if path.is_absolute() and path.is_relative_to(root):
+                value[field] = str(path.relative_to(root))
+                value[field.replace('_path', '_scope')] = 'case'
+    return value
+
+
+def _path(value, scope, case, historical_root=None):
+    path = Path(value)
+    if scope == 'case':
+        if case is None or path.is_absolute() or '..' in path.parts:
+            raise ValueError('Invalid case-relative dependency path')
+        return Path(case).absolute() / path
+    if scope is not None or not path.is_absolute():
+        raise ValueError('Invalid external dependency path')
+    # Schema1 compatibility is read-only. The observed stage cwd defines the
+    # original case, not a guessed prefix or the source's current location.
+    if case is not None and historical_root is not None and path.is_relative_to(historical_root):
+        return Path(case).absolute() / path.relative_to(historical_root)
+    return path
+
+
+def observed_path(row, field, case, historical_root=None):
+    return _path(row[field], row.get(field.replace('_path', '_scope')), case, historical_root)
+
+
+def changes(actual, *, case=None, run=None):
+    """Check current case-local evidence, external identity and scientific inputs.
+
+    Old absolute schema1 traces are resolved against their recorded cwd, without
+    modifying their bytes. Case source snapshots are independently checked by
+    the pipeline even when Python observation is complete.
+    """
     problems = []
-    value=os.environ.get('PYTHONPATH')
-    current=hashlib.sha256(value.encode()).hexdigest() if value is not None else None
-    if current!=actual.get('parent_pythonpath_sha256'):
+    value = os.environ.get('PYTHONPATH')
+    current = hashlib.sha256(value.encode()).hexdigest() if value is not None else None
+    if current != actual.get('parent_pythonpath_sha256'):
         problems.append('parent PYTHONPATH changed')
-    records = list(actual.get('invariants', []))
+    traces = []
+    roots = set()
     for stage in actual.get('stages', []):
-        trace_path = Path(stage['trace_path_absolute'])
+        relative = Path(stage.get('trace_path', ''))
+        if run is not None:
+            if not relative.name or relative.is_absolute() or '..' in relative.parts:
+                problems.append('invalid dependency trace path'); continue
+            trace_path = Path(run) / relative
+        else:
+            trace_path = Path(stage['trace_path_absolute'])
         if not trace_path.is_file() or file_state(trace_path)['sha256'] != stage['sha256']:
             problems.append('dependency trace missing or changed: ' + str(trace_path)); continue
-        trace = json.loads(trace_path.read_text(encoding='utf-8'))
-        for logical, expected in trace.get('directory_listings',{}).items():
+        try:
+            trace = json.loads(trace_path.read_text(encoding='utf-8'))
+            if trace.get('schema') not in (1, 2):
+                raise ValueError('Unsupported dependency trace schema')
+            root = trace.get('case_root') if trace.get('schema') == 2 else trace.get('cwd')
+            if not isinstance(root, str) or not Path(root).is_absolute():
+                raise ValueError('Missing recorded case root')
+            roots.add(root)
+            traces.append(trace)
+        except (OSError, ValueError, TypeError):
+            problems.append('invalid dependency trace: ' + str(trace_path))
+    if len(roots) > 1:
+        problems.append('conflicting recorded dependency case roots')
+        return sorted(set(problems))
+    historical_root = Path(next(iter(roots))) if roots else None
+    records = list(actual.get('invariants', []))
+    for trace in traces:
+        listings = trace.get('directory_listings', {})
+        rows = ([dict(logical_path=logical, **(expected or {}), missing=expected is None)
+                 for logical, expected in listings.items()] if isinstance(listings, dict) else listings)
+        for row in rows:
             try:
-                current=directory_state(logical)
-            except OSError:current=None
-            if current!=expected:problems.append('used directory listing changed: '+logical)
-        for key, expected in trace.get('environment_reads',{}).items():
-            if key in ('PYTHONPATH','PYTHONDONTWRITEBYTECODE'):
-                continue  # fixed runner overrides; runner itself is bound
-            value=os.environ.get(key)
-            current=hashlib.sha256(value.encode()).hexdigest() if value is not None else None
-            if current!=expected:problems.append('used environment variable changed: '+key)
+                logical = observed_path(row, 'logical_path', case, historical_root)
+                expected = None if row.get('missing') else {
+                    'resolved_path': str(observed_path(row, 'resolved_path', case, historical_root)),
+                    'names': row['names']}
+                now = directory_state(logical)
+            except OSError:
+                now = None
+            except (ValueError, TypeError, KeyError):
+                problems.append('invalid directory dependency'); continue
+            if now != expected:
+                problems.append('used directory listing changed: ' + str(logical))
+        for key, expected in trace.get('environment_reads', {}).items():
+            if key in ('PYTHONPATH', 'PYTHONDONTWRITEBYTECODE') or presentation_environment(key):
+                continue  # fixed runner inputs; full observed values remain recorded
+            value = os.environ.get(key)
+            current = hashlib.sha256(value.encode()).hexdigest() if value is not None else None
+            if current != expected:
+                problems.append('used environment variable changed: ' + key)
         for row in trace.get('files', []):
             if row.get('read') and row.get('role') != 'generated':
-                records.append({'logical_path':row['logical_path'], 'resolved_path':row['resolved_path'], 'sha256':row['first_sha256'],'kind':row['kind']})
+                records.append(dict(row, sha256=row['first_sha256']))
                 if row.get('changed_during_stage'):
                     problems.append('dependency changed during execution: ' + row['logical_path'])
     for row in records:
-        now = file_state(row['logical_path'])
-        if now != {k:row[k] for k in ('logical_path','resolved_path','sha256','kind')}:
-            problems.append('actual dependency changed: ' + row['logical_path'])
+        try:
+            logical = observed_path(row, 'logical_path', case, historical_root)
+            expected = {'logical_path': str(logical),
+                        'resolved_path': str(observed_path(row, 'resolved_path', case, historical_root)),
+                        'sha256': row['sha256'], 'kind': row['kind']}
+            if file_state(logical) != expected:
+                problems.append('actual dependency changed: ' + str(logical))
+        except (OSError, ValueError, TypeError, KeyError):
+            problems.append('invalid file dependency: ' + str(row.get('logical_path')))
     return sorted(set(problems))
 
-
 class Observer:
-    def __init__(self, output, stage, generated):
+    def __init__(self, output, stage, generated, case=None):
         self.output = output
+        self.case = Path(case or os.getcwd()).absolute()
+        self.case_prefix = str(self.case) + os.sep
+        self.path_bindings = {}
         self.busy = False
         self.last_checkpoint=0.0
         self.generated = generated if isinstance(generated,dict) else {path:None for path in generated}
         self.files = {}
         self.data = {'schema':SCHEMA,'stage':stage,'argv':sys.argv[:], 'cwd':os.getcwd(),
-                     'files':[], 'directory_listings':{}, 'native_events':[], 'runtime_initializations':[], 'uncovered':[], 'extensions':[], 'limitations':LIMITATIONS,
+                     'case_root':str(self.case), 'files':[], 'directory_listings':{}, 'native_events':[], 'runtime_initializations':[], 'uncovered':[], 'extensions':[], 'limitations':LIMITATIONS,
                      'completed':False,'finalized':False, 'environment_reads':{},
                      'environment_fingerprint':hashlib.sha256(json.dumps(dict(os.environ),sort_keys=True).encode()).hexdigest()}
+
+    def portable_state(self, row):
+        # A stage can observe thousands of import candidates. Bind each path
+        # once, rather than reparsing every path during every full checkpoint.
+        value = dict(row)
+        for field in ('logical_path', 'resolved_path', 'end_resolved_path'):
+            path = value.get(field)
+            if not isinstance(path, str):
+                continue
+            if path not in self.path_bindings:
+                if path == str(self.case):
+                    self.path_bindings[path] = '.'
+                elif path.startswith(self.case_prefix):
+                    self.path_bindings[path] = path[len(self.case_prefix):]
+                else:
+                    self.path_bindings[path] = None
+            relative = self.path_bindings[path]
+            if relative is not None:
+                value[field] = relative
+                value[field.replace('_path', '_scope')] = 'case'
+        return value
 
     def checkpoint(self,force=False):
         now=time.monotonic()
         if not force and self.data['files'] and now-self.last_checkpoint<.25:return
-        self.last_checkpoint=now
         self.data['files'] = list(self.files.values())
         self.output.parent.mkdir(parents=True, exist_ok=True)
         temporary = self.output.with_suffix('.partial')
-        temporary.write_text(json.dumps(self.data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        payload = dict(self.data)
+        payload['files'] = [self.portable_state(row) for row in self.data['files']]
+        payload['extensions'] = [self.portable_state(row) for row in self.data['extensions']]
+        payload['directory_listings'] = [self.portable_state(dict(logical_path=logical, **(expected or {}),
+            missing=expected is None)) for logical, expected in self.data['directory_listings'].items()]
+        temporary.write_text(json.dumps(payload,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         os.replace(temporary,self.output)
+        self.last_checkpoint=time.monotonic()
 
     def observe(self,path,read=True,write=False):
         if not isinstance(path,(str,bytes,os.PathLike)):
@@ -189,9 +313,9 @@ class Observer:
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--trace',type=Path,required=True);parser.add_argument('--stage',required=True);parser.add_argument('--generated',default='[]');parser.add_argument('command',nargs=argparse.REMAINDER)
+    parser=argparse.ArgumentParser();parser.add_argument('--trace',type=Path,required=True);parser.add_argument('--stage',required=True);parser.add_argument('--case-root',type=Path);parser.add_argument('--generated',default='[]');parser.add_argument('command',nargs=argparse.REMAINDER)
     a=parser.parse_args();command=a.command[1:] if a.command[:1]==['--'] else a.command
-    observer=Observer(a.trace,a.stage,json.loads(a.generated))
+    observer=Observer(a.trace,a.stage,json.loads(a.generated),case=a.case_root)
     observer.data['target_argv']=command;observer.data['python']=sys.executable
     observer.busy=True;observer.checkpoint(force=True);observer.busy=False
     # The minimal trusted bootstrap imports stdlib before installing hooks. Bind

@@ -290,7 +290,7 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
             target = attempt / prefix / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(root / relative, target)
-    env = os.environ.copy()
+    env = run_trace.fixed_presentation_environment(os.environ)
     parent_pythonpath = env.get('PYTHONPATH')
     parent_pythonpath_sha256 = hashlib.sha256(parent_pythonpath.encode()).hexdigest() if parent_pythonpath is not None else None
     env['PYTHONPATH'] = str(BUNDLE) + os.pathsep + env.get('PYTHONPATH', '')
@@ -314,10 +314,10 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
                 if not trace.get('finalized'):uncovered.append('incomplete stage trace: '+step['stage'])
             except (OSError,ValueError):uncovered.append('missing or invalid stage trace: '+step['stage'])
         precise=dependency_mode=='python-reviewed' and not uncovered and len(stages)==len(commands)
-        return {'schema':1,'parent_pythonpath_sha256':parent_pythonpath_sha256,'requested_mode':dependency_mode,'mode':'python-reviewed' if precise else 'conservative',
+        return {'schema':2,'parent_pythonpath_sha256':parent_pythonpath_sha256,'requested_mode':dependency_mode,'mode':'python-reviewed' if precise else 'conservative',
                 'coverage':{'uncovered':uncovered,'limitations':run_trace.LIMITATIONS,
                             'caller_review_required':True,'os_io_complete':False},
-                'stages':stages,'invariants':invariants}
+                'stages':stages,'invariants':[run_trace.bind_state(row, case) for row in invariants]}
     save(attempt / 'receipt.json', receipt)
     try:
         for stage, command in commands:
@@ -325,10 +325,10 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
             for previous in receipt['steps']:
                 try:
                     trace=read_json(attempt/(previous['stage']+'.trace.json'))
-                    generated.update({row['logical_path']:row.get('producer_stage',previous['stage']) for row in trace['files'] if row.get('role')=='generated'})
+                    generated.update({str(run_trace.observed_path(row, 'logical_path', case)):row.get('producer_stage',previous['stage']) for row in trace['files'] if row.get('role')=='generated'})
                 except (OSError,ValueError):pass
             executed=[sys.executable,str(BUNDLE/'scripts/run_trace.py'),'--trace',str(attempt/(stage+'.trace.json')),
-                      '--stage',stage,'--generated',json.dumps(generated),'--']+command[1:]
+                      '--stage',stage,'--case-root',str(case),'--generated',json.dumps(generated),'--']+command[1:]
             step = {'stage': stage, 'argv': command, 'executed_argv':executed, 'started_utc': stamp()}
             receipt['steps'].append(step)
             save(attempt / 'receipt.json', receipt)
@@ -361,8 +361,8 @@ def run_case(case, model='code/model.py', validator='code/validate.py', timeout=
                 raise ValueError('; '.join(methods))
         receipt['actual_dependencies']=observed_dependencies()
         precise=receipt['actual_dependencies']['mode']=='python-reviewed'
-        actual_changes=run_trace.changes(receipt['actual_dependencies']) if precise else []
-        if read_case_config(case)['inputs'] != receipt['inputs'] or input_changes(case, config) or actual_changes or (not precise and (source_snapshot(case) != code_hashes or dependency_snapshot() != dependency_hashes)):
+        actual_changes=run_trace.changes(receipt['actual_dependencies'], case=case, run=attempt) if precise else []
+        if read_case_config(case)['inputs'] != receipt['inputs'] or input_changes(case, config) or actual_changes or source_snapshot(case) != code_hashes or (not precise and dependency_snapshot() != dependency_hashes):
             raise ValueError('Inputs or reviewed code changed during execution: '+ '; '.join(actual_changes))
         receipt['outputs'] = {}
         for path in (list(out.rglob('*')) + [attempt / 'checks.json']
@@ -425,16 +425,18 @@ def status(case):
             stale.append('run input binding missing; validity unknown')
         elif receipt['inputs'] != config['inputs']:
             stale.append('registered input version changed')
+        # A precise trace never replaces the case-relative reviewed source binding.
+        # In particular, copied cases must check their own model, not the origin.
+        for relative, checksum in receipt.get('code', {}).items():
+            source = (case / relative).resolve()
+            if not source.is_relative_to(case) or not source.is_file() or digest(source) != checksum:
+                stale.append(relative)
         actual=receipt.get('actual_dependencies')
-        if isinstance(actual,dict) and actual.get('schema')==1 and actual.get('mode')=='python-reviewed':
-            stale.extend(run_trace.changes(actual))
+        if isinstance(actual,dict) and actual.get('schema') in (1, 2) and actual.get('mode')=='python-reviewed':
+            stale.extend(run_trace.changes(actual, case=case, run=path.parent))
         else:
             if receipt.get('dependencies') != dependency_snapshot():
                 stale.append('project dependency file set changed or binding missing')
-            for relative, checksum in receipt.get('code', {}).items():
-                source = (case / relative).resolve()
-                if not source.is_relative_to(case) or not source.is_file() or digest(source) != checksum:
-                    stale.append(relative)
             current_sources = source_snapshot(case)
             if current_sources != receipt.get('code', {}):
                 stale.append('case source/configuration file set changed')

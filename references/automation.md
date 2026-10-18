@@ -302,7 +302,10 @@ schema 1沿原行为。字段门保存作者／评审者声明，实际覆盖、
 
 - `paper_facts.py resolve/expand --case ... --manifest ... --workspace ...` 用非根 RFC6901 路径、来源 SHA、单位和格式绑定 `\fact{key}`；数组位置可加语义 guard。展示算术仅接受有来源链的有限操作，不运行文档代码。补充证据保留原作用范围，不能冒充某次运行字段。所有出现生成句子映射；查到同值不算绑定。
 - 默认只选最新且可用的运行，不跳过失败。显式 `--run-id ... --historical` 只复现历史显示，不能恢复科学有效性。展开目标必须是新目录；旧 TeX/PDF/收据不覆盖，编译及实际页面审阅另做。
-- 新运行保留原 `code/dependencies` 广库存，并额外记录 `actual_dependencies`。缺省仍保守失效；案例显式 `dependency_mode: "python-reviewed"` 表示调用者已审阅其 Python I/O 适用性。两阶段观察完整时，按实际读取/导入、条件路径、目录枚举、环境及执行不变量判断失效；未用脚本不因此失效。旧收据不补写追踪。
+- 新运行保留原 `code/dependencies` 广库存，并额外记录 `actual_dependencies`。缺省仍保守失效；案例显式 `dependency_mode: "python-reviewed"` 表示调用者已审阅其 Python I/O 适用性。两阶段观察完整时按实际读取/导入、条件路径、目录枚举、数值配置环境及执行不变量判断失效；无论何种模式，收据中已有的案例相对 `code` 文件哈希都核对，复制后改模型不能继续引用原目录成功。精确模式不因新增未读取脚本或无关插件脚本改动而失效。
+- 新内部追踪格式为 schema2：案例内文件的 logical/resolved 路径各自使用相对路径与 scope，外部输入保留绝对身份；状态检查从当前运行目录取 trace。只读兼容 schema1 时，以原 trace 的 cwd 为案例边界映射到当前副本，不改旧收据/trace。迁移不追认旧证据：核心执行器或真实外部依赖变化仍使旧运行失效，需另记重放。
+- 子进程固定 `LC_ALL/LANG/LANGUAGE=C`、继承的 `LC_*` 类别为 C、`COLUMNS=80`、`LINES=24`；追踪保留原实际读取值，但状态检查不把这些区域/展示变量的父终端差异算成科学过期。不得用它们传数值参数或资料选择；科学配置用显式输入或具名变量，实际读取的其他环境变量及父 `PYTHONPATH` 仍参与失效判断。旧收据不补写追踪或更改实际环境记录。
+- 追踪快照以实际写入结束后再开始节流间隔，并缓存路径作用域转换，避免大导入清单每次观察都重新全量写入；结束/失败的强制快照仍保存。
 - 追踪是 Python 观察，不能观察全部原生库内部 I/O，不能当作系统沙箱。用户显式 ctypes 加载、子进程、网络或不完整观察退回保守模式。唯一运行时例外是按标准库实际源码/栈定位的顶层 `pythonapi = PyDLL(None)` 初始化，保留事件与 SHA；不豁免用户 `CDLL(None)`。失败/超时也留部分观察，瞬时修改后复原不保证检出。
 - `pipeline.py --workspace ... refresh --cases ... --dry-run` 只报告已有影响/差异；没有新运行时数字变化写未知。清单是用户工作区里的 `schema:1,cases:[...]`，每项显式指定 `id/case/baseline_run`，另一个不可变案例基线用 `baseline_case`；可指定 `tolerances:{absolute,relative,ignore_paths}`、`conclusions:[{id,pointer,operator,threshold?}]`、fact manifest、句子映射及版式/指导文件的旧 SHA。容差判断为 `|a-b| <= absolute + relative*max(|a|,|b|)`；按数组原位置比较，不用同值搜索重配。
 - `--execute` 只消耗已有工作流的一次合法尝试，不建立或重置时钟。失败保留，不换旧成功。报告可同时含 unaffected/numbers/conclusions/layout/guidance/unknown；列出已声明结论谓词的翻转，无法据此声称全部自然语言结论已核。
