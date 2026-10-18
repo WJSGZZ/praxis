@@ -148,6 +148,7 @@ def test_calibration_new_options_reject_bad_inputs(kwargs):
 def test_pagerank_star_from_stationary_equations_and_betweenness_path():
     edges = [['c', leaf, 1.] for leaf in ['a', 'b', 'd']]
     result = graph.pagerank(edges, directed=False, alpha=.85)
+    assert {key: result[key] for key in ('directed', 'nodes', 'edges')} == dict(directed=False, nodes=4, edges=3)
     scores = {p['node']: p['score'] for p in result['scores']}
     # p_c = (1-a)/4 + a*(1-p_c), leaves share remaining probability.
     center = ((1-.85)/4+.85)/(1+.85)
@@ -253,11 +254,17 @@ def test_pagerank_rejects_invalid_controls_and_node_declarations(kwargs):
         graph.pagerank([[0, 1, 1]], **kwargs)
 
 
-def test_pagerank_rejects_exact_duplicate_directed_edges_and_reports_nonconvergence():
+@pytest.mark.parametrize('directed', [True, False])
+def test_pagerank_rejects_exact_duplicate_directed_edges_and_reports_nonconvergence(directed):
     with pytest.raises(ValueError, match='duplicate'):
         graph.pagerank([[0, 1, 1], [0, 1, 2]])
-    result = graph.pagerank([[0, 1, 1], [1, 2, 1]], max_iter=1, tol=1e-16)
+    edges = [[0, 1, 1], [1, 2, 1]]
+    result = graph.pagerank(edges, nodes=[0, 1, 2, 3], directed=directed, max_iter=1, tol=1e-16)
     assert result['converged'] is False and result['scores'] is None
+    normal = graph.pagerank(edges, nodes=[0, 1, 2, 3], directed=directed)
+    assert normal['converged'] is True
+    for reply in (result, normal):
+        assert {key: reply[key] for key in ('directed', 'nodes', 'edges')} == dict(directed=directed, nodes=4, edges=2)
 
 
 @pytest.mark.parametrize('kwargs', [dict(resolution=0), dict(baseline_trials=0), dict(baseline_trials=True), dict(seed=-1)])

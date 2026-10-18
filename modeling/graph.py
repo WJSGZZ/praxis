@@ -57,7 +57,7 @@ def minimum_spanning_tree(edges):
     return dict(edges=[[u, v, d['weight']] for u, v, d in tree.edges(data=True)], total=_finite_total(tree.size(weight='weight')))
 
 
-def _analysis_graph(edges, nodes, directed, *, distances=False):
+def _analysis_graph(edges, nodes, directed):
     """JSON-friendly node labels, positive weights, no loops or overwritten edges."""
     if type(directed) is not bool:
         raise ValueError('directed must be a boolean')
@@ -117,6 +117,7 @@ def pagerank(edges, *, nodes=None, directed=True, alpha=.85, tol=1e-10, max_iter
         scores = nx.pagerank(g, alpha=alpha, tol=tol, max_iter=max_iter, weight='weight')
     except nx.PowerIterationFailedConvergence:
         return dict(converged=False, scores=None, alpha=alpha, max_iter=max_iter,
+                    directed=directed, nodes=len(g), edges=g.number_of_edges(),
                     note='Power iteration did not meet its tolerance; no converged scores are reported.')
     return dict(converged=True, scores=[dict(node=n, score=float(scores[n])) for n in g],
                 alpha=alpha, directed=directed, nodes=len(g), edges=g.number_of_edges(),
@@ -127,7 +128,7 @@ def betweenness(edges, *, nodes=None, directed=False, normalized=True):
     """Exact all-source shortest-path betweenness; positive weights mean distances/costs, not strengths."""
     if type(normalized) is not bool:
         raise ValueError('normalized must be a boolean')
-    g = _analysis_graph(edges, nodes, directed, distances=True)
+    g = _analysis_graph(edges, nodes, directed)
     scores = nx.betweenness_centrality(g, normalized=normalized, weight='weight')
     return dict(scores=[dict(node=n, score=float(scores[n])) for n in g], normalized=normalized,
                 directed=directed, nodes=len(g), edges=g.number_of_edges(),
