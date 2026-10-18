@@ -294,3 +294,18 @@ schema 1沿原行为。字段门保存作者／评审者声明，实际覆盖、
 交付或实际停止后，可用 `stage` 按显式文件清单生成独立分享副本与摘要，查看删减／缺失和原件／分享哈希；确认实际清单后才 `pack`。同一只读 `inspect` 接受目录和 ZIP，不执行包内代码、不上传。完整字段、事件样例、分享边界和限制见 [运行反馈](feedback.md)。反馈记录完整、ZIP 字节完好与整题研究完成分别验收。
 
 分享包写入器对压缩比过高的合法重复日志使用无压缩条目，保持读取器的膨胀比限制。拒绝的 ZIP 同样关闭资源；此措施不取消总字节、路径、符号链接和文件数检查。插件导出收据绑定实际交付文件，包括包根 README 与 LICENSE；收据自身不递归绑定，哈希也不等于信任或功能验证。
+
+
+## 活案例：字段绑定、依赖与局部更新
+
+这些是本地 CLI，不是新增 MCP 数学工具。历史冻结、作者判断和科学验证保持独立。
+
+- `paper_facts.py resolve/expand --case ... --manifest ... --workspace ...` 用非根 RFC6901 路径、来源 SHA、单位和格式绑定 `\fact{key}`；数组位置可加语义 guard。展示算术仅接受有来源链的有限操作，不运行文档代码。补充证据保留原作用范围，不能冒充某次运行字段。所有出现生成句子映射；查到同值不算绑定。
+- 默认只选最新且可用的运行，不跳过失败。显式 `--run-id ... --historical` 只复现历史显示，不能恢复科学有效性。展开目标必须是新目录；旧 TeX/PDF/收据不覆盖，编译及实际页面审阅另做。
+- 新运行保留原 `code/dependencies` 广库存，并额外记录 `actual_dependencies`。缺省仍保守失效；案例显式 `dependency_mode: "python-reviewed"` 表示调用者已审阅其 Python I/O 适用性。两阶段观察完整时，按实际读取/导入、条件路径、目录枚举、环境及执行不变量判断失效；未用脚本不因此失效。旧收据不补写追踪。
+- 追踪是 Python 观察，不能观察全部原生库内部 I/O，不能当作系统沙箱。用户显式 ctypes 加载、子进程、网络或不完整观察退回保守模式。唯一运行时例外是按标准库实际源码/栈定位的顶层 `pythonapi = PyDLL(None)` 初始化，保留事件与 SHA；不豁免用户 `CDLL(None)`。失败/超时也留部分观察，瞬时修改后复原不保证检出。
+- `pipeline.py --workspace ... refresh --cases ... --dry-run` 只报告已有影响/差异；没有新运行时数字变化写未知。清单是用户工作区里的 `schema:1,cases:[...]`，每项显式指定 `id/case/baseline_run`，另一个不可变案例基线用 `baseline_case`；可指定 `tolerances:{absolute,relative,ignore_paths}`、`conclusions:[{id,pointer,operator,threshold?}]`、fact manifest、句子映射及版式/指导文件的旧 SHA。容差判断为 `|a-b| <= absolute + relative*max(|a|,|b|)`；按数组原位置比较，不用同值搜索重配。
+- `--execute` 只消耗已有工作流的一次合法尝试，不建立或重置时钟。失败保留，不换旧成功。报告可同时含 unaffected/numbers/conclusions/layout/guidance/unknown；列出已声明结论谓词的翻转，无法据此声称全部自然语言结论已核。
+- `--execute --rebuild` 仅在已绑定数字、结论谓词未翻转时生成独立候选和变化页清单；作者仍须复查比较措辞、条件和页面，不能自动冻结。结论翻转交作者改论证；指导改变给定点建议，不整篇重写。像素相同仅证明该尺寸显示复现，不证明科学正确。
+
+有分段人写源和数值图生成器的案例，清单用 `facts.driver:{path,sha256,timeout_seconds?}` 绑定已审阅的本地适配脚本；refresh只传固定的case/run-id/output参数，不走shell，重建段落与图到新目录。脚本字节变化须重新审阅并更新清单，不直接在文档或数据中执行命令。静态源展开不能保证未绑定图的数值自动同步，涉及这类图应使用适配器或转人工复查。
