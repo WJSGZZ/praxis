@@ -24,7 +24,7 @@
 
 样本局限：从60篇候选经材料守卫放行21篇，再排除3篇图像PDF，仅剩18篇；年份为2018、2021、2022，ICM偏多，MCM A/B/C只有4篇。图数以可抽取的最大 Figure 编号（不超过60）近似，部分“数学家版”可能经过编辑；结构统计未核读内容或图的论证价值。这不是获奖因果、通用最低图数或评分线。
 
-- 默认安排一张模型结构图，说明输入、主要变量、机制与输出的依赖；动笔前先画草稿，以图中依赖顺序组织全文提纲，正文沿这一顺序展开，成稿前再按实际内容精修并核对图文对应。每个主要比较默认检查图、表或文字哪种能使读者直接判断，选择省图时在计划表说明理由。
+- 默认安排一张模型结构图，说明输入、主要变量、机制与输出的依赖；动笔前先画草稿，以图中依赖顺序组织全文提纲，正文沿这一顺序展开，成稿前再按实际内容精修并核对图文对应。精修前先写图纸：逐项列出每个元素及其对应的模型变量或方程、元素间的连接与方向、配色、线型与字体；图纸含糊就先补全，不开画。内容与样式分开改：调样式不得增删元素、改动连接或方向。渲染后实际看图自查，至多三轮：先查忠实，即没有方法中不存在的模块、没有漏连、箭头方向正确、图中文字无误、图题不画进图内；再查重叠、拥挤和多余图例；每轮记下意见与改后的图纸；交付前另由未参与绘图的角色只凭正文和成图核对忠实，作者自查不能代替。忠实不过不交付，美观不能抵消。美赛结构图默认样式（只作默认，不设硬门）：每个子模型一块浅色底块；圆角矩形表示过程，圆柱表示存储；实线为主流程，虚线为情景或可选路径；模块名用无衬线字体，数学变量与正文公式写法一致；只用一种醒目色标出最终答案。结构图用 TikZ 等可编辑代码生成，不用图像生成模型绘制；数据图仍由真实结果经代码生成。每个主要比较默认检查图、表或文字哪种能使读者直接判断，选择省图时在计划表说明理由。
 - 涉及区域、县、网格等空间单元时默认包含地图，标明边界／坐标来源、单位、图例、缺失单元及真实位置或示意身份。空间问题通常不能只用总量曲线回答。
 - 少于8张图是本轮采纳的**实验参数**，仅触发计划复查。少于8张、缺模型结构图、涉及空间单元却缺地图时，计划表分别写明为什么文字或表格更好；无空间单元时写“不适用”及理由。短解析题可合理省图，不能用重复图、无效示意图或编造地图满足数量。
 - 不设固定图型清单。选型按读者问题决定，数量与例外先作告警；有无图不能代替题意覆盖与科学核验。
@@ -125,5 +125,6 @@ fig.savefig("region-map.pdf")
 - Rougier, Droettboom, Bourne，“Ten Simple Rules for Better Figures”，PLOS Computational Biology，2014（开放获取）。
 - Wong，“Color blindness”，Nature Methods 8:441，2011；Okabe 与 Ito 的色盲友好调色板。
 - Matplotlib 色图指南（matplotlib.org/stable/users/explain/colors/colormaps.html）。
+- Zhu 等，PaperBanana（PaperVizAgent），github.com/dwzhu-pku/PaperBanana，Apache-2.0：结构图“图纸—样式—看图自查”流程的思路来源，未采用其图像生成。
 
 核验的第一手技术资料（2026-10-09）：[PGFplots 误差条](https://tikz.dev/pgfplots/reference-errorbars)、[坐标范围](https://tikz.dev/pgfplots/reference-specifyrange)、[Matplotlib 色图指南](https://matplotlib.org/stable/users/explain/colors/colormaps.html)、[Nature 制图规范](https://research-figure-guide.nature.com/figures/preparing-figures-our-specifications/)、[Nature 作者格式指南](https://www.nature.com/nature/for-authors/formatting-guide)。采用其数据表达、可编辑矢量、误差定义与可读性原则；期刊指定字体／版面尺寸不是比赛强制规定，也不冒称“顶尖质量已认证”。
