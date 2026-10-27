@@ -11,7 +11,7 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 5, 'cumcm': 2, 'research': 1}
+VERSIONS = {'mcm': 5, 'cumcm': 2, 'research': 2}
 # A house identity for simulations only; it is not an assigned contest team.
 MCM_SIMULATION_TEAM = '7391856'
 BEGIN = '% BEGIN PRAXIS MCM STYLE v5\n'
@@ -23,10 +23,10 @@ def style_block(contest='mcm', *, layout_version=None):
         raise ValueError('Unknown layout profile')
     name = contest.upper()
     version = VERSIONS[contest] if layout_version is None else layout_version
-    supported = (1, 2, 3, 4, 5) if contest == 'mcm' else (VERSIONS[contest],)
+    supported = (1, 2, 3, 4, 5) if contest == 'mcm' else (1, 2) if contest == 'research' else (VERSIONS[contest],)
     if type(version) is not int or version not in supported:
         raise ValueError('Unsupported archived layout version')
-    suffix = f'-v{version}' if contest == 'mcm' and version != VERSIONS[contest] else ''
+    suffix = f'-v{version}' if contest in ('mcm', 'research') and version != VERSIONS[contest] else ''
     source = ROOT / f'templates/{contest}-style{suffix}.tex'
     return (f'% BEGIN PRAXIS {name} STYLE v{version}\n' +
             source.read_text(encoding='utf-8').replace('@@PLOTS@@', texplot.PREAMBLE) +
@@ -189,12 +189,12 @@ def check(text, contest='mcm', *, layout_mode='archive'):
     if layout_mode not in {'current', 'archive'}:
         raise ValueError('Layout mode must be current or archive')
     version = VERSIONS[contest]
-    if contest == 'mcm':
-        markers = re.findall(r'% BEGIN PRAXIS MCM STYLE v([0-9]+)\n', text)
+    if contest in ('mcm', 'research'):
+        markers = re.findall(r'% BEGIN PRAXIS ' + contest.upper() + r' STYLE v([0-9]+)\n', text)
         if len(markers) != 1:
-            raise ValueError('Require exactly one shared MCM style version')
+            raise ValueError('Require exactly one shared ' + contest.upper() + ' style version')
         version = int(markers[0])
-        if layout_mode == 'current' and version != VERSIONS['mcm']:
+        if contest == 'mcm' and layout_mode == 'current' and version != VERSIONS['mcm']:
             raise ValueError('Current MCM delivery requires the current shared style v'
                              + str(VERSIONS['mcm']) + '; use explicit archive mode for historical reproduction')
     block = style_block(contest, layout_version=version)

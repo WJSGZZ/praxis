@@ -1,0 +1,24 @@
+% Praxis mathematical research house style v1; target-journal instructions take precedence.
+\documentclass[11pt,a4paper]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,booktabs,caption,needspace,placeins}
+\usepackage[margin=30mm]{geometry}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}
+@@PLOTS@@
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=true}
+\captionsetup[table]{position=above,skip=5pt}
+\captionsetup[figure]{position=below,skip=7pt}
+\raggedbottom
+\renewcommand{\topfraction}{.9}\renewcommand{\textfraction}{.08}\renewcommand{\floatpagefraction}{.8}
+\setlength{\emergencystretch}{2em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\renewcommand{\proofname}{Proof}

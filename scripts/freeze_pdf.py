@@ -113,13 +113,15 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
     manuscript = None
     diagnostic_inputs = dict(results=results, requirements=requirements, model_contract=model_contract,
                              figure_plan=figure_plan, reader_review=reader_review)
-    if layout is not None and layout_mode == 'current' and contest in ('mcm', 'cumcm'):
+    if layout is not None and layout_mode == 'current' and contest in ('mcm', 'cumcm', 'research'):
         from scripts.manuscript_delivery import inspect as inspect_manuscript
-        manuscript = inspect_manuscript(text, [page.extract_text() or '' for page in doc.pages],
+        from scripts.manuscript import extract_pdf_pages, language
+        manuscript = inspect_manuscript(text, extract_pdf_pages(source, prefer_cjk=language(text) == 'zh'),
                                         pdf_sha256=digest, **diagnostic_inputs,
-                                        problem_year=problem_year, allow_anachronism=allow_anachronism)
+                                        problem_year=problem_year, allow_anachronism=allow_anachronism,
+                                        mode='research' if contest == 'research' else 'contest')
     elif any(path is not None for path in diagnostic_inputs.values()) or problem_year is not None or allow_anachronism:
-        raise ValueError('Manuscript diagnostics require a current-mode MCM/CUMCM layout-gated delivery')
+        raise ValueError('Manuscript diagnostics require a current-mode MCM/CUMCM/research layout-gated delivery')
     if dependency_review is not None:
         verify_compiler_dependencies(build['compiler_dependencies'], tex)
     if (source.read_bytes() != raw or (tex is not None and tex.read_bytes() != tex_bytes)
@@ -146,7 +148,8 @@ def freeze(source, destination, *, tex=None, contest=None, build_receipt=None,
                {'compiler_dependency_review': {'passed': None, 'status': 'historical receipt lacks compiler-opened file bindings'}} if layout is not None else {}),
             **({"heading_structure_review": structure} if structure is not None else {}),
             **({"font_size_review": sizes} if sizes is not None else {}),
-            **({'manuscript_diagnostics': manuscript} if manuscript is not None else {}),
+            **({'manuscript_diagnostics': manuscript, 'delivery_status': manuscript['delivery_status']}
+               if manuscript is not None else {}),
             "source": str(source.resolve()), "snapshot": str(destination.resolve()),
             "sha256": sha, "bytes": len(raw), "created_utc": datetime.now(timezone.utc).isoformat(),
             "note": "Local snapshot only; not proof of contest deadline compliance or submission."}

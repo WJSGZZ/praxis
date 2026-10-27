@@ -12,6 +12,134 @@ import re
 
 from pypdf import PdfReader, PdfWriter
 
+QUALITY_CHECKLIST = [
+    '摘要是否给出主要发现和关键数字？',
+    '结论是否先讲发现及其含义？',
+    '有无自我评价和内部过程话？',
+    '逐图逐面板列出已查的标注和图例：文字是否被线、点、填充穿过？图例整个框内及边缘是否有数据或距离过近？',
+    '逐图核对关键数字与正文：近似显示、连续值和实际实施精度能否直接区分？是否会造成读法矛盾？',
+    '术语、单位及数字精度是否一致且含义明确？',
+    '首页和模板标签的语言是否统一？',
+    '局限是否集中、具体，且保留结论所需条件？',
+    '读者最可能误解的一处是什么？',
+]
+
+
+def quality_status(review, pdf_sha256):
+    """Record truthfully; missing/unfinished review is a warning, never refusal.
+
+    Actor/context/scope are declarations, not mechanically certified isolation.
+    Historical coverage-only records remain readable but do not certify this review.
+    """
+    pending = {'status': '未经独立读者审阅', 'unresolved': None,
+               'diagnostic_only': True}
+    if not isinstance(review, dict):
+        return pending
+    initial = review.get('initial_review')
+    followup = (review.get('review_round') == 'followup' and isinstance(initial, dict)
+                and initial.get('actor') == review.get('actor')
+                and initial.get('fresh_context') is True
+                and initial.get('source_pdf_sha256') == review.get('initial_pdf_sha256')
+                and quality_status(initial, review.get('initial_pdf_sha256'))['status'] != pending['status'])
+    checks = review.get('quality_checks')
+    if (review.get('type') != 'reader' or review.get('source_pdf_sha256') != pdf_sha256
+            or not isinstance(review.get('actor'), str) or not review['actor'].strip()
+            or (review.get('fresh_context') is not True and not followup)
+            or review.get('reading_scope') != 'rendered_pages_only'
+            or not isinstance(checks, list) or len(checks) != len(QUALITY_CHECKLIST)
+            or any(not isinstance(c, dict) or not isinstance(c.get('id'), str)
+                   or c.get('verdict') not in ('clear', 'issue', 'uncertain')
+                   or not isinstance(c.get('evidence'), str) or not c['evidence'].strip() for c in checks)
+            or {c.get('id') for c in checks} != {str(i+1) for i in range(len(QUALITY_CHECKLIST))}
+            or not isinstance(review.get('issues'), list)):
+        return pending
+    rows = review['issues']
+    if any(not isinstance(row, dict) for row in rows):
+        return pending
+    unresolved = sum(row.get('status') not in ('fixed', 'retained')
+                     or not isinstance(row.get('resolution'), str) or not row['resolution'].strip()
+                     or (row.get('status') == 'fixed' and review.get('review_round') != 'followup')
+                     for row in rows)
+    # An issue/uncertainty verdict cannot disappear by omitting the issues list.
+    if not rows and any(c['verdict'] != 'clear' for c in checks):
+        unresolved = sum(c['verdict'] != 'clear' for c in checks)
+    return {'status': f'有 {unresolved} 项未处理' if unresolved else '已完成独立读者审阅',
+            'unresolved': unresolved, 'diagnostic_only': True}
+
+
+def build_quality(source, destination, question):
+    """Full rendered-page review packet; no source, logs or author assessments.
+
+    Large PDF Form XObjects get isolated enlarged views. Inline pgfplots/raster
+    figures without separable forms need explicit visual coverage on full pages;
+    no crop inferred from a caption is presented as a precise figure extraction.
+    """
+    from pypdf.generic import ContentStream
+    import pypdfium2
+    source, destination = Path(source), Path(destination)
+    raw = source.read_bytes()
+    if not isinstance(question, str) or not question.strip():
+        raise ValueError('Supply the original research question or problem')
+    destination.mkdir(parents=True, exist_ok=False)
+    (destination/'packet.pdf').write_bytes(raw)
+    (destination/'question.txt').write_text(question, encoding='utf-8')
+    reader, writer = PdfReader(source), PdfWriter()
+    figures, number_tokens = [], []
+    doc = pypdfium2.PdfDocument(source)
+    for number, pdf_page in enumerate(reader.pages, 1):
+        page = doc[number-1]
+        page.render(scale=1.5).to_pil().save(destination/f'page-{number:02}.png')
+        text = page.get_textpage()
+        number_tokens.append({'page':number, 'tokens':re.findall(r'\d+(?:\.\d+)?', text.get_text_range()),
+                              'scope':'actual full page; figure-only numeric tokens below when separable'})
+        text.close()
+        matrix, stack = (1,0,0,1,0,0), []
+        def compose(m, n):
+            a,b,c,d,e,f=m;g,h,i,j,k,l=map(float,n)
+            return (a*g+c*h,b*g+d*h,a*i+c*j,b*i+d*j,a*k+c*l+e,b*k+d*l+f)
+        for args, op in ContentStream(pdf_page.get('/Contents'), reader).operations:
+            if op == b'q': stack.append(matrix)
+            elif op == b'Q': matrix=stack.pop()
+            elif op == b'cm': matrix=compose(matrix,args)
+            elif op == b'Do':
+                obj=pdf_page['/Resources']['/XObject'][args[0]].get_object()
+                if obj.get('/Subtype') != '/Form' or '/BBox' not in obj: continue
+                x0,y0,x1,y1=map(float,obj['/BBox'])
+                a,b,c,d,e,f=compose(matrix,obj.get('/Matrix',(1,0,0,1,0,0)))
+                points=[(a*x+c*y+e,b*x+d*y+f) for x,y in [(x0,y0),(x1,y1),(x0,y1),(x1,y0)]]
+                left,right=min(x for x,y in points),max(x for x,y in points)
+                bottom,top=min(y for x,y in points),max(y for x,y in points)
+                if right-left < 120 or top-bottom < 60: continue
+                view=writer.add_page(pdf_page)
+                view.cropbox.lower_left=(left,bottom);view.cropbox.upper_right=(right,top)
+                i=len(figures)+1
+                # Preserve the PDF crop too, not only a raster enlargement.
+                page.render(scale=2.5,crop=(max(0,left),max(0,bottom),
+                    max(0,float(page.get_width())-right),max(0,float(page.get_height())-top))).to_pil().save(destination/f'figure-{i:02}.png')
+                ft=page.get_textpage()
+                bounded=ft.get_text_bounded(left,bottom,right,top);ft.close()
+                figures.append({'figure':i,'page':number,'bbox_pdf_points':[left,bottom,right,top],
+                    'numbers':re.findall(r'\d+(?:\.\d+)?',bounded),'view':f'figure-{i:02}.png'})
+        page.close()
+    doc.close()
+    if figures:
+        writer.write(destination/'figure-views.pdf')
+    template={'type':'reader','actor':'','source_pdf_sha256':hashlib.sha256(raw).hexdigest(),
+        'fresh_context':True,'reading_scope':'rendered_pages_only','review_round':'initial',
+        'quality_checks':[{'id':str(i+1),'question':q,'verdict':None,'evidence':''}
+                          for i,q in enumerate(QUALITY_CHECKLIST)],'issues':[]}
+    (destination/'reader-review-template.json').write_text(json.dumps(template,ensure_ascii=False,indent=2))
+    (destination/'PROMPT.txt').write_text('只读本目录成品PDF/页面和问题，先独立审阅，不读源码、作者记录或其他评语。逐页实看，并逐图放大核对。按九条清单填写记录，给页面依据；问题写id/page/description/status=open。没有问题也需逐条有据。不要给奖档，不重算模型，不自行改论文。\n'+ '\n'.join(f'{i+1}. {q}' for i,q in enumerate(QUALITY_CHECKLIST)),encoding='utf-8')
+    packet={'type':'reader_quality_packet','source_pdf_sha256':hashlib.sha256(raw).hexdigest(),
+        'source_pages':len(reader.pages),'packet_pages':len(reader.pages),'scope':'all_pages',
+        'figures':figures,'page_number_tokens':number_tokens,
+        'figure_review_scope':'separable large Form XObjects; inline pgfplots or unseparated images require manual enlarged full-page review',
+        'limitations':['Numeric tokens are not automatically matched to scientific claims.',
+                       'Fresh context and allowed-input isolation require orchestration; this packet does not enforce a sandbox.']}
+    (destination/'packet.json').write_text(json.dumps(packet,ensure_ascii=False,indent=2))
+    if source.read_bytes()!=raw: raise ValueError('PDF changed while preparing packet')
+    return packet
+
 
 _FIGURE = re.compile(r"\b(?:Figure|Fig\.)\s*\d+|图\s*\d+", re.I)
 _TARGET = re.compile(
@@ -174,12 +302,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('pdf', type=Path)
     parser.add_argument('destination', type=Path)
-    parser.add_argument('--requirements', required=True, type=Path)
+    parser.add_argument('--requirements', type=Path)
+    parser.add_argument('--quality', action='store_true', help='Full rendered-page professional reader review')
+    parser.add_argument('--question', type=Path, help='Original problem or research question text')
     parser.add_argument('--pages', nargs='*', type=int, default=[])
     parser.add_argument('--minutes', type=int, default=25)
     args = parser.parse_args()
-    result = build(args.pdf, args.destination, json.loads(args.requirements.read_text(encoding='utf-8')),
-                   extra_pages=args.pages, minutes=args.minutes)
+    if args.quality:
+        if args.question is None: parser.error('--quality needs --question')
+        result = build_quality(args.pdf,args.destination,args.question.read_text(encoding='utf-8'))
+    else:
+        if args.requirements is None: parser.error('coverage packet needs --requirements')
+        result = build(args.pdf, args.destination, json.loads(args.requirements.read_text(encoding='utf-8')),
+                       extra_pages=args.pages, minutes=args.minutes)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

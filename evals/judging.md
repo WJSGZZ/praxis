@@ -55,4 +55,4 @@
 
 ## 数学研究作品的评价
 
-研究的六项定性标准及记录字段唯一归 [research-judging.md](research-judging.md)，不填竞赛七维、奖项或百分制。
+研究的六项定性标准、按主张补充的学科检查及记录字段唯一归 [research-judging.md](research-judging.md)，数学方法共用，不填竞赛七维、奖项或百分制。

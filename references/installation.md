@@ -130,7 +130,7 @@ Claude Code 可改为 `~/.claude/skills/praxis`；其他发现目录见 [兼容�
 在仓库根目录编译；从安装包使用时进入其 `skills/praxis` 目录，论文与输出仍放在用户工作区。以下相对路径按实际位置替换，输出目录必须尚不存在：
 
 ```bash
-uv run --locked python -m scripts.paper_template main.tex --contest cumcm --compile --output-directory outputs/build-001
+uv run --locked python -m scripts.paper_template report.tex --contest cumcm --compile --output-directory outputs/build-001
 ```
 
 美赛改为 `--contest mcm`。Windows 可追加 `--compiler "C:/Tools/tectonic/tectonic.exe"`，其他系统同样支持显式路径。首次运行需联网获取固定 TeX 资源；中文字体随资源提供，无需复制 Mac 系统字体。版本、资源包与字体哈希不符时停止，不自动更换排版环境。输出包含 PDF、日志和 `.build.json`；逐页检查后，按[写作流程](writing.md)携带构建记录冻结最终文件。

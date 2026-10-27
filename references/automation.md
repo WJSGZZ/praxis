@@ -130,14 +130,14 @@ uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/pipeline.py" --works
 以下模块命令在 **BUNDLE目录** 的锁定环境执行，所有论文／输出路径使用工作项目的绝对路径。`paper_template --contest` 实际支持 mcm/cumcm/research；研究生赛按原官方封面及匿名稿选择真实工具链，再用下方 graduate 提交检查，记录实际支持范围。
 
 ```bash
-uv run --locked python -m scripts.paper_template "$WORKSPACE/paper/paper.tex" \
+uv run --locked python -m scripts.paper_template "$WORKSPACE/paper/report.tex" \
   --contest mcm --review-structure
-uv run --locked python -m scripts.paper_template "$WORKSPACE/paper/paper.tex" \
+uv run --locked python -m scripts.paper_template "$WORKSPACE/paper/report.tex" \
   --contest mcm --compile --output-directory "$WORKSPACE/paper/build-001"
-uv run --locked python -m scripts.freeze_pdf "$WORKSPACE/paper/build-001/paper.pdf" \
-  "$WORKSPACE/paper/final.pdf" --tex "$WORKSPACE/paper/paper.tex" --contest mcm \
-  --build-receipt "$WORKSPACE/paper/build-001/paper.build.json" \
-  --page-review "$WORKSPACE/paper/build-001/paper.pdf.page-review.json"
+uv run --locked python -m scripts.freeze_pdf "$WORKSPACE/paper/build-001/report.pdf" \
+  "$WORKSPACE/deliverables/build-001/report.pdf" --tex "$WORKSPACE/paper/report.tex" --contest mcm \
+  --build-receipt "$WORKSPACE/paper/build-001/report.build.json" \
+  --page-review "$WORKSPACE/paper/build-001/report.pdf.page-review.json"
 ```
 
 国赛选 `--contest cumcm`；未知或不匹配版式的通用PDF快照保留自身用途。美赛当前编译默认 `--layout-mode current`；历史按原 `layout_version` 选择 v1/v2/v3/v4，并在编译与冻结显式 `--layout-mode archive`。资源由 `templates/typesetting-runtime.json` 固定 Tectonic 0.17.0 及包URL／SHA256。共享样式嵌入独立TeX，字面全局字体、页边距、段距／行距、标题与页眉覆盖由检查器拒绝；变更从唯一模板源重建。
@@ -161,8 +161,8 @@ uv run --locked python -m scripts.freeze_pdf "$WORKSPACE/paper/build-001/paper.p
 当届交付机械检查示例：
 
 ```bash
-uv run --locked python -m scripts.contest_rules "$WORKSPACE/paper/final.pdf" --contest cumcm --edition 2026
-uv run --locked python -m scripts.contest_rules "$WORKSPACE/paper/final.pdf" --contest graduate --edition 2026 --document-kind submission
+uv run --locked python -m scripts.contest_rules "$WORKSPACE/deliverables/build-001/report.pdf" --contest cumcm --edition 2026
+uv run --locked python -m scripts.contest_rules "$WORKSPACE/deliverables/build-001/report.pdf" --contest graduate --edition 2026 --document-kind submission
 ```
 
 不传edition只做兼容检查；graduate默认document-kind=report只核匿名报告部分，完整submission另核官方封面。机械子集、真实披露、原届次合规与正式提交分别验收，官方条款和已核日期见 [contest-delivery.md](contest-delivery.md)。
@@ -173,7 +173,7 @@ uv run --locked python -m scripts.contest_rules "$WORKSPACE/paper/final.pdf" --c
 写论文或交付摘要时，传 `--checks /实际运行/checks.json` 获取真实 total/passed/failed；已有稿件声称的项数可用 `--claimed-check-count` 比对，存在失败或数量不一致时返回非零。报告正文和状态的数量从这份证据派生，不手工凭记忆填写；检查通过不等于检查独立或覆盖充分。
 
 ```bash
-uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/check_pdf.py" /绝对路径/paper.pdf \
+uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/check_pdf.py" /绝对路径/report.pdf \
   --checks /实际运行/checks.json --claimed-check-count 12
 ```
 
@@ -195,7 +195,7 @@ current 编译还通过 Tectonic 的依赖清单记录实际打开的本地输�
 
 历史重现必须显式选择保留的 `layout_version`，编译与布局冻结传 `--layout-mode archive`；保留版本、原件和旧哈希，不称当前交付通过。无布局 profile 的通用 PDF 快照、research 和 CUMCM 继续其各自用途与规则；它们不自动成为美赛交付，也不能冒充当前美赛字号／页面门禁成功。构建或冻结记录不是正式提交回执。
 
-章节结构由 `python -m scripts.paper_template main.tex --contest mcm --review-structure` 预检，或单独运行 `python -m scripts.paper_structure main.tex`。采用 pylatexenc 的语法树，检查字面 chapter／section／subsection／subsubsection 的直接父子关系；注释、代码示例、数学内容和宏定义不作为实际标题。带 `--tex`／`--contest` 的最终冻结同样检查，未解决候选或解析失败时在写PDF前停止，另将结果保存在冻结收据；原构建收据的版式身份不变。它是编辑复查入口，不是官方子节数量规则或完整TeX解析认证：不展开宏、不读取 input／include、不执行条件分支；未覆盖的结构仍以实际目录和正文为准。合法的复杂TeX也可能触发解析失败，先查看诊断，不因此判论文错误，也不绕过成品审查。没有源码的通用快照保持原用途，不认证章节结构。
+章节结构由 `python -m scripts.paper_template report.tex --contest mcm --review-structure` 预检，或单独运行 `python -m scripts.paper_structure report.tex`。采用 pylatexenc 的语法树，检查字面 chapter／section／subsection／subsubsection 的直接父子关系；注释、代码示例、数学内容和宏定义不作为实际标题。带 `--tex`／`--contest` 的最终冻结同样检查，未解决候选或解析失败时在写PDF前停止，另将结果保存在冻结收据；原构建收据的版式身份不变。它是编辑复查入口，不是官方子节数量规则或完整TeX解析认证：不展开宏、不读取 input／include、不执行条件分支；未覆盖的结构仍以实际目录和正文为准。合法的复杂TeX也可能触发解析失败，先查看诊断，不因此判论文错误，也不绕过成品审查。没有源码的通用快照保持原用途，不认证章节结构。
 
 只有一个编号子节时，默认合并无独立作用的层级。确需保留者保存JSON：`tex_sha256` 为当前UTF-8源码字节的SHA256，`approved_single_child_nodes` 为 `[{"id":"预检给出的候选id","reason":"该子节实际承担的独立导航或规定职责"}]`。预检追加 `--structure-review /绝对路径/structure-review.json`，单独脚本用 `--review`，最终冻结也传 `--structure-review`。过期哈希、未知／重复id和空理由拒绝；不能用批量理由或增加无内容标题凑数。记录保存实际判断，不能自动证明理由正确。预检与编译分开调用，最后查看同次编译的目录、正文与交叉引用。
 
@@ -204,18 +204,18 @@ scripts/check_references.py 读取每行一条的参考文献文本，用 Crossr
 
 ### 当前交付的论文诊断（全部先告警）
 
-`freeze_pdf` 在 current MCM/CUMCM 布局冻结中调用 Summary、正文语言、关键数字与题面覆盖诊断，收据 `manuscript_diagnostics` 含逐项结果和输入 SHA；新项均为 `diagnostic_only:true`，不以词汇代理指标判论文质量。版式、字节绑定和原有拒绝条件照常执行。缺少元数据或文本映射不确定时明确列未检查项，不当作通过。
+`freeze_pdf` 在 current MCM/CUMCM/research 布局冻结中调用摘要、正文语言和关键数字诊断；题面覆盖只用于竞赛，研究入口不要求赛事覆盖材料，收据 `manuscript_diagnostics` 含逐项结果和输入 SHA；新项均为 `diagnostic_only:true`，不以词汇代理指标判论文质量。版式、字节绑定和原有拒绝条件照常执行。缺少元数据或文本映射不确定时明确列未检查项，不当作通过。
 
 ```bash
-uv run --locked python -m scripts.check_summary "$WORKSPACE/paper/paper.tex" --results "$WORKSPACE/results.json"
-uv run --locked python -m scripts.check_prose "$WORKSPACE/paper/paper.tex" --pdf "$WORKSPACE/paper/paper.pdf" --problem-year 2023
-uv run --locked python -m scripts.check_claims "$WORKSPACE/paper/paper.tex" --results "$WORKSPACE/results.json"
-uv run --locked python -m scripts.contest_coverage "$WORKSPACE/paper/paper.tex" \
+uv run --locked python -m scripts.check_summary "$WORKSPACE/paper/report.tex" --results "$WORKSPACE/results.json"
+uv run --locked python -m scripts.check_prose "$WORKSPACE/paper/report.tex" "$WORKSPACE/paper/report.pdf" --problem-year 2023
+uv run --locked python -m scripts.check_claims "$WORKSPACE/paper/report.tex" --results "$WORKSPACE/results.json"
+uv run --locked python -m scripts.contest_coverage "$WORKSPACE/paper/report.tex" \
   --requirements "$WORKSPACE/planning/requirements.json" --model-contract "$WORKSPACE/planning/model-contract.json" \
   --figure-plan "$WORKSPACE/planning/figure-plan.json"
 ```
 
-正文统计使用实际 PDF 文本及 TeX 节标题映射，排除局限、优缺点、参考、附录、AI 与复现节；标题无法唯一定位时比例为 null。英文否定词占比 >0.16、六位有效数字、运行编号／本机路径、晚于题目年份的引用仅告警；历史学习稿显式 `--allow-anachronism`。公开 URL、数学环境、复现节各按实际用途处理。数值检查只覆盖显式阿拉伯数字加已识别单位／币种／百分号，允许 1e-3 或显示精度舍入；值匹配不证明量纲、出处或主张正确。
+正文统计使用实际 PDF 文本及 TeX 节标题映射，排除局限、优缺点、参考、附录、AI 与复现节；标题无法唯一定位时比例为 null。英文否定词占比 >0.16、六位有效数字（常规金额两位小数豁免）、运行编号／本机路径、晚于题目年份的引用仅告警；历史学习稿显式 `--allow-anachronism`。公开 URL、数学环境、复现节各按实际用途处理。数值检查只覆盖显式阿拉伯数字加已识别单位／币种／百分号，允许 1e-3 或显示精度舍入；值匹配不证明量纲、出处或主张正确。
 
 覆盖位置由 `requirements.json` 的可选交付元数据提供，脚本核实际源位置，不猜语义：
 
@@ -230,13 +230,17 @@ uv run --locked python -m scripts.contest_coverage "$WORKSPACE/paper/paper.tex" 
 位置值可为 `label:<实际标签>` 或该区域的原文短句；Summary／正文／结论各自核验。假设表、每条检验位置、声明参数交集、Memo 页边界和符号、优缺点及图计划逐项告警。`planning/figure-plan.json` 用 `{figures:[{id,kind,reader_question,data_source,section}],omissions:[{kind,reason}],few_figures_reason}`；id 对应实际图标签，kind 的 structure/map 供结构图及空间地图核查，数量和省略理由按 [visualization.md](visualization.md#图表计划)。源检查不代替实际 PDF 页审阅。
 
 ```bash
-uv run --locked python -m scripts.reader_packet "$WORKSPACE/paper/paper.pdf" "$WORKSPACE/reader-packet" \
+uv run --locked python -m scripts.reader_packet "$WORKSPACE/paper/report.pdf" "$WORKSPACE/reader-packet" \
   --requirements "$WORKSPACE/planning/requirements.json" --minutes 25 --pages 16 17
 ```
 
-阅读包含首页、可识别图页、结论与 Memo 候选页，保留原页码映射；`--pages` 仅补实际核实的漏选页。标题／图号是文本启发式，先核 packet 覆盖。全新读者只读 packet，最多20–30分钟，按模板逐题写 yes/no、一句话答案、可信依据与首要追问；真实 actor、耗时及原 PDF SHA 一并保存。缺答案或过期 PDF 绑定先告警，不充当全文评审或数学验证。
+上面的旧coverage包只作快速题问定位。完整稿（竞赛或研究）交付前，改用 `python -m scripts.reader_packet /实际/report.pdf /新的读者包目录 --quality --question /原问题.txt`：全页渲染、可分离图形单独放大，并列出图内数字；内联pgfplots或未分离图像明确退回放大整页人工检查，不能冒称自动遮挡检查。九条清单保存在 `reader_packet.QUALITY_CHECKLIST`，涵盖摘要发现及关键数、结论、自评/过程话、逐图遮挡、图文数字、术语单位、首页语言、局限和最可能误解处。读者只收到成品、原问题和清单，保存 `type:reader`、`actor`、`source_pdf_sha256`、`fresh_context:true`、`reading_scope:rendered_pages_only`、九项 `quality_checks`（id/verdict/evidence）和 `issues`（id/page/description/status/resolution）；上下文与范围是实际执行要求，字段声明不能认证隔离。缺失/过期/不完整记录写“未经独立读者审阅”，未处理问题写“有 N 项未处理”；每项修复或有具体理由保留，修改后交同一读者定点复核、绑定新PDF并注明followup，不再叫盲读。复核记录可写 `fresh_context:false`，须嵌入原 `initial_review` 与 `initial_pdf_sha256` 并沿用相同actor；保留九项质量记录及全部问题处置，不拿一个只有面板笔记的补充文件冒充完整记录。状态与诊断均warning-only，冻结允许保存但不能宣称读者检查完成。
 
-最终冻结可追加 `--results`、`--requirements`、`--model-contract`、`--figure-plan`、`--reader-review`（均为实际 JSON 路径）、`--problem-year` 与历史研究用 `--allow-anachronism`。这些参数只用于 current MCM/CUMCM；archive 保持原证据，不追套新版诊断。只有经独立 O/MH 校准并获用户采纳的项目才能另升为拒绝，目前没有新增拒绝项。
+宿主能力查证于2026-10-27：[Claude Code官方插件参考](https://code.claude.com/docs/en/plugins-reference)支持插件根的 `agents/`，具体代理定义及显式调用见[官方子代理文档](https://code.claude.com/docs/en/sub-agents)；[OpenAI官方Codex子代理文档](https://learn.chatgpt.com/docs/agent-configuration/subagents)说明App/CLI/IDE可通过明确请求或项目指令委派，使用内置worker/explorer或 `.codex/agents/`、`~/.codex/agents/` 的TOML自定义代理。实际调用由宿主编排工具执行，不是运行一个同名Python脚本；Praxis未据此自动安装代理或保证所有客户端均可调用。优先用不继承作者历史的新上下文；本轮支持的 `spawn_agent(fork_turns="none")` 是实际会话工具，不是跨宿主通用API。缺该能力的宿主应新开会话，只发reader packet和清单，再把记录带回原会话。
+
+旧coverage阅读包含首页、可识别图页、结论与 Memo 候选页，保留原页码映射；`--pages` 仅补实际核实的漏选页。标题／图号是文本启发式，先核 packet 覆盖。全新读者只读 packet，最多20–30分钟，按模板逐题写 yes/no、一句话答案、可信依据与首要追问；真实 actor、耗时及原 PDF SHA 一并保存。缺答案或过期 PDF 绑定先告警，不充当全文评审或数学验证。
+
+最终冻结可追加 `--results`、`--requirements`、`--model-contract`、`--figure-plan`、`--reader-review`（均为实际 JSON 路径）、`--problem-year` 与历史研究用 `--allow-anachronism`。这些参数用于 current MCM/CUMCM/research；研究模式复用摘要、中文正文及首页语言检查，不套竞赛覆盖项。中文按字符切句与小样本标定阈值提示，过程话和自评单独定位；共享research v2在加载ctex时本地化日期、关键词和摘要标签，旧v1保持可读和可复现。archive 保持原证据，不追套新版诊断。只有经独立 O/MH 校准并获用户采纳的项目才能另升为拒绝，目前没有新增拒绝项。
 
 ## 数值任务的证据索引
 

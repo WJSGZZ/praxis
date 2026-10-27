@@ -7,6 +7,15 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 本地候选版，尚未发布。Local candidate; publication is pending.
 
+- 完整论文交付前的读者质量检查：文字诊断支持中文（切句、否定比例、过程话与自我评价提示、中文章节映射）；研究论文接入交付诊断，检查摘要结果与开头结尾、首页语言；中文研究稿的日期、关键词与摘要标签本地化，旧样式保留；新增按实际墨迹检查图中文字和图例是否压住数据；交付前由全新上下文读者只看成品页面审阅，缺审或有未处理问题时如实标明状态。新增检查均只给提示，不拦截交付。
+  Reader-quality checks before delivering a complete paper: prose diagnostics now handle Chinese text, including sentence splitting, negation ratio, process and self-assessment cues, and Chinese section headings. Research papers get delivery diagnostics for abstract results, opening and closing sentences, and front-matter language. Chinese research papers use localized date, keyword and abstract labels, with the previous style kept. A figure check reports text or legends that overlap plotted ink. A fresh-context reader reviews the rendered pages before delivery, and the delivery status reports a missing review or open issues. All new checks are warnings and do not block delivery.
+
+- 新建正式报告统一以 `report` 命名主源与成品，例如 `report.tex`／`report.pdf`；版本保存在独立目录。用户指定名和提交规范优先，历史冻结文件及收据不追改。
+  New modeling reports use `report` as the main filename stem, including `report.tex` and `report.pdf`, with versions kept in separate directories. Explicit user or submission requirements take precedence; existing frozen artifacts retain their original identities.
+
+- 研究评审保留数学建模主干，按解析、机制、描述、预测、因果与决策主张补核证据及学科适用条件，混合研究分层判断；竞赛图数复查、开篇总览图和模型结构图默认项明确限定竞赛，研究论文按论证需要选图，不新增评分字段或图数门槛。
+  Research review now selects evidence checks by the claim being made, while retaining shared mathematical modeling and independent verification. Mixed studies can separate mathematical guarantees from empirical conclusions. Figure-count prompts and default overview or model diagrams apply to competition papers; research papers select figures for their argumentative value. Existing assessment fields and scoring contracts are unchanged.
+
 - 活案例失效修复：新运行固定区域及终端展示设置；内部追踪 schema2 对案例内路径分别记录相对作用域，外部文件仍绑绝对身份。所有模式均核已有案例源码哈希，复制后改模型或实际输入会失效；schema1追踪只读兼容，旧字节保留。数值配置环境和 PYTHONPATH 继续参与核验。
   Live-case validity fixes: runs normalize locale and terminal presentation settings. Internal trace schema2 stores separately scoped case-relative paths and keeps external inputs absolute. Every mode checks the recorded case source hashes, including after a copy; schema1 traces remain readable without rewriting historical evidence. Scientific environment configuration and PYTHONPATH are still checked.
 

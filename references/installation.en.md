@@ -130,7 +130,7 @@ The mathematical tools and MCP server run without TeX. For a final paper build, 
 Run the following from the repository root, or from `skills/praxis` in an exported plugin. Adjust the source and output paths to your own workspace; the destination must be new:
 
 ```bash
-uv run --locked python -m scripts.paper_template main.tex --contest cumcm --compile --output-directory outputs/build-001
+uv run --locked python -m scripts.paper_template report.tex --contest cumcm --compile --output-directory outputs/build-001
 ```
 
 Use `--contest mcm` for an MCM paper. An explicit Windows path can be passed as `--compiler "C:/Tools/tectonic/tectonic.exe"`; the same option accepts macOS and Linux paths. The first build needs network access to fetch the pinned TeX resources, including Chinese fonts. Compiler, bundle or font mismatches stop the build rather than selecting a substitute. Keep the PDF, log and `.build.json` together, inspect every page, then follow the [writing workflow](writing.md) to freeze a final copy.

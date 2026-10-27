@@ -27,6 +27,34 @@ LIMITATIONS = [
 ]
 
 
+def language(text):
+    """CJK-dominant prose, not the operating system locale."""
+    cjk = len(re.findall(r'[\u3400-\u9fff]', text))
+    latin = len(re.findall(r'[A-Za-z]', text))
+    return 'zh' if cjk >= 12 and cjk >= latin / 3 else 'en'
+
+
+def extract_pdf_pages(path, *, prefer_cjk=False):
+    """Actual PDF text only; prefer PDFium when Chinese font maps fail in pypdf."""
+    from pypdf import PdfReader
+    pages = [p.extract_text() or '' for p in PdfReader(path).pages]
+    if prefer_cjk or any('\ufffd' in p for p in pages):
+        import pypdfium2
+        with pypdfium2.PdfDocument(path) as doc:
+            alternate = []
+            for page in doc:
+                text = page.get_textpage()
+                try:
+                    alternate.append(text.get_text_range())
+                finally:
+                    text.close()
+                page.close()
+        count = lambda values: len(re.findall(r'[\u3400-\u9fff]', ''.join(values)))
+        if count(alternate) > count(pages) or (prefer_cjk and count(alternate)):
+            return alternate
+    return pages
+
+
 def strip_comments(tex: str) -> str:
     """Mask unescaped percent comments while preserving offsets and newlines."""
     if not isinstance(tex, str):
@@ -241,13 +269,14 @@ UNIT = (r'(?:%|percent(?:age points?)?|per\s*cent|percentage\s+points?|'
         r'USD|EUR|GBP|CNY|RMB|KES|US\$|dollars?|euros?|pounds?|yuan|'
         r'million|billion|thousand|km(?:\s*[²³23])?|m(?:\s*[²³23])?|cm|mm|ha|'
         r'kg|mg|tonnes?|tons?|lit(?:er|re)s?|mL|L|MW|kW|W|kWh|MWh|'
+        r'dB|dBm|Hz|kHz|MHz|GHz|V|mV|A|mA|Ah|hops?|'
         r'years?|months?|weeks?|days?|hours?|minutes?|seconds?|s|h|'
         r'counties|countries|people|persons?|households?|bomas?|units?|cases?|'
         r'paths?|samples?|observations?|trials?|runs?|policies|scenarios?|'
         r'元|万元|亿元|人|户|个|年|月|天|小时|分钟|秒|公里|千米|米|公顷|吨|千克|升)')
 NUMBER = r'[+-]?(?:(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?'
-QUANTITY = re.compile(r'(?<![\w.])(?P<currency>[$€£¥])?\s*(?P<number>' + NUMBER +
-    r')\s*(?P<unit>' + UNIT + r')?(?![\w])', re.I)
+QUANTITY = re.compile(r'(?<![A-Za-z0-9_.])(?P<currency>[$€£¥])?\s*(?P<number>' + NUMBER +
+    r')\s*(?P<unit>' + UNIT + r')?(?![A-Za-z0-9_])', re.I)
 
 
 def quantities(text: str) -> list[dict]:

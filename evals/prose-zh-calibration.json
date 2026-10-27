@@ -1,0 +1,47 @@
+{
+  "status": "calibration_sample",
+  "threshold": 0.05,
+  "range": [
+    0.0,
+    0.04
+  ],
+  "selection": "Five convenience Chinese competition papers; maximum observed ratio + 0.01. Shared-topic samples, not a held-out validation or a quality threshold.",
+  "minimum_cjk_characters": 12,
+  "samples": [
+    {
+      "id": "2015-A1",
+      "sha256": "bb8f4bf7291c964ccf899966ea5d071b48451f4ed80dbaff9acdc5d16c26a463",
+      "body_sentences": 139,
+      "negative_sentences": 3,
+      "ratio": 0.02158273381294964
+    },
+    {
+      "id": "2015-B1",
+      "sha256": "03027f728def80ec8d0eb1f6721e62ab16f7c95d97e6118e460e5712220af3b5",
+      "body_sentences": 184,
+      "negative_sentences": 7,
+      "ratio": 0.03804347826086957
+    },
+    {
+      "id": "2016-A",
+      "sha256": "59d51b0cfe5780f53dd3c37e071c5906e030a6bdc86b13eab5b5c600d23413fc",
+      "body_sentences": 118,
+      "negative_sentences": 2,
+      "ratio": 0.01694915254237288
+    },
+    {
+      "id": "2016-C",
+      "sha256": "4bf99bf49099a71e6c970e938b2f6aa08785fce95df9b167ec8599d8168fd3ca",
+      "body_sentences": 50,
+      "negative_sentences": 2,
+      "ratio": 0.04
+    },
+    {
+      "id": "2016-C2",
+      "sha256": "3d26cf45dec07231a2ddf6fb6b93e8160a2fe02bc830c60646ed3e3fa3b48a78",
+      "body_sentences": 65,
+      "negative_sentences": 0,
+      "ratio": 0.0
+    }
+  ]
+}

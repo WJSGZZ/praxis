@@ -369,7 +369,7 @@ def test_research_style_accepts_optional_structure_and_refuses_font_drift():
             r'\title[A result]{A result}\begin{document}\begin{abstract}A claim.\end{abstract}'
             r'\maketitle\begin{theorem}A conditional result.\end{theorem}'
             r'\begin{proof}An argument.\end{proof}\end{document}')
-    assert check(text, 'research')['profile'] == 'praxis-research-v1'
+    assert check(text, 'research')['profile'] == 'praxis-research-v2'
     check((ROOT/'templates/research-paper.tex').read_text(), 'research')
     check((ROOT/'demos/collatz-research/reproduce/paper/paper.tex').read_text(), 'research')
     for command in [r'\usepackage{newtxtext}', r'\usepackage{lmodern}',

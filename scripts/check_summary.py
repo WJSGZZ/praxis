@@ -40,7 +40,8 @@ def _symbols(math_text):
     return set(greek + [symbol.replace('{', '').replace('}', '') for symbol in bare_symbols])
 
 
-def inspect(tex_text, results=None, *, method_terms=None) -> dict:
+def inspect(tex_text, results=None, *, method_terms=None, reader_quality=False,
+            pdf_pages=None, paragraph_boundaries_known=True, profile='contest') -> dict:
     parsed = document(tex_text)
     numeric_results(results)  # Validate optional JSON; numerical consistency is check_claims' job.
     terms = _terms(method_terms)
@@ -66,9 +67,12 @@ def inspect(tex_text, results=None, *, method_terms=None) -> dict:
     paragraphs = [plain_text(p).strip() for p in re.split(r'\n\s*\n|\\par\b', raw) if plain_text(p).strip()]
     all_sentences = sentences(text)
     first_sentences = sentences(paragraphs[0]) if paragraphs else []
-    methods = sorted({term for term in terms if re.search(r'(?<!\w)' + re.escape(term) + r'(?!\w)', text, re.I)})
+    methods = sorted({term for term in terms if (term in text if re.search(r'[\u3400-\u9fff]',term)
+                     else re.search(r'(?<!\w)' + re.escape(term) + r'(?!\w)', text, re.I))})
     numbers = quantities(text)
-    output['metrics'].update(summary_regions=1, first_paragraph_sentences=len(first_sentences),
+    output['metrics'].update(summary_regions=1,
+        first_paragraph_sentences=len(first_sentences) if paragraph_boundaries_known else None,
+        paragraph_boundaries_known=paragraph_boundaries_known,
         sentences=len(all_sentences), method_terms_found=methods,
         quantities=[{'literal': q['literal'], 'unit': q['unit'], 'text': q['text']} for q in numbers],
         quantity_count=len(numbers), quantity_range=[1, 8], quantity_range_status='experimental',
@@ -76,17 +80,50 @@ def inspect(tex_text, results=None, *, method_terms=None) -> dict:
     loc = {'position': part['start'], 'tex': tex_text, 'section': part['title']}
     if not text:
         output['warnings'].append(warning('summary_empty', 'Summary has no extracted literal text.', **loc))
-    if len(first_sentences) > 3:
+    if len(first_sentences) > 3 and paragraph_boundaries_known and profile == 'contest':
         output['warnings'].append(warning('summary_first_paragraph_long',
             f'First paragraph has {len(first_sentences)} sentences; experimental maximum is 3.', **loc))
-    if not methods:
+    if not methods and profile == 'contest':
         output['warnings'].append(warning('summary_method_missing', 'No method name from the explicit vocabulary was found.', **loc))
-    if not 1 <= len(numbers) <= 8:
+    if not 1 <= len(numbers) <= 8 and profile == 'contest':
         output['warnings'].append(warning('summary_quantity_count',
             f'Found {len(numbers)} Arabic quantities with recognized units; experimental range is 1–8.', **loc))
     if all_sentences and LIMITING.search(all_sentences[-1]):
         output['warnings'].append(warning('summary_limiting_last_sentence',
             'Last Summary sentence contains a limiting/negative cue; review its reader-facing role.', **loc))
+    if reader_quality:
+        quality_text = text
+        output['metrics']['reader_quality_text_source'] = 'literal_tex_abstract'
+        if pdf_pages:
+            # Actual rendered numbers may be produced by macros absent from literal TeX.
+            # Summary Sheet metadata is not the scientific Summary paragraph.
+            first = pdf_pages[0]
+            anchor = re.search(r'(?:^|\n)\s*(?:摘要|Abstract|Summary)(?![ \t]*Sheet\b)(?=[.。:：\s]|$)[.。:：]?', first, re.I)
+            if anchor:
+                quality_text = first[anchor.end():]
+                stop = re.search(r'(?:^|\n)\s*(?:Keywords?\s*:|关键词|关键字|\d+(?:\.\d+)*[.)]?\s+[^\d])', quality_text, re.I)
+                if stop: quality_text = quality_text[:stop.start()]
+                output['metrics']['reader_quality_text_source'] = 'actual_pdf_abstract'
+            else:
+                output['metrics']['reader_quality_pdf_mapping'] = 'uncertain; literal source fallback'
+        quality_sentences = sentences(quality_text)
+        result_cue = re.compile(r'发现|结果|提高|降低|升至|降至|由.+至|分别需|净额为|最优|'
+                                r'得到|得出|求得|表明|'
+                                r'\b(?:find|found|estimate|achieve|reduce|increase|gives?|yields?|coverage|gets?|gains?|predicts?|reaches?)\b', re.I)
+        result_numbers = [q for sentence in quality_sentences if result_cue.search(sentence)
+                          for q in quantities(sentence)]
+        output['metrics']['result_quantity_count'] = len(result_numbers)
+        output['metrics']['result_number_scope'] = 'unit-bearing numbers in lexical result sentences; targets and years alone do not count; semantic binding requires reader review'
+        if not result_numbers:
+            output['warnings'].append(warning('summary_result_numbers_missing',
+                'No unit-bearing number in a recognizable result sentence; review whether the abstract states a key finding.', **loc))
+        boundary = re.compile(r'^(?:(?:本文|本研究|我们|研究|we|this (?:paper|study))\s*)?'
+                              r'(?:尚未|不能|未识别|未能|无法|不足|cannot|have not|does not)', re.I)
+        for side, sentence in [('opening', quality_sentences[0] if quality_sentences else ''),
+                               ('closing', quality_sentences[-1] if quality_sentences else '')]:
+            if boundary.search(sentence):
+                output['warnings'].append(warning('summary_limitation_boundary',
+                    f'Abstract {side} starts with a limitation; review findings-first organization.', **loc))
     summary_symbols = set()
     definitions = {}
     for node in parsed['math']:

@@ -1,6 +1,6 @@
 \newcommand{\PraxisTitle}{Mathematical research title}
-% BEGIN PRAXIS RESEARCH STYLE v1
-% Praxis mathematical research house style v1; target-journal instructions take precedence.
+% BEGIN PRAXIS RESEARCH STYLE v2
+% Praxis mathematical research house style v2; target-journal instructions take precedence.
 \documentclass[11pt,a4paper]{amsart}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -39,6 +39,23 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 \renewcommand{\proofname}{Proof}
+
+% Localize labels only when ctex is loaded; English documents retain AMS defaults.
+\usepackage{etoolbox}
+\makeatletter
+\newcommand{\PraxisResearchChinese}{%
+  \renewcommand{\abstractname}{摘要}%
+  \renewcommand{\keywordsname}{关键词}%
+  \renewcommand{\datename}{日期}%
+  \renewcommand{\refname}{参考文献}%
+  \renewcommand{\proofname}{证明}%
+  \patchcmd{\abstract}{\scshape\abstractname.}{\normalfont\bfseries\abstractname\quad}{}%
+    {\PackageWarning{praxis}{Chinese abstract label patch did not apply}}%
+  \def\@setdate{\datename：\enspace\@date}%
+  \def\@setkeywords{\keywordsname：\enspace\@keywords}%
+}
+\AtBeginDocument{\@ifpackageloaded{ctex}{\PraxisResearchChinese}{}}
+\makeatother
 % END PRAXIS RESEARCH STYLE
 
 \title[Mathematical research title]{\PraxisTitle}
