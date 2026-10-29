@@ -208,14 +208,14 @@ scripts/check_references.py 读取每行一条的参考文献文本，用 Crossr
 
 ```bash
 uv run --locked python -m scripts.check_summary "$WORKSPACE/paper/report.tex" --results "$WORKSPACE/results.json"
-uv run --locked python -m scripts.check_prose "$WORKSPACE/paper/report.tex" "$WORKSPACE/paper/report.pdf" --problem-year 2023
+uv run --locked python -m scripts.check_prose "$WORKSPACE/paper/report.tex" "$WORKSPACE/paper/report.pdf" --profile contest --problem-year 2023
 uv run --locked python -m scripts.check_claims "$WORKSPACE/paper/report.tex" --results "$WORKSPACE/results.json"
 uv run --locked python -m scripts.contest_coverage "$WORKSPACE/paper/report.tex" \
   --requirements "$WORKSPACE/planning/requirements.json" --model-contract "$WORKSPACE/planning/model-contract.json" \
   --figure-plan "$WORKSPACE/planning/figure-plan.json"
 ```
 
-正文统计使用实际 PDF 文本及 TeX 节标题映射，排除局限、优缺点、参考、附录、AI 与复现节；标题无法唯一定位时比例为 null。英文否定词占比 >0.16、六位有效数字（常规金额两位小数豁免）、运行编号／本机路径、晚于题目年份的引用仅告警；历史学习稿显式 `--allow-anachronism`。公开 URL、数学环境、复现节各按实际用途处理。数值检查只覆盖显式阿拉伯数字加已识别单位／币种／百分号，允许 1e-3 或显示精度舍入；值匹配不证明量纲、出处或主张正确。
+正文统计使用实际 PDF 文本及 TeX 节标题映射，排除局限、优缺点、参考、附录、AI 与复现节；标题无法唯一定位时比例为 null。英文否定词占比 >0.16；中文按 `--profile contest|research|unknown` 从 `evals/prose-zh-calibration.json` 分别取样本阈值，未知类型使用较宽者，输出所选类型、阈值及 `calibration_sample` 状态。完整交付按其 mode 传入类型，词法比例不判断限定是否必要。六位有效数字（常规金额两位小数豁免）、运行编号／本机路径、晚于题目年份的引用仅告警；历史学习稿显式 `--allow-anachronism`。公开 URL、数学环境、复现节各按实际用途处理。位数检查在正文中对可唯一绑定到字面 TeX 表格单元、或含数学推导及端点／上界说明的语境豁免，摘要和结论不继承该豁免，并检查无单位的六位及以上小数；重复或宏生成数值无法可靠绑定时仍给提示，需人工核对。其他数值检查覆盖显式阿拉伯数字加已识别单位／币种／百分号，允许 1e-3 或显示精度舍入；值匹配不证明量纲、出处或主张正确。
 
 覆盖位置由 `requirements.json` 的可选交付元数据提供，脚本核实际源位置，不猜语义：
 

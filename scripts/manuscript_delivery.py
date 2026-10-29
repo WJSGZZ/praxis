@@ -26,7 +26,7 @@ def inspect(tex_text, pdf_pages, *, pdf_sha256, results=None, requirements=None,
     reports = {'summary': check_summary.inspect(tex_text, values['results'], reader_quality=True,
                                                pdf_pages=pdf_pages, profile=mode),
                'prose': check_prose.inspect(tex_text, pdf_pages, problem_year=problem_year,
-                                            allow_anachronism=allow_anachronism),
+                                            allow_anachronism=allow_anachronism, profile=mode),
                'claims': check_claims.inspect(tex_text, values['results'])}
     warnings = []
     for name, report in reports.items():

@@ -126,7 +126,51 @@ def _mask_spans(tex, spans):
     return ''.join(chars)
 
 
-def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False) -> dict:
+def _precision_exemption(quantity, segment, parsed, parts, text):
+    """Conservative literal evidence; never exempt summary/conclusion occurrences.
+
+    Repeated prose literals cannot bind a rendered occurrence to one source
+    location. A table/formula elsewhere is insufficient evidence.
+    """
+    if segment['kind'] in ('summary', 'conclusion'):
+        return None
+    literal = quantity['literal']
+    part = next((p for p in parts if p['title'] == segment['title']), None)
+    if part is None:
+        return None
+    matches = list(re.finditer(r'(?<![0-9.])' + re.escape(literal) + r'(?![0-9.])', part['text']))
+    pdf_matches = list(re.finditer(r'(?<![0-9.])' + re.escape(literal) + r'(?![0-9.])', text))
+    def in_table(pos):
+        return any(n.pos <= pos < n.pos + n.len for n in parsed['tables'])
+    if len(matches) == len(pdf_matches) == 1 and in_table(part['start'] + matches[0].start()):
+        return 'unique_literal_table_cell'
+    # A literal can occur once in a table and once in the adjacent derivation.
+    # Bind the prose occurrence using its surrounding sentence, not the value alone.
+    left = text.rfind('。', 0, quantity['start']) + 1
+    right = re.search(r'。|(?<=[A-Za-z])[.!?]\s', text[quantity['start']:])
+    sentence = text[left:quantity['start'] + right.start() if right else len(text)]
+    cue = r'端点|边界精确值|精确端点|连续最优|最优上界|exact endpoint|boundary value'
+    if not re.search(cue, sentence, re.I):
+        return None
+    source_prose = [m for m in matches if not in_table(part['start'] + m.start())]
+    if len(source_prose) != 1:
+        return None
+    m = source_prose[0]
+    para_start = part['text'].rfind('\n\n', 0, m.start()) + 2
+    if para_start == 1:
+        para_start = 0
+    para_end = part['text'].find('\n\n', m.end())
+    para_end = len(part['text']) if para_end < 0 else para_end
+    paragraph = part['text'][para_start:para_end]
+    has_math = any(part['start'] + para_start <= n.pos < part['start'] + para_end for n in parsed['math'])
+    if has_math and re.search(cue, plain_text(paragraph), re.I):
+        return 'unique_literal_math_endpoint'
+    return None
+
+
+def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False, profile='unknown') -> dict:
+    if profile not in ('contest', 'research', 'unknown'):
+        raise ValueError('Prose profile must be contest, research or unknown')
     parsed = document(tex_text)
     if not isinstance(pdf_pages, (list, tuple)) or any(not isinstance(p, str) for p in pdf_pages):
         raise TypeError('pdf_pages must be a list of actual extracted PDF page strings')
@@ -155,14 +199,23 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False) 
     sents = prose_sentences(body_text, lang)
     negative = sum(bool((NEG_ZH if lang == 'zh' else NEG).search(sentence)) for sentence in sents)
     ratio = negative / len(sents) if sents else None
-    calibration = json.loads(CALIBRATION.read_text()) if lang == 'zh' else {}
+    config = json.loads(CALIBRATION.read_text()) if lang == 'zh' else {}
+    profiles = config.get('profiles', {})
+    selected = (max(profiles, key=lambda key: profiles[key]['threshold'])
+                if profile == 'unknown' and profiles else profile)
+    calibration = profiles.get(selected, config)
     threshold = calibration.get('threshold', 0.16)
+    if lang != 'zh':
+        selected = 'english_legacy'
+
     output['metrics'].update(pdf_pages=len(pdf_pages), text_source='actual_pdf_page_text',
         mapping_status=mapping_status, unresolved_sections=unresolved,
         mapped_sections=[{'title': s['title'], 'kind': s['kind'], 'page': s['page']} for s in segments],
         body_sentences=len(sents) if segments else None,
         negative_sentences=negative if segments else None, neg_ratio=round(ratio, 3) if ratio is not None else None,
-        language=lang, neg_ratio_threshold=threshold, neg_ratio_threshold_status='calibration_sample',
+        language=lang, profile=profile, neg_ratio_threshold_profile=selected,
+        neg_ratio_threshold_selection='wider_when_unknown' if profile == 'unknown' and lang == 'zh' else 'explicit_profile',
+        neg_ratio_threshold=threshold, neg_ratio_threshold_status=calibration.get('status', 'calibration_sample'),
         neg_ratio_calibration_range=calibration.get('range', [0.04, 0.16]),
         neg_ratio_calibration_samples=calibration.get('samples', []),
         minimum_sentence_words=6 if lang == 'en' else None,
@@ -171,11 +224,18 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False) 
     if ratio is not None and ratio > threshold:
         output['warnings'].append(warning('prose_negation_ratio',
             f'{negative}/{len(sents)} body sentences contain a calibration negation cue ({ratio:.3f} > {threshold}); this is a lexical review prompt.'))
-    precision, leaks = [], []
+    precision, leaks, precision_exemptions = [], [], []
     for segment in segments:
         text = segment['text']
         if segment['kind'] not in EXEMPT_PRECISION:
-            for quantity in quantities(text):
+            candidates = quantities(text)
+            # Summary/conclusion prose also covers unitless six-place decimals.
+            # Match actual PDF text; no arbitrary TeX expansion or inferred units.
+            if segment['kind'] in ('summary', 'conclusion'):
+                for match in re.finditer(r'(?<![A-Za-z0-9_.])[+-]?\d+\.\d{6,}(?:[eE][+-]?\d+)?(?![A-Za-z0-9_.])', text):
+                    if not any(q['start'] <= match.start() < q['start'] + len(q['text']) for q in candidates):
+                        candidates.append(dict(literal=match.group(), unit='', text=match.group(), start=match.start()))
+            for quantity in candidates:
                 # This diagnostic targets money, ratios and discrete counts;
                 # physical measurement precision needs domain-specific judgment.
                 unit = quantity['unit'].lower()
@@ -185,7 +245,12 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False) 
                 currency = re.search(r'[$€£¥]|usd|eur|gbp|cny|rmb|kes|dollar|euro|pound|yuan|元', unit)
                 literal = quantity['literal']
                 ordinary_currency = currency and 'e' not in literal.lower() and '.' in literal and len(literal.rsplit('.',1)[1]) <= 2
-                if eligible and not ordinary_currency and significant_digits(literal) >= 6:
+                if (eligible or segment['kind'] in ('summary', 'conclusion') and len(literal.partition('.')[2]) >= 6) and not ordinary_currency and significant_digits(literal) >= 6:
+                    reason = _precision_exemption(quantity, segment, parsed, parts, text)
+                    if reason:
+                        precision_exemptions.append(dict(text=quantity['text'], reason=reason,
+                            page=segment['page'], offset=segment['offset'] + quantity['start']))
+                        continue
                     candidate = {'text': quantity['text'], 'significant_digits': significant_digits(quantity['literal']),
                                  'page': segment['page'], 'offset': segment['offset'] + quantity['start']}
                     precision.append(candidate)
@@ -259,7 +324,7 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False) 
                         output['warnings'].append(warning('prose_anachronistic_reference',
                             f'Reference year {year} is later than problem year {problem_year}.',
                             position=part['start'], tex=tex_text, section=part['title'], reference_text_offset=match.start()))
-    output['metrics'].update(precision_candidates=precision, process_leak_candidates=leaks,
+    output['metrics'].update(precision_candidates=precision, precision_exemptions=precision_exemptions, process_leak_candidates=leaks,
                              text_subscripts=underscores, later_reference_years=citations,
                              unexpanded_constructs=hidden)
     if problem_year is None:
@@ -268,7 +333,7 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False) 
     output['limitations'] += [
         'PDF headings must match normalized literal TeX titles uniquely and in order; repeated running headings, renamed macros and TOC ambiguity can prevent mapping.',
         'Negation is a lexical prompt: English uses six-word sentences; Chinese uses 12 CJK characters and a small convenience calibration sample, not a quality cutoff.',
-        'Precision covers recognized money/percentage/count quantities with six or more displayed significant digits; bare decimals and implicit units are outside coverage.',
+        'Precision flags recognized money/percentage/count quantities at six significant digits, plus bare six-place decimals in mapped summaries/conclusions. Body table cells and exact derivation endpoints are exempt only with uniquely located literal TeX evidence; PDF-only/macro-generated or ambiguous context remains a review prompt. This is not a semantic precision proof.',
         'Chronology checks literal reference-section years, not an external bibliography database or the truth of publication dates.',
     ]
     return output
@@ -278,13 +343,14 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('tex', type=Path)
     parser.add_argument('pdf', type=Path, help='Actual PDF; each page is extracted with pypdf')
+    parser.add_argument('--profile', choices=('contest', 'research', 'unknown'), default='unknown')
     parser.add_argument('--problem-year', type=int)
     parser.add_argument('--allow-anachronism', action='store_true')
     args = parser.parse_args(argv)
     try:
         pages = extract_pdf_pages(args.pdf, prefer_cjk=language(args.tex.read_text()) == 'zh')
         output = inspect(args.tex.read_text(encoding='utf-8'), pages,
-                         problem_year=args.problem_year, allow_anachronism=args.allow_anachronism)
+                         problem_year=args.problem_year, allow_anachronism=args.allow_anachronism, profile=args.profile)
     except (OSError, UnicodeError, TypeError, ValueError) as error:
         parser.error(str(error))
     print(json.dumps(output, indent=2, ensure_ascii=True, allow_nan=False))

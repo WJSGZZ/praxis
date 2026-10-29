@@ -1,47 +1,354 @@
 {
   "status": "calibration_sample",
-  "threshold": 0.05,
-  "range": [
-    0.0,
-    0.04
-  ],
-  "selection": "Five convenience Chinese competition papers; maximum observed ratio + 0.01. Shared-topic samples, not a held-out validation or a quality threshold.",
   "minimum_cjk_characters": 12,
-  "samples": [
-    {
-      "id": "2015-A1",
-      "sha256": "bb8f4bf7291c964ccf899966ea5d071b48451f4ed80dbaff9acdc5d16c26a463",
-      "body_sentences": 139,
-      "negative_sentences": 3,
-      "ratio": 0.02158273381294964
+  "selection": "Separate competition and research convenience samples; unknown profile uses the wider threshold. Neither is a semantic quality cutoff.",
+  "profiles": {
+    "contest": {
+      "status": "calibration_sample",
+      "threshold": 0.05,
+      "range": [
+        0.0,
+        0.04
+      ],
+      "selection": "Five convenience Chinese competition papers; maximum observed ratio + 0.01. Shared-topic samples, not a held-out validation or a quality threshold.",
+      "minimum_cjk_characters": 12,
+      "samples": [
+        {
+          "id": "2015-A1",
+          "sha256": "bb8f4bf7291c964ccf899966ea5d071b48451f4ed80dbaff9acdc5d16c26a463",
+          "body_sentences": 139,
+          "negative_sentences": 3,
+          "ratio": 0.02158273381294964
+        },
+        {
+          "id": "2015-B1",
+          "sha256": "03027f728def80ec8d0eb1f6721e62ab16f7c95d97e6118e460e5712220af3b5",
+          "body_sentences": 184,
+          "negative_sentences": 7,
+          "ratio": 0.03804347826086957
+        },
+        {
+          "id": "2016-A",
+          "sha256": "59d51b0cfe5780f53dd3c37e071c5906e030a6bdc86b13eab5b5c600d23413fc",
+          "body_sentences": 118,
+          "negative_sentences": 2,
+          "ratio": 0.01694915254237288
+        },
+        {
+          "id": "2016-C",
+          "sha256": "4bf99bf49099a71e6c970e938b2f6aa08785fce95df9b167ec8599d8168fd3ca",
+          "body_sentences": 50,
+          "negative_sentences": 2,
+          "ratio": 0.04
+        },
+        {
+          "id": "2016-C2",
+          "sha256": "3d26cf45dec07231a2ddf6fb6b93e8160a2fe02bc830c60646ed3e3fa3b48a78",
+          "body_sentences": 65,
+          "negative_sentences": 0,
+          "ratio": 0.0
+        }
+      ]
     },
-    {
-      "id": "2015-B1",
-      "sha256": "03027f728def80ec8d0eb1f6721e62ab16f7c95d97e6118e460e5712220af3b5",
-      "body_sentences": 184,
-      "negative_sentences": 7,
-      "ratio": 0.03804347826086957
-    },
-    {
-      "id": "2016-A",
-      "sha256": "59d51b0cfe5780f53dd3c37e071c5906e030a6bdc86b13eab5b5c600d23413fc",
-      "body_sentences": 118,
-      "negative_sentences": 2,
-      "ratio": 0.01694915254237288
-    },
-    {
-      "id": "2016-C",
-      "sha256": "4bf99bf49099a71e6c970e938b2f6aa08785fce95df9b167ec8599d8168fd3ca",
-      "body_sentences": 50,
-      "negative_sentences": 2,
-      "ratio": 0.04
-    },
-    {
-      "id": "2016-C2",
-      "sha256": "3d26cf45dec07231a2ddf6fb6b93e8160a2fe02bc830c60646ed3e3fa3b48a78",
-      "body_sentences": 65,
-      "negative_sentences": 0,
-      "ratio": 0.0
+    "research": {
+      "status": "calibration_sample",
+      "profile": "research",
+      "threshold": 0.132,
+      "selection": "Three public Chinese research working papers from two institutions, selected for professional research structure before cue counts were inspected; convenience sample with climate/policy and review bias, not a held-out validation or quality cutoff.",
+      "minimum_cjk_characters": 12,
+      "extraction": "scripts.manuscript.extract_pdf_pages(prefer_cjk=True); exact actual PDF spans; scripts.check_prose.inspect on selected spans, unmodified prose_sentences/NEG_ZH. Running headers, tables and footnotes within spans remain, as in W1; no OCR or TeX-generated text.",
+      "scope": "Manual body boundary mapping, title and endpoint checking; mechanical full-body extraction is not full scientific review. Local discussion of model limits remains body unless a separate exempt section exists.",
+      "samples": [
+        {
+          "id": "pbc-climate-tools",
+          "title": "主流机构气候变化分析评估工具的探索性应用",
+          "authors": [
+            "气变模型课题组"
+          ],
+          "publisher": "中国人民银行工作论文 No.2025/1",
+          "source_url": "https://www.pbc.gov.cn/en/3935690/3689029/5878802/5878808/2025102710233934592.pdf",
+          "sha256": "e82ecaf3614fc9a2c8baab7f63f83be26a4cd85c59f63620acc5ec3b5bcc4c5e",
+          "pdf_pages": 35,
+          "body_ranges": [
+            {
+              "physical_page": 2,
+              "char_start": 93,
+              "char_end": 1260
+            },
+            {
+              "physical_page": 3,
+              "char_start": 0,
+              "char_end": 1030
+            },
+            {
+              "physical_page": 4,
+              "char_start": 0,
+              "char_end": 785
+            },
+            {
+              "physical_page": 5,
+              "char_start": 0,
+              "char_end": 1026
+            },
+            {
+              "physical_page": 6,
+              "char_start": 0,
+              "char_end": 848
+            },
+            {
+              "physical_page": 7,
+              "char_start": 0,
+              "char_end": 714
+            },
+            {
+              "physical_page": 8,
+              "char_start": 0,
+              "char_end": 1046
+            },
+            {
+              "physical_page": 9,
+              "char_start": 0,
+              "char_end": 951
+            },
+            {
+              "physical_page": 10,
+              "char_start": 0,
+              "char_end": 935
+            },
+            {
+              "physical_page": 11,
+              "char_start": 0,
+              "char_end": 811
+            },
+            {
+              "physical_page": 12,
+              "char_start": 0,
+              "char_end": 1441
+            },
+            {
+              "physical_page": 13,
+              "char_start": 0,
+              "char_end": 690
+            },
+            {
+              "physical_page": 14,
+              "char_start": 0,
+              "char_end": 1259
+            },
+            {
+              "physical_page": 15,
+              "char_start": 0,
+              "char_end": 1281
+            },
+            {
+              "physical_page": 16,
+              "char_start": 0,
+              "char_end": 1060
+            },
+            {
+              "physical_page": 17,
+              "char_start": 0,
+              "char_end": 107
+            },
+            {
+              "physical_page": 18,
+              "char_start": 0,
+              "char_end": 1269
+            },
+            {
+              "physical_page": 19,
+              "char_start": 0,
+              "char_end": 1013
+            },
+            {
+              "physical_page": 20,
+              "char_start": 0,
+              "char_end": 1093
+            },
+            {
+              "physical_page": 21,
+              "char_start": 0,
+              "char_end": 1175
+            }
+          ],
+          "scope_notes": "原生中文研究工作论文；排除首页摘要、物理22–25附录、25–34文献、35英文摘要。正文中的局部模型局限讨论保留，未因cue高排除；无独立题为局限的章节。",
+          "body_sentences": 222,
+          "negative_sentences": 24,
+          "ratio": 0.10810810810810811
+        },
+        {
+          "id": "pbc-climate-risk",
+          "title": "气候相关金融风险——基于央行职能的分析",
+          "authors": [
+            "中国人民银行研究局课题组"
+          ],
+          "publisher": "中国人民银行工作论文 No.2020/3",
+          "source_url": "https://www.pbc.gov.cn/yanjiuju/fileDir/resource/cms/2020/05/2020052216072629562.pdf",
+          "sha256": "feb8e3ce4453c480188cbe30860162192dfc5636b020422f8a5636fe95f1e46c",
+          "pdf_pages": 24,
+          "body_ranges": [
+            {
+              "physical_page": 2,
+              "char_start": 3,
+              "char_end": 1448
+            },
+            {
+              "physical_page": 3,
+              "char_start": 0,
+              "char_end": 1409
+            },
+            {
+              "physical_page": 4,
+              "char_start": 0,
+              "char_end": 1396
+            },
+            {
+              "physical_page": 5,
+              "char_start": 0,
+              "char_end": 1432
+            },
+            {
+              "physical_page": 6,
+              "char_start": 0,
+              "char_end": 1171
+            },
+            {
+              "physical_page": 7,
+              "char_start": 0,
+              "char_end": 1620
+            },
+            {
+              "physical_page": 8,
+              "char_start": 0,
+              "char_end": 1518
+            },
+            {
+              "physical_page": 9,
+              "char_start": 0,
+              "char_end": 984
+            },
+            {
+              "physical_page": 10,
+              "char_start": 0,
+              "char_end": 611
+            },
+            {
+              "physical_page": 11,
+              "char_start": 0,
+              "char_end": 1407
+            },
+            {
+              "physical_page": 12,
+              "char_start": 0,
+              "char_end": 1446
+            },
+            {
+              "physical_page": 13,
+              "char_start": 0,
+              "char_end": 1469
+            },
+            {
+              "physical_page": 14,
+              "char_start": 0,
+              "char_end": 1477
+            },
+            {
+              "physical_page": 15,
+              "char_start": 0,
+              "char_end": 1329
+            },
+            {
+              "physical_page": 16,
+              "char_start": 0,
+              "char_end": 1071
+            },
+            {
+              "physical_page": 17,
+              "char_start": 0,
+              "char_end": 1447
+            },
+            {
+              "physical_page": 18,
+              "char_start": 0,
+              "char_end": 1142
+            }
+          ],
+          "scope_notes": "排除首页双语摘要和声明、物理19–24参考文献；实际中文PDF。官方当前目录的Full text链接定位，不沿用失效旧URL。",
+          "body_sentences": 330,
+          "negative_sentences": 40,
+          "ratio": 0.12121212121212122
+        },
+        {
+          "id": "wri-fashion",
+          "title": "时尚服装品牌范围三减碳：基于有限样本的中国经验",
+          "authors": [
+            "张默凡",
+            "安周",
+            "曹子靖",
+            "张文佺"
+          ],
+          "publisher": "世界资源研究所工作论文，2024年5月，DOI 10.46830/wriwp.22.00005",
+          "source_url": "https://wri.org.cn/sites/default/files/2024-05/时尚减碳.pdf",
+          "sha256": "ee95f67d0a315ab5e727f4e4af2d090ede4e3fad79b505daef3e4f9a65ef7fea",
+          "pdf_pages": 20,
+          "body_ranges": [
+            {
+              "physical_page": 4,
+              "char_start": 621,
+              "char_end": 1897
+            },
+            {
+              "physical_page": 5,
+              "char_start": 0,
+              "char_end": 1842
+            },
+            {
+              "physical_page": 6,
+              "char_start": 0,
+              "char_end": 2275
+            },
+            {
+              "physical_page": 7,
+              "char_start": 0,
+              "char_end": 2296
+            },
+            {
+              "physical_page": 8,
+              "char_start": 0,
+              "char_end": 2374
+            },
+            {
+              "physical_page": 9,
+              "char_start": 0,
+              "char_end": 1967
+            },
+            {
+              "physical_page": 10,
+              "char_start": 0,
+              "char_end": 2302
+            },
+            {
+              "physical_page": 11,
+              "char_start": 0,
+              "char_end": 2100
+            },
+            {
+              "physical_page": 12,
+              "char_start": 0,
+              "char_end": 322
+            }
+          ],
+          "scope_notes": "官方中文版本，文首列中国作者及中文引用建议，包含双语执行摘要；未见翻译者或译自英文声明，因此仅称官方中文版本，不据此证明原发语言。排除物理1–4执行摘要／英文摘要（第4页从引言起计）、13–17附件、18文献、19致谢及20版权。",
+          "body_sentences": 234,
+          "negative_sentences": 18,
+          "ratio": 0.07692307692307693
+        }
+      ],
+      "range": [
+        0.07692307692307693,
+        0.12121212121212122
+      ],
+      "threshold_basis": "ceil((max observed ratio + 0.01) * 1000) / 1000; same margin as contest, rounded upward to 3 decimals. Short-drama manuscripts were excluded from fitting."
     }
-  ]
+  }
 }
