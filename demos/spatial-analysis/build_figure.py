@@ -41,7 +41,7 @@ def _line_data(artist):
             "marker": artist.get_marker(), "label": artist.get_label()}
 
 
-def build(run, output):
+def build(run, output, *, praxis_style=False):
     run, output = Path(run).expanduser().absolute(), Path(output).expanduser().absolute()
     if output.exists():
         raise FileExistsError("Figure output must be a new directory: " + str(output))
@@ -66,6 +66,9 @@ def build(run, output):
                          "xtick.labelsize": 10.5, "ytick.labelsize": 11,
                          "pdf.fonttype": 42, "ps.fonttype": 42,
                          "axes.spines.top": False, "axes.spines.right": False})
+    if praxis_style:
+        import scienceplots  # Registers upstream science and no-latex styles.
+        plt.style.use(["science", "no-latex", ROOT / "templates/praxis.mplstyle"])
     figure, (spatial, distance) = plt.subplots(1, 2, figsize=(12.2, 7.3),
                                              gridspec_kw={"width_ratios": [1.23, 1]})
     figure.subplots_adjust(left=.065, right=.97, top=.85, bottom=.26, wspace=.25)
@@ -140,6 +143,11 @@ def build(run, output):
     figure.text(.065, .035,
                 "Capacities (A, B, C): nominal (0, 5, 7), cost 17; all-location guarantee (4, 5, 3), cost 25.", fontsize=11)
 
+    if praxis_style:
+        from matplotlib.text import Text
+        for text in figure.findobj(Text):
+            text.set_fontsize(max(12, text.get_fontsize()))
+
     pdf_path, png_path = output / "coverage.pdf", output / "coverage.png"
     # Stable PDF metadata avoids run-time timestamps affecting its identity.
     figure.savefig(pdf_path, format="pdf", metadata={"CreationDate": None, "ModDate": None, "Title": "Coverage and location error"})
@@ -175,6 +183,11 @@ def build(run, output):
         "artifacts": {"coverage.pdf": _hash(pdf_path), "coverage.png": _hash(png_path)},
         "visual_review": "required",
     }
+    if praxis_style:
+        metadata["plot_style"] = {"file": "templates/praxis.mplstyle",
+                                  "sha256": _hash(ROOT / "templates/praxis.mplstyle"),
+                                  "scienceplots_version": version("SciencePlots"),
+                                  "bases": ["science", "no-latex"]}
     if metadata["facilities"]["xy"] != [row["xy"] for row in sites.values()] or metadata["demands"]["xy"] != [row["xy"] for row in demands.values()]:
         raise RuntimeError("Plotted points differ from the original coordinates")
     if len(metadata["distance_series"]) != 9 or metadata["spatial_axis"]["aspect"] != 1:
@@ -190,7 +203,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--praxis-style", action="store_true", help="Use shared SciencePlots-based typography")
     arguments = parser.parse_args()
-    result = build(arguments.run, arguments.output)
+    result = build(arguments.run, arguments.output, praxis_style=arguments.praxis_style)
     print(json.dumps({"original_input_sha256": result["original_input_sha256"], "distance_intervals": len(result["distance_series"]),
                       "legend_labels": result["legend_labels"], "visual_review": result["visual_review"]}))

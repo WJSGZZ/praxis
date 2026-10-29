@@ -1,0 +1,42 @@
+# Praxis Matplotlib house defaults, layered after SciencePlots science/no-latex.
+# Usage (after import scienceplots):
+# plt.style.use(["science", "no-latex", ROOT / "templates/praxis.mplstyle"])
+# 12 pt at native figure size; check final embedded size separately.
+# Times-family text matches the MCM newtx role; STIXGeneral is a portable fallback,
+# not a claim of byte-identical newtx fonts. Chinese text needs an explicit CJK font.
+font.family: serif
+font.serif: Times New Roman, STIXGeneral, DejaVu Serif
+font.size: 12
+mathtext.fontset: stix
+text.usetex: False
+axes.titlesize: 12
+axes.titleweight: normal
+axes.titlelocation: left
+axes.titlepad: 9
+axes.labelsize: 12
+xtick.labelsize: 12
+ytick.labelsize: 12
+legend.fontsize: 12
+figure.titlesize: 14
+axes.linewidth: 0.8
+lines.linewidth: 1.5
+lines.markersize: 5
+axes.prop_cycle: cycler('color', ['0072B2', 'D55E00', '009E73', 'CC79A7', 'E69F00', '56B4E9', '000000'])
+axes.spines.top: False
+axes.spines.right: False
+xtick.top: False
+ytick.right: False
+xtick.direction: out
+ytick.direction: out
+grid.alpha: 0.35
+grid.linewidth: 0.6
+legend.frameon: False
+savefig.dpi: 180
+savefig.bbox: tight
+savefig.pad_inches: 0.08
+pdf.fonttype: 42
+ps.fonttype: 42
+figure.facecolor: white
+axes.facecolor: white
+# Text convention (not enforceable by rcParams): short titles without final full stops;
+# explanatory captions below the figure in the manuscript, units on axes, no branding.
