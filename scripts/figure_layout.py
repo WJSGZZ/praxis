@@ -19,7 +19,7 @@ def _identity(artist, axis, kind, index):
     return artist.get_gid() or f'axes[{axis}].{kind}[{index}]'
 
 
-def inspect(figure, *, figure_id=None, exclude_artists=()):
+def inspect(figure, *, figure_id=None, exclude_artists=(), reference_lines=None, reference_context=None):
     """Return warning-only findings; never return a pass/fail certificate.
 
     Supports Line2D, axes collections (scatter, fill_between, etc.) and data
@@ -114,4 +114,79 @@ def inspect(figure, *, figure_id=None, exclude_artists=()):
                             'overlap_pixels': count,
                             'message': 'Rendered data ink intersects label/legend bbox; review visually.',
                         })
+    if reference_lines is not None:
+        def fully_rendered_text(text):
+            if not figure.get_visible():
+                return False
+            for parent in figure.axes:
+                if ((text is parent.xaxis.label and (not parent.axison or not parent.xaxis.get_visible()))
+                        or (text is parent.yaxis.label and (not parent.axison or not parent.yaxis.get_visible()))):
+                    return False
+            bbox = Text.get_window_extent(text, renderer=renderer)
+            if (not np.isfinite(bbox.extents).all() or bbox.width <= 0 or bbox.height <= 0
+                    or bbox.x0 < 0 or bbox.y0 < 0 or bbox.x1 > width or bbox.y1 > height):
+                return False
+            renderer.clear()
+            Text.draw(text, renderer)  # An annotation arrow cannot stand in for its text.
+            ink = np.asarray(renderer.buffer_rgba())[:, :, 3] > 0
+            if not np.any(ink):
+                return False
+            clipped = text.get_clip_on()
+            if clipped:
+                try:
+                    text.set_clip_on(False)
+                    renderer.clear()
+                    Text.draw(text, renderer)
+                    full = np.asarray(renderer.buffer_rgba())[:, :, 3] > 0
+                finally:
+                    text.set_clip_on(clipped)
+                if np.any(full & ~ink):
+                    return False
+            return True
+
+        context = reference_context or {}
+        known_texts = list(figure.texts)
+        for ax in figure.axes:
+            known_texts += list(ax.texts) + [ax.xaxis.label, ax.yaxis.label,
+                                           ax.title, ax._left_title, ax._right_title]
+        report['reference_review'] = []
+        for artist in reference_lines:
+            axis = next((i for i, ax in enumerate(figure.axes)
+                         if any(artist is a for a in ax.lines)), None)
+            object_id = artist.get_gid() or f'reference[{len(report["reference_review"])}]'
+            entry = {'object_id': object_id, 'status': 'unexplained'}
+            explanation = context.get(artist)
+            if axis is None or not figure.get_visible() or not visible(artist) or not figure.axes[axis].get_visible():
+                entry['status'] = 'not_visible_in_figure'
+            elif (isinstance(explanation, Text)
+                  and any(explanation is t for t in known_texts)
+                  and explanation.get_figure() is figure
+                  and visible(explanation) and explanation.get_text().strip()
+                  and (explanation.axes is None or explanation.axes.get_visible())):
+                if fully_rendered_text(explanation):
+                    entry.update(status='visible_text_bound', text=explanation.get_text())
+            elif (isinstance(explanation, dict)
+                  and isinstance(explanation.get('location'), str)
+                  and explanation['location'].strip()
+                  and isinstance(explanation.get('text'), str)
+                  and explanation['text'].strip()):
+                entry.update(status='caller_attested_context', text=explanation['text'], location=explanation['location'])
+            if entry['status'] == 'unexplained':
+                legends = list(figure.legends) + [a.get_legend() for a in figure.axes
+                                                   if a.get_visible() and a.get_legend() is not None]
+                if any(visible(lg) and any(visible(t) and t.get_text().strip()
+                       and t.get_text() == artist.get_label() for t in lg.get_texts())
+                       for lg in legends):
+                    entry['status'] = 'legend_binding_unverified'
+                    report['warnings'].append({
+                        'code': 'figure_reference_binding_unverified', 'figure': report['figure'],
+                        'axis': axis, 'object_id': object_id,
+                        'message': 'Visible legend has a matching label; original handle binding requires reader or caller confirmation, not proof of a missing explanation.'})
+            report['reference_review'].append(entry)
+            if entry['status'] == 'unexplained':
+                report['warnings'].append({
+                    'code': 'figure_reference_unexplained', 'figure': report['figure'],
+                    'axis': axis, 'object_id': object_id,
+                    'message': 'Declared reference lacks a bound visible explanation; inspect nearby caption/prose before changing the figure.'})
+        report['limitations'].append('reference roles and nearby prose are caller supplied; text binding does not verify scientific meaning; legend proxies alone do not establish original handle identity')
     return report
