@@ -1,28 +1,15 @@
 ---
 name: praxis
 license: MIT
-description: 将问题与数据推进为可解释、可复现的数学模型、独立验证与报告证据。用于整题建模、路线选择、专业分析、论文协作与竞赛交付，无需用户先选算法。Mathematical modeling, scientific analysis, independent validation, paper collaboration and competition delivery. 单个数学概念问答不必启动整题流程。
+description: 数学建模、独立核验及研究/竞赛交付。 Mathematical modeling for research and competitions.
 ---
 
 # Praxis
 
-接续目标、场景、已有工作与预算，选择当前主责，用相称证据完成回答。
+接续目标/已有工作/允许输入/预算。完整竞赛从[model](skills/praxis-model/SKILL.md)进compute→verify→report；研究用`--stage research`；局部只进对应阶段，不建案例、不写 tasks.md。未知届次或期刊不继承其它要求。
 
-| 请求类型 | 技能 | 唯一首读文件 |
-|---|---|---|
-| 整题建模 | [model](skills/praxis-model/SKILL.md) | [统一方法](references/methods.md) |
-| 单个数值或局部判断：不建案例、不写 tasks.md | [verify](skills/praxis-verify/SKILL.md) | [工具表](references/model-library.md) |
-| 数据与测量 | [data-analysis](skills/praxis-data-analysis/SKILL.md) | [数据分析](references/data-analysis.md) |
-| 预测与推断 | [time-series](skills/praxis-time-series/SKILL.md)、[statistics](skills/praxis-statistics/SKILL.md) | [统计分析](references/statistical-analysis.md) |
-| 优化与决策 | [optimization](skills/praxis-optimization/SKILL.md) | [优化](references/optimization.md) |
-| 整稿组稿与交付 | [report](skills/praxis-report/SKILL.md) | [写作](references/writing.md) |
-| 整稿评价 | [review](skills/praxis-review/SKILL.md) | [分类标准](evals/judging.md) |
-| 论文语言 | [scientific-writing](skills/praxis-scientific-writing/SKILL.md) | [科研表达](references/scientific-writing.md) |
+按请求选：[数据](skills/praxis-data-analysis/SKILL.md)、[预测](skills/praxis-time-series/SKILL.md)、[推断](skills/praxis-statistics/SKILL.md)、[优化](skills/praxis-optimization/SKILL.md)、[整稿评价](skills/praxis-review/SKILL.md)、[语言](skills/praxis-scientific-writing/SKILL.md)；其余查[分工](references/capabilities.md)。仅加载当前主责。
 
-完整竞赛题先读 [统一方法](references/methods.md)、[算前门禁](references/modeling-gate.md)、[论文清单](references/contest-paper-checklist.md)。
-读外部材料前读 [材料暴露](references/integrity.md#材料暴露)，沿用封存与接触身份。
-其余按缺口查 [专业分工](references/capabilities.md)；未知届次或期刊不继承其它要求。
+`uv --directory "$BUNDLE" run --locked python -m scripts.instruction_packet`输出完整核心；阶段包含本责和安全原文。无终端按[读取索引](references/instruction-index.md)选区。`--list-details`按缺口选`--detail ID`；核心上限9390，模板另计。
 
-持续授权内完成实现、独立检查、整稿与实际成品、回归和唯一记录。
-真阻塞记证据、恢复条件与下一动作，完成独立部分，保留失败。
-本目录为 BUNDLE，脚本在 `scripts/`；运行需 Python 3.12 与 uv；无终端时只做设计，不声称已运行。
+持续授权内完成关联工作；阻塞记证据/恢复条件并做独立部分。BUNDLE为本目录；Python3.12/uv；无终端仅设计，不称已运行。

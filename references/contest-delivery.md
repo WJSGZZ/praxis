@@ -1,3 +1,14 @@
+<!-- praxis:core:start -->
+# 竞赛交付
+
+先核赛事—赛项—届次、模拟/正式用途与官方原规范，区分强制要求、项目默认和本稿选择；未知届次保持待核，不继承别届。新稿用现有paper_template API生成骨架与共享样式，模板展示不代表各组件必需，不要求全文读样式源码。特殊组件/赛事才查对应API或profile。
+
+MCM current交付顺序：current编译→当前PDF字体候选与全部页面实际审阅→current冻结→workflow.report登记；一门失败保留候选/失败，不称已交付。全页核标题、图表/公式、版心、居中、遮挡、引用、分页、匿名与真实身份；数学小字号须同PDF逐项真实说明，不批量豁免。改源后重建并复核受影响成品；archive保留原证据，不能追称当前通过。
+
+上传目录仅当届论文、规定附件与支撑；开发收据/工作源另放。国赛附录与支撑包对清单，真实解压并重跑入口。披露按真实工作与当届政策，正式上传/公开/提交另须明确授权。在BUNDLE运行 `PYTHON -m scripts.paper_template TEX --contest mcm --compile --output-directory NEW`，随后 `PYTHON -m scripts.freeze_pdf --help`核必填审阅参数。骨架用paper_template.preamble/summary_header/summary_heading生成。新稿不熟骨架函数签名时先读delivery-api，特殊组件/接口不清亦同；读者字段不清才加载reader-api。
+<!-- praxis:core:end -->
+
+<!-- praxis:details:start -->
 # 竞赛论文的版式与真实交付
 
 交付时先核赛事—赛项—届次与实际使用模式。官方条款从 [competitions.json](../evals/competitions.json) 的对应档案和原文件核验，把官方要求、附加要求与本稿选择分别记录。未知届次标待核，练习与正式提交分别验收。公共表达归 [writing.md](writing.md)，必备件归 [contest-paper-checklist.md](contest-paper-checklist.md)，奖档意见归 [竞赛评审](../evals/contest-judging.md)，AI 披露与贡献归 [integrity.md](integrity.md#ai-披露与贡献)。研究稿选 [research-mode.md](research-mode.md)，确定期刊后核投稿要求。
@@ -54,3 +65,4 @@ MCM v5 增加可选 `memo` 环境（收件人、日期、主题，前后各清�
 report 阶段按 [integrity.md 的AI披露与贡献](integrity.md#ai-披露与贡献) 汇总真实记录，原始交互和缺口接 [feedback.md](feedback.md)。正文围绕题意、模型、结果与论证；工作状态放项目记录或交付说明，必要假设、条件、来源和官方AI声明保留在对应位置。科学内容未变时只重编受影响产物。
 
 最终上传目录按当届提交对象整理：论文、规定附件与支撑；本地收据、审查报告、交付说明和工作源放开发目录。demo 采用对应提交文件结构与附录要求。国赛完整可运行代码同时进入支撑包并列于论文附录，交付前核附录清单与压缩包成员，真实解压并重跑计算入口；美赛及其他赛事分别核自己的单文件／附件政策。科研内容、格式、页面、披露和提交授权分别留验收结论。
+<!-- praxis:details:end -->

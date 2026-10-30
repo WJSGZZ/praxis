@@ -1,3 +1,16 @@
+<!-- praxis:core:start -->
+# 执行核心
+
+下文PYTHON是命令缩写，每次展开为 `uv --directory "$BUNDLE" run --locked python`，不是系统python；WORKSPACE为工作根绝对路径。不resolve环境symlink。无终端只设计。审核模型/验证器；普通Python有宿主账户权限，校验/超时不是沙箱；不联网调用无关服务，不写raw。工具不清先 `PYTHON -m scripts.mcp_server --describe TOOL`，环境错先runtime_info，不猜import重写算法。
+
+`PYTHON -m scripts.pipeline --workspace WORKSPACE init --name NAME --problem 原题绝对路径`建案例，重复--data接附件；已有案例读case/tasks/progress不覆盖。原题仍看原页；复杂Word/Excel抽取异常才读intake-api。
+
+model.py --output DIR写非空对象results.json；validate.py --results PATH --output PATH写非空数组，每项name/passed/evidence，schema2另method(analytic/enumeration/bound/conservation/hand_calc/naive_baseline/replay/external_value)，独立项标independent:true和实际依据。先小输入走真实消费链，核参数、缺失/日历、文件名与类型；失败非零保留，不重建清预算。
+
+审核后 `PYTHON -m scripts.pipeline --workspace WORKSPACE run --case CASE`，status/evidence核有效运行和题问链接；快照变化重核，新失败不换旧成功。多轮才用workflow，首次运行前决定命中课程是否采用，不手改预算/计数。API不清或报错才读model-api/requirements-api/workflow-api；机器门不证明科学语义或真实授权。
+<!-- praxis:core:end -->
+
+<!-- praxis:details:start -->
 # 自动执行与证据契约
 
 执行计算时，解析技能真实位置为 BUNDLE，当前用户工作项目为 WORKSPACE。宿主能力未知或调用失败时按 [agent-compatibility.md](agent-compatibility.md) 核对；能力缺失只做可完成的分析，不能编造运行。环境未准备时执行 `uv sync --project "$BUNDLE" --locked`；需要开发测试时增加 `--group dev`。通过 `uv run --locked --project "$BUNDLE" python "$BUNDLE/scripts/pipeline.py" --workspace "$WORKSPACE"` 调用，不依赖虚拟环境的系统目录结构，也不依赖技能安装目录作为当前工作目录。下列命令的 BUNDLE 与 WORKSPACE 均应替换为实际绝对路径；Windows PowerShell 示例见[安装指南](installation.md#windows-powershell)。已有准备好的 POSIX 环境仍可直接使用其 `.venv/bin/python`，不要解析符号链接后改用基础解释器。
@@ -320,3 +333,4 @@ schema 1沿原行为。字段门保存作者／评审者声明，实际覆盖、
 固定展示派生JSON若来自NPZ等非JSON运行制品，须在 `facts.guarded_outputs:[{file:"output/arrays.npz",reason:"需要重算展示派生"}]` 登记依赖。dry-run核对两次运行的实际制品与各自receipt；哈希变化时派生数字保持unknown并禁止自动改稿，必须重算展示派生和比较后再审阅。容器字节变化不证明数组数值变化，工具也不猜测数组等价。适配器或声明helper哈希变化在dry-run中同样显示unknown；不能因模型结果未变就报告整篇不受影响。
 
 发布前可在私有工作区用源码解释器和绝对脚本路径运行，例如 `/path/to/source/.venv/bin/python /path/to/source/scripts/release_check.py --main-cases data/cases-main.json --workspace "$PWD" --case-report outputs/release-main-cases/new-check`；也可从源码根用 `python -m scripts.release_check` 搭配显式 `--workspace`。这个可选门禁调用 `refresh(dry_run=True,rebuild=False)`，只生成新报告目录；不会运行模型、消耗工作流尝试或重建论文。未给 `--case-report` 时在工作区 `outputs/release-main-cases/` 下生成唯一目录。保留原 QUICK、长检查选择和测试套件行为，不指定 `--main-cases` 时不访问私有案例。已有可用结果的数值变化需逐项解释；过期、失败或未重算案例的新数字保持 unknown，不能把它写成“数字未变”。报告读取／校验错误导致门禁失败，数字差异本身不导致代码测试失败。发布前人工看过报告并解释变化是额外要求；命令成功不代表人工审阅或科学验收已完成。私有清单、结果及报告不进入公开测试或插件安装包。
+<!-- praxis:details:end -->

@@ -1,3 +1,14 @@
+<!-- praxis:core:start -->
+# 算前产物
+
+完整模型先写planning/model-contract.json，schema 2运行前由pipeline检查；不通过不运行，不能改schema或重建案例清预算。契约为作者声明，机器不能核遗漏方程和现实语义。
+
+列symbols(symbol/unit/object/uses)、parameters(symbol/value/unit/source_level/source/real_world_quantity)、mechanisms(id/cause/effect_variable/sign/equation)、conserved_quantities、probability_combinations、logical_claims、limiting_cases、information_time、spatial和cheapest_refutation。无适用清单写空数组并解释。核对象一义、量纲、守恒、概率依赖、必要/充分量词、极限、量级和信息时点，实际手算/小例/单位复算必须有结果；守恒验证输出同名balance:检查。unknown参数用null并保留未知。
+
+requirements.json逐项给题面原句与位置、kind(answer/forecast/decision/proof)、答案与证据ID；不得用引用存在冒充题问齐全。字段格式不清或门禁报错时，才加载gate-fields原文及相应schema诊断。
+<!-- praxis:core:end -->
+
+<!-- praxis:details:start -->
 # 算前门禁：把模型写成可检查的契约
 
 完整建模先产出 `planning/model-contract.json`，再交 compute。schema 2 每次运行前核必填字段与下列一致性，一次列出全部问题；schema 1 沿用原行为。契约是作者声明，机器核声明的一致性，遗漏的方程及现实解释仍需独立审查。
@@ -19,3 +30,4 @@
 题面条目（`planning/requirements.json`，schema 2）：每个 requirement 必填 `kind`（answer/forecast/decision/proof）；所挂题面原句含 forecast、predict、projection、future、预测、未来、趋势而 kind 不是 forecast 时，须写 `kind_justification`。`quote` 至少 4 个英文词或 15 个字母、数字或汉字（中文按字数），条目间不得重复；跨行断词的连字符（`reser-` 换行 `voir`）两边都可去掉后比对。init 记录 `problem-extracted.txt` 的哈希，之后改动须在 `problem_text_corrections[{before,after,reason}]` 逐条列出。契约被拒不消耗 workflow 尝试次数，`next` 返回 prepare 并列出问题；评审 `mechanism_audit.symbols_checked` 不少于契约声明的符号数。workflow 在 init 时记录案例 schema，之后改动即拒绝；status 把 schema 2 收据在 schema 已改的案例中标为过期。
 
 字段与错误结果唯一见 [automation.md](automation.md#模型与验证器)；模型选择归 [methods.md](methods.md)，结构与数学检查见 [structure-discovery.md](structure-discovery.md)、[mathematical-reasoning.md](mathematical-reasoning.md)。
+<!-- praxis:details:end -->
