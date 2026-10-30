@@ -27,9 +27,26 @@ LOCAL_PATH = re.compile(r'(?<![\w:/])(?:/Users/[^\s<>"\u201c\u201d]+|[A-Za-z]:[\
 PUBLIC_URL = re.compile(r'https?://[^\s<>]+', re.I)
 NEG_ZH = re.compile(r'不能|不是|不等于|并非|尚未|无法|不应|不宜|未')
 PROCESS = re.compile(r'本轮|作者稿核读|核读|候选|收据|冻结|验收|运行编号')
+# An access restriction can be a legitimate experimental condition. These
+# anchored phrases prompt a placement review; individual scientific words do not.
+PROCESS_EN_ACCESS = re.compile(
+    r'\b(?:no\b[^.!?]{0,150}\b(?:data|benchmark)\s+(?:was|were)\s+supplied'
+    r'|(?:in|for)\s+this\s+(?:exercise|task|evaluation))\b'
+    r'\s*[,;:]?\s*(?:(?:and|while|but)\s+)?'
+    r'(?P<access>(?:outside|external|web)\s+retrieval\s+(?:is|was)\s+'
+    r'(?:excluded|forbidden|disabled))\b', re.I)
 SELF_EVAL = re.compile(r'顶刊|顶尖(?:[\u3400-\u9fff]{0,8})期刊|顶尖经济学论文|原创性未|非原创|不是(?:新的?)?(?:经济|数学)?定理|尚未建立原创|'
                        r'\bnot novel\b|\btop[- ](?:tier )?journal\b|\bnot (?:a )?new theorem\b', re.I)
 CALIBRATION = Path(__file__).resolve().parents[1] / 'evals/prose-zh-calibration.json'
+
+
+def _unhyphenated_pdf_text(text):
+    """Join ASCII line-end hyphenation for this cue, retaining PDF offsets."""
+    keep = [True] * len(text)
+    for match in re.finditer(r'(?<=[A-Za-z])-[ \t]*\r?\n[ \t]*(?=[A-Za-z])', text):
+        keep[match.start():match.end()] = [False] * (match.end() - match.start())
+    positions = [index for index, retained in enumerate(keep) if retained]
+    return ''.join(text[index] for index in positions), positions
 
 
 def prose_sentences(text, lang):
@@ -258,6 +275,19 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False, 
                         f'{quantity["text"]} has {candidate["significant_digits"]} significant digits; review displayed precision.',
                         page=candidate['page'], offset=candidate['offset'], section=segment['title']))
         if segment['kind'] not in EXEMPT_LEAK:
+            joined, positions = _unhyphenated_pdf_text(text)
+            for match in PROCESS_EN_ACCESS.finditer(joined):
+                start, end = match.span('access')
+                original_start, original_end = positions[start], positions[end - 1] + 1
+                cue = text[original_start:original_end]
+                candidate = {'kind': 'prose_process_leak', 'text': cue,
+                             'normalized_text': match.group('access'), 'page': segment['page'],
+                             'offset': segment['offset'] + original_start}
+                leaks.append(candidate)
+                output['warnings'].append(warning('prose_process_leak',
+                    f'Author-access review cue: {match.group("access")}. '
+                    'Review placement; retain scientific data limits and genuine study-design conditions.',
+                    page=candidate['page'], offset=candidate['offset'], section=segment['title']))
             for pattern, code in ((PROCESS, 'prose_process_leak'), (SELF_EVAL, 'prose_self_evaluation')):
                 for match in pattern.finditer(text):
                     if pattern is PROCESS and match.group() == '验收':
@@ -331,6 +361,7 @@ def inspect(tex_text, pdf_pages, *, problem_year=None, allow_anachronism=False, 
         output['warnings'].append(warning('prose_reference_year_unchecked',
             'Problem year was not supplied; reference chronology was not checked.'))
     output['limitations'] += [
+        'English author-access cues need a task or supplied-input anchor; genuine study-design conditions may be retained after review. Existing disclosure/reference exemptions remain.',
         'PDF headings must match normalized literal TeX titles uniquely and in order; repeated running headings, renamed macros and TOC ambiguity can prevent mapping.',
         'Negation is a lexical prompt: English uses six-word sentences; Chinese uses 12 CJK characters and a small convenience calibration sample, not a quality cutoff.',
         'Precision flags recognized money/percentage/count quantities at six significant digits, plus bare six-place decimals in mapped summaries/conclusions. Body table cells and exact derivation endpoints are exempt only with uniquely located literal TeX evidence; PDF-only/macro-generated or ambiguous context remains a review prompt. This is not a semantic precision proof.',
