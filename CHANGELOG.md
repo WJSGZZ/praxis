@@ -7,6 +7,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 本地候选版，尚未发布。Local candidate; publication is pending.
 
+- 读者清单新增两项核对：摘要、结论和教材、备忘录里的量词与分母是否与正文一致，同一角色的文字是否跨图统一字体。评审把某个优化结果算作长处之前，要先查一个便宜的约束或结构界。
+  The reader checklist now also compares quantifiers and denominators in summaries, conclusions and outward-facing notes with the body, and checks font consistency for the same text role across figures. Before crediting an optimization result, review first checks an inexpensive constraint or structural bound.
+
 - 完整论文交付前的读者质量检查：文字诊断支持中文（切句、否定比例、过程话与自我评价提示、中文章节映射）；研究论文接入交付诊断，检查摘要结果与开头结尾、首页语言；中文研究稿的日期、关键词与摘要标签本地化，旧样式保留；新增按实际墨迹检查图中文字和图例是否压住数据；交付前由全新上下文读者只看成品页面审阅，缺审或有未处理问题时如实标明状态。新增检查均只给提示，不拦截交付。
   Reader-quality checks before delivering a complete paper: prose diagnostics now handle Chinese text, including sentence splitting, negation ratio, process and self-assessment cues, and Chinese section headings. Research papers get delivery diagnostics for abstract results, opening and closing sentences, and front-matter language. Chinese research papers use localized date, keyword and abstract labels, with the previous style kept. A figure check reports text or legends that overlap plotted ink. A fresh-context reader reviews the rendered pages before delivery, and the delivery status reports a missing review or open issues. All new checks are warnings and do not block delivery.
 

@@ -20,4 +20,4 @@ BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv
 
 ## 交接
 
-大量数学核验交 [praxis-verify](../praxis-verify/SKILL.md)，定义回 [model](../praxis-model/SKILL.md)，页面与表达交 [praxis-report](../praxis-report/SKILL.md)；评委辨别力按 [PROTOCOL.md](../../evals/PROTOCOL.md) 另验，规则接入不视作校准。
+影响主要比较依据、尚未核实的数学主张交 [praxis-verify](../praxis-verify/SKILL.md)：先查便宜的约束、结构界或单位，再追踪显示模型与输出，不把“有数值和地图”当作已验证连接。独立角色回传实际证据和未核范围后再权衡，原初判另封、更正不覆盖；大量核验仍服从原预算。定义回 [model](../praxis-model/SKILL.md)，页面与表达交 [praxis-report](../praxis-report/SKILL.md)；评委辨别力按 [PROTOCOL.md](../../evals/PROTOCOL.md) 另验，规则接入不视作校准。
