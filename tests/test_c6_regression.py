@@ -100,3 +100,16 @@ def test_full_rank_prediction_marks_every_row_estimable():
     prediction = regression.ols_report(x, y, X_new=[[1, 2], [3, 4]])['prediction']
     assert prediction['estimable'] == [True, True]
     assert prediction['non_estimable_rows'] == []
+
+
+def test_unit_leverage_within_rounding_is_undefined_not_near_unit(monkeypatch):
+    import statsmodels.stats.outliers_influence as influence
+    original = influence.OLSInfluence.hat_matrix_diag
+    def perturbed(self):
+        h = np.array(original.func(self) if hasattr(original, 'func') else original.fget(self), dtype=float)
+        h[h.argmax()] = 1 - 3*np.finfo(float).eps
+        return h
+    monkeypatch.setattr(influence.OLSInfluence, 'hat_matrix_diag', property(perturbed))
+    result = regression.ols_report([1., 0., 0., 0., 0., 0., 0., 0.], np.arange(8.), covariance='HC3')
+    assert result['covariance']['status'] == 'undefined'
+    assert result['covariance']['leverage']['status'] == 'checked'

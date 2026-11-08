@@ -473,6 +473,7 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
             z, d = np.diff(z), d+1
         # d=0: constant or constant+trend; d=1: none or drift (statsmodels trend='t' in levels).
         trends = ('c', 'ct') if d == 0 else ('n', 't') if d == 1 else ('n',)
+        restarted = 0
         timed_rank_ok = X is None or np.linalg.matrix_rank(np.column_stack([np.ones(len(y)), np.arange(len(y)), X])) == X.shape[1]+2
         for p in range(max_p+1):
             for q in range(max_q+1):
@@ -481,7 +482,15 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
                         continue
                     try:
                         seasonal = (1, 0, 0, seasonal_period) if seasonal_period else (0, 0, 0, 0)
-                        fit = ARIMA(y, exog=X, order=(p, d, q), seasonal_order=seasonal, trend=trend).fit()
+                        model = ARIMA(y, exog=X, order=(p, d, q), seasonal_order=seasonal, trend=trend)
+                        fit = model.fit()
+                        if not fit.mle_retvals.get('converged', False) and np.isfinite(fit.params).all():
+                            # Gradient line searches can stop at the optimum with a nonconverged flag, and the
+                            # flag differs across BLAS builds. Restart once from the reported estimate with a
+                            # derivative-free optimizer and keep the candidate only if that run converges.
+                            refit = model.fit(start_params=fit.params, method_kwargs={'method': 'nm', 'maxiter': 2000})
+                            if refit.mle_retvals.get('converged', False) and np.isfinite(refit.params).all():
+                                fit = refit; restarted += 1
                         k = len(fit.params); denom = len(y)-d-k-1
                         if denom <= 0 or not np.isfinite(fit.aic) or not np.isfinite(fit.params).all(): continue
                         aicc = fit.aic + 2*k*(k+1)/denom
@@ -493,7 +502,8 @@ def arima_forecast(series: Sequence[float], horizon: int, *, max_p: int = 3, max
         converged_fits = [item for item in fits if item[4]]
         aicc, order, trend, fit, _ = (converged_fits or fits)[0]
         selection = dict(rule='lowest AICc among optimizer-converged candidates', candidates_fitted=len(fits),
-                         converged_candidates=len(converged_fits), fallback_from_nonconverged=None)
+                         converged_candidates=len(converged_fits), restarted_to_convergence=restarted,
+                         fallback_from_nonconverged=None)
         if converged_fits and fits[0] is not converged_fits[0]:
             selection['fallback_from_nonconverged'] = dict(order=list(fits[0][1]), trend=fits[0][2], aicc=float(fits[0][0]))
         if not converged_fits:

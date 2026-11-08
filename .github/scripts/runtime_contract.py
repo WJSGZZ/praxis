@@ -51,9 +51,9 @@ result = json.loads(args.results.read_text(encoding="utf-8"))
 x, y = [Fraction(str(value)) for value in result["x"]]
 value = Fraction(str(result["objective"]))
 checks = [
-    {"name": "exact primal feasibility", "passed": x >= 0 and y >= 0 and x + y <= 4 and x <= 2,
+    {"name": "exact primal feasibility", "method": "analytic", "passed": x >= 0 and y >= 0 and x + y <= 4 and x <= 2,
      "independent": True, "evidence": f"x={x}, y={y}; x+y={x+y}<=4, x<=2"},
-    {"name": "independent exact global upper bound", "passed": 3*x + 2*y == value == 10,
+    {"name": "independent exact global upper bound", "method": "bound", "passed": 3*x + 2*y == value == 10,
      "independent": True,
      "evidence": "For every feasible continuous point, 3x+2y=2(x+y)+x<=2*4+2=10; (2,2) attains10. No solver/model imported."},
 ]
@@ -185,10 +185,27 @@ class Contract:
         case = Path(intake["case"])
         (case / "code/model.py").write_text(MODEL, encoding="utf-8")
         (case / "code/validate.py").write_text(VALIDATOR, encoding="utf-8")
-        write_json(case / "planning/requirements.json", {"requirements": [{
-            "id": "R1", "question": "What is the continuous LP optimum?", "unit": "objective units",
-            "result_pointer": "/objective", "checks": ["exact primal feasibility", "independent exact global upper bound"],
-        }]})
+        write_json(case / "planning/model-contract.json", {
+            "symbols": [{"symbol": "x", "unit": "units", "object": "first decision quantity",
+                         "uses": [{"equation": "objective and constraints", "object": "first decision quantity"}]},
+                        {"symbol": "y", "unit": "units", "object": "second decision quantity",
+                         "uses": [{"equation": "objective and constraints", "object": "second decision quantity"}]}],
+            "parameters": [], "mechanisms": [], "conserved_quantities": [],
+            "probability_combinations": [], "logical_claims": [],
+            "limiting_cases": [{"case": "x and y both zero", "expected": "objective zero"}],
+            "cheapest_refutation": {"method": "hand_calc", "result": "3x+2y=2(x+y)+x<=2*4+2=10, attained at (2,2)"},
+            "information_time": "all coefficients are known before solving", "spatial": False,
+        })
+        write_json(case / "planning/requirements.json", {
+            "problem_items": [
+                {"id": "P1", "quote": "Maximize 3x+2y subject to x+y<=4, x<=2, x>=0, y>=0.", "page": 1},
+                {"id": "P2", "quote": "Find a continuous optimum with an independent exact upper bound.", "page": 1},
+            ],
+            "requirements": [{
+                "id": "R1", "question": "What is the continuous LP optimum?", "unit": "objective units",
+                "result_pointer": "/objective", "checks": ["exact primal feasibility", "independent exact global upper bound"],
+                "problem_item_ids": ["P1", "P2"], "kind": "answer",
+            }]})
         self.command("directory_module_run", directory + workspace + [
             "run", "--case", str(case), "--timeout", "30"])
         status = json.loads(self.command("project_absolute_script_status", project + workspace + [

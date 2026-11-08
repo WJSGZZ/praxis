@@ -119,3 +119,20 @@ def test_exog_trend_parameters_are_named_without_shifting_exog_names():
     assert set(r['parameters']) == {'const', 'trend', 'x1', 'sigma2'}
     assert r['parameters']['x1'] == pytest.approx(2, abs=.1)
     assert r['parameters']['trend'] == pytest.approx(.4, abs=.02)
+
+
+def test_spurious_first_nonconvergence_is_restarted_and_kept(monkeypatch):
+    from statsmodels.tsa.arima.model import ARIMA
+    original = ARIMA.fit
+
+    def fit(self, *args, **kwargs):
+        result = original(self, *args, **kwargs)
+        if 'start_params' not in kwargs and self.k_trend == 2:
+            result.mle_retvals['converged'] = False
+        return result
+    monkeypatch.setattr(ARIMA, 'fit', fit)
+    y = 10+.2*np.arange(30)+.4*np.sin(np.arange(30))
+    r = inference.arima_forecast(y, 2, max_p=0, max_q=0, max_d=0)
+    assert r['trend'] == 'ct' and r['converged']
+    assert r['selection']['restarted_to_convergence'] == 1
+    assert r['selection']['fallback_from_nonconverged'] is None

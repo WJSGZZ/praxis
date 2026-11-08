@@ -16,6 +16,8 @@ from modeling.contracts import diagnostic
 
 
 NEAR_UNIT_LEVERAGE = 1e-8
+# Exact unit leverage is computed as 1-h within a few dozen ulps, and the residue differs across BLAS builds.
+UNIT_LEVERAGE_TOL = 64*np.finfo(float).eps
 
 
 def _estimable_rows(design: np.ndarray, new_design: np.ndarray) -> np.ndarray:
@@ -98,7 +100,7 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
     if covariance == 'HC3':
         if identified:
             leverage = fit.get_influence().hat_matrix_diag
-            near = np.flatnonzero((1 - leverage < NEAR_UNIT_LEVERAGE) & (leverage < 1 - np.finfo(float).eps))
+            near = np.flatnonzero((1 - leverage < NEAR_UNIT_LEVERAGE) & (1 - leverage > UNIT_LEVERAGE_TOL))
             leverage_report = dict(status='near_unit_leverage' if len(near) else 'checked', threshold_one_minus_leverage=NEAR_UNIT_LEVERAGE,
                                    min_one_minus_leverage=float(max(0.0, 1 - leverage.max())), rows=near.tolist()[:20])
             if len(near):
@@ -107,7 +109,7 @@ def ols_report(X: Sequence[Sequence[float]], y: Sequence[float], *, names: Seque
         if not identified:
             inference_status = 'not_reported_rank_deficient'
             inference_reason = 'Rank-deficient design; individual HC3 inference is not reported'
-        elif np.any(fit.get_influence().hat_matrix_diag >= 1 - np.finfo(float).eps):
+        elif np.any(1 - fit.get_influence().hat_matrix_diag <= UNIT_LEVERAGE_TOL):
             inference_status = 'undefined'
             inference_reason = 'HC3 needs leverage strictly below one; a unit-leverage row makes its variance correction undefined'
         else:
