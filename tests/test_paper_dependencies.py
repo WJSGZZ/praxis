@@ -192,14 +192,14 @@ def test_historical_receipt_is_unknown_not_retroactively_certified(tmp_path):
     from scripts.paper_template import ROOT, check
     source = tmp_path/'main.tex'
     source.write_text(preamble(None, 'Archive', 'research')+
-                     r'\title[Archive]{Archive}\end{document}')
+                     r'\title[Archive]{Archive}\end{document}', encoding='utf-8')
     pdf = tmp_path/'main.pdf'
     writer=PdfWriter(); writer.add_blank_page(width=595, height=842); writer.write(pdf)
     build=tmp_path/'main.build.json'
-    build.write_text(json.dumps({'runtime':json.loads((ROOT/'templates/typesetting-runtime.json').read_text()),
-        'layout':check(source.read_text(),'research'),
+    build.write_text(json.dumps({'runtime':json.loads((ROOT/'templates/typesetting-runtime.json').read_text(encoding='utf-8')),
+        'layout':check(source.read_text(encoding='utf-8'),'research'),
         'tex_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
-        'pdf_sha256':hashlib.sha256(pdf.read_bytes()).hexdigest()}))
+        'pdf_sha256':hashlib.sha256(pdf.read_bytes()).hexdigest()}), encoding='utf-8')
     with pytest.raises(ValueError, match='compiler-opened dependency'):
         freeze(pdf,tmp_path/'current.pdf',tex=source,contest='research',build_receipt=build)
     result=freeze(pdf,tmp_path/'archive.pdf',tex=source,contest='research',build_receipt=build,layout_mode='archive')
