@@ -240,6 +240,14 @@ def section_region(text, title):
     return ''.join(lines[start:stop])
 
 
+FRONTMATTER = re.compile(r'\A---\n.*?\n---\n', re.S)
+
+
+def strip_frontmatter(text):
+    """Hosts route on the YAML description; the packet carries only the body."""
+    return FRONTMATTER.sub('', text, count=1)
+
+
 def build_packet(bundle, overlay=None, stage='contest', details=(), limit=LIMIT):
     if type(limit) is not int or not 1 <= limit <= LIMIT:
         raise ValueError(f'Limit must be within 1..{LIMIT}; cannot bypass the fixed budget')
@@ -248,7 +256,7 @@ def build_packet(bundle, overlay=None, stage='contest', details=(), limit=LIMIT)
     for relative, mode, title in paths:
         text, record = read_source(bundle, overlay, relative)
         part = marker_region(text, CORE_BEGIN, CORE_END) if mode == 'core' else (
-            section_region(text, title) if mode == 'section' else text)
+            section_region(text, title) if mode == 'section' else strip_frontmatter(text))
         record.update(region=mode, heading=title, characters=len(part),
                       selected_sha256=digest(part.encode('utf-8')))
         blocks.append(f'[{relative}]\n{part}')

@@ -1,7 +1,7 @@
 ---
 name: praxis
 license: MIT
-description: 数学建模、独立核验及研究/竞赛交付。 Mathematical modeling for research and competitions.
+description: 将问题与数据推进为可解释、可复现的数学模型、独立验证与报告证据。用于整题建模、路线选择、专业分析、论文协作与竞赛交付，无需用户先选算法。Mathematical modeling, scientific analysis, independent validation, paper collaboration and competition delivery. 单个数学概念问答不必启动整题流程。
 ---
 
 # Praxis

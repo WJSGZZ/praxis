@@ -1,6 +1,6 @@
 ---
 name: praxis-report
-description: 以有效证据完成论文、真实审阅及交付。 Paper assembly and PDF delivery.
+description: 把有效结果组织成可核查的整篇论文或报告：摘要与章节、结果与图表、数字与引用一致、AI披露、PDF逐页检查与冻结。用于“组织论文、组稿、改摘要、检查PDF、交付报告”。科学论证与纯语言修订交 praxis-scientific-writing，整稿水平与奖档意见交 praxis-review。 Assemble validated results into a complete modeling paper or report; manage structure, figures, citations, AI disclosure and final PDF delivery.
 license: MIT
 ---
 

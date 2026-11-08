@@ -8,7 +8,7 @@ import sys
 import pytest
 
 from scripts.build_plugin import BUNDLE, HOSTS, build_plugin
-from scripts.instruction_packet import ROLES, build_packet, read_source
+from scripts.instruction_packet import ROLES, build_packet, read_source, strip_frontmatter
 
 
 @pytest.fixture(scope='module', params=HOSTS)
@@ -31,8 +31,9 @@ def test_real_export_packets(exported, stage):
     expected = ROLES if stage in ('contest', 'research') else (stage,)
     for role in expected:
         skill = exported / f'skills/praxis-{role}/SKILL.md'
-        assert skill.read_text() in text
-        assert f'name: praxis-{role}\n' in text
+        assert strip_frontmatter(skill.read_text()) in text
+        assert 'description:' not in strip_frontmatter(skill.read_text())
+        assert f'[skills/praxis-{role}/SKILL.md]\n' in text
         record = next(row for row in manifest['sources']
                       if row['path'] == f'skills/praxis-{role}/SKILL.md')
         assert Path(record['resolved_path']) == skill.resolve()
@@ -58,7 +59,7 @@ def test_real_export_cli_from_unrelated_cwd(exported, tmp_path, stage):
     else:
         assert (bundle / 'references/research-mode.md').read_text() in result.stdout
     for role in ROLES if stage in ('contest', 'research') else (stage,):
-        assert f'name: praxis-{role}\n' in result.stdout
+        assert f'[skills/praxis-{role}/SKILL.md]\n' in result.stdout
 
 
 def test_source_and_overlay_precedence_remain_local(tmp_path):

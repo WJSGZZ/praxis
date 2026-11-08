@@ -93,3 +93,11 @@ def test_section_loader_ignores_fenced_code_headings(fence):
     assert 'Other' not in selected
     with pytest.raises(ValueError, match='heading'):
         section_region(body, 'comment')
+
+
+def test_packet_omits_skill_frontmatter_but_keeps_host_description():
+    from scripts.instruction_packet import strip_frontmatter
+    raw = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
+    assert raw.startswith('---\n') and len(raw.split('description:', 1)[1].split('\n', 1)[0]) > 150
+    body = strip_frontmatter(raw)
+    assert not body.startswith('---') and body in raw
