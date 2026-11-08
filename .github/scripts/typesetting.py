@@ -144,10 +144,11 @@ def main(compiler=None):
         tex = OUT / f'{name}.tex'
         if contest: check(tex.read_text(encoding='utf-8'), contest)
         built = OUT/(name+'-build')
-        # Preserve the original archived toll layout; current examples are candidates
-        # here, with cross-platform rendering checked below. CI cannot invent
-        # a page-by-page human/AI visual-review record.
-        mode = 'archive' if name == 'toll' else 'current'
+        # Preserve the archived layouts of the toll paper and the reviewed MCM 2016 A
+        # demo; templates and other examples are current candidates, with
+        # cross-platform rendering checked below. CI cannot invent a
+        # page-by-page human/AI visual-review record.
+        mode = 'archive' if name in ('toll', 'bath') else 'current'
         compile_paper(tex, contest, built, executable, layout_mode=mode)
         pdf = built/(name+'.pdf')
         if contest and contest != 'mcm':

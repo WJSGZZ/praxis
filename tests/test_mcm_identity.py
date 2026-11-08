@@ -129,3 +129,34 @@ def test_primary_demo_builder_rejects_a_real_identity_with_fresh_source_hash(tmp
     assert result.returncode != 0
     assert 'fixed simulation team identity' in result.stderr
     assert not (reproduce / 'paper').exists()
+
+
+def test_primary_demo_preview_accepts_archived_style_but_delivery_requires_current(tmp_path):
+    import hashlib
+    import os
+    import re
+    import shutil
+    import subprocess
+    import sys
+
+    from scripts.paper_template import VERSIONS, style_block
+
+    reproduce = tmp_path / 'reproduce'; reproduce.mkdir()
+    script = reproduce / 'build_paper.py'
+    shutil.copy2(ROOT / 'demos/mcm-2016-a/reproduce/build_paper.py', script)
+    current = paper(preamble('1234567', 'Actual entry', identity_mode='contest'))
+    old = VERSIONS['mcm'] - 1
+    archived = current.replace(style_block('mcm'), style_block('mcm', layout_version=old))
+    assert re.search(rf'STYLE v{old}\n', archived)
+    source = tmp_path / 'report/paper.tex'; source.parent.mkdir()
+    source.write_text(archived)
+    (tmp_path / 'verification.json').write_text(json.dumps({'pdf': {
+        'tex_sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'pages_total': 1}}))
+    environment = dict(os.environ, PYTHONPATH=str(ROOT))
+    run = lambda *extra: subprocess.run([sys.executable, str(script), *extra], cwd=ROOT,
+                                        env=environment, capture_output=True, text=True, timeout=15)
+    preview = run('--candidate')
+    assert preview.returncode != 0 and 'fixed simulation team identity' in preview.stderr
+    delivery = run()
+    assert delivery.returncode != 0 and f'current shared style v{VERSIONS["mcm"]}' in delivery.stderr
+    assert not (reproduce / 'paper').exists()

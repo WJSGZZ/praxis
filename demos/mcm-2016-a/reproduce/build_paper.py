@@ -27,12 +27,14 @@ def main():
     raw = source.read_bytes()
     if hashlib.sha256(raw).hexdigest() != record['pdf']['tex_sha256']:
         raise ValueError('Selected manuscript source changed; update actual science/format review before delivery')
-    check(raw.decode('utf-8'), 'mcm', layout_mode='current')
+    # A preview reproduces the reviewed, archived layout; sealed delivery requires the current style.
+    mode = 'archive' if args.candidate else 'current'
+    check(raw.decode('utf-8'), 'mcm', layout_mode=mode)
     if mcm_identity(raw.decode('utf-8'))['team'] != MCM_SIMULATION_TEAM:
         raise ValueError('Current demo must use the fixed simulation team identity')
     output = ROOT/'paper'; output.mkdir(exist_ok=True)
     tex = output/'paper.tex'; tex.write_bytes(raw)
-    compile_in_place(tex, 'mcm')
+    compile_in_place(tex, 'mcm', layout_mode=mode)
     pdf = tex.with_suffix('.pdf')
     if args.candidate:
         print(json.dumps({'candidate':str(pdf),'review_required':True,'selected_pages':record['pdf']['pages_total']})); return
