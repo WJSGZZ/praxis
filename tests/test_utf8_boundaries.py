@@ -313,3 +313,18 @@ def test_presentation_and_generated_task_actual_json_console():
     assert result['tools'] == 73
     task = decoded_console(legacy_console('evals.planted', ['new', 'lp', '1']))
     assert task['score_version'] and task['task_sha256']
+
+
+def test_typesetting_ci_generators_name_text_encodings():
+    import ast
+    scripts = ['demos/domino-research/reproduce/build_note.py', 'demos/mcm-2016-a/reproduce/build_paper.py',
+               'examples/image_analysis_demo.py', 'demos/image-analysis/build_figure.py', '.github/scripts/typesetting.py']
+    missing = []
+    for script in scripts:
+        tree = ast.parse((Path(__file__).resolve().parents[1] / script).read_text(encoding='utf-8'))
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                    and node.func.attr in ('read_text', 'write_text')
+                    and not any(k.arg == 'encoding' for k in node.keywords)):
+                missing.append(f'{script}:{node.lineno}')
+    assert not missing, 'Windows CI uses a legacy default encoding: ' + ', '.join(missing)

@@ -41,7 +41,7 @@ def count_summary(record: dict) -> str:
             f'the transfer matrix and coupled recurrences agree for $0\\le n\\le {two}$.')
 
 
-R = json.loads((HERE / 'reference/results.json').read_text())
+R = json.loads((HERE / 'reference/results.json').read_text(encoding='utf-8'))
 a = [int(x) for x in R['counts']['transfer_matrix_n0_to_16']]
 g, fc = R['guess'], R['finite_check']
 assert g['coefficients'] == ['4', '-1'] and g['holdout_ok'] and fc['proof_by_finite_check'] and R['closed_form_matches_n0_to_60']
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     out = args.output_directory.resolve()
     out.mkdir(parents=True, exist_ok=True)
-    (out / 'paper.tex').write_text(TEX)
+    (out / 'paper.tex').write_text(TEX, encoding='utf-8')
     check_layout(TEX, 'research')
     compile_in_place(out / 'paper.tex', 'research', compiler=args.compiler)
     shutil.copyfile(out / 'paper.pdf', HERE.parent / 'deliverables/paper.pdf')
