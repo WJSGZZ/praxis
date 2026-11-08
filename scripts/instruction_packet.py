@@ -26,6 +26,15 @@ PHASE_GUIDES = {
 }
 STAGES = (*ROLES, 'contest', 'research')
 REQUIRED_DETAILS = {'research': ('research',)}
+# Use existing disciplinary guidance at the point where its evidence is needed.
+CLAIM_SECTIONS = {
+    'proof': ('mathematical-reasoning', '命题与证明义务', '解析命题、定理或算法保证'),
+    'mechanism': ('dynamical-modeling', '数值检查与机制确认分别做', '方程的解释及对观测的预测'),
+    'measurement': ('data-analysis', '从研究问题确定观察和测量契约', '构念、观测单位与描述结论'),
+    'prediction': ('machine-learning', '选择与最终评价', '预测、泛化和基线比较'),
+    'intervention': ('causal-analysis', '识别先于估计', '改变处理或政策的因果效果'),
+    'decision': ('optimization', '定义可执行的决策', '建议所依赖的目标、信息、约束和替代方案'),
+}
 CONTEST_GUIDES = ('contest-paper-checklist', 'contest-delivery')
 # Details are explicit choices or a declared stage requirement, never recursive.
 DETAILS = {
@@ -46,6 +55,10 @@ DETAILS = {
     'tools': ('references/model-library.md', None, '方法/工具适用范围或既有实现不明'),
     'scientific-writing': ('references/scientific-writing.md', None, '局部学术论证/公式解释需要专项修订'),
     'literature': ('references/literature-review.md', None, '需要综述而非普通来源核读'),
+    'closest-work': ('references/literature-review.md', '逐条判断相对已有工作的贡献', '评估定理、证明或应用结论相对最近先例多了什么'),
+    'siam-siap': ('references/siam-research.md', 'SIAP：一个科学问题和一项数学推进', '目标为 SIAM Journal on Applied Mathematics'),
+    'siam-sinum': ('references/siam-research.md', 'SINUM：数值方法的设计或分析推进了什么', '目标为 SIAM Journal on Numerical Analysis'),
+    'siam-sisc': ('references/siam-research.md', 'SISC：计算优势在什么条件下成立', '目标为 SIAM Journal on Scientific Computing'),
     'research': ('references/research-mode.md', None, '任务为研究而非完整竞赛'),
     'defense': ('references/defense-coaching.md', None, '实际共同研究或答辩准备'),
     'capabilities': ('references/capabilities.md', None, '请求超出四主责或需要专业分工'),
@@ -82,16 +95,22 @@ DETAILS = {
     'figures': ('references/visualization.md', None, '具体制图/图例/空间数据/最终字号问题'),
     'contest-profile': ('references/contest-delivery.md', '届次、格式与阅读文件', '非默认赛事或需要核官方规范与项目选择'),
 }
+DETAILS.update({f'claim-{name}': (f'references/{guide}.md', heading, purpose)
+                for name, (guide, heading, purpose) in CLAIM_SECTIONS.items()})
 
 
-def stage_sources(stage):
+def stage_sources(stage, claim_types=()):
     """One canonical resource spec for execution and the offline index."""
     if stage not in STAGES:
         raise ValueError('Unknown stage')
+    theory_only = stage == 'research' and set(claim_types) == {'proof'}
     role_names = ROLES if stage in ('contest', 'research') else (stage,)
+    if theory_only:
+        role_names = ('verify', 'report')
     paths = [('SKILL.md', 'full', None)]
     paths += [(f'skills/praxis-{r}/SKILL.md', 'full', None) for r in role_names]
-    guides = tuple(dict.fromkeys(g for r in role_names for g in PHASE_GUIDES[r]))
+    guides = ('methods', 'writing') if theory_only else tuple(
+        dict.fromkeys(g for r in role_names for g in PHASE_GUIDES[r]))
     if stage == 'contest':
         guides += CONTEST_GUIDES
     paths += [(f'references/{g}.md', 'core', None) for g in guides]
@@ -111,7 +130,7 @@ def render_index():
         '由 `scripts/instruction_packet.py --print-index` 从运行时资源定义生成；勿手工修改。', '',
         '无终端时按下表直接读取文件与指定区段。core 指唯一 '
         '`<!-- praxis:core:start -->` 至 `<!-- praxis:core:end -->` 内的正文；'
-        '全文包括技能头信息。章节指同名标题及其下级内容，至下一个同级或更高标题。', '',
+        '宿主按技能头信息发现技能，命令输出技能正文。章节包含同名标题及其下级内容，至下一个同级或更高标题。', '',
         '每阶段均包含完整 integrity 安全文与 learning-loop 的“同题资料与接触范围”节。'
         '研究阶段另外必读 research 原文，不继承竞赛清单或 MCM current 命令；'
         '竞赛阶段才增加竞赛清单与交付核心。', '',
@@ -128,6 +147,13 @@ def render_index():
             relative, heading, _ = DETAILS[key]
             scope = f'章节：{heading}' if heading else '全文'
             lines.append(f'| {stage} | {link(relative)} | 额外必读 detail `{key}`；{scope} |')
+    lines += ['', '## 研究主张选择', '',
+              '研究阶段由作者按主张选 --claim-type，可重复使用。无终端时读 research 原文与下列对应章节。'
+              '仅选 proof 的纯推导稿使用 verify、report、methods、writing 与两份安全原文。'
+              '含计算、经验或决策主张时按完整研究阶段执行，另核实际数值输入和独立证据。', '',
+              '| 类型 | 主张 | 首读章节 |', '|---|---|---|']
+    for name, (guide, heading, purpose) in CLAIM_SECTIONS.items():
+        lines.append(f'| {name} | {purpose} | {link(f"references/{guide}.md")} · {heading} |')
     lines += ['', '## 条件细则', '',
               '只有对应缺口或明确阶段要求才读取；先选ID，再按真实文件/标题取文。'
               '被core/details分区的文件，细则取details区；标题未指定时取整个细则区，'
@@ -248,10 +274,13 @@ def strip_frontmatter(text):
     return FRONTMATTER.sub('', text, count=1)
 
 
-def build_packet(bundle, overlay=None, stage='contest', details=(), limit=LIMIT):
+def build_packet(bundle, overlay=None, stage='contest', details=(), limit=LIMIT, *, claim_types=()):
     if type(limit) is not int or not 1 <= limit <= LIMIT:
         raise ValueError(f'Limit must be within 1..{LIMIT}; cannot bypass the fixed budget')
-    paths = stage_sources(stage)
+    claim_types = tuple(dict.fromkeys(claim_types))
+    if claim_types and (stage != 'research' or any(key not in CLAIM_SECTIONS for key in claim_types)):
+        raise ValueError('Claim types require stage research and a known research claim type')
+    paths = stage_sources(stage, claim_types)
     records, blocks = [], []
     for relative, mode, title in paths:
         text, record = read_source(bundle, overlay, relative)
@@ -267,7 +296,7 @@ def build_packet(bundle, overlay=None, stage='contest', details=(), limit=LIMIT)
         raise ValueError(f'Core packet {core_characters} characters exceeds {limit}; no packet emitted')
     detail_records, detail_blocks, required_records = [], [], []
     required_characters = conditional_characters = 0
-    required = REQUIRED_DETAILS.get(stage, ())
+    required = (*REQUIRED_DETAILS.get(stage, ()), *(f'claim-{key}' for key in claim_types))
     for key in dict.fromkeys((*required, *details)):
         if key not in DETAILS:
             raise ValueError(f'Unknown detail: {key}')
@@ -287,13 +316,14 @@ def build_packet(bundle, overlay=None, stage='contest', details=(), limit=LIMIT)
             detail_records.append(record)
             conditional_characters += len('\n' + block)
     static = []
-    for path in ('templates/mcm-paper.tex', 'templates/mcm-style.tex'):
+    templates = ('research', 'research-zh') if stage == 'research' or 'research' in details else ('mcm',)
+    for path in (f'templates/{template}-{part}.tex' for template in templates for part in ('paper', 'style')):
         text, record = read_source(bundle, overlay, path)
         record['characters'] = len(text)
         static.append(record)
     text = body + ('\n' + '\n'.join(detail_blocks) if detail_blocks else '')
     # Metadata stays outside the instruction budget and is reported separately.
-    manifest = {'schema': 1, 'stage': stage, 'limit': limit,
+    manifest = {'schema': 1, 'stage': stage, 'claim_types': list(claim_types), 'limit': limit,
                 'metric': 'Python len of emitted Unicode text, including source-region headers and whitespace; hashes are separate provenance metadata',
                 'core_characters': core_characters, 'emitted_characters': len(text),
                 'conditional_detail_characters': conditional_characters,
@@ -312,6 +342,8 @@ def main():
     parser.add_argument('--overlay', type=Path, help='Candidate replacements only; unchanged inputs come from --bundle')
     parser.add_argument('--stage', choices=STAGES, default='contest')
     parser.add_argument('--detail', action='append', default=[], choices=tuple(DETAILS))
+    parser.add_argument('--claim-type', action='append', default=[], choices=tuple(CLAIM_SECTIONS),
+                        help='Research stage: select evidence guidance for each substantive claim')
     parser.add_argument('--list-details', action='store_true')
     parser.add_argument('--print-index', action='store_true', help='Print the offline Markdown index; never writes source files')
     parser.add_argument('--limit', type=int, default=LIMIT)
@@ -327,7 +359,8 @@ def main():
             print(json.dumps({k: {'path': v[0], 'heading': v[1], 'trigger': v[2]}
                               for k, v in DETAILS.items()}, ensure_ascii=False, indent=2))
             return
-        text, manifest = build_packet(args.bundle, args.overlay, args.stage, args.detail, args.limit)
+        text, manifest = build_packet(args.bundle, args.overlay, args.stage, args.detail, args.limit,
+                                      claim_types=args.claim_type)
         if args.manifest:
             # Explicit new evidence only; do not overwrite an existing user file.
             with args.manifest.open('x', encoding='utf-8') as stream:

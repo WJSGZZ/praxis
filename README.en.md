@@ -68,7 +68,7 @@ The competition cases make the full workflow inspectable; they do not define the
 
 **[Browse all cases →](demos/README.en.md)** Explore data analysis, spatial coverage, image measurement, mathematical studies and secondary competition papers.
 
-Reports share checked layout sources: separate contest profiles and an [AMS-style research template](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. New MCM reports require the problem edition explicitly and use the three-column summary header. Third-level headings and contents entries are available when they aid navigation; frozen cases retain their recorded layout unless separately revised. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
+Reports share checked layout sources: separate contest profiles and working-paper layouts for [Chinese](templates/research-zh-paper.tex) and [English](templates/research-paper.tex). A pinned build environment and cross-platform typesetting checks keep layouts reproducible, while sections and figures follow the argument. New MCM reports require the problem edition explicitly and use the three-column summary header. Third-level headings and contents entries are available when they aid navigation; frozen cases retain their recorded layout unless separately revised. Final pages are inspected as PDFs; plots use verified data and PGFplots/TikZ vector output, with other established scientific libraries available where the data require them.
 
 The active MCM gallery now uses the shared A4 layout: 12pt ordinary body and figure text, a two-em first-line indent after summary and section headings, and a separate AI-report start. Current delivery requires canonical compilation, font inspection, actual all-page review and freezing. Historical snapshots retain their identities. [Selected MCM works](https://github.com/WJSGZZ/praxis/blob/main/demos/mcm-studies/README.en.md) remain secondary cases; uncalibrated AI opinions do not establish official awards.
 
@@ -156,6 +156,13 @@ The entry skill takes a problem end to end; each focused skill handles one kind 
 | [`praxis-experimental-design`](skills/praxis-experimental-design/SKILL.md) | "Design a useful experiment and justify its sample size" | Experimental units, allocation, randomization, replication, power and measurement design |
 
 The core and specialist skills share one [methodology](references/methods.md) and task record, using established scientific libraries where appropriate. Skills are selected for the question and delivery purpose, with competition rules loaded by edition. See [capability handoffs](references/capabilities.md) for responsibilities and how work passes between them.
+
+For a SIAM manuscript, select the venue by its principal contribution. The [SIAP, SINUM and SISC guidance](references/siam-research.md) links the editorial policies to concrete checks. For a numerical analysis manuscript, run `python -m scripts.instruction_packet --stage research --detail siam-sinum`.
+To evaluate a contribution, run `python -m scripts.instruction_packet --stage research --detail closest-work`. Try deriving the claim from the nearest domain model and mathematical result together. Identify the step that still requires a proof or measurement, and explain whose prediction or decision changes.
+
+For research, select the claims the manuscript actually makes. For example, `python -m scripts.instruction_packet --stage research --claim-type proof` opens the proof guidance. A prediction used to recommend an intervention needs both a fair forecast comparison and an identification argument. Select both with `--claim-type prediction --claim-type intervention`. Deepen the analysis when an unresolved alternative would change the conclusion.
+
+Start a working paper with `python -m scripts.paper_template report.tex --init-research en` for the [English AMS manuscript](templates/research-paper.tex), or choose `zh` for the [Chinese CTeX manuscript](templates/research-zh-paper.tex). A venue's required class and bibliography style take precedence.
 
 ### Competitions are one application
 

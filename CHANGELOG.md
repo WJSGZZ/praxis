@@ -7,6 +7,12 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 本地候选版，尚未发布。Local candidate; publication is pending.
 
+- 研究方法新增“从已证结果到更强贡献”：先例对照显示主张可由已知原理推出时，分析证明实际用到的结构，在最弱前提下推广，用精确构造证明界可达并标出失效边界；研究评审同步检查可推广的特例与未证紧性的上界。
+  Research mode adds a step for strengthening results that prior work already implies: analyse which structure the proof uses, generalise under the weakest assumptions, certify sharpness with an exact construction and mark where the result fails. Research review now flags generalisable special cases and bounds not shown to be sharp.
+
+- 网格收敛指数的 `gci_fine` 一律为无量纲比例。细网格值为零且未指定正的 `reference_scale` 时返回 `null`，原单位的估计见 `gci_fine_abs`。
+  The fine-grid GCI now reports an absolute estimate separately. Its relative value is undefined at a zero reference unless a positive same-unit scale is supplied.
+
 - 读者清单新增两项核对：摘要、结论和教材、备忘录里的量词与分母是否与正文一致，同一角色的文字是否跨图统一字体。评审把某个优化结果算作长处之前，要先查一个便宜的约束或结构界。
   The reader checklist now also compares quantifiers and denominators in summaries, conclusions and outward-facing notes with the body, and checks font consistency for the same text role across figures. Before crediting an optimization result, review first checks an inexpensive constraint or structural bound.
 

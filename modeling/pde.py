@@ -6,6 +6,8 @@ into the domain positive, or ('robin', h, u_inf): -k u_x = h (u_inf - u) on the 
 against a known solution before trusting a result."""
 from __future__ import annotations
 
+from fractions import Fraction
+import math
 from typing import Callable
 
 import numpy as np
@@ -114,29 +116,71 @@ def convergence_study(solver: Callable[[int], np.ndarray], exact: np.ndarray | C
     equation; an order near zero means the error is not coming from the mesh. Refine space and time separately (a fine time step while
     refining the mesh, then a fine mesh while refining the step) or tie dt to dx for a second-order scheme; point values read off by
     interpolation add their own error, so use a mesh point or a higher-order interpolant when the order looks wrong."""
+    cell_counts = tuple(cell_counts)
+    if (not cell_counts or any(type(n) is bool or not isinstance(n, (int, np.integer))
+                               or n <= 0 for n in cell_counts)
+            or any(a >= b for a, b in zip(cell_counts, cell_counts[1:]))):
+        raise ValueError('Use strictly increasing positive integer cell counts')
+
     errors = []
     for n in cell_counts:
         x, u = solver(n)
-        errors.append(float(np.max(np.abs(u - (exact(x) if callable(exact) else exact)))))
-    orders = [float(np.log(errors[i] / errors[i + 1]) / np.log(cell_counts[i + 1] / cell_counts[i])) for i in range(len(errors) - 1)]
-    return dict(cells=list(cell_counts), errors=errors, observed_orders=orders)
+        x = np.asarray(x, dtype=float)
+        if x.ndim != 1 or not x.size or not np.isfinite(x).all():
+            raise ValueError('Expected a finite one-dimensional grid')
+        u = np.asarray(u, dtype=float)
+        ref = np.asarray(exact(x) if callable(exact) else exact, dtype=float)
+        shapes = {(x.size,), (x.size, 1), (1, x.size)}
+        if u.shape not in shapes or (ref.ndim and ref.shape not in shapes):
+            raise ValueError('Each value must correspond to one grid point')
+        error = float(np.max(np.abs(u.reshape(-1) - ref.reshape(-1))))
+        if not math.isfinite(error):
+            raise ValueError('Nonfinite max-norm error')
+        errors.append(error)
+    orders = [(math.log(a) - math.log(b)) / math.log(n2 / n1) if min(a, b) > 0 else None
+              for a, b, n1, n2 in zip(errors, errors[1:], cell_counts, cell_counts[1:])]
+    return dict(cells=list(cell_counts), errors=errors, observed_orders=orders,
+                note='An order is undefined when either measured error is zero.')
 
 
-def grid_convergence_index(f_fine: float, f_medium: float, f_coarse: float, refinement_ratio: float, *, safety_factor: float = 1.25) -> dict:
-    """Observed order, Richardson-extrapolated value and grid convergence index from three systematically refined solutions (Roache).
+def grid_convergence_index(f_fine: float, f_medium: float, f_coarse: float, refinement_ratio: float, *,
+                           safety_factor: float = 1.25, reference_scale: float | None = None) -> dict:
+    """Richardson estimate from three same-quantity grids of fixed refinement ratio.
 
-    Needs monotone convergence: (f_coarse - f_medium) and (f_medium - f_fine) of the same sign. The GCI is an error band on the fine-grid
-    value, not a bound; a safety factor of 1.25 is conventional for three grids."""
+    gci_fine is a fraction, normalized by the magnitude of the fine value or an
+    explicitly supplied positive scale in the same units. gci_fine_abs has the
+    units of the input quantity. Both assume a leading power-law error.
+    """
     r = float(refinement_ratio)
-    if not np.isfinite([f_fine, f_medium, f_coarse, r, safety_factor]).all() or safety_factor <= 0:
-        raise ValueError('Finite solution values, refinement ratio and positive safety factor required')
-    d21, d32 = f_medium - f_fine, f_coarse - f_medium
-    if r <= 1 or d21 == 0 or d32 == 0 or d21 * d32 < 0:
-        raise ValueError('Need refinement_ratio > 1 and monotone, non-zero differences between the three solutions')
-    p = float(np.log(d32 / d21) / np.log(r))
-    if p <= 0:
+    values = [f_fine, f_medium, f_coarse, r, safety_factor]
+    if not np.isfinite(values).all() or r <= 1 or safety_factor <= 0:
+        raise ValueError('Finite values, refinement ratio > 1 and positive safety factor required')
+    if reference_scale is not None and (not math.isfinite(reference_scale) or reference_scale <= 0):
+        raise ValueError('reference_scale must be positive, finite and in the units of the grid values')
+
+    # Three scalars suffice. Rational arithmetic on their represented values
+    # avoids overflow in products of differences and cancellation in r**p - 1.
+    fine, middle, coarse = (Fraction(float(v)) for v in values[:3])
+    d21, d32 = middle - fine, coarse - middle
+    if not d21 or not d32 or (d21 > 0) != (d32 > 0):
+        raise ValueError('Need monotone, non-zero differences between the three solutions')
+    excess = d32 / d21 - 1
+    if excess <= 0:
         raise ValueError('The solutions are not converging (observed order <= 0)')
-    extrapolated = f_fine + (f_fine - f_medium) / (r ** p - 1)
-    rel = abs((f_medium - f_fine) / f_fine) if f_fine != 0 else abs(f_medium - f_fine)
-    return dict(observed_order=p, extrapolated=float(extrapolated), gci_fine=float(safety_factor * rel / (r ** p - 1)),
-                note='Error band on the fine-grid value assuming the asymptotic range; check that the three grids are in it.')
+    ratio = excess + 1
+    log_ratio = (math.log1p(float(excess)) if excess < 1 else
+                 math.log(ratio.numerator) - math.log(ratio.denominator))
+    order = log_ratio / math.log(r)
+    correction = -d21 / excess
+    absolute = Fraction(float(safety_factor)) * abs(correction)
+    scale = abs(fine) if reference_scale is None else Fraction(float(reference_scale))
+    try:
+        limit = float(fine + correction)
+        band = float(absolute)
+        relative = float(absolute / scale) if scale else None
+    except OverflowError as exc:
+        raise ValueError('Grid estimate exceeds the representable output range') from exc
+    return dict(observed_order=order, extrapolated=limit, gci_fine=relative, gci_fine_abs=band,
+                normalization_scale=float(scale), relative_status='defined' if scale else 'zero_reference',
+                note='gci_fine is a fraction; gci_fine_abs is in input units. Three grids fit a leading '
+                     'error term; they do not establish the asymptotic regime or a rigorous error bound.')

@@ -8,4 +8,4 @@ license: MIT
 
 接有效工件，按methods核心核主张/前提，交结论范围/独立性/反例与局限。重放和同助手换角色只算相应自查，不包装真人核验；局部证明或一个数值结果不启动整稿评奖；整稿交[praxis-review](../praxis-review/SKILL.md)，缺证回原因阶段。
 
-沿主入口加 `--stage verify`。重要评语复现后才用 `--detail review`，保证/误差细节缺口用math或foundations。
+沿主入口加 `--stage verify`。重要评语复现后才用 `--detail review`，证明任务先按[命题与证明义务](../../references/mathematical-reasoning.md#命题与证明义务)核量词、域、假设和每个推论，按范围选择推导、穷举或见证；保证/误差细节缺口用math或foundations。

@@ -22,6 +22,7 @@ PROJECT = Path.cwd().resolve()
 sys.path.insert(0, str(BUNDLE))
 from scripts import run_trace
 from scripts.audit_data import audit
+from modeling import proof_obligations
 from modeling.schema_contracts import check_model_contract, reasoned, unique_object_pairs
 import pandas as pd
 from pypdf import PdfReader
@@ -709,6 +710,7 @@ def evidence_index(case):
         raise ValueError('Check names must be unique for unambiguous evidence links')
     lookup = {check['name']: check for check in checks}
     entries = []
+    claims = definition.get('claims', [])
     for task in tasks:
         entry = dict(task)
         errors = []
@@ -724,10 +726,21 @@ def evidence_index(case):
                                    and c['method'] in CHECK_METHODS - {'replay'}
                                    for c in entry['check_evidence']):
             errors.append('Requirement needs an independent check with a non-replay method')
+        if schema == 2 and task.get('kind') == 'proof':
+            linked_claims = [claim for claim in claims
+                             if isinstance(claim, dict) and claim.get('requirement') == task['id']]
+            entry['proof_review'] = [
+                dict(claim_id=claim.get('id'), text=claim.get('text'),
+                     **proof_obligations.review(claim.get('proof_obligation')))
+                for claim in linked_claims
+            ] or [dict(claim_id=None, **proof_obligations.review(None))]
+            for item in entry['proof_review']:
+                if item.get('agrees_with_assertion') is False:
+                    errors.append(f"Claim {item['claim_id']}: exact check contradicts the asserted truth of "
+                                  "the formal relation; review the statement and its domain.")
         entry['linked'] = not errors
         entry['errors'] = errors
         entries.append(entry)
-    claims = definition.get('claims', [])
     claim_issues = claim_problems(tasks, claims, lookup, results, schema) if claims or schema == 2 else []
     problem_issues = problem_item_problems(case, definition) if schema == 2 else []
     if schema == 2:

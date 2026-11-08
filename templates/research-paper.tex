@@ -1,4 +1,4 @@
-\newcommand{\PraxisTitle}{Mathematical research title}
+\newcommand{\PraxisTitle}{How much can averaging reduce bounded error?}
 % BEGIN PRAXIS RESEARCH STYLE v2
 % Praxis mathematical research house style v2; target-journal instructions take precedence.
 \documentclass[11pt,a4paper]{amsart}
@@ -58,16 +58,37 @@
 \makeatother
 % END PRAXIS RESEARCH STYLE
 
-\title[Mathematical research title]{\PraxisTitle}
+% Working-paper example. Replace the question, evidence, metadata and references.
+\title[Bounded error in a weighted mean]{\PraxisTitle}
 \author{}\date{}
+\keywords{weighted mean, worst-case error}
 \begin{document}
 \begin{abstract}
-State the question, precise conclusion, evidence and scope here.
+Averaging measurements with a common deterministic error bound leaves
+the worst-case error unchanged. For any nonnegative weights that sum to
+one, the bound is attained when every error equals the common upper bound.
 \end{abstract}
 \maketitle
-\section{Question and result}
-Replace this specimen with the actual definitions and result.
-\section{Argument}
-\begin{proposition}For every integer $n$, $n(n+1)$ is even.\end{proposition}
-\begin{proof}One of two consecutive integers is even.\end{proof}
+\section{Measurement model}
+Let $y_i=\theta+e_i$ for $1\leq i\leq n$, where $n\geq1$ and
+$|e_i|\leq\delta$. The errors have no assumed probability law.
+We ask how far a weighted estimate can lie from $\theta$.
+\section{A sharp bound}
+\begin{proposition}
+If $w_i\geq0$, $\sum_i w_i=1$ and $\delta\geq0$, then
+\[
+  \sup_{|e_i|\leq\delta}\left|\sum_i w_i y_i-\theta\right|=\delta .
+\]
+\end{proposition}
+\begin{proof}
+The error is $\sum_i w_i e_i$. Its absolute value is at most
+$\sum_i w_i\delta=\delta$, and setting every $e_i=\delta$ attains equality.
+\end{proof}
+The supremum is a dual-norm calculation \cite{bv}. Adding observations
+alone cannot reduce this bound. A claim about variance would require a
+probability model for the errors.
+\begin{thebibliography}{1}
+\bibitem{bv} S. Boyd and L. Vandenberghe, \emph{Convex Optimization},
+Cambridge University Press, 2004, Appendix A.
+\end{thebibliography}
 \end{document}

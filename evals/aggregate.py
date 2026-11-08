@@ -219,6 +219,70 @@ def review_record(item: dict) -> dict:
                 **blocks)
 
 
+def _verification_checks(rows, claim_ids):
+    """Check the internal consistency of optional, claim-specific declarations."""
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError('research verification_checks must be a list of records')
+    for row in rows:
+        claim_id = row.get('claim_id')
+        if not isinstance(claim_id, str) or claim_id not in claim_ids:
+            raise ValueError('verification check must identify a declared critical claim')
+        for field in ('actor', 'evidence'):
+            _text(row.get(field), f'verification {field}')
+        if row.get('basis') not in ('reported', 'examined'):
+            raise ValueError('verification basis must distinguish reported from examined')
+        kind, status = row.get('kind'), row.get('status')
+        if kind == 'artifact_access':
+            if status not in ('available', 'restricted', 'unavailable'):
+                raise ValueError('artifact_access requires an access status')
+            continue
+        if kind not in ('same_data_reproduction', 'new_data_replication'):
+            raise ValueError('Unknown research verification kind')
+        if status == 'not_checked':
+            if row.get('observed') is not None:
+                raise ValueError('An unperformed comparison cannot report an observed result')
+            continue
+        if status not in ('consistent', 'inconsistent', 'inconclusive'):
+            raise ValueError('verification comparison needs an explicit outcome')
+        for field in ('original_data', 'check_data', 'procedure', 'comparison_rule', 'observed'):
+            _text(row.get(field), f'verification {field}')
+        same_inputs = row['original_data'].strip() == row['check_data'].strip()
+        if kind == 'same_data_reproduction':
+            if not same_inputs or row.get('same_procedure') is not True:
+                raise ValueError('Same-data reproduction requires the original inputs and procedure')
+        if kind == 'new_data_replication':
+            if same_inputs:
+                raise ValueError('New-data replication cannot use the original sample again')
+            _text(row.get('collection'), 'new-data collection evidence')
+
+
+def _closest_work_comparisons(rows, claim_ids):
+    """Validate what a reviewer declares about one claim relative to one prior result."""
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError('research closest_work_comparisons must be a list of records')
+    for row in rows:
+        claim_id = row.get('claim_id')
+        if not isinstance(claim_id, str) or claim_id not in claim_ids:
+            raise ValueError('closest-work comparison must identify a declared critical claim')
+        for field in ('source', 'location', 'prior_result', 'scope', 'derivation', 'increment'):
+            _text(row.get(field), f'closest-work {field}')
+        relation = row.get('relation')
+        if relation not in ('implied', 'additional_step', 'conflicts', 'unresolved'):
+            raise ValueError('Unknown closest-work relation')
+        kind, status = row.get('increment_kind'), row.get('status')
+        if kind not in ('none', 'mathematical_result', 'proof', 'method', 'mechanism',
+                        'empirical_finding', 'application', 'undetermined'):
+            raise ValueError('Unknown closest-work increment kind')
+        if status not in ('supported', 'refuted', 'unverified'):
+            raise ValueError('Unknown closest-work increment status')
+        if (relation == 'unresolved' or kind == 'undetermined') and status != 'unverified':
+            raise ValueError('An unresolved comparison or undetermined increment must remain unverified')
+        if relation == 'implied' and kind == 'mathematical_result' and status == 'supported':
+            raise ValueError('A directly implied claim cannot itself be a supported new mathematical result')
+        if kind == 'application' or row.get('application_implication') is not None:
+            _text(row.get('application_implication'), 'closest-work application_implication')
+
+
 def research_assessment(item: dict) -> dict:
     """Validate scoped research judgments, without a score or journal certification."""
     if type(item.get('schema_version')) is not int or item['schema_version'] != 2:
@@ -255,6 +319,10 @@ def research_assessment(item: dict) -> dict:
         _text(source, 'research novelty search source')
     if criteria['novelty']['status'] == 'supported' and not (search['completed'] and search['sources']):
         raise ValueError('Supported novelty requires a completed scoped literature search with sources')
+    if assessment.get('verification_checks') is not None:
+        _verification_checks(assessment['verification_checks'], {c['id'] for c in item['critical_claims']})
+    if assessment.get('closest_work_comparisons') is not None:
+        _closest_work_comparisons(assessment['closest_work_comparisons'], {c['id'] for c in item['critical_claims']})
     return assessment
 
 
@@ -377,9 +445,12 @@ def user_view(report: dict, contest: str | None = None) -> dict:
             records = result['reviews']
             out[paper] = dict(status='research_reviewer_assessments',
                 assessments=[dict(r['research_assessment'], review_id=r['review_id'],
-                                  source=r.get('source'), reviewer=r.get('reviewer')) for r in records],
+                                  source=r.get('source'), reviewer=r.get('reviewer'),
+                                  verification_checks=r['research_assessment'].get('verification_checks'),
+                                  closest_work_comparisons=r['research_assessment'].get('closest_work_comparisons'))
+                             for r in records],
                 reviews=records, validity=[r['validity_status'] for r in records],
-                note='按研究价值、证明和表达评议；不是顶刊认证，不转成奖项、百分制或录用概率。')
+                note='研究意见按稿件版本、主张和审读范围呈现。verification_checks 或 closest_work_comparisons 为 null 表示该类检查未记录。')
             continue
         assessments, reviews = [], []
         has_attached_awards = any('award_estimate' in r for r in result['reviews'])

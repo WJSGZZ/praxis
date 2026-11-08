@@ -5,7 +5,7 @@ from typing import Callable, Sequence
 
 import numpy as np
 from scipy.optimize import least_squares
-from modeling.contracts import diagnostic
+from modeling.contracts import diagnostic, jacobian_uncertainty
 
 
 def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence[float], y: Sequence[float], theta0: Sequence[float], *,
@@ -14,10 +14,10 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
     """Least-squares calibration of model(theta, x) to (x, y), with an identifiability and hold-out report.
 
     Reported: estimates with approximate confidence intervals (local, from the Jacobian, valid if the model is right and the noise
-    independent), the Jacobian's condition number and the largest parameter correlation (large values mean the data cannot separate the
-    parameters), the residual lag-1 autocorrelation (structure left in the residuals), the rms error, and, if `holdout` > 0, the rms
+    independent with common variance), the Jacobian's unit-dependent condition number and the largest parameter correlation,
+    the residual lag-1 autocorrelation, the rms error, and, if `holdout` > 0, the rms
     error on the last `holdout` points that were kept out of the fit. Undefined diagnostics are null with explicit reasons;
-    rank-deficient or failed fits do not report individual parameter intervals. Flags list each warning.
+    rank-deficient, failed or bound-active fits do not report ordinary individual parameter intervals. Flags list each warning.
     multistart=0 retains one theta0 fit; a value >=8 adds that many random starts in a finite box, uniform by default or
     start_sampling='log_uniform' (every lower bound > 0) for parameters spanning orders of magnitude. A random start whose model
     call raises an Exception is recorded as failed and stays in the denominator; a theta0 failure still raises. Fits share the
@@ -92,14 +92,19 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
             record.update(converged=False, error=str(exc), error_type=type(exc).__name__)
     accepted = [(index, candidate) for index, candidate in fits if candidate.success]
     best_index, fit = min(accepted or fits, key=lambda pair: pair[1].cost)
-    J = fit.jac
-    rank = int(np.linalg.matrix_rank(J))
-    identified = rank == k
     dof = max(1, n_fit - k)
     sigma2 = 2 * fit.cost / dof
-    cond = float(np.linalg.cond(J))
-    cov = np.linalg.pinv(J.T @ J) * sigma2
-    se = np.sqrt(np.diag(cov))
+    rank, cond, se, corr = jacobian_uncertainty(fit.jac, sigma2)
+    identified = rank == k
+    active = np.flatnonzero(fit.active_mask)
+    inference_status = 'computed'
+    inference_reason = None
+    if not identified:
+        inference_status, inference_reason = 'not_reported_rank_deficient', 'Individual intervals require a full-rank Jacobian'
+    elif not fit.success:
+        inference_status, inference_reason = 'fit_failed', 'Individual intervals require a converged fit'
+    elif active.size:
+        inference_status, inference_reason = 'active_bound', 'An active parameter bound invalidates the ordinary joint interior covariance approximation'
     from scipy.stats import t as student
     crit = float(student.ppf(1 - alpha / 2, dof))
     diagnostics = {}
@@ -108,11 +113,12 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
         max_corr, diagnostics['max_parameter_correlation'] = diagnostic(0, status='not_applicable', reason='A single parameter has no off-diagonal correlation')
     elif not identified or not fit.success:
         max_corr, diagnostics['max_parameter_correlation'] = diagnostic(0, status='not_identifiable' if not identified else 'fit_failed', reason='Individual parameter covariance is unavailable for a rank-deficient Jacobian or an unconverged fit')
+    elif active.size:
+        max_corr, diagnostics['max_parameter_correlation'] = diagnostic(0, status=inference_status, reason=inference_reason)
     elif not (se > 0).all():
         max_corr, diagnostics['max_parameter_correlation'] = diagnostic(0, status='undefined', reason='Zero estimated parameter variance makes covariance normalization undefined; a zero-residual fit does not establish uncertainty')
     else:
-        corr = cov / np.outer(se, se)
-        max_corr, diagnostics['max_parameter_correlation'] = diagnostic(np.abs(corr - np.eye(k)).max(), reason='Parameter covariance normalization is not finite')
+        max_corr, diagnostics['max_parameter_correlation'] = diagnostic(np.abs(corr[np.triu_indices(k, 1)]).max(), reason='Parameter covariance normalization is not finite')
     res = fit.fun
     lag1, diagnostics['residual_lag1_autocorrelation'] = diagnostic(
         np.corrcoef(res[:-1], res[1:])[0, 1] if len(res) > 3 and res.std() > 0 else 0,
@@ -122,20 +128,22 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
         raise ValueError('Calibration did not produce finite parameter estimates and fit error')
     flags = []
     if not identified or cond > 1e6 or max_corr is not None and max_corr > 0.98:
-        flags.append(f'weakly identified (Jacobian rank {rank}/{k}, condition {cond:.2g}): the data cannot separate the parameters')
+        flags.append(f'weakly identified or poorly scaled (local Jacobian rank {rank}/{k}, condition {cond:.2g}); check units and parameter uncertainty for the target contrast')
     if not fit.success:
         flags.append('fit did not converge; parameter inference is unavailable')
-    for i in range(k):
-        if np.isfinite(lo[i]) and abs(fit.x[i] - lo[i]) < 1e-6 * max(1, abs(lo[i])) or np.isfinite(hi[i]) and abs(fit.x[i] - hi[i]) < 1e-6 * max(1, abs(hi[i])):
-            flags.append(f'{labels[i]} sits on its bound')
+    for i, side in enumerate(fit.active_mask):
+        if side:
+            flags.append(f'{labels[i]} sits on its {"lower" if side < 0 else "upper"} bound')
+        elif (np.isfinite(lo[i]) and fit.x[i] - lo[i] < 1e-6 * max(1, abs(lo[i]))
+              or np.isfinite(hi[i]) and hi[i] - fit.x[i] < 1e-6 * max(1, abs(hi[i]))):
+            flags.append(f'{labels[i]} is near a bound; check the local interval on the parameter scale')
     if lag1 is not None and abs(lag1) > 0.5:
-        flags.append(f'residuals are strongly autocorrelated (lag-1 {lag1:.2f}): the model misses structure the data contain')
-    inference_status = 'computed' if identified and fit.success else ('not_reported_rank_deficient' if not identified else 'fit_failed')
+        flags.append(f'residuals are strongly autocorrelated in the supplied fit order (lag-1 {lag1:.2f}); check whether adjacency has a scientific meaning')
     parameters = []
     for i in range(k):
         item = dict(name=labels[i], estimate=float(fit.x[i]), inference=dict(status=inference_status))
         if inference_status != 'computed':
-            item['inference']['reason'] = 'Local individual intervals require a full-rank Jacobian and a converged fit'
+            item['inference']['reason'] = inference_reason
         elif sigma2 == 0:
             item['inference'] = dict(status='zero_residual_variance', reason='Estimated noise variance is zero; degenerate local intervals exclude structural and measurement error')
         for field, value in [('std_error', se[i]), ('ci_low', fit.x[i] - crit * se[i]), ('ci_high', fit.x[i] + crit * se[i])]:
@@ -147,7 +155,7 @@ def calibrate(model: Callable[[np.ndarray, np.ndarray], np.ndarray], x: Sequence
     out = dict(parameters=parameters, rmse=rmse, points_fitted=n_fit, jacobian_condition=cond_value, max_parameter_correlation=max_corr,
                residual_lag1_autocorrelation=lag1, converged=bool(fit.success), flags=flags,
                diagnostics=diagnostics, jacobian_rank=rank, fit_status='converged' if fit.success else 'failed',
-               note='Confidence intervals are local and conditional on the model being right; they do not include structural error.')
+               note='Intervals use a local linearization and independent errors of common variance. Ordinary intervals are withheld when the solver identifies an active bound. Conditioning depends on parameter units; full local rank does not establish global uniqueness.')
     if multistart:
         # A basin needs agreement in parameter location as well as objective.
         # Equivalent but distinct symmetric minimizers remain distinct basins.

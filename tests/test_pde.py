@@ -76,3 +76,28 @@ def test_values_at_interpolates_with_boundary_values_and_rejects_outside_points(
     assert abs(pde.values_at(r, [0.0, 1.0], left=0., right=0.)[0]) < 1e-12
     with pytest.raises(ValueError):
         pde.values_at(r, [0.0])
+
+
+def test_gci_units_at_zero_and_small_oscillatory_differences():
+    for scale in (1., 1000.):
+        result = pde.grid_convergence_index(0., scale, 5*scale, 2)
+        assert result['gci_fine'] is None
+        assert result['gci_fine_abs'] == pytest.approx(1.25 * scale / 3)
+        assert result['relative_status'] == 'zero_reference'
+        scaled = pde.grid_convergence_index(0., scale, 5*scale, 2, reference_scale=scale)
+        assert scaled['gci_fine'] == pytest.approx(1.25/3)
+    with pytest.raises(ValueError, match='monotone'):
+        pde.grid_convergence_index(0., 1e-260, -3e-260, 2)
+    with pytest.raises(ValueError, match='reference_scale'):
+        pde.grid_convergence_index(0., 1., 5., 2, reference_scale=0.)
+
+
+def test_convergence_compares_corresponding_points_and_handles_exact_solution():
+    def solver(n):
+        x = np.linspace(0, 1, n)
+        return x, x[:, None]
+    result = pde.convergence_study(solver, lambda x: x, (4, 8, 16))
+    assert result['errors'] == [0., 0., 0.]
+    assert result['observed_orders'] == [None, None]
+    with pytest.raises(ValueError, match='one grid point'):
+        pde.convergence_study(solver, lambda x: np.zeros((len(x), 2)), (4, 8))

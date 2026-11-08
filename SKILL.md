@@ -6,7 +6,7 @@ description: 将问题与数据推进为可解释、可复现的数学模型、�
 
 # Praxis
 
-接续目标/已有工作/允许输入/预算。完整竞赛从[model](skills/praxis-model/SKILL.md)进compute→verify→report；研究用`--stage research`；局部只进对应阶段，不建案例、不写 tasks.md。未知届次或期刊不继承其它要求。
+接续目标/已有工作/允许输入/预算。完整竞赛从[model](skills/praxis-model/SKILL.md)进compute→verify→report。研究用`--stage research`，由作者按实际主张选 `--claim-type`（proof、mechanism、measurement、prediction、intervention、decision，可重复）。仅有解析证明时从命题和证明义务开始；有辅助计算再取 compute 核查。局部请求只进对应阶段，不建案例、不写 tasks.md。未知届次或期刊不继承其它要求。
 
 按请求选：[数据](skills/praxis-data-analysis/SKILL.md)、[预测](skills/praxis-time-series/SKILL.md)、[推断](skills/praxis-statistics/SKILL.md)、[优化](skills/praxis-optimization/SKILL.md)、[整稿评价](skills/praxis-review/SKILL.md)、[语言](skills/praxis-scientific-writing/SKILL.md)；其余查[分工](references/capabilities.md)。仅加载当前主责。
 

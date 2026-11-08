@@ -34,6 +34,7 @@ KEY_RESOURCES = (
     'SKILL.md', 'pyproject.toml', 'uv.lock', 'packaging/plugin.json', 'packaging/mcp.json',
     'templates/mcm-paper.tex', 'templates/mcm-style.tex', 'templates/cumcm-paper.tex',
     'templates/cumcm-style.tex', 'templates/research-paper.tex', 'templates/research-style.tex',
+    'templates/research-zh-paper.tex', 'templates/research-zh-style.tex',
     'templates/cumcm-fonts.json', 'templates/typesetting-runtime.json', 'scripts/build_plugin.py',
 )
 

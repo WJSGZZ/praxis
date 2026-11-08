@@ -419,7 +419,7 @@ def test_cumcm_figure_data_and_proofs_follow_archived_records():
 def test_research_running_title_is_explicit():
     text = (ROOT/'templates/research-paper.tex').read_text()
     with pytest.raises(ValueError, match='running title'):
-        check(text.replace('[Mathematical research title]', ''), 'research')
+        check(text.replace('[Bounded error in a weighted mean]', ''), 'research')
 
 
 def test_removed_table_is_rejected_but_forward_and_package_references_are_valid():
@@ -602,3 +602,22 @@ def test_current_zero_disclosure_identity_is_refused_but_history_and_science_rem
         check(source, layout_mode='current')
     historical = source.replace('Template team', 'The earlier template team')
     check(historical, layout_mode='current')
+
+
+def test_research_language_starters_create_distinct_checked_manuscripts(tmp_path):
+    import subprocess
+    import sys
+    from scripts.paper_template import check
+    for lang, expected in [('zh', 'praxis-research-zh-v1'), ('en', 'praxis-research-v2')]:
+        manuscript = tmp_path / f'{lang}.tex'
+        cmd = [sys.executable, '-m', 'scripts.paper_template', str(manuscript), '--init-research', lang]
+        subprocess.run(cmd, cwd=ROOT, check=True)
+        source = manuscript.read_text(encoding='utf-8')
+        assert check(source, 'research')['profile'] == expected
+        if lang == 'zh':
+            assert '{ctexart}' in source and r'\begin{proposition}' in source
+            with pytest.raises(ValueError, match='shared source'):
+                check(source.replace('zihao=-4', 'zihao=-5'), 'research')
+        manuscript.write_text('draft the author has edited', encoding='utf-8')
+        assert subprocess.run(cmd, cwd=ROOT, capture_output=True).returncode != 0
+        assert manuscript.read_text(encoding='utf-8') == 'draft the author has edited'

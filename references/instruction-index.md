@@ -2,7 +2,7 @@
 
 由 `scripts/instruction_packet.py --print-index` 从运行时资源定义生成；勿手工修改。
 
-无终端时按下表直接读取文件与指定区段。core 指唯一 `<!-- praxis:core:start -->` 至 `<!-- praxis:core:end -->` 内的正文；全文包括技能头信息。章节指同名标题及其下级内容，至下一个同级或更高标题。
+无终端时按下表直接读取文件与指定区段。core 指唯一 `<!-- praxis:core:start -->` 至 `<!-- praxis:core:end -->` 内的正文；宿主按技能头信息发现技能，命令输出技能正文。章节包含同名标题及其下级内容，至下一个同级或更高标题。
 
 每阶段均包含完整 integrity 安全文与 learning-loop 的“同题资料与接触范围”节。研究阶段另外必读 research 原文，不继承竞赛清单或 MCM current 命令；竞赛阶段才增加竞赛清单与交付核心。
 
@@ -67,6 +67,19 @@
 | research | [references/learning-loop.md](learning-loop.md) | 章节：同题资料与接触范围 |
 | research | [references/research-mode.md](research-mode.md) | 额外必读 detail `research`；全文 |
 
+## 研究主张选择
+
+研究阶段由作者按主张选 --claim-type，可重复使用。无终端时读 research 原文与下列对应章节。仅选 proof 的纯推导稿使用 verify、report、methods、writing 与两份安全原文。含计算、经验或决策主张时按完整研究阶段执行，另核实际数值输入和独立证据。
+
+| 类型 | 主张 | 首读章节 |
+|---|---|---|
+| proof | 解析命题、定理或算法保证 | [references/mathematical-reasoning.md](mathematical-reasoning.md) · 命题与证明义务 |
+| mechanism | 方程的解释及对观测的预测 | [references/dynamical-modeling.md](dynamical-modeling.md) · 数值检查与机制确认分别做 |
+| measurement | 构念、观测单位与描述结论 | [references/data-analysis.md](data-analysis.md) · 从研究问题确定观察和测量契约 |
+| prediction | 预测、泛化和基线比较 | [references/machine-learning.md](machine-learning.md) · 选择与最终评价 |
+| intervention | 改变处理或政策的因果效果 | [references/causal-analysis.md](causal-analysis.md) · 识别先于估计 |
+| decision | 建议所依赖的目标、信息、约束和替代方案 | [references/optimization.md](optimization.md) · 定义可执行的决策 |
+
 ## 条件细则
 
 只有对应缺口或明确阶段要求才读取；先选ID，再按真实文件/标题取文。被core/details分区的文件，细则取details区；标题未指定时取整个细则区，未分区的文件取全文；`@intro`取文件开头至首个二级标题前。
@@ -90,6 +103,10 @@
 | `tools` | [references/model-library.md](model-library.md) | 全文/整个details区 | 方法/工具适用范围或既有实现不明 |
 | `scientific-writing` | [references/scientific-writing.md](scientific-writing.md) | 全文/整个details区 | 局部学术论证/公式解释需要专项修订 |
 | `literature` | [references/literature-review.md](literature-review.md) | 全文/整个details区 | 需要综述而非普通来源核读 |
+| `closest-work` | [references/literature-review.md](literature-review.md) | 逐条判断相对已有工作的贡献 | 评估定理、证明或应用结论相对最近先例多了什么 |
+| `siam-siap` | [references/siam-research.md](siam-research.md) | SIAP：一个科学问题和一项数学推进 | 目标为 SIAM Journal on Applied Mathematics |
+| `siam-sinum` | [references/siam-research.md](siam-research.md) | SINUM：数值方法的设计或分析推进了什么 | 目标为 SIAM Journal on Numerical Analysis |
+| `siam-sisc` | [references/siam-research.md](siam-research.md) | SISC：计算优势在什么条件下成立 | 目标为 SIAM Journal on Scientific Computing |
 | `research` | [references/research-mode.md](research-mode.md) | 全文/整个details区 | 任务为研究而非完整竞赛 |
 | `defense` | [references/defense-coaching.md](defense-coaching.md) | 全文/整个details区 | 实际共同研究或答辩准备 |
 | `capabilities` | [references/capabilities.md](capabilities.md) | 全文/整个details区 | 请求超出四主责或需要专业分工 |
@@ -125,3 +142,9 @@
 | `review` | [references/review-protocol.md](review-protocol.md) | 全文/整个details区 | 重要评语需复现并判断实际影响 |
 | `figures` | [references/visualization.md](visualization.md) | 全文/整个details区 | 具体制图/图例/空间数据/最终字号问题 |
 | `contest-profile` | [references/contest-delivery.md](contest-delivery.md) | 届次、格式与阅读文件 | 非默认赛事或需要核官方规范与项目选择 |
+| `claim-proof` | [references/mathematical-reasoning.md](mathematical-reasoning.md) | 命题与证明义务 | 解析命题、定理或算法保证 |
+| `claim-mechanism` | [references/dynamical-modeling.md](dynamical-modeling.md) | 数值检查与机制确认分别做 | 方程的解释及对观测的预测 |
+| `claim-measurement` | [references/data-analysis.md](data-analysis.md) | 从研究问题确定观察和测量契约 | 构念、观测单位与描述结论 |
+| `claim-prediction` | [references/machine-learning.md](machine-learning.md) | 选择与最终评价 | 预测、泛化和基线比较 |
+| `claim-intervention` | [references/causal-analysis.md](causal-analysis.md) | 识别先于估计 | 改变处理或政策的因果效果 |
+| `claim-decision` | [references/optimization.md](optimization.md) | 定义可执行的决策 | 建议所依赖的目标、信息、约束和替代方案 |

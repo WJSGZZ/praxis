@@ -161,10 +161,10 @@ def test_prose_precision_leaks_boundaries_exemptions_and_commit_urls():
     tex = r'\section{Model}Body.\section{Reproducibility}Exempt.\section{Conclusion}Decision.'
     pages = ['Model\nThe cost is $122.649928 million for 1234567 people, with 0.123456% coverage. '
              'The measurement is 0.123456789 km. '
-             'Run 20261014T024934-616bd085 uses abcdef1234567890 in /Users/xik/private/report and C:\\work\\run. '
+             'Run 20261014T024934-616bd085 uses abcdef1234567890 in /Users/example/private/report and C:\\work\\run. '
              'The public source is https://github.com/a/b/blob/0123456789abcdef/script.py . '
              'Identifier xabcdef1234567890z is a word.\n'
-             'Reproducibility\nRun 20261014T024934-616bd085 at /Users/xik/reproduce.\n'
+             'Reproducibility\nRun 20261014T024934-616bd085 at /Users/example/reproduce.\n'
              'Conclusion\nThe chosen policy improves the observed response.']
     result = prose(tex, pages, problem_year=2023)
     kinds = [c['kind'] for c in result['metrics']['process_leak_candidates']]

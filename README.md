@@ -68,7 +68,7 @@
 
 **[更多案例 →](demos/README.md)** 数据分析、空间覆盖、图像测量、数学研究及次要美赛论文集中在案例总览。
 
-论文由共享版式源生成：国赛、美赛分别适配，数学研究稿使用 [AMS 风格模板](templates/research-paper.tex)。固定编译环境、样式漂移检查和三系统排版 CI 用来维持一致；新美赛稿明确使用原题年份，摘要采用三栏信息；正文与目录可按需要使用三级标题。冻结案例保留原版式，迁移另存修订。章节与图按论证需要选择，最终仍检查实际 PDF。图由有效数据生成，使用 PGFplots/TikZ 矢量绘制，复杂数值场可按需求使用成熟科学绘图库。
+论文由共享版式源生成：国赛、美赛分别适配，研究工作论文按主文语言选用[中文 CTeX 模板](templates/research-zh-paper.tex)或[英文 AMS 模板](templates/research-paper.tex)。运行 `python -m scripts.paper_template report.tex --init-research zh` 建中文稿，英文稿选 `en`。固定编译环境、样式漂移检查和三系统排版 CI 用来维持一致；新美赛稿明确使用原题年份，摘要采用三栏信息；正文与目录可按需要使用三级标题。冻结案例保留原版式，迁移另存修订。章节与图按论证需要选择，最终仍检查实际 PDF。图由有效数据生成，使用 PGFplots/TikZ 矢量绘制，复杂数值场可按需求使用成熟科学绘图库。
 
 美赛案例已统一为当前 A4 共享模板：普通正文与图表文字 12pt，摘要及标题后首段缩进 2em，AI 报告独立起页。新交付必须通过构建、实际字号、逐页审阅及冻结门禁；旧冻结稿保留原身份，当前案例入口提供格式修订阅读版。[美赛精选作品](https://github.com/WJSGZZ/praxis/tree/main/demos/mcm-studies)另列在次要案例中，未校准 AI 评议不等于正式获奖。
 
@@ -164,6 +164,11 @@ uv sync --project /path/to/plugin/skills/praxis --locked
 规则按“赛事—赛项—届次”查询[赛事档案](evals/competitions.json)，包括国赛 2026 的 AI 使用细则和研究生赛 2026 的格式、提交及答辩要求；具体交付时再按该届规则检查。
 
 开始时先确认交付目标（竞赛有截止、先做透再收敛、研究、教学）：内部按科研标准做透并设停止规则，再把证据收敛成评委读得懂的论文，做法见[深度工作与竞赛收敛](references/convergence.md)；交稿前有[独立评审协议](references/review-protocol.md)。
+
+面向 SIAM 期刊的稿件可按主要贡献选择[应用数学、数值分析或科学计算的审读依据](references/siam-research.md)。例如，数值分析稿运行 `python -m scripts.instruction_packet --stage research --detail siam-sinum`。
+判断一项结果具体新在哪里，可运行 `python -m scripts.instruction_packet --stage research --detail closest-work`。把最接近的应用模型与数学定理放在一起重新推导，查清哪些已有依据、哪一步仍需证明、这个差别会改变谁的判断。
+
+研究方法按主张选取，深度取决于还需要排除什么解释。用 `python -m scripts.instruction_packet --stage research --claim-type proof` 检查一般命题的前提与证明义务。论文同时声称预测改善并推荐干预时，可重复指定 `--claim-type prediction --claim-type intervention`，分别设计同条件比较和因果识别检查。
 
 完整竞赛稿先审读者能否找到各问答案，再审全文与关键机制；有同届同题的真实参照稿时，按[成对协议](evals/PAIRWISE.md)给比较意见。缺少参照时暂不判断奖档，只列主要问题与修改依据；诊断分仅用于定位问题。研究稿分别评价证明、新颖性、重要性、方法、表达与可核查性。两类意见都绑定稿件版本及实际检查范围，约定见[作品评测](evals/judging.md)；获奖能力仍须由真实论文的辨别试验验证。 完整稿交付前另做[专业读者检查](references/automation.md#当前交付的论文诊断全部先告警)：中文与英文文字提示、研究摘要和首页标签检查、绘图重叠提示，以及只看成品页面的新上下文读者记录。所有新增项只告警；缺记录或问题未处理时如实显示状态，不把检查通过当成研究质量认证。
 

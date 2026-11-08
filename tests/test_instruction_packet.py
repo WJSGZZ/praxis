@@ -101,3 +101,28 @@ def test_packet_omits_skill_frontmatter_but_keeps_host_description():
     assert raw.startswith('---\n') and len(raw.split('description:', 1)[1].split('\n', 1)[0]) > 150
     body = strip_frontmatter(raw)
     assert not body.startswith('---') and body in raw
+
+
+def test_theory_and_mixed_research_choose_evidence_for_the_actual_claims():
+    theory, manifest = packet(stage='research', claim_types=['proof'])
+    assert '命题与证明义务' in theory and '完整模型先写planning/model-contract.json' not in theory
+    assert 'skills/praxis-verify/SKILL.md' in {record['path'] for record in manifest['sources']}
+    assert {row['path'] for row in manifest['static_templates_not_emitted']} == {
+        f'templates/{name}-{part}.tex' for name in ('research', 'research-zh') for part in ('paper', 'style')}
+    mixed, manifest = packet(stage='research', claim_types=['prediction', 'intervention', 'intervention'])
+    assert [r['id'] for r in manifest['required_details']] == ['research', 'claim-prediction', 'claim-intervention']
+    assert '选择与最终评价' in mixed and '识别先于估计' in mixed
+    with pytest.raises(ValueError, match='stage research'):
+        packet(stage='contest', claim_types=['proof'])
+
+
+def test_closest_work_is_discoverable_and_loads_just_the_comparison_method():
+    general, _ = packet(stage='research')
+    assert '--detail closest-work' in general
+    from scripts.instruction_packet import section_region
+    guide = (ROOT / 'references/literature-review.md').read_text()
+    section = section_region(guide, '逐条判断相对已有工作的贡献')
+    assert section not in general
+    detailed, manifest = packet(stage='research', claim_types=['proof'], details=['closest-work'])
+    assert section in detailed and guide not in detailed
+    assert [row['id'] for row in manifest['details']] == ['closest-work']

@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.optimize import brentq, least_squares
-from modeling.contracts import diagnostic
+from modeling.contracts import diagnostic, jacobian_uncertainty
 
 
 def simulate_sir(beta, gamma, population, infected0, days, *, recovered0=0.):
@@ -48,8 +48,9 @@ def final_size(r0, *, susceptible_fraction=1.0, infected_fraction=None):
 def fit_sir(infected, population, *, recovered=None, starts=((.4, .2), (.2, .1), (.8, .3))):
     """Fit beta and gamma to daily infected counts; flags weak identifiability from the Jacobian.
 
-    With only infected counts early in an outbreak, beta and gamma are strongly correlated; a
-    large condition number or correlation means the data cannot separate them."""
+    The first day specifies the initial compartments; only later observations enter the
+    residuals. Local standard errors assume independent errors of common variance across
+    the fitted series, an interior solution, and a full-rank Jacobian."""
     y = np.asarray(infected, float)
     if (y.ndim != 1 or len(y) < 4 or not np.isfinite(y).all() or (y < 0).any()
             or not np.isfinite(population) or population <= 0 or (y > population).any() or y[0] <= 0):
@@ -62,8 +63,8 @@ def fit_sir(infected, population, *, recovered=None, starts=((.4, .2), (.2, .1),
 
     def residual(theta):
         simulated = simulate_sir(theta[0], theta[1], population, y[0], days, recovered0=recovered0)
-        i_residual = np.asarray(simulated['I']) - y
-        return i_residual if r is None else np.r_[i_residual, np.asarray(simulated['R']) - r]
+        i_residual = np.asarray(simulated['I'])[1:] - y[1:]
+        return i_residual if r is None else np.r_[i_residual, np.asarray(simulated['R'])[1:] - r[1:]]
 
     best = None
     for start in starts:
@@ -75,15 +76,20 @@ def fit_sir(infected, population, *, recovered=None, starts=((.4, .2), (.2, .1),
             best = fit
     if best is None:
         raise RuntimeError('Fit failed from every start')
-    jac = best.jac
-    cond = float(np.linalg.cond(jac))
-    rank = int(np.linalg.matrix_rank(jac))
-    cov = np.linalg.pinv(jac.T @ jac) * (2 * best.cost / max(1, len(best.fun) - 2))
-    sd = np.sqrt(np.diag(cov))
-    corr_raw = float(cov[0, 1] / (sd[0] * sd[1])) if sd.min() > 0 else float('nan')
+    residual_count = len(best.fun)
+    degrees_of_freedom = residual_count - len(best.x)
+    rank, cond, sd, corr_matrix = jacobian_uncertainty(best.jac, 2 * best.cost / degrees_of_freedom)
+    corr_raw = float(corr_matrix[0, 1])
     identified = rank == 2 and bool(best.success)
-    corr, corr_status = diagnostic(corr_raw, status=None if identified else 'not_identifiable',
-                                   reason='Parameter correlation requires a converged full-rank fit and positive estimated variances')
+    active_bounds = {name: ('lower' if side < 0 else 'upper') for name, side in zip(('beta', 'gamma'), best.active_mask) if side}
+    inference_status = 'computed'
+    inference_reason = 'Parameter correlation requires positive estimated variances'
+    if not identified:
+        inference_status, inference_reason = 'not_identifiable', 'Individual inference requires a converged full-rank fit'
+    elif active_bounds:
+        inference_status, inference_reason = 'active_bound', 'An active parameter bound invalidates the ordinary joint interior covariance approximation'
+    corr, corr_status = diagnostic(corr_raw, status=None if inference_status == 'computed' else inference_status,
+                                   reason=inference_reason)
     condition, condition_status = diagnostic(cond, reason='The fitted Jacobian is singular; its condition is unbounded')
     r0 = float(best.x[0] / best.x[1])
     susceptible0 = population - y[0] - recovered0
@@ -91,13 +97,16 @@ def fit_sir(infected, population, *, recovered=None, starts=((.4, .2), (.2, .1),
                 final_size=float(final_size(r0, susceptible_fraction=susceptible0 / population, infected_fraction=y[0] / population)),
                 final_size_initial_state=dict(susceptible_fraction=float(susceptible0 / population), infected_fraction=float(y[0] / population),
                                               definition='Final removals minus initial recovered, divided by population; includes initially infected people'),
-                rmse=float(np.sqrt(2 * best.cost / len(best.fun))),
-                std_error=sd.tolist() if identified else None, parameter_correlation=corr, jacobian_condition=condition,
+                rmse=float(np.sqrt(2 * best.cost / residual_count)), fitted_residual_count=residual_count,
+                residual_degrees_of_freedom=degrees_of_freedom if inference_status == 'computed' else None,
+                active_bounds=active_bounds, std_error=sd.tolist() if inference_status == 'computed' else None,
+                parameter_correlation=corr, jacobian_condition=condition,
                 jacobian_rank=rank, converged=bool(best.success),
                 diagnostics=dict(parameter_correlation=corr_status, jacobian_condition=condition_status,
-                                 parameter_inference=dict(status='computed' if identified else 'not_identifiable')),
+                                 parameter_inference=dict(status='computed') if inference_status == 'computed'
+                                 else dict(status=inference_status, reason=inference_reason)),
                 weakly_identified=bool(not identified or cond > 1e6 or corr is not None and abs(corr) > .98),
                 fitted_observations=['infected'] if r is None else ['infected', 'recovered'],
                 assumptions=dict(initial_infected=float(y[0]), initial_recovered=recovered0, population=float(population), model='SIR with the declared initial recovered compartment',
                                  weakly_identified_rule='condition number of the Jacobian above 1e6 or |parameter correlation| above 0.98',
-                                 std_error_note='Local standard errors assuming the model is right and noise is independent; with noiseless or smooth data they are far too small to be believed.'))
+                                 std_error_note='Day zero fixes the initial state. Local standard errors use only later observations and assume independent errors of common variance across the fitted series. Ordinary errors are withheld at an active bound.'))

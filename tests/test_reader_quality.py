@@ -123,6 +123,7 @@ def test_followup_reuses_the_initial_reader_without_claiming_a_new_blind_context
 
 
 def test_quality_packet_includes_every_page_even_blank(tmp_path):
+    import json
     from pypdf import PdfWriter
     from scripts.reader_packet import build_quality
     source=tmp_path/'source.pdf';writer=PdfWriter()
@@ -134,6 +135,54 @@ def test_quality_packet_includes_every_page_even_blank(tmp_path):
     assert (tmp_path/'packet/page-02.png').exists()
     assert packet['figures'] == []
     assert (tmp_path/'packet/packet.pdf').read_bytes() == source.read_bytes()
+    template = json.loads((tmp_path/'packet/reader-review-template.json').read_text())
+    assert template['quality_schema_version'] == 2
+    assert template['fresh_context'] is None
+    assert all(row['issue_ids'] == [] for row in template['quality_checks'])
+
+
+def test_unrelated_issue_cannot_close_a_comparison_or_hide_it_on_followup():
+    from scripts.reader_packet import QUALITY_CHECKLIST, quality_status
+    initial = {
+        'quality_schema_version': 2, 'type': 'reader', 'actor': 'fixture',
+        'reading_scope': 'rendered_pages_only', 'fresh_context': True, 'review_round': 'initial',
+        'source_pdf_sha256': 'a'*64,
+        'quality_checks': [
+            {'id': str(i), 'verdict': 'clear', 'evidence': 'page 1', 'issue_ids': []}
+            for i in range(1, len(QUALITY_CHECKLIST) + 1)],
+        'issues': [{'id': 'unit', 'page': 1, 'description': 'Unit abbreviation.',
+                    'status': 'retained', 'resolution': 'Table header specifies hours.'}]}
+    initial['quality_checks'][1].update(verdict='issue', issue_ids=['comparison'])
+    # The 70% reduction compares the proposed method at low load with the
+    # baseline at high load. Neither a resolved unit question nor a clean
+    # verdict on the next PDF accounts for the reader's original objection.
+    assert quality_status(initial, 'a'*64)['unresolved'] == 1
+    problem = {'id': 'comparison', 'page': 1, 'description': 'Unlike workloads.', 'status': 'open'}
+    initial['issues'].append(problem)
+    assert quality_status(initial, 'a'*64)['unresolved'] == 1
+    revised = dict(initial, review_round='followup', fresh_context=False,
+                   initial_review=initial, initial_pdf_sha256='a'*64, source_pdf_sha256='b'*64,
+                   quality_checks=[dict(c, verdict='clear', issue_ids=[]) for c in initial['quality_checks']],
+                   issues=initial['issues'][:1])
+    assert quality_status(revised, 'b'*64)['unresolved'] == 1
+    downgraded = {k: v for k, v in revised.items() if k != 'quality_schema_version'}
+    assert quality_status(downgraded, 'b'*64)['status'] == '未经独立读者审阅'
+    assert quality_status(dict(downgraded, quality_schema_version=1), 'b'*64)['status'] == '未经独立读者审阅'
+    # A reader named the concern on the checklist but omitted its issue
+    # row. It must survive even if the new checklist now says clear.
+    incomplete = dict(initial, issues=initial['issues'][:1])
+    assert quality_status(dict(revised, initial_review=incomplete), 'b'*64)['unresolved'] == 1
+    unnamed = dict(incomplete, quality_checks=[dict(c, issue_ids=[]) for c in incomplete['quality_checks']])
+    assert quality_status(dict(revised, initial_review=unnamed), 'b'*64)['unresolved'] == 1
+    revised['issues'].append(dict(problem, status='fixed', resolution='Page 1 compares like workloads.'))
+    assert quality_status(revised, 'b'*64)['unresolved'] == 0
+    assert quality_status(dict(revised, initial_review=incomplete), 'b'*64)['unresolved'] == 0
+    linked = [dict(c) for c in revised['quality_checks']]
+    linked[1]['issue_ids'] = ['comparison']
+    assert quality_status(dict(revised, initial_review=unnamed, quality_checks=linked), 'b'*64)['unresolved'] == 0
+    assert quality_status(dict(revised, fresh_context=True), 'b'*64)['status'] == '未经独立读者审阅'
+    unbound = dict(revised, initial_pdf_sha256=None, initial_review=dict(initial, source_pdf_sha256=None))
+    assert quality_status(unbound, 'b'*64)['status'] == '未经独立读者审阅'
 
 
 def test_contract_acceptance_is_not_an_internal_process_leak():

@@ -1,0 +1,88 @@
+\newcommand{\PraxisTitle}{平均能把有界测量误差降低多少？}
+% BEGIN PRAXIS RESEARCH-ZH STYLE v1
+% 中文研究工作论文。指定期刊有独立版式时使用其模板。
+\documentclass[UTF8,scheme=chinese,fontset=fandol,zihao=-4,a4paper]{ctexart}
+\usepackage{amsmath,amssymb,amsthm,booktabs,caption}
+\usepackage[margin=30mm]{geometry}
+\usepackage[hidelinks,pdfauthor={},pdftitle={\PraxisTitle}]{hyperref}
+\urlstyle{same}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{fillbetween,groupplots}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{main}{HTML}{0072B2}
+\definecolor{accent}{HTML}{D55E00}
+\definecolor{muted}{HTML}{7A7F85}
+\definecolor{light}{HTML}{B8BDC2}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oiorange}{HTML}{E69F00}
+\definecolor{oisky}{HTML}{56B4E9}
+\definecolor{oiyellow}{HTML}{F0E442}
+\definecolor{teal}{HTML}{17766E}
+\definecolor{clay}{HTML}{9E6440}
+\definecolor{slate}{HTML}{5D696E}
+\definecolor{sand}{HTML}{AAA69B}
+\ctexset{section={format=\large\bfseries},subsection={format=\normalsize\bfseries}}
+
+% Keep optional authors and dates out of the title spacing when they are empty.
+\makeatletter
+\renewcommand{\@maketitle}{%
+  \begin{center}
+    {\Large\bfseries\@title\par}
+    \ifx\@author\@empty\else
+      \vskip .6em {\normalsize\begin{tabular}[t]{c}\@author\end{tabular}\par}%
+    \fi
+    \ifx\@date\@empty\else\vskip .3em {\small\@date\par}\fi
+  \end{center}}
+\makeatother
+
+\renewcommand{\abstractname}{摘要}
+\renewcommand{\refname}{参考文献}
+\newcommand{\PraxisKeywords}[1]{\par\smallskip\noindent\textbf{关键词：}#1}
+\captionsetup{font=small,labelsep=quad}
+\captionsetup[table]{position=above}
+\newtheoremstyle{zhplain}{5pt}{5pt}{\normalfont}{}{\bfseries}{}{.6em}{}
+\theoremstyle{zhplain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{remark}[theorem]{注}
+\renewcommand{\proofname}{证明}
+\raggedbottom
+% END PRAXIS RESEARCH-ZH STYLE
+
+% 中文工作论文示例。正式投稿时按目标期刊要求设置作者、单位和参考文献。
+\title{\PraxisTitle}
+\author{}\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+多次测量均有相同的误差上界时，加权平均能把最坏误差降低多少？
+对权重非负、总和为一的估计量，最坏误差恰好等于单次测量的误差上界。
+所有测量同时出现同向极端误差时可达到这个界。
+\PraxisKeywords{加权平均；误差界；测量}
+\end{abstract}
+\section{测量误差与估计目标}
+设 $n\geq1$ 次测量满足 $y_i=\theta+e_i$，每次误差均满足
+$|e_i|\leq\delta$，其中 $\delta\geq0$。只给定这些范围时，
+加权平均最多会偏离真值 $\theta$ 多少？
+\section{最坏误差及其取值条件}
+\begin{proposition}
+若 $w_i\geq0$ 且 $\sum_i w_i=1$，则
+\[
+  \sup_{|e_i|\leq\delta}\left|\sum_i w_i y_i-\theta\right|=\delta .
+\]
+\end{proposition}
+\begin{proof}
+估计误差等于 $\sum_i w_i e_i$，其绝对值至多为
+$\sum_i w_i\delta=\delta$。取所有 $e_i=\delta$ 即可达到上界。
+\end{proof}
+这个上确界也可由对偶范数得到\cite{bv}。只要同向极端误差仍有可能，
+增加测量次数就无法收紧此界。若关心平均值的方差，则还须给出误差的概率模型。
+\begin{thebibliography}{1}
+\bibitem{bv} Boyd S, Vandenberghe L. \textit{Convex Optimization}.
+Cambridge University Press, 2004. 附录 A.
+\end{thebibliography}
+\end{document}

@@ -11,7 +11,7 @@ from scripts import texplot
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / 'templates/mcm-style.tex'
-VERSIONS = {'mcm': 5, 'cumcm': 2, 'research': 2}
+VERSIONS = {'mcm': 5, 'cumcm': 2, 'research': 2, 'research-zh': 1}
 # A house identity for simulations only; it is not an assigned contest team.
 MCM_SIMULATION_TEAM = '7391856'
 BEGIN = '% BEGIN PRAXIS MCM STYLE v5\n'
@@ -186,6 +186,8 @@ def check(text, contest='mcm', *, layout_mode='archive'):
     # Inspect TeX line endings semantically; receipts still bind untouched bytes.
     # Windows Path.write_text emits CRLF even with LF Git checkout attributes.
     text = text.replace('\r\n', '\n').replace('\r', '\n')
+    if contest == 'research' and re.search(r'^% BEGIN PRAXIS RESEARCH-ZH STYLE v\d+$', text, re.M):
+        contest = 'research-zh'
     if layout_mode not in {'current', 'archive'}:
         raise ValueError('Layout mode must be current or archive')
     version = VERSIONS[contest]
@@ -877,6 +879,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('tex', type=Path, help='Standalone TeX generated with a shared style')
     parser.add_argument('--contest', choices=list(VERSIONS), default='mcm')
+    parser.add_argument('--init-research', choices=('en', 'zh'),
+                        help='Write a new English or Chinese research starter at TEX')
     parser.add_argument('--compile', action='store_true', help='Compile with the pinned canonical runtime')
     parser.add_argument('--output-directory', type=Path, help='New output directory for canonical build artifacts')
     parser.add_argument('--compiler', help='Path to Tectonic 0.17.0')
@@ -890,6 +894,18 @@ def main():
     parser.add_argument('--structure-review', type=Path,
                         help='Exact-source-bound JSON reasons, used with --review-structure')
     args = parser.parse_args()
+    if args.init_research:
+        if args.compile or args.review_captions or args.review_structure or args.structure_review:
+            parser.error('Initialize the new manuscript before compiling or reviewing it')
+        profile = 'research' if args.init_research == 'en' else 'research-zh'
+        source = (ROOT / f'templates/{profile}-paper.tex').read_text(encoding='utf-8')
+        check(source, profile, layout_mode='current')
+        try:
+            with args.tex.open('x', encoding='utf-8') as output:
+                output.write(source)
+        except OSError as exc:
+            parser.exit(2, f'{exc}\n')
+        return
     if args.structure_review is not None and not args.review_structure:
         parser.error('--structure-review requires --review-structure')
     if args.compile and (args.review_structure or args.review_captions):

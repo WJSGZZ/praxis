@@ -38,6 +38,8 @@ def test_research_view_keeps_evidence_and_does_not_convert_to_awards(tmp_path):
     assert user['assessments'][0]['review_id'] == user['reviews'][0]['review_id']
     assert user['reviews'][0]['critical_claims'][0]['status'] == 'supported'
     assert user['assessments'][0]['criteria']['novelty']['status'] == 'unverified'
+    assert user['assessments'][0]['verification_checks'] is None
+    assert user['assessments'][0]['closest_work_comparisons'] is None
     assert 'award_estimates' not in internal['research-note']
 
 
@@ -72,6 +74,98 @@ def test_research_literature_and_root_issue_associations_are_preserved(tmp_path)
     user = ag.user_view(ag.aggregate([path]))['research-note']
     assert user['assessments'][0]['criteria']['novelty']['issue_ids'] == ['prior']
     assert user['reviews'][0]['validity_status'] == 'supported'  # Known does not mean mathematically false.
+
+
+def closest_comparison():
+    return dict(claim_id='theorem', source='Test prior on addition', location='identity (1)',
+                prior_result='Adding two to n gives n + 2.', scope='For integers; here n = 2.',
+                derivation='Substitute 2 into (1).', relation='implied',
+                increment_kind='mathematical_result', increment='The claimed new identity.',
+                status='refuted')
+
+
+def test_distinguish_known_claim_from_added_application_without_certifying_novelty(tmp_path):
+    item = research_item()
+    known = closest_comparison()
+    application = dict(known, increment_kind='application', status='supported',
+                       increment='Converts the identity into a check on a device count.',
+                       application_implication='Two working units from each rack meet a target of four.')
+    unresolved = dict(known, source='A second source', location='Abstract only',
+                      scope='Full statement and assumptions unavailable.', relation='unresolved',
+                      derivation='The abstract omits the hypotheses.', increment_kind='undetermined',
+                      increment='Insufficient information for comparison.', status='unverified')
+    rows = [known, application, unresolved]
+    item['research_assessment']['closest_work_comparisons'] = rows
+    path = tmp_path / 'review.json'
+    path.write_text(json.dumps([item]))
+    view = ag.user_view(ag.aggregate([path]))['research-note']
+    assert view['assessments'][0]['closest_work_comparisons'] == rows
+    assert view['assessments'][0]['criteria']['novelty']['status'] == 'unverified'
+    assert view['validity'] == ['supported']
+
+    assessment = item['research_assessment']
+    assessment['novelty_search'].update(completed=True, scope='Fixture application comparison.',
+                                        sources=[application['source']])
+    assessment['criteria']['novelty'].update(status='supported', evidence=application['increment'])
+    path.write_text(json.dumps([item]))
+    updated = ag.user_view(ag.aggregate([path]))['research-note']['assessments'][0]
+    assert updated['closest_work_comparisons'][-1]['status'] == 'unverified'
+    assert updated['criteria']['novelty']['status'] == 'supported'
+
+
+@pytest.mark.parametrize('updates', [
+    {'claim_id': 'absent'}, {'location': ''}, {'derivation': ''}, {'status': 'supported'},
+    {'relation': 'unresolved'}, {'increment_kind': 'application'}, {'relation': 'certified'},
+    {'increment_kind': 'undetermined', 'status': 'supported'},
+])
+def test_reject_contradictory_or_unbound_prior_comparisons(updates):
+    item = research_item()
+    item['research_assessment']['closest_work_comparisons'] = [dict(closest_comparison(), **updates)]
+    with pytest.raises(ValueError):
+        ag.review_record(item)
+
+
+def empirical_comparison():
+    return dict(claim_id='theorem', kind='same_data_reproduction', status='consistent',
+                actor='reviewer-1', basis='examined', evidence='test fixture, table 1',
+                original_data='sample A v1', check_data='sample A v1', same_procedure=True,
+                procedure='Mean using both original observations 1 and 3.',
+                comparison_rule='Exact equality to 2.', observed='(1+3)/2=2')
+
+
+def test_empirical_checks_separate_access_recalculation_and_new_samples(tmp_path):
+    item = research_item()
+    item['critical_claims'][0].update(claim='The original sample mean is 2.',
+                                      evidence='Original observations are 1 and 3.')
+    rerun = empirical_comparison()
+    rows = [dict(claim_id='theorem', kind='artifact_access', status='restricted', basis='reported',
+                 actor='data custodian', evidence='Reviewer granted controlled access.'),
+            rerun, dict(rerun, kind='new_data_replication', status='inconsistent',
+                        check_data='sample B', collection='New sampling visit for this fixture.',
+                        procedure='Same instrument and estimand as in the original study.',
+                        comparison_rule='Difference in means within 0.25.',
+                        observed='Sample B mean 3; difference 1.')]
+    item['research_assessment']['verification_checks'] = rows
+    path = tmp_path / 'reviews.json'
+    path.write_text(json.dumps([item]))
+    view = ag.user_view(ag.aggregate([path]))['research-note']
+    assert view['assessments'][0]['verification_checks'] == rows
+    assert view['validity'] == ['supported']  # A new sample does not change the original arithmetic.
+
+
+@pytest.mark.parametrize('updates', [
+    {'kind': 'new_data_replication', 'collection': 'Original data copied again.'},
+    {'check_data': 'new sample'}, {'same_procedure': False},
+    {'kind': 'new_data_replication', 'check_data': 'sample B'},  # no collection provenance
+    {'kind': 'artifact_access'},  # access is not a completed result comparison
+    {'status': 'not_checked'},  # still carries an observed outcome
+    {'claim_id': 'absent'}, {'basis': 'certified'}, {'comparison_rule': ''},
+])
+def test_contradictory_or_unbound_empirical_check_does_not_pass(updates):
+    item = research_item()
+    item['research_assessment']['verification_checks'] = [dict(empirical_comparison(), **updates)]
+    with pytest.raises(ValueError):
+        ag.review_record(item)
 
 
 def test_one_paper_cannot_mix_competition_and_research_judgments(tmp_path):

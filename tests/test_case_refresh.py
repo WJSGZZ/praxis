@@ -209,3 +209,80 @@ def test_changed_guarded_non_json_output_blocks_reusing_fixed_derived_facts(tmp_
     (case/'runs/new/output/arrays.npz').write_bytes(b'tampered')
     with pytest.raises(ValueError,match='[Hh]ash'):
         cr.assess_case(entry,tmp_path)
+
+
+def test_global_tolerance_does_not_round_large_integer_difference_down():
+    limit = 10**30
+    report = cr.compare_results({'v': 0}, {'v': limit + 1}, {'absolute': limit})
+    assert report['changes'][0]['new'] == limit + 1
+
+
+def test_compare_reports_each_required_scientific_quantity(tmp_path):
+    old = {'mesh': 16, 'runtime': 8, 'risk': 0.10, 'units': {'runtime': 'h', 'risk': '1'}}
+    new = dict(old, runtime=8.3, risk=0.8)
+    paths = [tmp_path/name for name in ('reference.json', 'candidate.json', 'criteria.json')]
+    def compare():
+        for path, obj in zip(paths, (old, new, spec)):
+            path.write_text(json.dumps(obj), encoding='utf-8')
+        return cr.compare_metric_files(*paths)
+
+    spec = {'conditions': {'/mesh': 16}, 'metrics': [
+        {'pointer': '/runtime', 'unit_pointer': '/units/runtime', 'unit': 'h', 'absolute': 1, 'relative': 0},
+        {'pointer': '/risk', 'unit_pointer': '/units/risk', 'unit': '1', 'absolute': .01, 'relative': 0}]}
+    result = compare()
+    assert result['status'] == 'outside_tolerance'
+    assert [row['status'] for row in result['metrics']] == ['within_tolerance', 'outside_tolerance']
+    new['risk'] = 0.11
+    assert compare()['status'] == 'within_tolerance'  # inclusive boundary
+    new['units'] = {'runtime': 's', 'risk': '1'}
+    assert compare()['metrics'][0]['status'] == 'not_comparable'
+    del new['risk'], old['risk']
+    assert len(compare()['metrics'][1]['problems']) == 2
+    new['mesh'] = 8
+    result = compare()
+    assert result['failed_conditions'] == [{'side': 'candidate', 'pointer': '/mesh', 'expected': '16', 'actual': '8',
+                                            'reason': 'condition differs'}]
+    assert all(row['status'] == 'not_comparable' for row in result['metrics'])
+
+
+def test_metric_cli_keeps_exact_decimal_inputs_and_reports_invalid_files(tmp_path):
+    import subprocess
+    import sys
+    import hashlib
+
+    spec = {'metrics': [{'pointer': '/v', 'unit_pointer': '/unit', 'unit': '1',
+                         'absolute': 0, 'relative': 0}]}
+    (tmp_path/'criteria.json').write_text(json.dumps(spec))
+    (tmp_path/'a.json').write_text('{"v":1.000000000000000000001,"unit":"1"}')
+    b = tmp_path/'b.json'
+    b.write_text('{"v":1,"unit":"1"}')
+    cmd = [sys.executable, '-m', 'scripts.case_refresh', '--workspace', str(tmp_path),
+           '--compare', 'a.json', 'b.json', '--criteria', 'criteria.json']
+    def run():
+        return subprocess.run(cmd, cwd=cr.pipeline.BUNDLE, text=True, capture_output=True)
+    unequal = run()
+    assert unequal.returncode == 1, unequal.stderr
+    report = json.loads(unequal.stdout)
+    assert report['metrics'][0]['absolute_difference'] == '1/1000000000000000000000'
+    assert report['input_sha256']['candidate'] == hashlib.sha256(b.read_bytes()).hexdigest()
+    b.write_bytes((tmp_path/'a.json').read_bytes())
+    assert run().returncode == 0
+    for bad in ['{"v":NaN,"unit":"1"}', '{"v":1,"v":2,"unit":"1"}']:
+        b.write_text(bad)
+        rejected = run()
+        assert rejected.returncode == 2 and not rejected.stdout
+
+
+def test_metric_comparison_requires_explicit_units_and_tolerances(tmp_path):
+    a = tmp_path/'a.json'
+    a.write_text('{"v":true,"unit":"1"}')
+    criteria = tmp_path/'criteria.json'
+    metric = dict(pointer='/v', unit_pointer='/unit', unit='1', absolute=0, relative=0)
+    for spec in [{}, {'metrics': []}, {'metrics': [dict(metric, pointer='/~2')]},
+                 {'metrics': [dict(metric, unit='')]}, {'metrics': [dict(metric, absolute=True)]},
+                 {'metrics': [metric, metric]}, {'metrics': [metric], 'conditions': {'/n': [2]}}]:
+        criteria.write_text(json.dumps(spec))
+        with pytest.raises(ValueError):
+            cr.compare_metric_files(a, a, criteria)
+    criteria.write_text(json.dumps({'metrics': [metric]}))
+    assert cr.compare_metric_files(a, a, criteria)['status'] == 'not_comparable'

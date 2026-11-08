@@ -8,7 +8,8 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
+from fractions import Fraction
 import hashlib
 import json
 import math
@@ -40,6 +41,12 @@ def _pointer_part(value):
     return str(value).replace('~', '~0').replace('/', '~1')
 
 
+def _difference_limits(a, b, absolute, relative):
+    """Compare decimal JSON numbers exactly, including at the tolerance boundary."""
+    x, y, atol, rtol = (Fraction(str(value)) for value in (a, b, absolute, relative))
+    return abs(x - y), atol + rtol * max(abs(x), abs(y))
+
+
 def compare_results(old, new, tolerances=None):
     """Compare every JSON field, with explicit abs+relative numeric tolerances.
 
@@ -48,12 +55,13 @@ def compare_results(old, new, tolerances=None):
     Ignored exact RFC6901 paths remain visible; array reordering is a change.
     """
     _finite_tree(old); _finite_tree(new)
-    tolerances = tolerances or {}
+    tolerances = {} if tolerances is None else tolerances
     if not isinstance(tolerances, dict) or set(tolerances) - {'absolute', 'relative', 'ignore_paths'}:
         raise ValueError('Unknown comparison tolerance fields')
     absolute, relative = tolerances.get('absolute', 0), tolerances.get('relative', 0)
     for v in (absolute, relative):
-        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v < 0:
+        if (type(v) not in (int, float) or v < 0 or
+                isinstance(v, float) and not math.isfinite(v)):
             raise ValueError('Tolerances must be finite nonnegative numbers')
     ignored = tolerances.get('ignore_paths', [])
     if not isinstance(ignored, list) or len(set(ignored)) != len(ignored) or any(
@@ -73,9 +81,8 @@ def compare_results(old, new, tolerances=None):
         if numbers:
             if a == b:
                 return
-            x, y = Decimal(str(a)), Decimal(str(b))
-            limit = Decimal(str(absolute)) + Decimal(str(relative))*max(abs(x), abs(y))
-            if abs(x-y) <= limit:
+            difference_abs, limit = _difference_limits(a, b, absolute, relative)
+            if difference_abs <= limit:
                 report['within_tolerance'] += 1
             else:
                 difference(path, 'number', a, b)
@@ -103,6 +110,104 @@ def compare_results(old, new, tolerances=None):
             difference(path, 'value', a, b)
     walk(old, new, '')
     return report
+
+
+def _is_pointer(value):
+    return isinstance(value, str) and value.startswith('/') and not re.search(r'~(?![01])', value)
+
+
+def _read_comparison_input(path):
+    from modeling.schema_contracts import unique_object_pairs
+
+    raw = path.read_bytes()
+    # Preserve the input decimal spelling instead of rounding through float.
+    def read_decimal(literal):
+        try:
+            number = Decimal(literal)
+        except InvalidOperation as exc:
+            raise ValueError('Unsupported decimal exponent') from exc
+        if abs(number.adjusted()) > 4096 or len(number.as_tuple().digits) > 4096:
+            raise ValueError('Decimal input exceeds the comparison precision limit (4096 digits or exponent)')
+        return number
+    value = json.loads(raw.decode('utf-8'), object_pairs_hook=unique_object_pairs,
+                       parse_float=read_decimal, parse_constant=pipeline.reject_nonfinite)
+    return value, hashlib.sha256(raw).hexdigest()
+
+
+def compare_metric_files(reference, candidate, criteria):
+    inputs, hashes = {}, {}
+    for name, path in [('reference', reference), ('candidate', candidate), ('criteria', criteria)]:
+        inputs[name], hashes[name] = _read_comparison_input(Path(path))
+    spec = inputs['criteria']
+    if (not isinstance(spec, dict) or set(spec) - {'metrics', 'conditions'} or
+            not isinstance(spec.get('metrics'), list) or not spec['metrics']):
+        raise ValueError('Declare a nonempty metrics list and optional common conditions')
+    conditions = spec.get('conditions', {})
+    if not isinstance(conditions, dict) or not all(_is_pointer(key) for key in conditions):
+        raise ValueError('conditions must map exact JSON pointers to expected scalar values')
+
+    def get(side, pointer):
+        return pipeline.result_pointer(inputs[side], pointer)
+
+    failed_conditions = []
+    for pointer, expected in conditions.items():
+        if type(expected) not in (str, int, Decimal, bool):
+            raise ValueError('Expected a scalar condition at ' + pointer)
+        for side in ('reference', 'candidate'):
+            try:
+                actual = get(side, pointer)
+                if (isinstance(actual, bool) != isinstance(expected, bool) or actual != expected):
+                    failed_conditions.append({'side': side, 'pointer': pointer, 'expected': str(expected),
+                                              'actual': str(actual), 'reason': 'condition differs'})
+            except ValueError as exc:
+                failed_conditions.append({'side': side, 'pointer': pointer, 'reason': str(exc)})
+
+    rows = []
+    seen = set()
+    for metric in spec['metrics']:
+        required = {'pointer', 'unit_pointer', 'unit', 'absolute', 'relative'}
+        if not isinstance(metric, dict) or set(metric) != required:
+            raise ValueError('Each metric needs exactly ' + ', '.join(sorted(required)))
+        pointer, unit_pointer, unit = metric['pointer'], metric['unit_pointer'], metric['unit']
+        if not _is_pointer(pointer) or not _is_pointer(unit_pointer) or pointer in seen:
+            raise ValueError('Give distinct metric pointers and valid unit pointers')
+        seen.add(pointer)
+        if not isinstance(unit, str) or not unit.strip():
+            raise ValueError('Each metric needs a nonempty unit ("1" for dimensionless results)')
+        absolute, relative = metric['absolute'], metric['relative']
+        if any(type(t) not in (int, Decimal) or t < 0 for t in (absolute, relative)):
+            raise ValueError('Each tolerance must be a nonnegative JSON number')
+        row = dict(pointer=pointer, unit_pointer=unit_pointer, unit=unit,
+                   absolute=str(absolute), relative=str(relative), problems=[])
+        values = []
+        for side in ('reference', 'candidate'):
+            try:
+                value = get(side, pointer)
+                if type(value) not in (int, Decimal):
+                    raise ValueError('Expected a numeric result')
+                row[side] = str(value)
+                observed_unit = get(side, unit_pointer)
+                row[side + '_unit'] = str(observed_unit)
+                if observed_unit != unit:
+                    raise ValueError('Unit does not match the declared unit')
+                values.append(value)
+            except ValueError as exc:
+                row['problems'].append({'side': side, 'reason': str(exc)})
+        if row['problems'] or failed_conditions:
+            row['status'] = 'not_comparable'
+        else:
+            delta, limit = _difference_limits(*values, absolute, relative)
+            row.update(absolute_difference=str(delta), allowed_difference=str(limit),
+                       status='within_tolerance' if delta <= limit else 'outside_tolerance')
+        rows.append(row)
+    statuses = {row['status'] for row in rows}
+    status = ('not_comparable' if 'not_comparable' in statuses else
+              'outside_tolerance' if 'outside_tolerance' in statuses else 'within_tolerance')
+    return dict(status=status, input_sha256=hashes,
+                common_conditions={p: str(v) for p, v in conditions.items()}, failed_conditions=failed_conditions,
+                metrics=rows, scope='Selected numerical outputs and declared common conditions only. '
+                'Input hashes do not establish independent execution, equivalent units with different names, '
+                'equal scientific methods, or independent replication.')
 
 
 def conclusion_changes(old, new, checks):
@@ -439,12 +544,29 @@ def refresh(manifest, *, workspace=None, dry_run=True, output=None, rebuild=Fals
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', type=Path, default=Path.cwd())
-    parser.add_argument('--cases', type=Path, required=True)
+    operation = parser.add_mutually_exclusive_group(required=True)
+    operation.add_argument('--cases', type=Path)
+    operation.add_argument('--compare', type=Path, nargs=2, metavar=('REFERENCE', 'CANDIDATE'),
+                           help='Read-only comparison of selected metric values from two JSON files')
+    parser.add_argument('--criteria', type=Path, help='Metric units, common conditions and per-metric tolerances')
     parser.add_argument('--dry-run', action='store_true', help='Read-only computations; default')
     parser.add_argument('--execute', action='store_true', help='Use an already authorized workflow attempt')
     parser.add_argument('--rebuild', action='store_true', help='Generate a new fact-bound candidate; never freeze it')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
+    if args.compare:
+        if not args.criteria or args.execute or args.dry_run or args.rebuild or args.output:
+            parser.error('--compare requires --criteria; it only reads inputs and prints JSON to stdout')
+        try:
+            workspace = args.workspace.resolve()
+            paths = [_safe(workspace, path) for path in [*args.compare, args.criteria]]
+            report = compare_metric_files(*paths)
+        except (ValueError, OSError) as exc:
+            parser.exit(2, f'{exc}\n')
+        print(json.dumps(report, indent=2))
+        return 0 if report['status'] == 'within_tolerance' else 1
+    if args.criteria:
+        parser.error('--criteria requires --compare')
     if args.dry_run and args.execute:
         parser.error('--dry-run and --execute are mutually exclusive')
     destination = _safe(args.workspace.resolve(), args.output) if args.output is not None else args.workspace.resolve()/'outputs/refresh'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')+'-'+uuid.uuid4().hex[:8])

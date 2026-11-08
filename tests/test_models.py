@@ -88,6 +88,42 @@ def test_sir_fit_recovers_known_parameters_from_noiseless_data():
     assert abs(fit['beta'] - .45) < 2e-3 and abs(fit['gamma'] - .15) < 2e-3
 
 
+@pytest.mark.parametrize('recovered', [None, [2., 3.2, 5., 6.7, 9.3, 12.6]])
+def test_sir_fit_conditions_on_the_initial_state_for_rmse_and_standard_errors(recovered):
+    infected = np.array([10., 13., 17., 19., 26., 32.])
+    fitted = fit_sir(infected, 500., recovered=recovered)
+    theta = np.array([fitted['beta'], fitted['gamma']])
+
+    def subsequent_errors(rates):
+        trajectory = simulate_sir(*rates, 500., infected[0], 5, recovered0=recovered[0] if recovered else 0.)
+        errors = trajectory['I'][1:] - infected[1:]
+        if recovered:
+            errors = np.r_[errors, np.subtract(trajectory['R'][1:], recovered[1:])]
+        return errors
+
+    errors = subsequent_errors(theta)
+    step = 1e-5
+    derivative = np.column_stack([(subsequent_errors(theta + step * direction)
+                                   - subsequent_errors(theta - step * direction)) / (2 * step)
+                                  for direction in np.eye(2)])
+    df = errors.size - 2
+    variance = np.dot(errors, errors) / df
+    expected = np.sqrt(np.diag(np.linalg.inv(derivative.T @ derivative)) * variance)
+    assert fitted['fitted_residual_count'] == errors.size
+    assert fitted['residual_degrees_of_freedom'] == df
+    assert fitted['rmse'] == pytest.approx(np.sqrt(np.mean(errors**2)))
+    assert fitted['std_error'] == pytest.approx(expected, rel=1e-4)
+
+
+def test_sir_with_active_rate_bound_retains_estimates_and_withholds_joint_covariance():
+    fitted = fit_sir([10, 13, 17, 21, 28, 37], 500., recovered=[0]*6)
+    assert fitted['jacobian_rank'] == 2 and fitted['converged']
+    assert fitted['gamma'] == pytest.approx(1e-4) and fitted['active_bounds'] == {'gamma': 'lower'}
+    assert fitted['std_error'] is None and fitted['parameter_correlation'] is None
+    assert fitted['diagnostics']['parameter_inference']['status'] == 'active_bound'
+    assert fitted['diagnostics']['parameter_correlation']['status'] == 'active_bound'
+
+
 def test_gm11_on_a_geometric_series_and_baselines_on_exact_patterns():
     series = [10 * 1.1 ** k for k in range(8)]
     g = gm11(series, 2)

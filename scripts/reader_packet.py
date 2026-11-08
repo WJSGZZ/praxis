@@ -13,8 +13,8 @@ import re
 from pypdf import PdfReader, PdfWriter
 
 QUALITY_CHECKLIST = [
-    '摘要是否给出主要发现和关键数字？',
-    '结论是否先讲发现及其含义？',
+    '从摘要能复述哪项发现，它用什么证据支持（证明、测量或计算），关键数字或理论条件是什么？',
+    '结论有何含义？若声称改善或优于基线，从页上重建一次比较：对象、指标、评估条件是否可比？若是理论命题，指出适用域、关键假设及推导依据。',
     '有无自我评价和内部过程话？',
     '逐图逐面板列出已查的标注和图例：文字是否被线、点、填充穿过？图例整个框内及边缘是否有数据或距离过近？',
     '逐图核对关键数字与正文：近似显示、连续值和实际实施精度能否直接区分？摘要、结论及教材／备忘录等对外说明的量词与分母是否和正文一致，是否会造成读法矛盾？',
@@ -33,12 +33,18 @@ def quality_status(review, pdf_sha256):
     """
     pending = {'status': '未经独立读者审阅', 'unresolved': None,
                'diagnostic_only': True}
-    if not isinstance(review, dict):
+    if not isinstance(review, dict) or not isinstance(pdf_sha256, str) or not re.fullmatch(r'[0-9a-f]{64}', pdf_sha256):
+        return pending
+    version = review.get('quality_schema_version', 1)
+    if type(version) is not int or version not in (1, 2):
         return pending
     initial = review.get('initial_review')
+    linked_initial = isinstance(initial, dict) and initial.get('quality_schema_version') == 2
+    if linked_initial and (version != 2 or review.get('review_round') != 'followup'):
+        return pending
     followup = (review.get('review_round') == 'followup' and isinstance(initial, dict)
                 and initial.get('actor') == review.get('actor')
-                and initial.get('fresh_context') is True
+                and initial.get('fresh_context') is True and initial.get('review_round') != 'followup'
                 and initial.get('source_pdf_sha256') == review.get('initial_pdf_sha256')
                 and quality_status(initial, review.get('initial_pdf_sha256'))['status'] != pending['status'])
     checks = review.get('quality_checks')
@@ -56,15 +62,56 @@ def quality_status(review, pdf_sha256):
     rows = review['issues']
     if any(not isinstance(row, dict) for row in rows):
         return pending
+    if version == 2:
+        if review.get('review_round') not in ('initial', 'followup'):
+            return pending
+        if review['review_round'] == 'followup' and (not followup or review.get('fresh_context') is not False):
+            return pending
+        ids = [row.get('id') for row in rows]
+        if (any(not isinstance(i, str) or not i.strip() for i in ids)
+                or len(set(ids)) != len(ids)):
+            return pending
+        if any(type(row.get('page')) is not int or row['page'] < 1
+               or not isinstance(row.get('description'), str) or not row['description'].strip()
+               for row in rows):
+            return pending
+        # A named concern may be referenced by several checks. Count it once,
+        # even when the same omission also drops it from the initial review.
+        missing_ids = set()
+        unlinked_checks = set()
+        current_links = {}
+        for check in checks:
+            links = check.get('issue_ids')
+            if not isinstance(links, list) or any(not isinstance(i, str) or not i.strip() for i in links):
+                return pending
+            missing_ids.update(set(links).difference(ids))
+            current_links[check['id']] = links
+            if check['verdict'] != 'clear' and not links:
+                unlinked_checks.add(check['id'])
+        if followup:
+            prior_ids = [row.get('id') for row in initial['issues']]
+            if any(not isinstance(i, str) or not i.strip() for i in prior_ids):
+                return pending
+            missing_ids.update(set(prior_ids).difference(ids))
+            if linked_initial:
+                for check in initial['quality_checks']:
+                    links = check['issue_ids']
+                    missing_ids.update(set(links).difference(ids))
+                    # If the initial check never named its issue, the same
+                    # check must supply the missing link at follow-up.
+                    if check['verdict'] != 'clear' and not links and not current_links[check['id']]:
+                        unlinked_checks.add(check['id'])
+        missing = len(missing_ids) + len(unlinked_checks)
+    else:
+        # Old records did not require issue IDs on checklist verdicts.
+        missing = sum(c['verdict'] != 'clear' for c in checks) if not rows else 0
     unresolved = sum(row.get('status') not in ('fixed', 'retained')
                      or not isinstance(row.get('resolution'), str) or not row['resolution'].strip()
                      or (row.get('status') == 'fixed' and review.get('review_round') != 'followup')
                      for row in rows)
-    # An issue/uncertainty verdict cannot disappear by omitting the issues list.
-    if not rows and any(c['verdict'] != 'clear' for c in checks):
-        unresolved = sum(c['verdict'] != 'clear' for c in checks)
+    unresolved += missing
     return {'status': f'有 {unresolved} 项未处理' if unresolved else '已完成独立读者审阅',
-            'unresolved': unresolved, 'diagnostic_only': True}
+            'unresolved': unresolved, 'issue_linkage_checked': version == 2, 'diagnostic_only': True}
 
 
 def build_quality(source, destination, question):
@@ -124,12 +171,12 @@ def build_quality(source, destination, question):
     doc.close()
     if figures:
         writer.write(destination/'figure-views.pdf')
-    template={'type':'reader','actor':'','source_pdf_sha256':hashlib.sha256(raw).hexdigest(),
-        'fresh_context':True,'reading_scope':'rendered_pages_only','review_round':'initial',
-        'quality_checks':[{'id':str(i+1),'question':q,'verdict':None,'evidence':''}
+    template={'quality_schema_version':2,'type':'reader','actor':'','source_pdf_sha256':hashlib.sha256(raw).hexdigest(),
+        'fresh_context':None,'reading_scope':'rendered_pages_only','review_round':'initial',
+        'quality_checks':[{'id':str(i+1),'question':q,'verdict':None,'evidence':'','issue_ids':[]}
                           for i,q in enumerate(QUALITY_CHECKLIST)],'issues':[]}
     (destination/'reader-review-template.json').write_text(json.dumps(template,ensure_ascii=False,indent=2))
-    (destination/'PROMPT.txt').write_text('只读本目录成品PDF/页面和问题，先独立审阅，不读源码、作者记录或其他评语。逐页实看，并逐图放大核对。按九条清单填写记录，给页面依据；问题写id/page/description/status=open。没有问题也需逐条有据。不要给奖档，不重算模型，不自行改论文。\n'+ '\n'.join(f'{i+1}. {q}' for i,q in enumerate(QUALITY_CHECKLIST)),encoding='utf-8')
+    (destination/'PROMPT.txt').write_text('只读本目录成品PDF/页面和问题，先独立审阅，不读源码、作者记录或其他评语。记录实际读者身份及fresh_context。逐页实看，并逐图放大核对。按九条清单填写记录，给页面依据。每个issue或uncertain判定在issue_ids中列出对应的问题编号，问题写id/page/description/status=open。复核时沿用并逐项处置初审编号。没有问题也需逐条有据。不要给奖档，不重算模型，不自行改论文。\n'+ '\n'.join(f'{i+1}. {q}' for i,q in enumerate(QUALITY_CHECKLIST)),encoding='utf-8')
     packet={'type':'reader_quality_packet','source_pdf_sha256':hashlib.sha256(raw).hexdigest(),
         'source_pages':len(reader.pages),'packet_pages':len(reader.pages),'scope':'all_pages',
         'figures':figures,'page_number_tokens':number_tokens,

@@ -19,6 +19,10 @@
 
 先从论文实际主张选择下列适用项，再核目标学科的对象、测量约定和已有结果；不要仅凭“经济学”“生物学”等标签整套套用。不同主张可以共存，逐项写明证据支持哪一层、哪些未检查；不适用项说明理由即可，不强制增加章节、数据或实验。沿用六维评价和现有 `critical_claims`／`issues`，具体依据写入相应 `evidence`，不新增一套分数或必填机器字段。
 
+审贡献时，尝试从最近结果的准确前提推出作者的核心结论，把直接推得的部分与新增步骤分别定位到原文。再检查证明是否只用到更弱的前提、所给的界是否被构造达到。稿件停留在可推广的特例或未证紧性的上界时，在评审行动里写出可以推广的方向，以及需要补的构造。审识别或决策时，构造同样符合观测、却使目标量或最优行动不同的两组参数或机制。成功的构造可以推翻“由这些证据唯一确定”的主张，同时保留两组共有的结论。把缺失的区分性观测或必要假设写入评审行动；没有找到这样的构造时，仍需依据目标域上的论证判断唯一性。
+
+同一命题可分别对照最接近的应用模型与数学定理。先匹配研究对象、量词、输入和边界条件，再写出代入与推导，指出首先需要额外证明、测量或构造的那一步。若先例已蕴含公式，仍可审查它在新问题中改变了哪个判断，记录判断失效的条件，以及验证现实意义所需的观测。SIAP 的编辑政策同时关注数学理解与具体科学问题的理解。覆盖一项已知方法或找到一个新例子，均需按这两方面解释贡献。[SIAP 编辑政策](https://epubs.siam.org/journal/siap/editorial-policy)
+
 | 主张与任务 | 数学与应用证据应核什么 | 不可据此直接推出 |
 |---|---|---|
 | 解析命题、算法保证 | 对象、量词和前提；证明依赖、反例、精确答案或认证界；相对最近结果的增量 | 有限样例成立就是一般证明；应用问题必须另有现实样本才能接受纯数学命题 |
@@ -39,5 +43,10 @@
 - `criteria`：上表六项齐全，各含 `status:supported|refuted|unverified` 与非空 `evidence`，必要时 `issue_ids` 引用同记录根因。标签只覆盖证据中明确的判断，不认证整篇；“正确性有支持”和“新颖性被既有文献否定”可以同时成立。
 - `major_gaps`、`actions`：文本列表，指向具体结果、证明或文献差距及修改价值。
 - `novelty_search`：`completed` 布尔、`scope` 与 `sources` 文本列表。新颖性判为 `supported` 时须有真实完成的有范围检索及来源；字段校验不能认证检索充分或结论真新。
+- 做过逐项先例比对时可填 `closest_work_comparisons`。每行用 `claim_id` 关联本稿主张，`source` 标识一个来源，`location` 指明已核的命题、公式或页码，未取得原文时写明限制。`prior_result` 陈述已有结果，`scope` 定位本稿主张并比较两者前提，`derivation` 写实际推导或卡住的位置。关系 `relation` 取 `implied`（先例直接推出）、`additional_step`（还需额外步骤）、`conflicts`（同范围有相反结果）或 `unresolved`。同一主张可列多篇先例。没有识别出可比较的来源时，在 `novelty_search.scope` 记录检索范围与限制，省略比较。
+- `increment_kind` 写本次核查的增量类型（`mathematical_result|proof|method|mechanism|empirical_finding|application|none|undetermined`），`increment` 写具体增量或缺口，`status`（`supported|refuted|unverified`）仅判断这项增量相对该先例的证据。应用增量另用 `application_implication` 说明科学或决策含义及适用范围。先例直接推出的同一命题可有独立的应用价值或证明贡献；若声明该命题本身为新增数学结果，两者矛盾。比较未决时保持 `unverified`。旧记录在用户视图显示 null。评阅者负责核对先例和推导，`criteria.novelty` 与整篇首发性仍需有范围的文献判断。
+- 对确实评到的计算或经验主张，可在 `research_assessment.verification_checks` 逐项记下做过什么。每条用 `claim_id` 连接本稿主张，`actor` 写明谁取得结果，`basis` 选 `reported`（转述作者或其他人的记录）或 `examined`（评委亲自核查），`evidence` 指到具体版本、位置或受限原因。材料获取用 `kind: artifact_access`，状态 `available|restricted|unavailable`。重做原计算用 `same_data_reproduction`，同一问题以独立新数据重复研究用 `new_data_replication`。后两类 `status` 为 `consistent|inconsistent|inconclusive|not_checked`。实际比较另记 `original_data` 和 `check_data`（原始输入版本标识）、`procedure`、`comparison_rule` 和 `observed`，写清哪些步骤相同、比较容差或判据，以及结果。原数据复算须声明 `same_procedure: true`，更换模型或估计方法的再分析可另外记录。新数据另用 `collection` 说明独立采集依据。重新命名、分割或重抽同一批观测仍使用原始输入标识。未做比较时保留原因，`observed` 留空。
+
+论文可因证明可逐步检查而在 `reproducibility` 维度得到支持。具体计算的复算和独立新数据的研究各有自己的证据。分类记录可缺，历史记录在用户视图显示为 null，既有维度和数学审读原样保留。聚合器核对声明是否相容，数据来源与实算经过须由评阅者核实。此处采用美国国家科学院关于计算复现与新数据重复研究的术语，以及 TOP 对披露和实际核验的区分。它是 Praxis 的可选评审记录，SIAM 各刊的适用要求以具体投稿指南为准。[美国国家科学院报告](https://www.nationalacademies.org/read/25303/chapter/3) · [TOP Guidelines](https://www.cos.io/initiatives/top-guidelines)
 
 `python -m evals.aggregate --view=user research-review.json` 输出研究导向视图。评委身份、来源、稿件版本、关键主张和根因保持关联；多个评委分别呈现，不投票制造“顶刊级”。同篇不可把竞赛与研究量表混算，历史稿不补造已完成审读。
