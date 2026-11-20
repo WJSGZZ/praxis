@@ -366,8 +366,8 @@
     "source_artifact_sha256": {
       "input.json": "c53b014c47a116b6032880702b508742cb3765b99b21c167f94fa0535b9bf35e",
       "edge-audit.json": "9a6d1637b9856cd797a261559707a19a192f9b3874e94b7b44cf0dbe9f54a819",
-      "nominal-allocation.json": "5396dbc8d53e9ced6beea8b9845c4020d536506c290aa8de9225a1befecee9d5",
-      "guaranteed-allocation.json": "d91066be8d3cf5b284249ff0c7eb1e8cb45f937897257af9b1d1e396a18a6089",
+      "nominal-allocation.json": "3f289632752aa7629658214d0326c4acb08bdd68b78b702d970ab2175c982480",
+      "guaranteed-allocation.json": "1cf93a3631e3ddce34057dc4eb32228fc31e49e3c694e8e3aecd985d37561e86",
       "independent-verification.json": "e697665164378c1e7329c1e2650a34a35edd9696b5ebe96474b24bb1962ff82f"
     },
     "scientific_caption": "A declared synthetic Cartesian plane in km, shown at equal aspect. Squares are facilities and circles are demands. Blue edges remain allowed for every independent radius-0.1-km point error; dashed C-u is nominally allowed at exactly 5 km but can reach 5.2 km. The C circle is its nominal 5-km boundary. Right-hand dots and bars show all nine actual nominal distances and tight geometric bounds, not confidence intervals. Demand v has only B as a possible neighbor.",
@@ -1064,7 +1064,7 @@
         "C"
       ],
       "nominal": {
-        "A": -0.0,
+        "A": 0.0,
         "B": 5.0,
         "C": 7.0
       },
@@ -1076,18 +1076,27 @@
       "nominal_cost": 17.0,
       "guaranteed_cost": 25.0
     },
-    "figure_generator_sha256": "71e5bd54ea257fc2990120ae90ad8af22143f1a0372d17c111a01d5a05b2b37d",
+    "figure_generator_sha256": "d6e6e4daa327fe178e77945cc9fb029544ab3b8fc9ca48b55c61e1749d2ff03a",
     "runtime": {
       "matplotlib": "3.11.2",
       "numpy": "2.5.3"
     },
     "artifacts": {
-      "coverage.pdf": "e985078a569bbf44d88aa39e7b21abcbce33c2942e2be05598d89343b9440cc5",
-      "coverage.png": "ee0ae91433c4ed76f0e2ed6fdffdff384eb6658b875e11286e95361aa0239cae"
+      "coverage.pdf": "9bf48f5c0e4502360904c3cd1bbe649776fd9297d9f673ec556731d41097ab8a",
+      "coverage.png": "b577b18e4948defdfe3f999ad62263779a4f78b1c05a8656cc76dfea0868690b"
     },
-    "visual_review": "required"
+    "visual_review": "required",
+    "plot_style": {
+      "file": "templates/praxis.mplstyle",
+      "sha256": "ab8bc9f53612888f4690faf0046732038c66e41dc3f01a29d68acfa0f60fe3b6",
+      "scienceplots_version": "2.2.2",
+      "bases": [
+        "science",
+        "no-latex"
+      ]
+    }
   },
-  "figure_generator_sha256": "71e5bd54ea257fc2990120ae90ad8af22143f1a0372d17c111a01d5a05b2b37d",
+  "figure_generator_sha256": "d6e6e4daa327fe178e77945cc9fb029544ab3b8fc9ca48b55c61e1749d2ff03a",
   "figure_runtime": {
     "matplotlib": "3.11.2",
     "numpy": "2.5.3"
@@ -1095,28 +1104,27 @@
   "figure_review": {
     "actual_png_viewed": true,
     "actual_pdf_raster_viewed": true,
-    "selected_rasters_equal_to_viewed_v3": true,
-    "selected_pdfs_equal_to_viewed_v3": true,
     "all_nine_actual_distances_checked": true,
     "all_six_coordinate_points_checked": true,
     "C_and_w_distinct": true,
     "spatial_equal_aspect": true,
     "all_fonts_embedded": true,
     "png_pixel_dimensions": [
-      2196,
-      1314
+      2031,
+      1270
     ],
     "pdf_size_points": [
-      878.4,
-      525.6
+      812.5,
+      508.2
     ],
-    "scope": "Standalone scientific demo; no whole-paper scaling or competition-format certification"
+    "scope": "Standalone scientific demo; no whole-paper scaling or competition-format certification",
+    "rebuilt": "2026-11-20 with --praxis-style (templates/praxis.mplstyle) so the three skill-demo figures share the paper typography; model, data and geometry unchanged"
   },
   "artifact_sha256": {
-    "coverage.png": "ee0ae91433c4ed76f0e2ed6fdffdff384eb6658b875e11286e95361aa0239cae",
-    "coverage.pdf": "e985078a569bbf44d88aa39e7b21abcbce33c2942e2be05598d89343b9440cc5"
+    "coverage.pdf": "9bf48f5c0e4502360904c3cd1bbe649776fd9297d9f673ec556731d41097ab8a",
+    "coverage.png": "b577b18e4948defdfe3f999ad62263779a4f78b1c05a8656cc76dfea0868690b"
   },
   "figure_implementation_sha256": {
-    "demos/spatial-analysis/build_figure.py": "71e5bd54ea257fc2990120ae90ad8af22143f1a0372d17c111a01d5a05b2b37d"
+    "demos/spatial-analysis/build_figure.py": "d6e6e4daa327fe178e77945cc9fb029544ab3b8fc9ca48b55c61e1749d2ff03a"
   }
 }

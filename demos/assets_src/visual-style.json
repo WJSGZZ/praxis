@@ -1,56 +1,21 @@
 {
+  "version": 3,
   "canvas": [
     1920,
     1080
   ],
   "colors": {
     "background": "#F6F5F0",
-    "ink": "#302B31",
-    "secondary": "#5E686E",
-    "rule": "#D8D8D2",
+    "ink": "#2B2730",
+    "secondary": "#646B70",
+    "rule": "#D6D4CC",
     "accent": "#263B9B",
-    "comparison": "#C8533B"
-  },
-  "profiles": {
-    "contest": {},
-    "research": {
-      "typography": {
-        "title": 64,
-        "subtitle": 23,
-        "label": 24,
-        "value": 58,
-        "explanation": 21,
-        "axis": 17,
-        "footer": 25,
-        "folio": 18
-      },
-      "layout": {
-        "margin": 125,
-        "header_y": 82,
-        "rule_y": 134,
-        "title_y": 225,
-        "subtitle_y": 301,
-        "chart": [
-          182,
-          1095,
-          412,
-          793
-        ],
-        "divider_x": 1174,
-        "facts_x": 1230,
-        "axis_label_y": 874,
-        "footer_rule_y": 914,
-        "claim_y": 964,
-        "condition_y": 1012
-      },
-      "rules": [
-        "One central mathematical question; no claim of originality or journal standing from appearance.",
-        "Use one chart and at most two prominent evidence facts. Page count belongs in the folio, not as a hero metric.",
-        "Titles and prose are independently composed in each language. Data, scope and conditions agree.",
-        "Exact named font faces; no synthetic weight, silent fallback, redistributed commercial font files or decoration standing in for evidence.",
-        "No interpolation is implied by guide lines; mark their checkpoint meaning. Review original, 900px and 390px sizes."
-      ]
-    }
+    "comparison": "#C8533B",
+    "panel": "#1F2A66",
+    "panel_ink": "#F5F0E4",
+    "panel_secondary": "#AAB3D8",
+    "panel_rule": "#3A4680",
+    "panel_comparison": "#F2957A"
   },
   "fonts": {
     "chinese_serif": {
@@ -68,6 +33,137 @@
     "latin_sans": {
       "family": "Helvetica Neue",
       "postscript": "HelveticaNeue"
+    },
+    "chinese_serif_bold": {
+      "family": "Songti SC",
+      "postscript": "STSongti-SC-Bold"
+    },
+    "latin_serif_bold": {
+      "family": "Baskerville",
+      "postscript": "Baskerville-SemiBold"
+    },
+    "chinese_sans_medium": {
+      "family": "Hiragino Sans GB",
+      "postscript": "HiraginoSansGB-W6"
+    },
+    "latin_sans_medium": {
+      "family": "Helvetica Neue",
+      "postscript": "HelveticaNeue-Medium"
     }
-  }
+  },
+  "roles": {
+    "kicker": {
+      "size": 19,
+      "face": "sans_medium",
+      "color": "accent"
+    },
+    "title": {
+      "size": 76,
+      "face": "serif_bold",
+      "color": "ink",
+      "size_latin": 68
+    },
+    "dek": {
+      "size": 28,
+      "face": "sans",
+      "color": "secondary"
+    },
+    "caption": {
+      "size": 22,
+      "face": "sans_medium",
+      "color": "ink"
+    },
+    "axis": {
+      "size": 20,
+      "face": "sans",
+      "color": "secondary"
+    },
+    "key": {
+      "size": 20,
+      "face": "sans",
+      "color": "secondary"
+    },
+    "claim": {
+      "size": 28,
+      "face": "serif",
+      "color": "ink"
+    },
+    "condition": {
+      "size": 20,
+      "face": "sans",
+      "color": "secondary"
+    },
+    "masthead": {
+      "size": 22,
+      "face": "serif",
+      "color": "panel_ink"
+    },
+    "label": {
+      "size": 22,
+      "face": "sans",
+      "color": "panel_secondary"
+    },
+    "value": {
+      "size": 100,
+      "face": "serif",
+      "color": "panel_ink"
+    },
+    "value_compact": {
+      "size": 66,
+      "face": "serif",
+      "color": "panel_ink"
+    },
+    "note": {
+      "size": 20,
+      "face": "sans",
+      "color": "panel_secondary"
+    },
+    "panel_note": {
+      "size": 19,
+      "face": "sans",
+      "color": "panel_secondary"
+    }
+  },
+  "layout": {
+    "margin": 112,
+    "panel_x": 1248,
+    "panel_margin": 96,
+    "kicker_y": 132,
+    "title_y": 244,
+    "dek_y": 306,
+    "caption_y": 398,
+    "chart": [
+      196,
+      1136,
+      430,
+      780
+    ],
+    "axis_label_y": 858,
+    "claim_y": 922,
+    "condition_y": 968,
+    "masthead_y": 132,
+    "facts_top": 210,
+    "facts_bottom": 968,
+    "panel_notes_y": [
+      922,
+      968
+    ]
+  },
+  "strokes": {
+    "hairline": 1.0,
+    "primary": 3.0,
+    "secondary": 2.0,
+    "guide": 1.2,
+    "marker": 9
+  },
+  "rules": [
+    "Two-field composition: a paper field carries the question and its chart; a deep ultramarine panel carries the evidence numbers. Scripts choose roles, never sizes, colours or coordinates.",
+    "Equal outer margins (112 px on paper, 96 px inside the panel, top and bottom alike); evidence facts are spaced evenly inside the panel.",
+    "Weight carries hierarchy: bold serif title, regular serif numbers and claim, medium sans for kicker and captions, regular sans for information. Minimum 19 px; shorten copy rather than shrink type.",
+    "One accent quantity per chart; vermilion only for a genuine comparison or held-out check, in its light form on the panel.",
+    "One central question and at most four evidence numbers (three or four use value_compact).",
+    "Derived numbers in the claim must agree with the displayed, rounded numbers.",
+    "Titles and prose are composed separately per language; numbers, scope and conditions agree.",
+    "Exact named font faces; no synthetic weight, silent fallback or bundled font files. Review at 1920, 900 and 390 px."
+  ]
 }

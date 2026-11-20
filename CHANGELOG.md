@@ -7,6 +7,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 本地候选版，尚未发布。Local candidate; publication is pending.
 
+- 宣传图改用统一的视觉规范：左边纸面讲问题和图，右边深群青色块给证据数字，四周边距均等；标题用粗宋体和半粗 Baskerville，数字和结论用衬线常规体，说明用无衬线，最小 19 px。`visual-style.json` 定义字面、角色、网格与线宽，`showcase.py` 是唯一模板，会拒绝越界文字。五组中英文宣传图已重建。论文与演示中的科学图仍用 Okabe–Ito 科研配色；空间分析演示图改用论文图样式（Times，12 pt），与另两张演示图一致。
+  Promotional images now follow one visual system: a paper field for the question and its chart, a deep ultramarine panel for the evidence numbers, and equal margins throughout. Titles use bold Songti and Baskerville SemiBold, numbers and claims the regular serif, information the sans, with a 19 px minimum. `visual-style.json` defines faces, roles, grid and strokes; `showcase.py` is the single template and rejects text that crosses its field. All five bilingual sets were rebuilt. Scientific figures keep the Okabe–Ito research palette; the spatial demo figure now uses the paper house style (Times, 12 pt) like the other two demo figures.
+
 - 研究方法新增“从已证结果到更强贡献”：先例对照显示主张可由已知原理推出时，分析证明实际用到的结构，在最弱前提下推广，用精确构造证明界可达并标出失效边界；研究评审同步检查可推广的特例与未证紧性的上界。
   Research mode adds a step for strengthening results that prior work already implies: analyse which structure the proof uses, generalise under the weakest assumptions, certify sharpness with an exact construction and mark where the result fails. Research review now flags generalisable special cases and bounds not shown to be sharp.
 

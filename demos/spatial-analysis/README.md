@@ -55,7 +55,7 @@ B 失效后，v 没有任何可达的活动设施。即便假设把 B 原有五�
 
 ```bash
 uv run --locked python -m examples.spatial_analysis_demo --output /path/to/new-spatial-run
-uv run --locked python demos/spatial-analysis/build_figure.py --run /path/to/new-spatial-run --output /path/to/new-spatial-figure
+uv run --locked python demos/spatial-analysis/build_figure.py --run /path/to/new-spatial-run --output /path/to/new-spatial-figure --praxis-style
 ```
 
 执行源内保存固定输入；可选 `--input /path/to/fixed-fixture.json` 接收同一规格的原始 JSON，逐字节保留并检查前后 SHA-256。输出包含九条边的审计、实际 LP 变量与矩阵、两种容量及分配、必要性审查、位置反例、B 失效结果、未知 CRS 拒绝记录和 `report.json`，不修改源码目录。

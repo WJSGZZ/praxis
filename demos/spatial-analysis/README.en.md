@@ -55,7 +55,7 @@ Run from the source checkout and choose output paths that do not yet exist:
 
 ```bash
 uv run --locked python -m examples.spatial_analysis_demo --output /path/to/new-spatial-run
-uv run --locked python demos/spatial-analysis/build_figure.py --run /path/to/new-spatial-run --output /path/to/new-spatial-figure
+uv run --locked python demos/spatial-analysis/build_figure.py --run /path/to/new-spatial-run --output /path/to/new-spatial-figure --praxis-style
 ```
 
 The execution source contains the fixed specification. Optional `--input /path/to/fixed-fixture.json` accepts original JSON bytes of that same specification and checks their SHA-256 identity before and after analysis. Outputs include the nine-edge audit, actual LP matrices and variable order, both allocations, the necessity audit, an adverse position witness, B-failure results, an unknown-CRS rejection and `report.json`. Files are created only in the chosen new directory.

@@ -40,7 +40,7 @@ def test_export_is_self_contained_and_excludes_runtime_data(tmp_path):
     assert (graphics/'showcase.py').is_file()
     assert json.loads((graphics/'visual-style.json').read_text())['canvas'] == [1920,1080]
     loaded = subprocess.run([sys.executable, '-c',
-        'import sys; sys.path.insert(0, sys.argv[1]); import make_overviews; assert make_overviews.W == 1920',
+        'import sys; sys.path.insert(0, sys.argv[1]); import make_overviews, make_research_overviews, showcase; assert showcase.W == 1920 and showcase.ROLES["title"]["face"] == "serif_bold"',
         str(graphics)], cwd=tmp_path, capture_output=True, text=True)
     assert loaded.returncode == 0, loaded.stderr
     problem = tmp_path / 'synthetic.md'
