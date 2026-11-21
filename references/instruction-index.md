@@ -141,6 +141,7 @@
 | `foundations` | [references/scientific-foundations.md](scientific-foundations.md) | 全文/整个details区 | 数值/统计/不确定性检查细节缺口 |
 | `review` | [references/review-protocol.md](review-protocol.md) | 全文/整个details区 | 重要评语需复现并判断实际影响 |
 | `figures` | [references/visualization.md](visualization.md) | 全文/整个details区 | 具体制图/图例/空间数据/最终字号问题 |
+| `paper-standards` | [references/paper-standards.md](paper-standards.md) | 全文/整个details区 | 按目标期刊/赛事/学位论文类型取图表、字号、配色、编号与单位规范 |
 | `contest-profile` | [references/contest-delivery.md](contest-delivery.md) | 届次、格式与阅读文件 | 非默认赛事或需要核官方规范与项目选择 |
 | `claim-proof` | [references/mathematical-reasoning.md](mathematical-reasoning.md) | 命题与证明义务 | 解析命题、定理或算法保证 |
 | `claim-mechanism` | [references/dynamical-modeling.md](dynamical-modeling.md) | 数值检查与机制确认分别做 | 方程的解释及对观测的预测 |

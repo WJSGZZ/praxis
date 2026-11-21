@@ -26,7 +26,8 @@ PREAMBLE = r"""\usepackage{pgfplots}
         # Okabe-Ito blue and vermilion stay distinguishable for colour-blind readers and in grayscale (with the dash styles).
         ("main", "0072B2"), ("accent", "D55E00"), ("muted", "7A7F85"), ("light", "B8BDC2"),
         ("oigreen", "009E73"), ("oiorange", "E69F00"), ("oisky", "56B4E9"), ("oiyellow", "F0E442"),
-        # project identity colours, for cover graphics only
+        # Historical project identity colours, kept so archived generators still compile.
+        # Not for new paper figures: papers follow references/paper-standards.md (scientific palette).
         ("teal", "17766E"), ("clay", "9E6440"), ("slate", "5D696E"), ("sand", "AAA69B"),
     ]
 )
@@ -501,12 +502,17 @@ def heatmap_panels(cubes: Sequence[Sequence[Sequence[float]]], titles: Sequence[
     return _font_profile("\n".join(out), font_profile)
 
 
-def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.22cm", font_profile: str | None = None) -> str:
-    """Left-to-right roadmap of boxes joined by arrows (TikZ)."""
+def flow_diagram(boxes: Sequence[str], *, node_width: str = "2.22cm", font_profile: str | None = None,
+                 border: str = "muted", arrow: str = "black") -> str:
+    """Left-to-right roadmap of boxes joined by arrows (TikZ).
+
+    Paper figures use neutral scientific colours; save the emphasis colours for the result being highlighted.
+    ``border``/``arrow`` let a caller name other colours; archived generators keep their frozen source and hashes.
+    """
     nodes = []
     for i, text in enumerate(boxes):
         pos = "" if i == 0 else "right=0.45cm of n%d" % (i - 1)
-        nodes.append(r"\node[draw=teal,line width=0.7pt,rounded corners=2pt,align=center,text width=%s,minimum height=1.35cm,font=\footnotesize,%s] (n%d) {%s};" % (
-            node_width, pos, i, text.replace("\n", r"\\ ")))
-    arrows = [r"\draw[-{Stealth[length=2.2mm]},clay,line width=0.8pt] (n%d) -- (n%d);" % (i, i + 1) for i in range(len(boxes) - 1)]
+        nodes.append(r"\node[draw=%s,line width=0.7pt,rounded corners=2pt,align=center,text width=%s,minimum height=1.35cm,font=\footnotesize,%s] (n%d) {%s};" % (
+            border, node_width, pos, i, text.replace("\n", r"\\ ")))
+    arrows = [r"\draw[-{Stealth[length=2.2mm]},%s,line width=0.8pt] (n%d) -- (n%d);" % (arrow, i, i + 1) for i in range(len(boxes) - 1)]
     return _font_profile("\n".join(nodes + arrows), font_profile)

@@ -7,6 +7,9 @@ Versions follow semantic versioning; 0.x means the skills and tools are still ch
 
 本地候选版，尚未发布。Local candidate; publication is pending.
 
+- 新增按论文类型检索的科研图表规范 `references/paper-standards.md`：99 条规则覆盖共通核心、SIAM、统计期刊、Elsevier／IEEE／APS、Nature／Science、美赛、国赛与中文期刊和学位论文，每条带一手来源、查阅日期、适用条件和证据状态；`scripts.paper_standards` 按刊名或赛事检索并校验。制图、写作、交付与评审技能动手前先按类型取规范；评审只以目标类型的已证实规则判违规。`texplot.flow_diagram` 默认改为中性灰框黑箭头。
+  New venue-specific standards for scientific figures and tables: 99 rules covering a shared core, SIAM, statistics journals, Elsevier/IEEE/APS, Nature/Science, MCM/ICM, CUMCM, and Chinese journals and theses, each with a first-hand source, access date, scope and evidence status. `scripts.paper_standards` retrieves and validates them by venue. Figure, writing, delivery and review skills consult the target venue first; review only treats the venue's confirmed rules as violations. `texplot.flow_diagram` now defaults to neutral grey boxes and black arrows.
+
 - 宣传图改用统一的视觉规范：左边纸面讲问题和图，右边深群青色块给证据数字，四周边距均等；标题用粗宋体和半粗 Baskerville，数字和结论用衬线常规体，说明用无衬线，最小 19 px。`visual-style.json` 定义字面、角色、网格与线宽，`showcase.py` 是唯一模板，会拒绝越界文字。五组中英文宣传图已重建。论文与演示中的科学图仍用 Okabe–Ito 科研配色；空间分析演示图改用论文图样式（Times，12 pt），与另两张演示图一致。
   Promotional images now follow one visual system: a paper field for the question and its chart, a deep ultramarine panel for the evidence numbers, and equal margins throughout. Titles use bold Songti and Baskerville SemiBold, numbers and claims the regular serif, information the sans, with a 19 px minimum. `visual-style.json` defines faces, roles, grid and strokes; `showcase.py` is the single template and rejects text that crosses its field. All five bilingual sets were rebuilt. Scientific figures keep the Okabe–Ito research palette; the spatial demo figure now uses the paper house style (Times, 12 pt) like the other two demo figures.
 

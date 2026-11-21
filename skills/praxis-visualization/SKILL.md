@@ -10,6 +10,7 @@ BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv
 
 ## 做什么
 
+- 动手前先定论文类型（期刊、赛事或学位论文），按 [paper-standards.md](../../references/paper-standards.md) 检索该类型的格式、字号、配色、误差与图注规范；目标规范优先于项目默认，查不到的项标待确认。
 - 按 [visualization.md](../../references/visualization.md) 先比较文字、表与图；每张图明确读者问题、量、对象、分母、单位和条件。
 - 从有效数组生成，留筛选、聚合、变换、缺失、网格及区间定义，分清观测、拟合、插值与预测。
 - 核 `series-id → 来源数组／单位／变换 → 实际 artist → label／颜色／符号`，图例显式 handles／labels，辅助线／带不占科学系列位置。

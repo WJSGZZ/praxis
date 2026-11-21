@@ -93,6 +93,7 @@ DETAILS = {
     'foundations': ('references/scientific-foundations.md', None, '数值/统计/不确定性检查细节缺口'),
     'review': ('references/review-protocol.md', None, '重要评语需复现并判断实际影响'),
     'figures': ('references/visualization.md', None, '具体制图/图例/空间数据/最终字号问题'),
+    'paper-standards': ('references/paper-standards.md', None, '按目标期刊/赛事/学位论文类型取图表、字号、配色、编号与单位规范'),
     'contest-profile': ('references/contest-delivery.md', '届次、格式与阅读文件', '非默认赛事或需要核官方规范与项目选择'),
 }
 DETAILS.update({f'claim-{name}': (f'references/{guide}.md', heading, purpose)

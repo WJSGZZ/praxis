@@ -10,6 +10,7 @@ BUNDLE=`praxis` 技能目录；脚本 `BUNDLE/scripts/`；Python 3.12、uv（`uv
 
 ## 做什么
 
+- 先定论文类型，按 [paper-standards.md](../../references/paper-standards.md) 取图注／表注、编号、单位与误差写法；不同期刊和赛事的约定不混用。
 - 按 [scientific-writing.md](../../references/scientific-writing.md) 区分组织、含混与证据缺口，围绕实际问题和答案安排论证，段落按职责组织。
 - 按 [writing.md](../../references/writing.md) 冻结数字、单位、变量、比较、条件、引用与强度；原位修订，未改变模型沿用有效证据。
 - 核主题链、主体与动作、公式前后及图表到结论的依赖，写出模型取舍与真实证据，不用故事补缺。
